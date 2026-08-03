@@ -559,6 +559,13 @@ def discover_json_files(root, exclude_realpath=None):
 # --------------------------------------------------------------------------
 
 def _finding_sort_key(f):
+    # The trailing canonical_dumps(f) is a total-order tiebreak. The preceding
+    # fields are the meaningful ordering; without the dump, two findings that
+    # agree on all of them (possible whenever a finding carries fields not
+    # listed here) would compare equal and their relative order would fall back
+    # to input order, which is not guaranteed stable. Comparing the canonical
+    # serialisation of the whole record makes the order total by construction.
+    # It can never reorder findings that already differ on an earlier field.
     return (
         f["source_tool"],
         f["source_report"],
@@ -566,6 +573,7 @@ def _finding_sort_key(f):
         f["code"],
         f["severity"],
         f["detail"],
+        canonical_dumps(f),
     )
 
 
