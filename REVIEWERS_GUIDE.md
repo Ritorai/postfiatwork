@@ -25,7 +25,7 @@ not that this guide re-derived it.
 **One amendment, added later.** The original guide was written entirely by static
 inspection, and the paragraph above describes how it was produced. A subsequent
 change closed the three contract failures named in Phase 1 and updated §1 and
-§4.6 to say so. Those commit references and test counts **do** come from real
+§4.6 to say so; a later change closed §4.6 itself and rewrote it to say so. Those commit references and test counts **do** come from real
 runs — `python3 -m unittest` executed against each changed tool — so they are
 measurements, not static claims. Everything else in this document remains
 static-inspection only. The distinction is kept explicit rather than quietly
@@ -366,22 +366,47 @@ you made.
 **Check:** cheap to compare README against transcript; expensive to verify by
 running.
 
-### 4.6 `regression-checker` trusts partial reports
+### 4.6 `regression-checker` trusts partial reports — CLOSED
 
-[`regression-checker/README.md`](regression-checker/README.md) documents that a
+[`regression-checker/README.md`](regression-checker/README.md) documented that a
 `report_mode: "file"` tool's report is fully trusted once it exists, "even if
 written by a crashing/partial run", and that `expected_exit_code: false` is
 silently accepted as `0` because JSON `bool` decodes as an `int` subclass.
 
-**Why it matters disproportionately:** this is the tool that guards every other
+**Why it mattered disproportionately:** this is the tool that guards every other
 tool's output stability. A weakness here weakens the whole regression story, not
 one directory.
 
-**Partially closed.** The missing `newline="\n"` is fixed in `f229dae9`, pinned
-by 8 tests in `95a97571`, so its report hash is now cross-platform stable. The
-two defects named above — trusting a partial report, and coercing
-`expected_exit_code: false` to `0` — are **still open**, and are why this entry
-stays in the ranking.
+**Closed.** The missing `newline="\n"` was fixed in `f229dae9`, pinned by 8
+tests in `95a97571`. The two remaining defects are now fixed as well:
+
+- `expected_exit_code` rejects JSON booleans explicitly (`is_exit_code()`);
+  a baseline carrying `false` is a setup error (exit `2`) rather than a
+  silent match against a real exit status of `0`.
+- A subprocess killed by a signal is recorded as
+  `detail.termination: "signalled"` with `detail.signal`, always raises the new
+  `ABNORMAL_TERMINATION` drift code — a baseline that literally records `-9`
+  cannot bless a `SIGKILL` — and `--update-baselines` refuses to write a
+  baseline from a signalled run, from a 0-byte report (override:
+  `--allow-empty-report`), or from an entry whose current `expected_exit_code`
+  is a boolean. Report `schema_version` is now `2`.
+
+**A separate defect was found while closing this one, and is also closed.**
+The `fixtures/` tree that `regression-checker/README.md` documents, that its
+VERIFICATION block invokes, and that 14 of its CLI-level tests run against was
+**never committed**. On a fresh clone those 14 tests failed and the documented
+verification was not reproducible. `make_fixtures.py` now regenerates the tree
+(measuring each fixture tool's real exit code and report hash rather than
+hand-typing them) and `make_fixtures.py --check` verifies the committed tree
+still matches the generator.
+
+**Measured, not claimed:** 174 tests pass across `test_regress.py` (131),
+`test_regress_newline.py` (8) and `test_regress_integrity.py` (35) on CPython
+3.11.15 / Linux x86_64. The pre-fix and post-fix runs against the same two
+adversarial baselines are transcribed in
+[`regression-checker/captured_output.txt`](regression-checker/captured_output.txt);
+pre-fix, a `SIGKILL`ed tool with a truncated report is reported
+`"status": "clean"`.
 
 ### 4.7 `captured_output.txt` has no schema
 
@@ -410,8 +435,8 @@ reporting, `snapshot-diff` `INVALID_REWARD`.
 `weak-assertion-scanner` (syntax-only), `contradiction-detector` (only six wired
 comparators), `dup-detector` (short documents structurally exempt),
 `loop-health` (undercounts resubmit-after-refusal), `wallet-reconciler`
-(adjacent-pair ordering), `preflight` (duplicate `task_id` silently dropped),
-`regression-checker` (trusts partial reports).
+(adjacent-pair ordering), `preflight` (duplicate `task_id` silently dropped).
+`regression-checker` no longer belongs on this list — see §4.6.
 
 **Well-evidenced relative to the rest:** `nondeterminism-scanner` and
 `weak-assertion-scanner` — the only two with committed self-scan reports and
