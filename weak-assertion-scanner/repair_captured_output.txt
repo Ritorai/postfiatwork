@@ -1,0 +1,125 @@
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/weak-assertion-scanner
+$ python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o before_report.json ; echo "exit=$?"
+exit=1
+
+$ python3 -c "import json; d=json.load(open('before_report.json')); print(d['summary'])"
+{'files_with_errors': 0, 'findings_by_category': {'WA001_NO_ASSERTION': 16, 'WA002_CALL_ONLY': 7, 'WA003_SELF_DERIVED_EXPECTATION': 72, 'WA004_SKIPPED_TEST': 19}, 'findings_total': 114}
+
+===== WA001/WA002 findings in before_report.json =====
+WA001_NO_ASSERTION | bundle-index/test_bundle_index.py : 428 | TestCanonicalJsonBytes.test_output_is_valid_json
+WA001_NO_ASSERTION | claim-checker/test_claimcheck.py : 1083 | TestCanonicalJsonBytes.test_is_pure_ascii_bytes
+WA001_NO_ASSERTION | dup-detector/test_dupdetect.py : 468 | TestCanonicalJson.test_output_is_pure_ascii
+WA001_NO_ASSERTION | loop-health/test_loop_health.py : 1304 | TestCLI.test_healthy_fixture_stdout_is_valid_json
+WA001_NO_ASSERTION | regression-checker/test_regress.py : 689 | TestBuildReport.test_report_is_json_serializable
+WA001_NO_ASSERTION | regression-checker/test_regress.py : 905 | TestCLIOutputHandling.test_output_flag_long_form
+WA001_NO_ASSERTION | snapshot-diff/test_snapdiff.py : 144 | TestJsonify.test_jsonify_output_is_json_serializable
+WA001_NO_ASSERTION | thread-check/test_thread_check.py : 1153 | TestBuildReport.test_report_is_json_serializable
+WA001_NO_ASSERTION | weak-assertion-scanner/demo_category/test_only_no_assertion.py : 7 | TestDemo.test_nothing_is_checked
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 13 | TestNoAssertion.test_empty_body
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 16 | TestNoAssertion.test_only_a_docstring
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 19 | TestNoAssertion.test_only_local_assignment
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 25 | TestCallOnly.test_call_only_expression_statement
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 28 | TestCallOnly.test_call_only_captured_in_variable
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 31 | TestCallOnly.test_call_only_widget_construction
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 62 | TestSkipped.test_body_only_skip_test
+WA002_CALL_ONLY | bundle-index/test_bundle_index.py : 428 | TestCanonicalJsonBytes.test_output_is_valid_json
+WA002_CALL_ONLY | claim-checker/test_claimcheck.py : 1083 | TestCanonicalJsonBytes.test_is_pure_ascii_bytes
+WA002_CALL_ONLY | dup-detector/test_dupdetect.py : 468 | TestCanonicalJson.test_output_is_pure_ascii
+WA002_CALL_ONLY | regression-checker/test_regress.py : 689 | TestBuildReport.test_report_is_json_serializable
+WA002_CALL_ONLY | weak-assertion-scanner/samples_weak/test_subject.py : 25 | TestCallOnly.test_call_only_expression_statement
+WA002_CALL_ONLY | weak-assertion-scanner/samples_weak/test_subject.py : 28 | TestCallOnly.test_call_only_captured_in_variable
+WA002_CALL_ONLY | weak-assertion-scanner/samples_weak/test_subject.py : 31 | TestCallOnly.test_call_only_widget_construction
+
+===== Re-run full suites for every affected tool =====
+
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/bundle-index
+$ python3 -m unittest test_bundle_index -v
+Ran 170 tests in 0.943s
+OK
+
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/claim-checker
+$ python3 -m unittest test_claimcheck -v
+Ran 180 tests in 4.942s
+OK
+
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/dup-detector
+$ python3 -m unittest test_dupdetect -v
+Ran 110 tests in 1.283s
+OK
+
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/loop-health
+$ python3 -m unittest test_loop_health -v
+Ran 202 tests in 1.171s
+OK
+
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/regression-checker
+$ python3 -m unittest test_regress -v
+test_baselines_is_a_directory_not_file_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_baselines_missing_tools_key_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_entry_with_bad_report_mode_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_malformed_baselines_json_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_nonexistent_baselines_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_nonexistent_root_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_output_directory_does_not_exist_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_root_is_a_file_not_dir_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_setup_error_report_is_canonical_json (test_regress.TestCLISetupErrors) ... ok
+Ran 130 tests in 9.996s
+OK
+
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/snapshot-diff
+$ python3 -m unittest test_snapdiff -v
+test_duplicate_task_id_in_after_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_duplicate_task_id_in_before_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_error_message_on_stderr_not_stdout (test_snapdiff.TestCliErrors) ... ok
+test_evidence_wrong_type_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_help_exit_0 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_json_syntax_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_array_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_boolean_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_infinity_literal_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_nan_literal_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_object_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_string_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_missing_required_arg_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_missing_task_id_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_missing_tasks_key_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_no_args_at_all_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_nonexistent_file_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_output_write_failure_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_summary_wrong_type_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_task_not_object_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_tasks_wrong_type_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_top_level_not_object_exit_2 (test_snapdiff.TestCliErrors) ... ok
+Ran 222 tests in 2.387s
+OK
+
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/thread-check
+$ python3 -m unittest test_thread_check -v
+Ran 229 tests in 0.939s
+OK
+
+===== Re-run scanner for after report =====
+$ python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o after_report.json ; echo "exit=$?"
+exit=1
+
+$ python3 -c "import json; d=json.load(open('after_report.json')); print(d['summary'])"
+{'files_with_errors': 0, 'findings_by_category': {'WA001_NO_ASSERTION': 8, 'WA002_CALL_ONLY': 3, 'WA003_SELF_DERIVED_EXPECTATION': 72, 'WA004_SKIPPED_TEST': 19}, 'findings_total': 102}
+
+===== Remaining WA001/WA002 findings in after_report.json (all inside scanner's own excluded fixtures) =====
+WA001_NO_ASSERTION | weak-assertion-scanner/demo_category/test_only_no_assertion.py : 7 | TestDemo.test_nothing_is_checked
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 13 | TestNoAssertion.test_empty_body
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 16 | TestNoAssertion.test_only_a_docstring
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 19 | TestNoAssertion.test_only_local_assignment
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 25 | TestCallOnly.test_call_only_expression_statement
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 28 | TestCallOnly.test_call_only_captured_in_variable
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 31 | TestCallOnly.test_call_only_widget_construction
+WA001_NO_ASSERTION | weak-assertion-scanner/samples_weak/test_subject.py : 62 | TestSkipped.test_body_only_skip_test
+WA002_CALL_ONLY | weak-assertion-scanner/samples_weak/test_subject.py : 25 | TestCallOnly.test_call_only_expression_statement
+WA002_CALL_ONLY | weak-assertion-scanner/samples_weak/test_subject.py : 28 | TestCallOnly.test_call_only_captured_in_variable
+WA002_CALL_ONLY | weak-assertion-scanner/samples_weak/test_subject.py : 31 | TestCallOnly.test_call_only_widget_construction
+
+===== before vs after summary =====
+WA001_NO_ASSERTION: before=16 after=8
+WA002_CALL_ONLY: before=7 after=3
+WA003_SELF_DERIVED_EXPECTATION: before=72 after=72
+WA004_SKIPPED_TEST: before=19 after=19
