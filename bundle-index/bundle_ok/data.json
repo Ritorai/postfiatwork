@@ -1,0 +1,5 @@
+{
+  "name": "sample-bundle",
+  "version": 1,
+  "values": [1, 2, 3]
+}

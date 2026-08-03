@@ -1,0 +1,2 @@
+This bundle exists only to demonstrate a clean, finding-free bundle_index.py run.
+It intentionally has no surprises: no missing README, no empty files, no duplicates.
