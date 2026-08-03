@@ -37,6 +37,26 @@ No absolute paths
 Tool names and relative command tokens are recorded; the --root
 directory itself, working directories, and any temp-file paths used to
 capture file-based reports are never written into the report.
+
+Abnormal termination is not a normal exit code
+-----------------------------------------------
+`subprocess` reports a process killed by a signal as a NEGATIVE
+returncode (-N for signal N). Treating that as "the tool exited with
+status -11" is wrong twice over: the report a segfaulting or OOM-killed
+tool leaves behind is by definition partial, and a baseline file can
+name -11 as an expected exit code and thereby bless the crash forever.
+Every result therefore carries an explicit `termination` field
+("exited" or "signalled"), a signalled run always raises the
+ABNORMAL_TERMINATION drift code regardless of what the baseline says,
+and --update-baselines refuses to record a baseline from a run that did
+not terminate normally. See README "3 limitations".
+
+Booleans are not exit codes
+----------------------------
+In Python `bool` is a subclass of `int`, so a naive
+`isinstance(x, int)` check accepts JSON `true`/`false` as an exit code
+and then silently compares `0 == False` as a match. `expected_exit_code`
+is validated with an explicit bool rejection.
 """
 
 import argparse
@@ -48,7 +68,7 @@ import subprocess
 import sys
 import tempfile
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 TOOL_NAME = "regression-checker"
 DEFAULT_TIMEOUT = 120
 REPORT_PLACEHOLDER = "{REPORT}"
@@ -58,14 +78,54 @@ DRIFT_HASH = "REPORT_HASH_DRIFT"
 DRIFT_TOOL_MISSING = "TOOL_MISSING"
 DRIFT_UNBASELINED = "UNBASELINED_TOOL"
 DRIFT_EXEC_ERROR = "EXECUTION_ERROR"
+DRIFT_ABNORMAL = "ABNORMAL_TERMINATION"
 
 ALL_DRIFT_CODES = frozenset(
-    {DRIFT_EXIT_CODE, DRIFT_HASH, DRIFT_TOOL_MISSING, DRIFT_UNBASELINED, DRIFT_EXEC_ERROR}
+    {
+        DRIFT_EXIT_CODE,
+        DRIFT_HASH,
+        DRIFT_TOOL_MISSING,
+        DRIFT_UNBASELINED,
+        DRIFT_EXEC_ERROR,
+        DRIFT_ABNORMAL,
+    }
 )
+
+TERM_EXITED = "exited"
+TERM_SIGNALLED = "signalled"
+
+EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
 
 
 class SetupError(Exception):
     """Raised for problems with the checker's own setup (exit code 2)."""
+
+
+def is_exit_code(value):
+    """True only for a real integer exit code.
+
+    `bool` is a subclass of `int` in Python, so `isinstance(True, int)`
+    is True and a baseline saying `"expected_exit_code": false` would be
+    accepted and then compared as `0 == False` -> match. A JSON boolean
+    is never an exit code; reject it explicitly.
+    """
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def exit_code_error(path, name, value):
+    """Message for a rejected 'expected_exit_code'. Booleans get their own
+    wording because the failure they cause is silent, not loud."""
+    if isinstance(value, bool):
+        return (
+            "baselines file %s: entry for %r has a JSON boolean %s as"
+            " 'expected_exit_code'. A boolean is not an exit code -- Python would"
+            " compare it equal to %d and silently mark a real exit code as matching."
+            % (path, name, "true" if value else "false", int(value))
+        )
+    return (
+        "baselines file %s: entry for %r 'expected_exit_code' must be an integer"
+        % (path, name)
+    )
 
 
 # --------------------------------------------------------------------------
@@ -142,11 +202,8 @@ def load_baselines(path):
                 "baselines file %s: entry for %r has invalid report_mode %r (want 'file' or 'stdout')"
                 % (path, name, entry.get("report_mode"))
             )
-        if not isinstance(entry["expected_exit_code"], int):
-            raise SetupError(
-                "baselines file %s: entry for %r 'expected_exit_code' must be an integer"
-                % (path, name)
-            )
+        if not is_exit_code(entry["expected_exit_code"]):
+            raise SetupError(exit_code_error(path, name, entry["expected_exit_code"]))
         expected_hash = entry.get("expected_report_sha256")
         if expected_hash is not None and (
             not isinstance(expected_hash, str) or len(expected_hash) != 64
@@ -228,6 +285,8 @@ def run_tool(tool_dir, entry, timeout):
                 "ok": False,
                 "actual_exit_code": None,
                 "actual_report_sha256": None,
+                "termination": None,
+                "signal": None,
                 "error": "timeout after %ss running: %s" % (timeout, " ".join(shlex.quote(c) for c in command)),
             }
         except FileNotFoundError as exc:
@@ -235,6 +294,8 @@ def run_tool(tool_dir, entry, timeout):
                 "ok": False,
                 "actual_exit_code": None,
                 "actual_report_sha256": None,
+                "termination": None,
+                "signal": None,
                 "error": "command not found: %s" % exc,
             }
         except OSError as exc:
@@ -242,8 +303,16 @@ def run_tool(tool_dir, entry, timeout):
                 "ok": False,
                 "actual_exit_code": None,
                 "actual_report_sha256": None,
+                "termination": None,
+                "signal": None,
                 "error": "could not execute command: %s" % exc,
             }
+
+        # POSIX: a process killed by signal N is reported as returncode -N.
+        # That is NOT an exit status and must never be compared against one.
+        signalled = proc.returncode < 0
+        termination = TERM_SIGNALLED if signalled else TERM_EXITED
+        signal_number = -proc.returncode if signalled else None
 
         if report_mode == "stdout":
             report_bytes = proc.stdout
@@ -253,6 +322,8 @@ def run_tool(tool_dir, entry, timeout):
                     "ok": False,
                     "actual_exit_code": proc.returncode,
                     "actual_report_sha256": None,
+                    "termination": termination,
+                    "signal": signal_number,
                     "error": "report file was not created by the command (report_mode=file)",
                 }
             try:
@@ -263,6 +334,8 @@ def run_tool(tool_dir, entry, timeout):
                     "ok": False,
                     "actual_exit_code": proc.returncode,
                     "actual_report_sha256": None,
+                    "termination": termination,
+                    "signal": signal_number,
                     "error": "could not read report file: %s" % exc,
                 }
 
@@ -270,6 +343,8 @@ def run_tool(tool_dir, entry, timeout):
             "ok": True,
             "actual_exit_code": proc.returncode,
             "actual_report_sha256": sha256_hex(report_bytes),
+            "termination": termination,
+            "signal": signal_number,
             "error": None,
             "report_bytes_length": len(report_bytes),
         }
@@ -322,6 +397,16 @@ def evaluate_tool(name, root, baseline_entry, present_dirs, timeout):
 
     drift_codes = []
     detail = {}
+
+    if run_result.get("termination") is not None:
+        detail["termination"] = run_result["termination"]
+    if run_result.get("signal") is not None:
+        detail["signal"] = run_result["signal"]
+    if run_result.get("termination") == TERM_SIGNALLED:
+        # A signalled process did not "exit" with any status. Whatever it
+        # left in its report is partial by construction, and no baseline
+        # may bless it -- not even one that literally records -N.
+        drift_codes.append(DRIFT_ABNORMAL)
 
     if not run_result["ok"]:
         drift_codes.append(DRIFT_EXEC_ERROR)
@@ -398,7 +483,8 @@ def build_report(root, baselines, timeout):
 # --update-baselines
 # --------------------------------------------------------------------------
 
-def update_baselines(root, baselines_path, raw_baselines, timeout, out_stream):
+def update_baselines(root, baselines_path, raw_baselines, timeout, out_stream,
+                     allow_empty_report=False):
     print("=" * 78, file=out_stream)
     print("WARNING: --update-baselines REWRITES THE COMMITTED BASELINE.", file=out_stream)
     print("This is how a real regression gets whitewashed. Every entry's", file=out_stream)
@@ -420,6 +506,12 @@ def update_baselines(root, baselines_path, raw_baselines, timeout, out_stream):
         if name not in present_dirs:
             failed.append((name, "tool directory not present under --root"))
             continue
+        if not is_exit_code(entry.get("expected_exit_code")):
+            # Refuse to "update" an entry whose current expected_exit_code is
+            # a JSON boolean: the old-vs-new comparison below would report
+            # "same" for a value that actually changed.
+            failed.append((name, exit_code_error(baselines_path, name, entry.get("expected_exit_code"))))
+            continue
         norm_entry = {
             "status": "baselined",
             "command": list(entry["command"]),
@@ -430,6 +522,20 @@ def update_baselines(root, baselines_path, raw_baselines, timeout, out_stream):
         run_result = run_tool(os.path.join(root, name), norm_entry, timeout)
         if not run_result["ok"]:
             failed.append((name, run_result["error"]))
+            continue
+        if run_result.get("termination") == TERM_SIGNALLED:
+            failed.append((
+                name,
+                "run terminated on signal %s -- refusing to baseline a crashed run"
+                % run_result.get("signal"),
+            ))
+            continue
+        if run_result.get("report_bytes_length") == 0 and not allow_empty_report:
+            failed.append((
+                name,
+                "run produced a 0-byte report -- refusing to baseline it"
+                " (pass --allow-empty-report if an empty report is genuinely correct)",
+            ))
             continue
         old_exit = entry.get("expected_exit_code")
         old_hash = entry.get("expected_report_sha256")
@@ -484,6 +590,13 @@ def build_arg_parser():
         "exit code / report hash in the baselines file. Never implied by any other flag.",
     )
     p.add_argument(
+        "--allow-empty-report",
+        action="store_true",
+        help="with --update-baselines only: permit recording a baseline for a tool whose "
+        "run produced a 0-byte report. Off by default because an empty report is the "
+        "signature of a tool that died before writing anything.",
+    )
+    p.add_argument(
         "--timeout",
         type=int,
         default=DEFAULT_TIMEOUT,
@@ -508,7 +621,14 @@ def main(argv=None):
             raise SetupError("baselines file %s is not valid JSON: %s" % (args.baselines, exc))
 
         if args.update_baselines:
-            code = update_baselines(args.root, args.baselines, raw_baselines, args.timeout, sys.stderr)
+            code = update_baselines(
+                args.root,
+                args.baselines,
+                raw_baselines,
+                args.timeout,
+                sys.stderr,
+                allow_empty_report=args.allow_empty_report,
+            )
             return code
 
         baselines = load_baselines(args.baselines)

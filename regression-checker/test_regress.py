@@ -2,8 +2,8 @@
 """Test suite for regress.py. Stdlib-only (unittest, tempfile, subprocess,
 json, os, sys, hashlib). Does NOT depend on the sibling tool repositories
 existing on disk -- every scenario is built from small synthetic fixtures
-created on the fly (or from the committed fixtures/ directory, which is
-itself self-contained)."""
+created on the fly, or from the generated fixtures/ directory, which
+setUpModule() builds via make_fixtures.py if it is not already present)."""
 
 import hashlib
 import json
@@ -21,6 +21,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REGRESS_PY = os.path.join(HERE, "regress.py")
 FIXTURES_DIR = os.path.join(HERE, "fixtures")
 PY = sys.executable or "python3"
+
+
+def setUpModule():
+    """`fixtures/` is generated, not committed -- the same convention as
+    `bundle-verifier/`, `exit-harness/` and `tamper-runner/`, which all ship a
+    `make_fixtures.py` and commit no generated tree. Build it on demand so the
+    CLI-level tests below are runnable from a fresh clone."""
+    if not os.path.isdir(FIXTURES_DIR):
+        import make_fixtures
+        make_fixtures.build(FIXTURES_DIR)
+
 
 
 def write(path, content):
@@ -293,12 +304,20 @@ class TestLoadBaselines(TempRootMixin, unittest.TestCase):
         with self.assertRaises(regress.SetupError):
             regress.load_baselines(path)
 
-    def test_expected_exit_code_bool_is_still_int_subtype_accepted(self):
-        # bool is a subclass of int in Python; document current behaviour.
+    def test_expected_exit_code_bool_false_rejected(self):
+        # bool is a subclass of int in Python. Accepting `false` here used to
+        # make `0 == False` compare as a match, silently blessing any tool
+        # that exited 0. It is now a setup error.
         root = self.make_root()
         path = self.write_baselines(root, {"t1": {"command": ["a"], "report_mode": "stdout", "expected_exit_code": False}})
-        tools = regress.load_baselines(path)
-        self.assertEqual(tools["t1"]["expected_exit_code"], False)
+        with self.assertRaises(regress.SetupError):
+            regress.load_baselines(path)
+
+    def test_expected_exit_code_bool_true_rejected(self):
+        root = self.make_root()
+        path = self.write_baselines(root, {"t1": {"command": ["a"], "report_mode": "stdout", "expected_exit_code": True}})
+        with self.assertRaises(regress.SetupError):
+            regress.load_baselines(path)
 
     def test_null_hash_accepted(self):
         root = self.make_root()
@@ -732,7 +751,7 @@ class TestBuildReport(TempRootMixin, unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# CLI end-to-end, against the committed fixtures/ directory
+# CLI end-to-end, against the generated fixtures/ directory
 # ---------------------------------------------------------------------------
 
 class TestCLIFixturesOk(unittest.TestCase):
