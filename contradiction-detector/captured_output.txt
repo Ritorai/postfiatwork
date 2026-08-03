@@ -1,0 +1,254 @@
+$ python3 -m unittest test_contradict -v
+test_directory_with_wrong_filename_is_not_applicable (test_contradict.AdapterApplicabilityPartialTests) ... ok
+test_link_integrity_needs_both_files (test_contradict.AdapterApplicabilityPartialTests) ... ok
+test_preflight_needs_both_files (test_contradict.AdapterApplicabilityPartialTests) ... ok
+test_reward_anomaly_needs_both_files (test_contradict.AdapterApplicabilityPartialTests) ... ok
+test_reward_reconciler_needs_both_files (test_contradict.AdapterApplicabilityPartialTests) ... ok
+test_applicable_dup_detector (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_event_linter (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_evidence_scorer (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_lifecycle_linter (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_link_integrity (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_preflight (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_queue_auditor (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_reward_anomaly (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_reward_reconciler (test_contradict.AdapterApplicabilityTests) ... ok
+test_applicable_staleness_monitor (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_dup_detector (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_event_linter (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_evidence_scorer (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_lifecycle_linter (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_link_integrity (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_preflight (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_queue_auditor (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_reward_anomaly (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_reward_reconciler (test_contradict.AdapterApplicabilityTests) ... ok
+test_not_applicable_staleness_monitor (test_contradict.AdapterApplicabilityTests) ... ok
+test_default_checkers_root_is_next_to_script (test_contradict.AdapterRegistryTests) ... ok
+test_every_adapter_has_required_keys (test_contradict.AdapterRegistryTests) ... ok
+test_every_adapter_required_inputs_is_tuple (test_contradict.AdapterRegistryTests) ... ok
+test_known_filenames_derived_from_all_adapters (test_contradict.AdapterRegistryTests) ... ok
+test_preflight_and_queue_auditor_do_not_share_a_filename (test_contradict.AdapterRegistryTests) ... ok
+test_queue_auditor_and_staleness_use_distinct_filenames (test_contradict.AdapterRegistryTests) ... ok
+test_reference_now_is_a_fixed_constant_not_wall_clock (test_contradict.AdapterRegistryTests) ... ok
+test_ten_adapters_registered (test_contradict.AdapterRegistryTests) ... ok
+test_checkers_root_defaults_to_none (test_contradict.ArgParsingTests) ... ok
+test_checkers_root_flag (test_contradict.ArgParsingTests) ... ok
+test_missing_positional_arg_exits_2 (test_contradict.ArgParsingTests) ... ok
+test_output_flag_long_form (test_contradict.ArgParsingTests) ... ok
+test_output_flag_short_form (test_contradict.ArgParsingTests) ... ok
+test_timeout_defaults (test_contradict.ArgParsingTests) ... ok
+test_timeout_flag_parses_float (test_contradict.ArgParsingTests) ... ok
+test_unknown_flag_exits_2 (test_contradict.ArgParsingTests) ... ok
+test_agree_when_no_issues_anywhere (test_contradict.BuildReportTests) ... ok
+test_cases_sorted_by_case_id_in_output (test_contradict.BuildReportTests) ... ok
+test_code_counts_present_for_every_known_code_even_when_zero (test_contradict.BuildReportTests) ... ok
+test_contradiction_gives_contradictions_found (test_contradict.BuildReportTests) ... ok
+test_empty_case_list_is_agree (test_contradict.BuildReportTests) ... ok
+test_execution_error_takes_priority_over_contradiction (test_contradict.BuildReportTests) ... ok
+test_scope_divergence_alone_is_still_agree (test_contradict.BuildReportTests) ... ok
+test_status_to_exit_code_mapping_covers_all_statuses (test_contradict.BuildReportTests) ... ok
+test_tool_version_and_report_version_present (test_contradict.BuildReportTests) ... ok
+test_compact_separators (test_contradict.CanonicalJsonTests) ... ok
+test_deterministic_across_calls (test_contradict.CanonicalJsonTests) ... ok
+test_ensure_ascii (test_contradict.CanonicalJsonTests) ... ok
+test_nested_sorted_keys (test_contradict.CanonicalJsonTests) ... ok
+test_round_trips (test_contradict.CanonicalJsonTests) ... ok
+test_sorted_keys (test_contradict.CanonicalJsonTests) ... ok
+test_trailing_newline (test_contradict.CanonicalJsonTests) ... ok
+test_amounts_differ_helper_handles_non_numeric_fallback (test_contradict.CompareAmountTests) ... ok
+test_amounts_differ_helper_handles_none (test_contradict.CompareAmountTests) ... ok
+test_below_price_code_also_considered (test_contradict.CompareAmountTests) ... ok
+test_contradiction_on_differing_amounts (test_contradict.CompareAmountTests) ... ok
+test_missing_payout_and_duplicate_payout_ignored (test_contradict.CompareAmountTests) ... ok
+test_no_comparison_when_only_one_side_has_finding (test_contradict.CompareAmountTests) ... ok
+test_no_contradiction_when_amounts_equal_different_formatting (test_contradict.CompareAmountTests) ... ok
+test_no_issues_when_neither_flags (test_contradict.CompareAmountTests) ... ok
+test_unrelated_task_ids_not_compared (test_contradict.CompareAmountTests) ... ok
+test_wallet_mismatch_is_scope_divergence (test_contradict.CompareAmountTests) ... ok
+test_contradiction_when_both_fully_original (test_contradict.CompareIdentityTests) ... ok
+test_missing_submission_id_in_scorer_records_handled_gracefully (test_contradict.CompareIdentityTests) ... ok
+test_no_contradiction_when_only_one_side_fully_original (test_contradict.CompareIdentityTests) ... ok
+test_no_contradiction_when_originality_below_one (test_contradict.CompareIdentityTests) ... ok
+test_no_issue_when_no_flagged_pairs (test_contradict.CompareIdentityTests) ... ok
+test_subject_contains_both_submission_ids (test_contradict.CompareIdentityTests) ... ok
+test_never_emits_a_contradiction_code (test_contradict.CompareLifecycleScopeTests) ... ok
+test_no_divergence_when_event_linter_also_flags_duplicate_event (test_contradict.CompareLifecycleScopeTests) ... ok
+test_no_issue_when_no_duplicate_state (test_contradict.CompareLifecycleScopeTests) ... ok
+test_other_lifecycle_linter_codes_ignored (test_contradict.CompareLifecycleScopeTests) ... ok
+test_scope_divergence_when_event_linter_silent (test_contradict.CompareLifecycleScopeTests) ... ok
+test_task_absent_from_event_linter_report_still_flagged (test_contradict.CompareLifecycleScopeTests) ... ok
+test_contradiction_when_link_integrity_linked_but_preflight_orphaned (test_contradict.CompareLinkageTests) ... ok
+test_contradiction_when_preflight_linked_but_link_integrity_orphaned (test_contradict.CompareLinkageTests) ... ok
+test_evidence_type_mismatch_is_scope_divergence_not_contradiction (test_contradict.CompareLinkageTests) ... ok
+test_multiple_submissions_sorted_by_submission_id (test_contradict.CompareLinkageTests) ... ok
+test_no_contradiction_when_both_orphaned (test_contradict.CompareLinkageTests) ... ok
+test_no_issues_when_both_link (test_contradict.CompareLinkageTests) ... ok
+test_scope_divergence_never_coded_as_contradiction (test_contradict.CompareLinkageTests) ... ok
+test_unrelated_preflight_issue_codes_ignored (test_contradict.CompareLinkageTests) ... ok
+test_contradiction_when_lifecycle_linter_silent (test_contradict.CompareTimestampTests) ... ok
+test_evidence_source_impossible_timestamp_ignored (test_contradict.CompareTimestampTests) ... ok
+test_multiple_tasks_each_evaluated_independently (test_contradict.CompareTimestampTests) ... ok
+test_no_contradiction_when_lifecycle_linter_also_has_a_finding (test_contradict.CompareTimestampTests) ... ok
+test_no_issue_when_no_impossible_timestamps (test_contradict.CompareTimestampTests) ... ok
+test_other_violation_codes_ignored (test_contradict.CompareTimestampTests) ... ok
+test_contradiction_on_null_deadline (test_contradict.CompareValidityTests) ... ok
+test_findings_grouped_across_all_three_buckets (test_contradict.CompareValidityTests) ... ok
+test_malformed_record_about_other_field_ignored (test_contradict.CompareValidityTests) ... ok
+test_no_contradiction_when_staleness_also_flags_malformed_deadline (test_contradict.CompareValidityTests) ... ok
+test_no_issue_when_both_clean (test_contradict.CompareValidityTests) ... ok
+test_overdue_proposed_is_scope_divergence (test_contradict.CompareValidityTests) ... ok
+test_stale_accepted_and_submitted_both_scope_divergence (test_contradict.CompareValidityTests) ... ok
+test_output_file_written_with_trailing_newline_only (test_contradict.DeterminismTests) ... ok
+test_output_flag_suppresses_stdout (test_contradict.DeterminismTests) ... ok
+test_relocation_produces_identical_bytes (test_contradict.DeterminismTests) ... ok
+test_repeated_runs_byte_identical (test_contradict.DeterminismTests) ... ok
+test_report_contains_no_absolute_paths (test_contradict.DeterminismTests) ... ok
+test_report_contains_no_backslash_windows_paths (test_contradict.DeterminismTests) ... ok
+test_completely_empty_root_yields_no_cases (test_contradict.DiscoverCasesTests) ... ok
+test_container_sorted_deterministically (test_contradict.DiscoverCasesTests) ... ok
+test_container_with_subdirectories (test_contradict.DiscoverCasesTests) ... ok
+test_file_instead_of_directory_raises (test_contradict.DiscoverCasesTests) ... ok
+test_files_at_container_level_that_are_not_known_inputs_are_ignored (test_contradict.DiscoverCasesTests) ... ok
+test_leaf_case_with_direct_files (test_contradict.DiscoverCasesTests) ... ok
+test_nonexistent_root_raises (test_contradict.DiscoverCasesTests) ... ok
+test_subdirectory_with_no_recognized_files_is_still_a_case (test_contradict.DiscoverCasesTests) ... ok
+test_trailing_slash_does_not_change_case_id (test_contradict.DiscoverCasesTests) ... ok
+test_both_checkers_clean_is_agree_with_zero_issues (test_contradict.EdgeCaseTests) ... ok
+test_case_where_only_one_checker_of_a_pair_can_evaluate (test_contradict.EdgeCaseTests) ... ok
+test_checker_absent_exits_2 (test_contradict.EdgeCaseTests) ... ok
+test_checker_that_itself_exits_2_is_execution_failure (test_contradict.EdgeCaseTests) ... ok
+test_empty_case_directory_exits_0 (test_contradict.EdgeCaseTests) ... ok
+test_nonexistent_case_root_exits_2 (test_contradict.EdgeCaseTests) ... ok
+test_key_is_a_plain_tuple_of_hashables (test_contradict.IssueSortKeyTests) ... ok
+test_sorts_by_checkers_when_code_equal (test_contradict.IssueSortKeyTests) ... ok
+test_sorts_by_code_first (test_contradict.IssueSortKeyTests) ... ok
+test_sorts_by_subject_when_code_and_checkers_equal (test_contradict.IssueSortKeyTests) ... ok
+test_stable_and_repeatable (test_contradict.IssueSortKeyTests) ... ok
+test_negative_timeout_rejected (test_contradict.MainTimeoutValidationTests) ... ok
+test_zero_timeout_rejected (test_contradict.MainTimeoutValidationTests) ... ok
+test_checkers_sorted (test_contradict.MakeIssueTests) ... ok
+test_defaults_are_empty_not_none (test_contradict.MakeIssueTests) ... ok
+test_message_stored_verbatim (test_contradict.MakeIssueTests) ... ok
+test_single_checker_tuple (test_contradict.MakeIssueTests) ... ok
+test_checker_unavailable_recorded_when_applicable_but_missing_script (test_contradict.ProcessCaseTests) ... ok
+test_counts_match_issue_list (test_contradict.ProcessCaseTests) ... ok
+test_execution_failure_from_fake_slow_checker (test_contradict.ProcessCaseTests) ... ok
+test_issues_are_sorted (test_contradict.ProcessCaseTests) ... ok
+test_no_applicable_checkers_yields_empty_case (test_contradict.ProcessCaseTests) ... ok
+test_not_applicable_checkers_listed_separately (test_contradict.ProcessCaseTests) ... ok
+test_amount_agree_end_to_end (test_contradict.RealCheckerIntegrationTests) ... ok
+test_amount_conflict_end_to_end (test_contradict.RealCheckerIntegrationTests) ... ok
+test_linkage_agree_end_to_end (test_contradict.RealCheckerIntegrationTests) ... ok
+test_linkage_conflict_end_to_end (test_contradict.RealCheckerIntegrationTests) ... ok
+test_multi_case_root_aggregates_across_cases (test_contradict.RealCheckerIntegrationTests) ... ok
+test_only_applicable_checkers_are_run (test_contradict.RealCheckerIntegrationTests) ... ok
+test_timestamp_conflict_end_to_end (test_contradict.RealCheckerIntegrationTests) ... ok
+test_validity_agree_end_to_end (test_contradict.RealCheckerIntegrationTests) ... ok
+test_validity_conflict_end_to_end (test_contradict.RealCheckerIntegrationTests) ... ok
+test_discover_checker_path_absolute_even_for_relative_root (test_contradict.RunCheckerTests) ... ok
+test_exit_2_detail_never_contains_raw_stderr (test_contradict.RunCheckerTests) ... ok
+test_exit_2_is_execution_failure (test_contradict.RunCheckerTests) ... ok
+test_non_json_stdout_is_execution_failure (test_contradict.RunCheckerTests) ... ok
+test_non_object_json_is_execution_failure (test_contradict.RunCheckerTests) ... ok
+test_ok_state_parses_json_report (test_contradict.RunCheckerTests) ... ok
+test_ok_state_with_findings_exit_1 (test_contradict.RunCheckerTests) ... ok
+test_relative_checkers_root_still_works (test_contradict.RunCheckerTests) ... ok
+test_result_dict_has_expected_keys (test_contradict.RunCheckerTests) ... ok
+test_subprocess_invoked_with_relative_case_files (test_contradict.RunCheckerTests) ... ok
+test_timeout_detail_mentions_seconds_value (test_contradict.RunCheckerTests) ... ok
+test_timeout_is_execution_failure_not_a_hang (test_contradict.RunCheckerTests) ... ok
+test_unavailable_detail_has_no_path (test_contradict.RunCheckerTests) ... ok
+test_unavailable_when_checkers_root_empty (test_contradict.RunCheckerTests) ... ok
+test_unexpected_exit_code_is_execution_failure (test_contradict.RunCheckerTests) ... ok
+test_handles_list_index (test_contradict.SafeGetTests) ... ok
+test_handles_non_container_leaf (test_contradict.SafeGetTests) ... ok
+test_handles_out_of_range_index (test_contradict.SafeGetTests) ... ok
+test_returns_none_for_missing_intermediate (test_contradict.SafeGetTests) ... ok
+test_returns_none_for_missing_key (test_contradict.SafeGetTests) ... ok
+test_returns_value_at_path (test_contradict.SafeGetTests) ... ok
+
+----------------------------------------------------------------------
+Ran 168 tests in 1.775s
+
+OK
+
+$ python3 contradict.py cases_agree ; echo "exit=$?"
+{"cases":[{"case_id":"amount_ok","checkers_applicable":["reward-anomaly","reward-reconciler"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"empty_case","checkers_applicable":[],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"identity_ok","checkers_applicable":["dup-detector","evidence-scorer"],"checkers_not_applicable":["event-linter","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"lifecycle_scope_demo","checkers_applicable":["event-linter","lifecycle-linter"],"checkers_not_applicable":["dup-detector","evidence-scorer","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":1,"issues":[{"checkers":["event-linter","lifecycle-linter"],"claims":{"lifecycle-linter":"DUPLICATE_STATE"},"code":"SCOPE_DIVERGENCE","message":"lifecycle-linter flagged an immediate back-to-back state repeat for task 'T-G'; event-linter's DUPLICATE_EVENT only fires on an exact (state, occurred_at) repeat, so a repeat with a different timestamp is invisible to it by design -- not a disagreement.","subject":{"task_id":"T-G"}}],"scope_divergence_count":1},{"case_id":"linkage_ok","checkers_applicable":["link-integrity","preflight"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"single_checker_case","checkers_applicable":["preflight"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"timestamp_ok","checkers_applicable":["lifecycle-linter","link-integrity"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"validity_ok","checkers_applicable":["queue-auditor","staleness-monitor"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","reward-anomaly","reward-reconciler"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0}],"code_counts":{"AMOUNT_CONTRADICTION":0,"CHECKER_UNAVAILABLE":0,"EXECUTION_FAILURE":0,"IDENTITY_CONTRADICTION":0,"LINKAGE_CONTRADICTION":0,"SCOPE_DIVERGENCE":1,"TIMESTAMP_CONTRADICTION":0,"VALIDITY_CONTRADICTION":0},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"agree","summary":{"case_count":8,"total_contradictions":0,"total_execution_issues":0,"total_issues":1,"total_scope_divergence":1},"tool_version":"1.0.0"}
+exit=0
+
+$ python3 contradict.py cases_conflict -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 contradict.py cases_conflict -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+e1bbd94e51d3d0787be10aed18a901f1b011d1d85b3e541188e747f45e22be42  r1.json
+e1bbd94e51d3d0787be10aed18a901f1b011d1d85b3e541188e747f45e22be42  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 contradict.py /nonexistent_dir ; echo "exit=$?"
+contradict.py: error: not a directory: /nonexistent_dir
+exit=2
+
+$ grep -c "/sessions\|/tmp\|/home" r1.json
+0
+
+==================================================================
+RELOCATION TEST (not part of the required command block; run
+separately to demonstrate no absolute-path dependence)
+==================================================================
+$ cp -r cases_conflict /tmp/relocated_test2/a/b/c/cases_conflict   # different absolute path
+$ python3 contradict.py cases_conflict -o /tmp/original_location.json   # from original location
+$ (cd /tmp/relocated_test2/a/b/c && python3 <original-path>/contradict.py cases_conflict -o /tmp/relocated.json)
+$ sha256sum /tmp/original_location.json /tmp/relocated.json
+e1bbd94e51d3d0787be10aed18a901f1b011d1d85b3e541188e747f45e22be42  /tmp/original_location.json
+e1bbd94e51d3d0787be10aed18a901f1b011d1d85b3e541188e747f45e22be42  /tmp/relocated.json
+$ cmp /tmp/original_location.json /tmp/relocated.json && echo RELOCATION-BYTE-IDENTICAL
+RELOCATION-BYTE-IDENTICAL
+
+==================================================================
+RUN AGAINST THE REAL SIBLING CHECKERS (live checkout, not the
+bundled copies under checkers/)
+==================================================================
+$ python3 contradict.py cases_agree --checkers-root <live-postfiatwork-checkout> ; echo exit=$?
+{"cases":[{"case_id":"amount_ok","checkers_applicable":["reward-anomaly","reward-reconciler"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"empty_case","checkers_applicable":[],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"identity_ok","checkers_applicable":["dup-detector","evidence-scorer"],"checkers_not_applicable":["event-linter","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"lifecycle_scope_demo","checkers_applicable":["event-linter","lifecycle-linter"],"checkers_not_applicable":["dup-detector","evidence-scorer","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":1,"issues":[{"checkers":["event-linter","lifecycle-linter"],"claims":{"lifecycle-linter":"DUPLICATE_STATE"},"code":"SCOPE_DIVERGENCE","message":"lifecycle-linter flagged an immediate back-to-back state repeat for task 'T-G'; event-linter's DUPLICATE_EVENT only fires on an exact (state, occurred_at) repeat, so a repeat with a different timestamp is invisible to it by design -- not a disagreement.","subject":{"task_id":"T-G"}}],"scope_divergence_count":1},{"case_id":"linkage_ok","checkers_applicable":["link-integrity","preflight"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"single_checker_case","checkers_applicable":["preflight"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"timestamp_ok","checkers_applicable":["lifecycle-linter","link-integrity"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0},{"case_id":"validity_ok","checkers_applicable":["queue-auditor","staleness-monitor"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","reward-anomaly","reward-reconciler"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0}],"code_counts":{"AMOUNT_CONTRADICTION":0,"CHECKER_UNAVAILABLE":0,"EXECUTION_FAILURE":0,"IDENTITY_CONTRADICTION":0,"LINKAGE_CONTRADICTION":0,"SCOPE_DIVERGENCE":1,"TIMESTAMP_CONTRADICTION":0,"VALIDITY_CONTRADICTION":0},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"agree","summary":{"case_count":8,"total_contradictions":0,"total_execution_issues":0,"total_issues":1,"total_scope_divergence":1},"tool_version":"1.0.0"}
+exit=0
+
+$ python3 contradict.py cases_conflict --checkers-root <live-postfiatwork-checkout> ; echo exit=$?
+{"cases":[{"case_id":"amount_conflict","checkers_applicable":["reward-anomaly","reward-reconciler"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","staleness-monitor"],"contradiction_count":1,"execution_issue_count":0,"issue_count":1,"issues":[{"checkers":["reward-anomaly","reward-reconciler"],"claims":{"reward-anomaly":"15.00","reward-reconciler":"12.000000"},"code":"AMOUNT_CONTRADICTION","message":"reward-reconciler and reward-anomaly report different paid amounts for task 'T-B': '12.000000' vs '15.00'","subject":{"task_id":"T-B"}}],"scope_divergence_count":0},{"case_id":"identity_conflict","checkers_applicable":["dup-detector","evidence-scorer"],"checkers_not_applicable":["event-linter","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":1,"execution_issue_count":0,"issue_count":1,"issues":[{"checkers":["dup-detector","evidence-scorer"],"claims":{"dup-detector":"near-duplicate (score=0.741722)","evidence-scorer":"both fully original (originality=1.0)"},"code":"IDENTITY_CONTRADICTION","message":"dup-detector flags 'SUB-C1' and 'SUB-C2' as a near-duplicate pair (score=0.741722), but evidence-scorer scores both as fully original with zero shared sentences -- the two tools disagree on whether these submissions are the same underlying content.","subject":{"submission_id_a":"SUB-C1","submission_id_b":"SUB-C2"}}],"scope_divergence_count":0},{"case_id":"linkage_conflict","checkers_applicable":["link-integrity","preflight"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":1,"execution_issue_count":0,"issue_count":1,"issues":[{"checkers":["link-integrity","preflight"],"claims":{"link-integrity":"orphaned","preflight":"linked"},"code":"LINKAGE_CONTRADICTION","message":"preflight and link-integrity disagree on whether evidence submission 'S-201' links to a known task: preflight's task export says linked, link-integrity's lifecycle export says orphaned","subject":{"submission_id":"S-201"}}],"scope_divergence_count":0},{"case_id":"timestamp_conflict","checkers_applicable":["lifecycle-linter","link-integrity"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":1,"execution_issue_count":0,"issue_count":1,"issues":[{"checkers":["lifecycle-linter","link-integrity"],"claims":{"lifecycle-linter":"accepted (no findings for this task)","link-integrity":"invalid: invalid calendar date/time (month must be in 1..12)"},"code":"TIMESTAMP_CONTRADICTION","message":"link-integrity rejects timestamp '2026-13-40T00:00:00Z' for task 'T-D' as impossible (invalid calendar date/time (month must be in 1..12)), but lifecycle-linter's report for the same task has no findings at all -- it treated the same value as an ordinary, valid point in the timeline.","subject":{"task_id":"T-D","value":"2026-13-40T00:00:00Z"}}],"scope_divergence_count":0},{"case_id":"validity_conflict","checkers_applicable":["queue-auditor","staleness-monitor"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","reward-anomaly","reward-reconciler"],"contradiction_count":1,"execution_issue_count":0,"issue_count":1,"issues":[{"checkers":["queue-auditor","staleness-monitor"],"claims":{"queue-auditor":"malformed (missing/null deadline)","staleness-monitor":"valid (null deadline is permitted)"},"code":"VALIDITY_CONTRADICTION","message":"queue-auditor treats task 'T-F''s null/missing 'deadline' as a MALFORMED_RECORD; staleness-monitor treats a null deadline on the same record as fully valid.","subject":{"field":"deadline","task_id":"T-F"}}],"scope_divergence_count":0}],"code_counts":{"AMOUNT_CONTRADICTION":1,"CHECKER_UNAVAILABLE":0,"EXECUTION_FAILURE":0,"IDENTITY_CONTRADICTION":1,"LINKAGE_CONTRADICTION":1,"SCOPE_DIVERGENCE":0,"TIMESTAMP_CONTRADICTION":1,"VALIDITY_CONTRADICTION":1},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"contradictions_found","summary":{"case_count":5,"total_contradictions":5,"total_execution_issues":0,"total_issues":5,"total_scope_divergence":0},"tool_version":"1.0.0"}
+exit=1
+
+# Against the sibling repo's OWN shipped fixture for the identity
+# comparator (dup-detector/records_dupes.json used verbatim,
+# unmodified, as submissions.json):
+$ python3 contradict.py /tmp/real_identity_shipped --checkers-root <live-postfiatwork-checkout> ; echo exit=$?
+{"cases":[{"case_id":"real_identity_shipped","checkers_applicable":["dup-detector","evidence-scorer"],"checkers_not_applicable":["event-linter","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0}],"code_counts":{"AMOUNT_CONTRADICTION":0,"CHECKER_UNAVAILABLE":0,"EXECUTION_FAILURE":0,"IDENTITY_CONTRADICTION":0,"LINKAGE_CONTRADICTION":0,"SCOPE_DIVERGENCE":0,"TIMESTAMP_CONTRADICTION":0,"VALIDITY_CONTRADICTION":0},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"agree","summary":{"case_count":1,"total_contradictions":0,"total_execution_issues":0,"total_issues":0,"total_scope_divergence":0},"tool_version":"1.0.0"}
+exit=0
+# Result: no IDENTITY_CONTRADICTION. evidence-scorer's originality for
+# the near-dup pair SUB-1003/SUB-1005 is 0.333333 (not 1.0) against
+# this real text, because one of its three sentences is untouched
+# by the rewrite -- contradict.py's strict both-originality==1.0 bar
+# correctly withholds judgement rather than overclaiming a contradiction.
+
+==================================================================
+EDGE CASES
+==================================================================
+# a) checker script absent under --checkers-root -> CHECKER_UNAVAILABLE, exit 2
+{"cases":[{"case_id":"linkage_ok","checkers_applicable":["link-integrity","preflight"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":2,"issue_count":2,"issues":[{"checkers":["link-integrity"],"claims":{},"code":"CHECKER_UNAVAILABLE","message":"link-integrity: checker script not found under checkers root","subject":{"checker":"link-integrity"}},{"checkers":["preflight"],"claims":{},"code":"CHECKER_UNAVAILABLE","message":"preflight: checker script not found under checkers root","subject":{"checker":"preflight"}}],"scope_divergence_count":0}],"code_counts":{"AMOUNT_CONTRADICTION":0,"CHECKER_UNAVAILABLE":2,"EXECUTION_FAILURE":0,"IDENTITY_CONTRADICTION":0,"LINKAGE_CONTRADICTION":0,"SCOPE_DIVERGENCE":0,"TIMESTAMP_CONTRADICTION":0,"VALIDITY_CONTRADICTION":0},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"execution_error","summary":{"case_count":1,"total_contradictions":0,"total_execution_issues":2,"total_issues":2,"total_scope_divergence":0},"tool_version":"1.0.0"}
+exit=2
+
+# b) checker itself exits 2 on bad input -> EXECUTION_FAILURE, exit 2
+{"cases":[{"case_id":"edge_checker_exit2","checkers_applicable":["queue-auditor"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":1,"issue_count":1,"issues":[{"checkers":["queue-auditor"],"claims":{},"code":"EXECUTION_FAILURE","message":"queue-auditor: checker reported invalid input or a usage error (exit 2)","subject":{"checker":"queue-auditor"}}],"scope_divergence_count":0}],"code_counts":{"AMOUNT_CONTRADICTION":0,"CHECKER_UNAVAILABLE":0,"EXECUTION_FAILURE":1,"IDENTITY_CONTRADICTION":0,"LINKAGE_CONTRADICTION":0,"SCOPE_DIVERGENCE":0,"TIMESTAMP_CONTRADICTION":0,"VALIDITY_CONTRADICTION":0},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"execution_error","summary":{"case_count":1,"total_contradictions":0,"total_execution_issues":1,"total_issues":1,"total_scope_divergence":0},"tool_version":"1.0.0"}
+exit=2
+
+# c) empty case directory -> zero applicable checkers, exit 0
+{"cases":[],"code_counts":{"AMOUNT_CONTRADICTION":0,"CHECKER_UNAVAILABLE":0,"EXECUTION_FAILURE":0,"IDENTITY_CONTRADICTION":0,"LINKAGE_CONTRADICTION":0,"SCOPE_DIVERGENCE":0,"TIMESTAMP_CONTRADICTION":0,"VALIDITY_CONTRADICTION":0},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"agree","summary":{"case_count":0,"total_contradictions":0,"total_execution_issues":0,"total_issues":0,"total_scope_divergence":0},"tool_version":"1.0.0"}
+exit=0
+
+# d) case where only one checker of a pair can evaluate (no comparison attempted)
+{"cases":[{"case_id":"single_checker_case","checkers_applicable":["preflight"],"checkers_not_applicable":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"contradiction_count":0,"execution_issue_count":0,"issue_count":0,"issues":[],"scope_divergence_count":0}],"code_counts":{"AMOUNT_CONTRADICTION":0,"CHECKER_UNAVAILABLE":0,"EXECUTION_FAILURE":0,"IDENTITY_CONTRADICTION":0,"LINKAGE_CONTRADICTION":0,"SCOPE_DIVERGENCE":0,"TIMESTAMP_CONTRADICTION":0,"VALIDITY_CONTRADICTION":0},"known_checkers":["dup-detector","event-linter","evidence-scorer","lifecycle-linter","link-integrity","preflight","queue-auditor","reward-anomaly","reward-reconciler","staleness-monitor"],"report_version":"1.0","status":"agree","summary":{"case_count":1,"total_contradictions":0,"total_execution_issues":0,"total_issues":0,"total_scope_divergence":0},"tool_version":"1.0.0"}
+exit=0
