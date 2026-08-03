@@ -1,0 +1,1 @@
+{"clusters":[],"config":{"alert_threshold":0.8,"burst_window":300,"length_tolerance":0.05,"link_threshold":0.5,"weights":{"burst_timing":0.2,"length_match":0.2,"shared_cid":0.6}},"report_version":"1.0","status":"clear","totals":{"alerting_clusters":0,"clusters":0,"linked_pairs":0,"records":3,"scored_pairs":0,"wallets":3}}
