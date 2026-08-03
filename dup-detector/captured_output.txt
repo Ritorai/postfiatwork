@@ -1,0 +1,196 @@
+================================================================
+ dupdetect - captured console output
+ host python: Python 3.10.12
+ working dir: /tmp/dupdetect
+================================================================
+
+### STEP 1 - test suite
+$ python3 -m unittest test_dupdetect -v 2>&1
+test_comparison_count_is_n_choose_2 (test_dupdetect.TestAnalyze) ... ok
+test_empty_texts_are_never_flagged (test_dupdetect.TestAnalyze) ... ok
+test_empty_vs_long_text_not_flagged (test_dupdetect.TestAnalyze) ... ok
+test_identical_texts_score_exactly_one (test_dupdetect.TestAnalyze) ... ok
+test_identical_up_to_case_and_punctuation_score_one (test_dupdetect.TestAnalyze) ... ok
+test_input_order_does_not_change_output (test_dupdetect.TestAnalyze) ... ok
+test_invalid_shingle_size_rejected (test_dupdetect.TestAnalyze) ... ok
+test_just_above_threshold_excludes_pair (test_dupdetect.TestAnalyze) ... ok
+test_larger_shingle_size_lowers_score (test_dupdetect.TestAnalyze) ... ok
+test_lightly_reworded_pair_is_flagged (test_dupdetect.TestAnalyze) ... ok
+test_negative_threshold_rejected (test_dupdetect.TestAnalyze) ... ok
+test_overlap_count_matches_list_length (test_dupdetect.TestAnalyze) ... ok
+test_overlapping_shingles_are_sorted (test_dupdetect.TestAnalyze) ... ok
+test_pair_ids_sorted_lexicographically (test_dupdetect.TestAnalyze) ... ok
+test_pairs_sorted_by_descending_score (test_dupdetect.TestAnalyze) ... ok
+test_shingle_size_recorded_in_config (test_dupdetect.TestAnalyze) ... ok
+test_short_text_flagged_when_shingle_size_fits (test_dupdetect.TestAnalyze) ... ok
+test_short_text_never_flagged_against_itself (test_dupdetect.TestAnalyze) ... ok
+test_single_record_flags_nothing (test_dupdetect.TestAnalyze) ... ok
+test_three_way_duplicate_yields_three_pairs (test_dupdetect.TestAnalyze) ... ok
+test_threshold_above_one_rejected (test_dupdetect.TestAnalyze) ... ok
+test_threshold_is_inclusive_at_boundary (test_dupdetect.TestAnalyze) ... ok
+test_threshold_one_flags_only_identical (test_dupdetect.TestAnalyze) ... ok
+test_threshold_zero_flags_any_pair_with_overlap (test_dupdetect.TestAnalyze) ... ok
+test_ties_broken_by_submission_id (test_dupdetect.TestAnalyze) ... ok
+test_unrelated_texts_not_flagged (test_dupdetect.TestAnalyze) ... ok
+test_zero_overlap_pair_never_flagged_even_at_threshold_zero (test_dupdetect.TestAnalyze) ... ok
+test_zero_records_flags_nothing (test_dupdetect.TestAnalyze) ... ok
+test_ends_with_single_trailing_newline (test_dupdetect.TestCanonicalJson) ... ok
+test_keys_are_sorted (test_dupdetect.TestCanonicalJson) ... ok
+test_no_whitespace_after_separators (test_dupdetect.TestCanonicalJson) ... ok
+test_output_is_pure_ascii (test_dupdetect.TestCanonicalJson) ... ok
+test_output_is_reparseable (test_dupdetect.TestCanonicalJson) ... ok
+test_repeated_analysis_is_byte_identical (test_dupdetect.TestCanonicalJson) ... ok
+test_repeated_serialization_is_byte_identical (test_dupdetect.TestCanonicalJson) ... ok
+test_bad_schema_exits_two (test_dupdetect.TestCli) ... ok
+test_bad_shingle_size_exits_two (test_dupdetect.TestCli) ... ok
+test_bad_threshold_exits_two (test_dupdetect.TestCli) ... ok
+test_clean_file_exits_zero (test_dupdetect.TestCli) ... ok
+test_dupes_file_exits_one (test_dupdetect.TestCli) ... ok
+test_dupes_fixture_contains_a_near_duplicate (test_dupdetect.TestCli) ... ok
+test_dupes_fixture_contains_an_exact_duplicate (test_dupdetect.TestCli) ... ok
+test_duplicate_ids_exit_two (test_dupdetect.TestCli) ... ok
+test_high_threshold_still_flags_exact_duplicate (test_dupdetect.TestCli) ... ok
+test_main_returns_codes_in_process (test_dupdetect.TestCli) ... wrote /dev/null (5 record(s), 0 flagged pair(s))
+wrote /dev/null (5 record(s), 2 flagged pair(s))
+error: input file not found: /nope/nope.json
+ok
+test_malformed_json_exits_two (test_dupdetect.TestCli) ... ok
+test_missing_file_exits_two (test_dupdetect.TestCli) ... ok
+test_no_arguments_exits_two (test_dupdetect.TestCli) ... ok
+test_non_numeric_threshold_exits_two (test_dupdetect.TestCli) ... ok
+test_out_flag_writes_file_and_keeps_stdout_empty (test_dupdetect.TestCli) ... ok
+test_shingle_size_flag_changes_report (test_dupdetect.TestCli) ... ok
+test_stdout_matches_out_file_bytes (test_dupdetect.TestCli) ... ok
+test_threshold_one_point_zero_on_clean_exits_zero (test_dupdetect.TestCli) ... ok
+test_two_runs_produce_byte_identical_files (test_dupdetect.TestCli) ... ok
+test_version_flag_exits_zero (test_dupdetect.TestCli) ... ok
+test_both_empty_is_zero_not_one (test_dupdetect.TestJaccard) ... ok
+test_disjoint_sets_score_zero (test_dupdetect.TestJaccard) ... ok
+test_half_overlap (test_dupdetect.TestJaccard) ... ok
+test_identical_sets_score_one (test_dupdetect.TestJaccard) ... ok
+test_one_empty_is_zero (test_dupdetect.TestJaccard) ... ok
+test_score_never_exceeds_one (test_dupdetect.TestJaccard) ... ok
+test_symmetric (test_dupdetect.TestJaccard) ... ok
+test_collapses_runs_of_whitespace (test_dupdetect.TestNormalization) ... ok
+test_digits_are_kept (test_dupdetect.TestNormalization) ... ok
+test_empty_text_yields_no_tokens (test_dupdetect.TestNormalization) ... ok
+test_leading_and_trailing_whitespace_ignored (test_dupdetect.TestNormalization) ... ok
+test_lowercases_tokens (test_dupdetect.TestNormalization) ... ok
+test_non_string_text_rejected (test_dupdetect.TestNormalization) ... ok
+test_preserves_interior_apostrophe (test_dupdetect.TestNormalization) ... ok
+test_preserves_interior_hyphen (test_dupdetect.TestNormalization) ... ok
+test_punctuation_differences_do_not_change_tokens (test_dupdetect.TestNormalization) ... ok
+test_pure_punctuation_tokens_dropped (test_dupdetect.TestNormalization) ... ok
+test_strips_leading_punctuation (test_dupdetect.TestNormalization) ... ok
+test_strips_trailing_punctuation (test_dupdetect.TestNormalization) ... ok
+test_unicode_nfkc_normalization_applied (test_dupdetect.TestNormalization) ... ok
+test_whitespace_only_text_yields_no_tokens (test_dupdetect.TestNormalization) ... ok
+test_exact_one_stays_one (test_dupdetect.TestScoreFormatting) ... ok
+test_exact_zero_stays_zero (test_dupdetect.TestScoreFormatting) ... ok
+test_formatting_is_idempotent (test_dupdetect.TestScoreFormatting) ... ok
+test_rounds_to_six_decimals (test_dupdetect.TestScoreFormatting) ... ok
+test_serialized_score_is_stable_across_calls (test_dupdetect.TestScoreFormatting) ... ok
+test_basic_trigram_set (test_dupdetect.TestShingles) ... ok
+test_empty_token_list_is_empty_set (test_dupdetect.TestShingles) ... ok
+test_negative_shingle_size_rejected (test_dupdetect.TestShingles) ... ok
+test_repeated_ngrams_deduplicated (test_dupdetect.TestShingles) ... ok
+test_shingle_count_is_n_minus_k_plus_one (test_dupdetect.TestShingles) ... ok
+test_shingle_size_zero_rejected (test_dupdetect.TestShingles) ... ok
+test_shingles_are_space_joined_strings (test_dupdetect.TestShingles) ... ok
+test_text_shorter_than_shingle_size_is_empty (test_dupdetect.TestShingles) ... ok
+test_token_count_equal_to_shingle_size_yields_one (test_dupdetect.TestShingles) ... ok
+test_unigram_shingles_are_the_token_set (test_dupdetect.TestShingles) ... ok
+test_duplicate_submission_id_rejected (test_dupdetect.TestValidation) ... ok
+test_empty_array_is_valid (test_dupdetect.TestValidation) ... ok
+test_empty_submission_id_rejected (test_dupdetect.TestValidation) ... ok
+test_error_message_names_the_index (test_dupdetect.TestValidation) ... ok
+test_extra_fields_ignored (test_dupdetect.TestValidation) ... ok
+test_load_records_directory_path (test_dupdetect.TestValidation) ... ok
+test_load_records_malformed_json (test_dupdetect.TestValidation) ... ok
+test_load_records_missing_file (test_dupdetect.TestValidation) ... ok
+test_load_records_round_trip (test_dupdetect.TestValidation) ... ok
+test_missing_submission_id_rejected (test_dupdetect.TestValidation) ... ok
+test_missing_text_rejected (test_dupdetect.TestValidation) ... ok
+test_non_object_element_rejected (test_dupdetect.TestValidation) ... ok
+test_non_string_submission_id_rejected (test_dupdetect.TestValidation) ... ok
+test_null_text_rejected (test_dupdetect.TestValidation) ... ok
+test_numeric_text_rejected (test_dupdetect.TestValidation) ... ok
+test_top_level_object_rejected (test_dupdetect.TestValidation) ... ok
+test_top_level_string_rejected (test_dupdetect.TestValidation) ... ok
+test_valid_records_accepted (test_dupdetect.TestValidation) ... ok
+test_whitespace_submission_id_rejected (test_dupdetect.TestValidation) ... ok
+
+----------------------------------------------------------------------
+Ran 110 tests in 0.317s
+
+OK
+exit=0
+
+### STEP 2 - clean corpus (expect exit 0, no pairs)
+$ python3 dupdetect.py records_clean.json
+{"comparison_count":10,"config":{"shingle_size":5,"threshold":0.6},"flagged_count":0,"flagged_pairs":[],"record_count":5,"version":"1.0.0"}
+exit=0
+
+### STEP 3 - duplicate corpus, run 1 of 2 (expect exit 1)
+$ python3 dupdetect.py records_dupes.json -o report_run1.json
+wrote report_run1.json (5 record(s), 2 flagged pair(s))
+exit=1
+
+### STEP 3 - duplicate corpus, run 2 of 2 (expect exit 1)
+$ python3 dupdetect.py records_dupes.json -o report_run2.json
+wrote report_run2.json (5 record(s), 2 flagged pair(s))
+exit=1
+
+### STEP 4 - byte-stability of the two reports
+$ sha256sum report_run1.json report_run2.json
+45aa1f80d3304103b703fa7527ff58b3f9c313f03b5bd41e4ec3cbfa3a879081  report_run1.json
+45aa1f80d3304103b703fa7527ff58b3f9c313f03b5bd41e4ec3cbfa3a879081  report_run2.json
+exit=0
+
+$ cmp report_run1.json report_run2.json && echo 'BYTE-IDENTICAL'
+BYTE-IDENTICAL
+exit=0
+
+$ wc -c report_run1.json report_run2.json
+ 5019 report_run1.json
+ 5019 report_run2.json
+10038 total
+exit=0
+
+### STEP 4b - flagged pairs found at the defaults (k=5, threshold=0.6)
+$ python3 -c "import json;r=json.load(open('report_run1.json'));print('records',r['record_count'],'comparisons',r['comparison_count'],'flagged',r['flagged_count']);[print(p['submission_id_a'],p['submission_id_b'],'score=',p['score'],'shingles=',p['overlap_count']) for p in r['flagged_pairs']]"
+records 5 comparisons 10 flagged 2
+SUB-1001 SUB-1002 score= 1.0 shingles= 81
+SUB-1003 SUB-1005 score= 0.777778 shingles= 70
+exit=0
+
+### STEP 5 - raising the threshold to 0.99 changes the verdict
+$ python3 dupdetect.py records_dupes.json --threshold 0.99 -o report_strict.json
+wrote report_strict.json (5 record(s), 1 flagged pair(s))
+exit=1
+
+$ python3 -c "import json;r=json.load(open('report_strict.json'));print('threshold',r['config']['threshold'],'flagged',r['flagged_count']);[print(p['submission_id_a'],p['submission_id_b'],'score=',p['score']) for p in r['flagged_pairs']]"
+threshold 0.99 flagged 1
+SUB-1001 SUB-1002 score= 1.0
+exit=0
+
+### STEP 6 - nonexistent input file (expect exit 2)
+$ python3 dupdetect.py no_such_file.json
+error: input file not found: no_such_file.json
+exit=2
+
+### EXTRA - malformed JSON (expect exit 2)
+$ printf '[[[' > /tmp/bad.json; python3 dupdetect.py /tmp/bad.json
+error: input file is not valid JSON: Expecting value: line 1 column 4 (char 3)
+exit=2
+
+### EXTRA - duplicate submission_id (expect exit 2)
+$ printf '[{"submission_id":"X","text":"a"},{"submission_id":"X","text":"b"}]' > /tmp/dupid.json; python3 dupdetect.py /tmp/dupid.json
+error: duplicate submission_id 'X' at index 1; submission ids must be unique
+exit=2
+
+### EXTRA - head of the canonical report for records_dupes.json
+$ cat report_run1.json | head -c 300; echo '   ...[truncated for display; full file is report_run1.json]'
+{"comparison_count":10,"config":{"shingle_size":5,"threshold":0.6},"flagged_count":2,"flagged_pairs":[{"overlap_count":81,"overlapping_shingles":["14 march she returned to","a fire extinguisher she reports","and did not hear any","and found the rear service","and notified the duty supervisor","and t   ...[truncated for display; full file is report_run1.json]
+exit=0
+
