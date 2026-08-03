@@ -1,0 +1,423 @@
+[
+  {
+    "task_id": "T-EMPTY",
+    "events": []
+  },
+  {
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-01T00:00:00Z"
+      }
+    ]
+  },
+  "not-a-record-object",
+  {
+    "task_id": "T-BAD-EVENTS",
+    "events": "oops-not-a-list"
+  },
+  {
+    "task_id": "T-BAD-EVENT-ITEM",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-01T00:00:00Z"
+      },
+      "oops-not-an-object"
+    ]
+  },
+  {
+    "task_id": "T-MISSING-STATE",
+    "events": [
+      {
+        "at": "2026-07-01T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-02T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-EMPTY-STATE",
+    "events": [
+      {
+        "state": "",
+        "at": "2026-07-01T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-02T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-MISSING-AT",
+    "events": [
+      {
+        "state": "proposed"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-02T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-BAD-TIMESTAMP",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-01T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "not-a-timestamp"
+      }
+    ]
+  },
+  {
+    "task_id": "T-NON-UTC-TIMESTAMP",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-01T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-02T00:00:00+05:30"
+      }
+    ]
+  },
+  {
+    "task_id": "T-UNKNOWN-STATE",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-01T00:00:00Z"
+      },
+      {
+        "state": "archived",
+        "at": "2026-07-02T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-OVERDUE-REVIEW",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-06-01T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-06-01T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-06-02T00:00:00Z"
+      },
+      {
+        "state": "verification_requested",
+        "at": "2026-06-25T00:00:00Z"
+      },
+      {
+        "state": "awaiting_review",
+        "at": "2026-07-01T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-OVERDUE-SUBMITTED",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-06-01T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-06-01T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-01T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-EXCESSIVE",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-01T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-01T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-02T00:00:00Z"
+      },
+      {
+        "state": "verification_requested",
+        "at": "2026-07-03T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-03T01:00:00Z"
+      },
+      {
+        "state": "verification_requested",
+        "at": "2026-07-04T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-04T01:00:00Z"
+      },
+      {
+        "state": "verification_requested",
+        "at": "2026-07-05T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-05T01:00:00Z"
+      },
+      {
+        "state": "verification_requested",
+        "at": "2026-07-06T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-06T01:00:00Z"
+      },
+      {
+        "state": "awaiting_review",
+        "at": "2026-08-02T23:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-REFUSED-RESUBMITTED",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-10T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-10T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-11T00:00:00Z"
+      },
+      {
+        "state": "verification_requested",
+        "at": "2026-07-12T00:00:00Z"
+      },
+      {
+        "state": "refused",
+        "at": "2026-07-12T12:00:00Z",
+        "refusal_reason": "incomplete_deliverable"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-13T00:00:00Z"
+      },
+      {
+        "state": "awaiting_review",
+        "at": "2026-07-13T01:00:00Z"
+      },
+      {
+        "state": "rewarded",
+        "at": "2026-08-02T23:30:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-REFUSAL-REASON-NONREFUSED",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-14T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-14T01:00:00Z",
+        "refusal_reason": "stray_reason_should_be_ignored"
+      },
+      {
+        "state": "rewarded",
+        "at": "2026-07-15T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-REFUSAL-EMPTY-STRING",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-16T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-16T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-17T00:00:00Z"
+      },
+      {
+        "state": "refused",
+        "at": "2026-07-17T12:00:00Z",
+        "refusal_reason": ""
+      },
+      {
+        "state": "rewarded",
+        "at": "2026-07-18T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-REFUSAL-UNICODE",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-19T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-19T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-20T00:00:00Z"
+      },
+      {
+        "state": "refused",
+        "at": "2026-07-20T12:00:00Z",
+        "refusal_reason": "拒绝：数据不完整"
+      },
+      {
+        "state": "rewarded",
+        "at": "2026-07-21T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-REFUSAL-MISSING-REASON",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-22T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-22T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-23T00:00:00Z"
+      },
+      {
+        "state": "refused",
+        "at": "2026-07-23T12:00:00Z"
+      },
+      {
+        "state": "rewarded",
+        "at": "2026-07-24T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-IDENTICAL-TIMESTAMPS",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-25T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-25T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-26T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-OUT-OF-ORDER",
+    "events": [
+      {
+        "state": "accepted",
+        "at": "2026-07-27T01:00:00Z"
+      },
+      {
+        "state": "proposed",
+        "at": "2026-07-27T00:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-28T00:00:00Z"
+      },
+      {
+        "state": "verification_requested",
+        "at": "2026-07-27T12:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-REFUSAL-NONSTRING",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-29T00:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-29T01:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-30T00:00:00Z"
+      },
+      {
+        "state": "refused",
+        "at": "2026-07-30T12:00:00Z",
+        "refusal_reason": 123
+      },
+      {
+        "state": "rewarded",
+        "at": "2026-07-31T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "task_id": "T-REFUSAL-DUPLICATE",
+    "events": [
+      {
+        "state": "proposed",
+        "at": "2026-07-19T05:00:00Z"
+      },
+      {
+        "state": "accepted",
+        "at": "2026-07-19T06:00:00Z"
+      },
+      {
+        "state": "submitted",
+        "at": "2026-07-20T05:00:00Z"
+      },
+      {
+        "state": "refused",
+        "at": "2026-07-20T13:00:00Z",
+        "refusal_reason": "拒绝：数据不完整"
+      },
+      {
+        "state": "rewarded",
+        "at": "2026-07-21T05:00:00Z"
+      }
+    ]
+  }
+]

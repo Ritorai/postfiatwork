@@ -1,0 +1,244 @@
+$ python3 -m unittest test_loop_health -v
+test_counts_by_code_has_all_six_codes_even_when_zero (test_loop_health.TestBuildReportShape) ... ok
+test_counts_by_code_sums_to_total_findings (test_loop_health.TestBuildReportShape) ... ok
+test_duplicate_task_ids_both_appear (test_loop_health.TestBuildReportShape) ... ok
+test_empty_list_zero_tasks_zero_findings (test_loop_health.TestBuildReportShape) ... ok
+test_findings_sorted_by_task_id_then_code (test_loop_health.TestBuildReportShape) ... ok
+test_generated_at_echoes_now (test_loop_health.TestBuildReportShape) ... ok
+test_healthy_zero_rounds_not_a_finding_end_to_end (test_loop_health.TestBuildReportShape) ... ok
+test_index_placeholder_can_collide_with_a_real_task_id (test_loop_health.TestBuildReportShape) ... ok
+test_multiple_findings_same_task_sorted_by_code (test_loop_health.TestBuildReportShape) ... ok
+test_non_list_root_raises_input_error (test_loop_health.TestBuildReportShape) ... ok
+test_number_root_raises_input_error (test_loop_health.TestBuildReportShape) ... ok
+test_options_echo_thresholds (test_loop_health.TestBuildReportShape) ... ok
+test_refusal_distribution_sorted_by_count_desc_then_reason_asc (test_loop_health.TestBuildReportShape) ... ok
+test_refusal_distribution_tie_break_alphabetical (test_loop_health.TestBuildReportShape) ... ok
+test_resubmission_rounds_excludes_structurally_malformed_records (test_loop_health.TestBuildReportShape) ... ok
+test_resubmission_rounds_sorted_by_task_id (test_loop_health.TestBuildReportShape) ... ok
+test_string_root_raises_input_error (test_loop_health.TestBuildReportShape) ... ok
+test_total_tasks_counts_malformed_records_too (test_loop_health.TestBuildReportShape) ... ok
+test_empty_array_input_exits_0 (test_loop_health.TestCLI) ... ok
+test_healthy_fixture_exits_0 (test_loop_health.TestCLI) ... ok
+test_healthy_fixture_stdout_is_valid_json (test_loop_health.TestCLI) ... ok
+test_help_flag_exits_0 (test_loop_health.TestCLI) ... ok
+test_invalid_now_value_exits_2 (test_loop_health.TestCLI) ... ok
+test_max_rounds_accepts_only_integers (test_loop_health.TestCLI) ... ok
+test_max_rounds_changes_verdict (test_loop_health.TestCLI) ... ok
+test_missing_input_file_arg_exits_2 (test_loop_health.TestCLI) ... ok
+test_missing_now_exits_2 (test_loop_health.TestCLI) ... ok
+test_negative_max_rounds_exits_2 (test_loop_health.TestCLI) ... ok
+test_negative_review_overdue_hours_exits_2 (test_loop_health.TestCLI) ... ok
+test_no_args_exits_2 (test_loop_health.TestCLI) ... ok
+test_non_utc_now_value_exits_2 (test_loop_health.TestCLI) ... ok
+test_nonexistent_input_file_exits_2 (test_loop_health.TestCLI) ... ok
+test_not_json_input_exits_2 (test_loop_health.TestCLI) ... ok
+test_object_root_exits_2 (test_loop_health.TestCLI) ... ok
+test_output_flag_writes_file_not_stdout (test_loop_health.TestCLI) ... ok
+test_output_long_flag_equivalent (test_loop_health.TestCLI) ... ok
+test_repeated_runs_byte_identical_output_files (test_loop_health.TestCLI) ... ok
+test_review_overdue_hours_accepts_floats (test_loop_health.TestCLI) ... ok
+test_review_overdue_hours_changes_verdict (test_loop_health.TestCLI) ... ok
+test_stderr_message_on_bad_input_file (test_loop_health.TestCLI) ... ok
+test_stderr_message_on_missing_now (test_loop_health.TestCLI) ... ok
+test_unhealthy_fixture_exits_1 (test_loop_health.TestCLI) ... ok
+test_unhealthy_fixture_triggers_all_six_codes (test_loop_health.TestCLI) ... ok
+test_ends_with_single_trailing_newline (test_loop_health.TestCanonicalJson) ... ok
+test_ensure_ascii_escapes_unicode (test_loop_health.TestCanonicalJson) ... ok
+test_is_valid_single_line_json (test_loop_health.TestCanonicalJson) ... ok
+test_keys_sorted (test_loop_health.TestCanonicalJson) ... ok
+test_no_spaces_after_separators (test_loop_health.TestCanonicalJson) ... ok
+test_roundtrips_through_json_loads (test_loop_health.TestCanonicalJson) ... ok
+test_findings_order_independent_of_input_task_order (test_loop_health.TestDeterminism) ... ok
+test_output_independent_of_dict_key_insertion_order (test_loop_health.TestDeterminism) ... ok
+test_repeated_calls_produce_identical_canonical_json (test_loop_health.TestDeterminism) ... ok
+test_custom_max_rounds_zero_any_round_triggers (test_loop_health.TestExcessiveResubmissions) ... ok
+test_custom_max_rounds_zero_no_rounds_no_finding (test_loop_health.TestExcessiveResubmissions) ... ok
+test_default_max_rounds_is_three (test_loop_health.TestExcessiveResubmissions) ... ok
+test_exactly_at_default_max_rounds_no_finding (test_loop_health.TestExcessiveResubmissions) ... ok
+test_finding_carries_rounds_and_max_rounds (test_loop_health.TestExcessiveResubmissions) ... ok
+test_large_max_rounds_never_triggers (test_loop_health.TestExcessiveResubmissions) ... ok
+test_one_more_than_default_max_rounds_triggers (test_loop_health.TestExcessiveResubmissions) ... ok
+test_healthy_fixture_is_valid_json_array (test_loop_health.TestFixtures) ... ok
+test_healthy_fixture_produces_zero_findings_via_library (test_loop_health.TestFixtures) ... ok
+test_unhealthy_fixture_is_valid_json_array (test_loop_health.TestFixtures) ... ok
+test_unhealthy_fixture_produces_findings_via_library (test_loop_health.TestFixtures) ... ok
+test_example_from_spec (test_loop_health.TestFormatAge) ... ok
+test_fractional_truncated_down (test_loop_health.TestFormatAge) ... ok
+test_just_under_a_day (test_loop_health.TestFormatAge) ... ok
+test_large_value (test_loop_health.TestFormatAge) ... ok
+test_negative_one_hour (test_loop_health.TestFormatAge) ... ok
+test_negative_zero (test_loop_health.TestFormatAge) ... ok
+test_one_day (test_loop_health.TestFormatAge) ... ok
+test_one_hour (test_loop_health.TestFormatAge) ... ok
+test_one_minute (test_loop_health.TestFormatAge) ... ok
+test_one_second (test_loop_health.TestFormatAge) ... ok
+test_seventy_two_hours_exactly (test_loop_health.TestFormatAge) ... ok
+test_sub_minute_truncated (test_loop_health.TestFormatAge) ... ok
+test_sub_minute_truncated_2 (test_loop_health.TestFormatAge) ... ok
+test_zero (test_loop_health.TestFormatAge) ... ok
+test_ends_with_z_not_offset (test_loop_health.TestIsoZ) ... ok
+test_preserves_microseconds (test_loop_health.TestIsoZ) ... ok
+test_replaces_plus_zero_offset_with_z (test_loop_health.TestIsoZ) ... ok
+test_roundtrips_through_parse (test_loop_health.TestIsoZ) ... ok
+test_build_report_requires_now_argument (test_loop_health.TestNoWallClockRead) ... ok
+test_now_is_only_ever_the_injected_cli_value (test_loop_health.TestNoWallClockRead) ... ok
+test_process_task_requires_now_argument (test_loop_health.TestNoWallClockRead) ... ok
+test_source_has_no_forbidden_wall_clock_calls (test_loop_health.TestNoWallClockRead) ... ok
+test_invalid_bad_day (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_hour (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_month (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_boolean_value (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_date_only_no_z (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_dict_value (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_empty_string (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_float_value (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_garbage_text (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_integer_value (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_list_value (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_negative_offset_0800 (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_none_value (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_positive_offset_0530 (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_slash_date (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_timezone_naive (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_trailing_garbage_after_z (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_whitespace_only (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_invalid_z_with_embedded_offset (test_loop_health.TestParseUtcTimestampInvalid) ... ok
+test_valid_end_of_year (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_leading_trailing_whitespace (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_leap_day (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_lowercase_z (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_offset (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_z (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_minus_zero_offset (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_plus_zero_offset (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_space_separator_with_offset (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_valid_uppercase_z (test_loop_health.TestParseUtcTimestampValid) ... ok
+test_empty_history_finding_task_id (test_loop_health.TestProcessTaskEmptyHistory) ... ok
+test_empty_history_rounds_is_zero_not_a_finding_by_itself (test_loop_health.TestProcessTaskEmptyHistory) ... ok
+test_nonempty_events_no_empty_history_finding (test_loop_health.TestProcessTaskEmptyHistory) ... ok
+test_zero_events_is_empty_history (test_loop_health.TestProcessTaskEmptyHistory) ... ok
+test_all_events_malformed_yields_zero_rounds_no_latest_state (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_at_is_integer (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_at_is_none (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_missing_at_key (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_missing_state_key (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_not_a_dict (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_state_is_empty_string (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_state_is_integer (test_loop_health.TestProcessTaskEventShape) ... ok
+test_event_state_is_none (test_loop_health.TestProcessTaskEventShape) ... ok
+test_malformed_event_has_event_index (test_loop_health.TestProcessTaskEventShape) ... ok
+test_one_bad_one_good_event_only_bad_flagged (test_loop_health.TestProcessTaskEventShape) ... ok
+test_empty_string (test_loop_health.TestProcessTaskInvalidTimestamp) ... ok
+test_finding_has_at_raw (test_loop_health.TestProcessTaskInvalidTimestamp) ... ok
+test_finding_has_event_index (test_loop_health.TestProcessTaskInvalidTimestamp) ... ok
+test_garbage_string (test_loop_health.TestProcessTaskInvalidTimestamp) ... ok
+test_invalid_timestamp_excludes_event_from_sequence (test_loop_health.TestProcessTaskInvalidTimestamp) ... ok
+test_non_utc_offset (test_loop_health.TestProcessTaskInvalidTimestamp) ... ok
+test_timezone_naive (test_loop_health.TestProcessTaskInvalidTimestamp) ... ok
+test_events_not_a_list_dict (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_events_not_a_list_none (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_events_not_a_list_string (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_malformed_record_finding_has_record_index (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_missing_events_key (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_missing_task_id_key (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_record_not_a_dict_list (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_record_not_a_dict_none (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_record_not_a_dict_number (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_record_not_a_dict_string (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_task_id_is_empty_string (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_task_id_is_integer (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_task_id_is_list (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_task_id_is_none (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_valid_task_id_unicode (test_loop_health.TestProcessTaskRecordShape) ... ok
+test_all_seven_known_states_are_not_unknown (test_loop_health.TestProcessTaskUnknownState) ... ok
+test_unknown_state_breaks_resubmission_adjacency (test_loop_health.TestProcessTaskUnknownState) ... ok
+test_unknown_state_case_sensitive (test_loop_health.TestProcessTaskUnknownState) ... ok
+test_unknown_state_does_not_block_valid_timestamp_use (test_loop_health.TestProcessTaskUnknownState) ... ok
+test_unknown_state_finding_carries_state (test_loop_health.TestProcessTaskUnknownState) ... ok
+test_unrecognized_state_flagged (test_loop_health.TestProcessTaskUnknownState) ... ok
+test_duplicate_reasons_all_counted_individually (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_multiple_refused_events_all_counted (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_non_string_refusal_reason_flagged_malformed (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_non_string_refusal_reason_list_flagged_malformed (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refusal_reason_on_event_with_invalid_timestamp_still_counted (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refusal_reason_on_non_refused_event_ignored (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refusal_reason_on_non_refused_event_not_flagged_malformed (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refused_missing_refusal_reason_key_not_counted (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refused_with_empty_string_reason_counted (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refused_with_null_refusal_reason_not_counted (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refused_with_reason_counted (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_refused_with_unicode_reason_counted (test_loop_health.TestRefusalReasonExtraction) ... ok
+test_identical_timestamps_direct_adjacency_still_counts (test_loop_health.TestResubmissionRounds) ... ok
+test_identical_timestamps_tie_break_is_original_order (test_loop_health.TestResubmissionRounds) ... ok
+test_many_rounds (test_loop_health.TestResubmissionRounds) ... ok
+test_no_events_of_interest_zero_rounds (test_loop_health.TestResubmissionRounds) ... ok
+test_non_chronological_input_order_still_sorted_correctly (test_loop_health.TestResubmissionRounds) ... ok
+test_refused_then_resubmitted_does_not_count_as_a_round (test_loop_health.TestResubmissionRounds) ... ok
+test_reverse_transition_not_counted (test_loop_health.TestResubmissionRounds) ... ok
+test_single_event_zero_rounds (test_loop_health.TestResubmissionRounds) ... ok
+test_single_verification_to_submitted_is_one_round (test_loop_health.TestResubmissionRounds) ... ok
+test_submitted_then_verification_requested_then_submitted_twice_rejected_between (test_loop_health.TestResubmissionRounds) ... ok
+test_two_rounds (test_loop_health.TestResubmissionRounds) ... ok
+test_verification_requested_followed_by_awaiting_review_not_submitted (test_loop_health.TestResubmissionRounds) ... ok
+test_verification_requested_with_no_following_submitted (test_loop_health.TestResubmissionRounds) ... ok
+test_zero_events_zero_rounds (test_loop_health.TestResubmissionRounds) ... ok
+test_accepted_never_triggers_review_overdue (test_loop_health.TestReviewOverdue) ... ok
+test_age_seconds_example_from_spec (test_loop_health.TestReviewOverdue) ... ok
+test_awaiting_review_exactly_at_threshold_no_breach (test_loop_health.TestReviewOverdue) ... ok
+test_awaiting_review_one_second_before_threshold_no_breach (test_loop_health.TestReviewOverdue) ... ok
+test_awaiting_review_one_second_past_threshold_breaches (test_loop_health.TestReviewOverdue) ... ok
+test_custom_threshold_zero_any_positive_age_breaches (test_loop_health.TestReviewOverdue) ... ok
+test_custom_threshold_zero_exact_now_no_breach (test_loop_health.TestReviewOverdue) ... ok
+test_default_review_overdue_hours_is_72 (test_loop_health.TestReviewOverdue) ... ok
+test_finding_carries_age_seconds_and_age_human (test_loop_health.TestReviewOverdue) ... ok
+test_finding_carries_review_overdue_hours_used (test_loop_health.TestReviewOverdue) ... ok
+test_finding_carries_state_and_since (test_loop_health.TestReviewOverdue) ... ok
+test_only_latest_state_matters_old_awaiting_review_then_rewarded (test_loop_health.TestReviewOverdue) ... ok
+test_proposed_never_triggers_review_overdue (test_loop_health.TestReviewOverdue) ... ok
+test_refused_never_triggers_review_overdue (test_loop_health.TestReviewOverdue) ... ok
+test_rewarded_never_triggers_review_overdue (test_loop_health.TestReviewOverdue) ... ok
+test_submitted_exactly_at_threshold_no_breach (test_loop_health.TestReviewOverdue) ... ok
+test_submitted_past_threshold_breaches (test_loop_health.TestReviewOverdue) ... ok
+test_verification_requested_never_triggers_review_overdue (test_loop_health.TestReviewOverdue) ... ok
+test_very_large_threshold_suppresses_old_finding (test_loop_health.TestReviewOverdue) ... ok
+
+----------------------------------------------------------------------
+Ran 202 tests in 0.429s
+
+OK
+
+$ python3 loop_health.py histories_healthy.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+{"findings":[],"generated_at":"2026-08-03T00:00:00Z","options":{"max_rounds":3,"review_overdue_hours":72},"refusal_reason_distribution":[{"count":1,"reason":"missing_attachment"},{"count":1,"reason":"quality_below_threshold"}],"resubmission_rounds":[{"resubmission_rounds":1,"task_id":"T-100"},{"resubmission_rounds":1,"task_id":"T-101"},{"resubmission_rounds":0,"task_id":"T-102"},{"resubmission_rounds":1,"task_id":"T-103"},{"resubmission_rounds":0,"task_id":"T-104"}],"summary":{"counts_by_code":{"EMPTY_HISTORY":0,"EXCESSIVE_RESUBMISSIONS":0,"INVALID_TIMESTAMP":0,"MALFORMED_RECORD":0,"REVIEW_OVERDUE":0,"UNKNOWN_STATE":0},"total_findings":0,"total_tasks":5}}
+exit=0
+
+$ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+57fd4e82ab7a7478aabd11a2c0be87eb442d4d1cd40d926d1cbcbd39dada7ae5  r1.json
+57fd4e82ab7a7478aabd11a2c0be87eb442d4d1cd40d926d1cbcbd39dada7ae5  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z --review-overdue-hours 99999 ; echo "exit=$?"
+{"findings":[{"code":"MALFORMED_RECORD","message":"record at index 1 is missing required key: task_id","record_index":1,"task_id":"<index:1>"},{"code":"MALFORMED_RECORD","message":"record at index 2 is not a JSON object","record_index":2,"task_id":"<index:2>"},{"code":"MALFORMED_RECORD","event_index":1,"message":"task 'T-BAD-EVENT-ITEM' event at index 1 is not a JSON object","task_id":"T-BAD-EVENT-ITEM"},{"code":"MALFORMED_RECORD","message":"task 'T-BAD-EVENTS' 'events' must be a JSON array","task_id":"T-BAD-EVENTS"},{"at_raw":"not-a-timestamp","code":"INVALID_TIMESTAMP","event_index":1,"message":"task 'T-BAD-TIMESTAMP' event at index 1: unparseable ISO-8601 timestamp: 'not-a-timestamp'","task_id":"T-BAD-TIMESTAMP"},{"code":"EMPTY_HISTORY","message":"task 'T-EMPTY' has zero events","task_id":"T-EMPTY"},{"code":"MALFORMED_RECORD","event_index":0,"message":"task 'T-EMPTY-STATE' event at index 0 has a missing or invalid 'state' (must be a non-empty string)","task_id":"T-EMPTY-STATE"},{"code":"EXCESSIVE_RESUBMISSIONS","max_rounds":3,"message":"task 'T-EXCESSIVE' has 4 resubmission round(s), exceeding max_rounds=3","rounds":4,"task_id":"T-EXCESSIVE"},{"code":"MALFORMED_RECORD","event_index":0,"message":"task 'T-MISSING-AT' event at index 0 is missing required key: at","task_id":"T-MISSING-AT"},{"code":"MALFORMED_RECORD","event_index":0,"message":"task 'T-MISSING-STATE' event at index 0 has a missing or invalid 'state' (must be a non-empty string)","task_id":"T-MISSING-STATE"},{"at_raw":"2026-07-02T00:00:00+05:30","code":"INVALID_TIMESTAMP","event_index":1,"message":"task 'T-NON-UTC-TIMESTAMP' event at index 1: timestamp is not expressed in UTC (non-zero offset): '2026-07-02T00:00:00+05:30'","task_id":"T-NON-UTC-TIMESTAMP"},{"code":"MALFORMED_RECORD","event_index":3,"message":"task 'T-REFUSAL-NONSTRING' event at index 3 has a non-string refusal_reason","task_id":"T-REFUSAL-NONSTRING"},{"code":"UNKNOWN_STATE","event_index":1,"message":"task 'T-UNKNOWN-STATE' event at index 1 has unknown state 'archived'","state":"archived","task_id":"T-UNKNOWN-STATE"}],"generated_at":"2026-08-03T00:00:00Z","options":{"max_rounds":3,"review_overdue_hours":99999.0},"refusal_reason_distribution":[{"count":2,"reason":"\u62d2\u7edd\uff1a\u6570\u636e\u4e0d\u5b8c\u6574"},{"count":1,"reason":""},{"count":1,"reason":"incomplete_deliverable"}],"resubmission_rounds":[{"resubmission_rounds":0,"task_id":"T-BAD-EVENT-ITEM"},{"resubmission_rounds":0,"task_id":"T-BAD-TIMESTAMP"},{"resubmission_rounds":0,"task_id":"T-EMPTY"},{"resubmission_rounds":0,"task_id":"T-EMPTY-STATE"},{"resubmission_rounds":4,"task_id":"T-EXCESSIVE"},{"resubmission_rounds":0,"task_id":"T-IDENTICAL-TIMESTAMPS"},{"resubmission_rounds":0,"task_id":"T-MISSING-AT"},{"resubmission_rounds":0,"task_id":"T-MISSING-STATE"},{"resubmission_rounds":0,"task_id":"T-NON-UTC-TIMESTAMP"},{"resubmission_rounds":1,"task_id":"T-OUT-OF-ORDER"},{"resubmission_rounds":0,"task_id":"T-OVERDUE-REVIEW"},{"resubmission_rounds":0,"task_id":"T-OVERDUE-SUBMITTED"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-DUPLICATE"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-EMPTY-STRING"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-MISSING-REASON"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-NONSTRING"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-REASON-NONREFUSED"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-UNICODE"},{"resubmission_rounds":0,"task_id":"T-REFUSED-RESUBMITTED"},{"resubmission_rounds":0,"task_id":"T-UNKNOWN-STATE"}],"summary":{"counts_by_code":{"EMPTY_HISTORY":1,"EXCESSIVE_RESUBMISSIONS":1,"INVALID_TIMESTAMP":2,"MALFORMED_RECORD":8,"REVIEW_OVERDUE":0,"UNKNOWN_STATE":1},"total_findings":13,"total_tasks":23}}
+exit=1
+
+$ python3 loop_health.py histories_unhealthy.json ; echo "exit=$?"
+usage: loop_health.py [-h] --now NOW [--max-rounds MAX_ROUNDS]
+                      [--review-overdue-hours REVIEW_OVERDUE_HOURS]
+                      [-o OUTPUT]
+                      input_file
+loop_health.py: error: the following arguments are required: --now
+exit=2
+
+$ python3 loop_health.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+loop_health.py: error: input file not found: /nonexistent.json
+exit=2
+
+$ grep -n "now()\|utcnow\|time.time" loop_health.py
+(grep exit code: 1)
