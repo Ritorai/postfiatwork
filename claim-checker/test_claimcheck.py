@@ -1082,7 +1082,12 @@ class TestCanonicalJsonBytes(unittest.TestCase):
 
     def test_is_pure_ascii_bytes(self):
         out = claimcheck.canonical_json_bytes({"x": "héllo wörld"})
-        out.decode("ascii")  # must not raise UnicodeDecodeError
+        # decode("ascii") raises UnicodeDecodeError on any byte >= 0x80, so
+        # this both proves purity and gets us the text to inspect further.
+        decoded = out.decode("ascii")
+        self.assertTrue(all(b < 128 for b in out))
+        self.assertIn("\\u00e9", decoded)  # é
+        self.assertIn("\\u00f6", decoded)  # ö
 
     def test_round_trips_through_json_loads(self):
         obj = {"a": [3, 1, 2], "b": {"nested": True}}
