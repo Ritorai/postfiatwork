@@ -1152,8 +1152,12 @@ class TestBuildReport(unittest.TestCase):
 
     def test_report_is_json_serializable(self):
         data = [mk_thread("T-1", [msg("m1", "reviewer", hours_ago(1), "Why?")])]
-        report, _ = tc.build_report(data, NOW, tc.DEFAULT_UNANSWERED_MAX_HOURS)
-        json.dumps(report)  # must not raise
+        report, total = tc.build_report(data, NOW, tc.DEFAULT_UNANSWERED_MAX_HOURS)
+        dumped = json.dumps(report)
+        round_tripped = json.loads(dumped)
+        self.assertEqual(round_tripped, report)
+        self.assertEqual(len(round_tripped["findings"]), total)
+        self.assertEqual(round_tripped["thread_summaries"][0]["task_id"], "T-1")
 
 
 # ==========================================================================
