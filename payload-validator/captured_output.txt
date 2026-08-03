@@ -1,0 +1,217 @@
+$ python3 -m unittest test_payload_validate -v
+test_bad_alphabet_address_caught (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_bad_length_address_caught (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_bad_prefix_address_caught (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_both_account_and_destination_invalid_reports_both (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_checksum_flip_on_account_caught (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_checksum_flip_on_destination_caught (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_valid_classic_addresses_pass (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_valid_xaddress_destination_passes (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_valid_xaddress_testnet_account_passes (test_payload_validate.TestAddressValidationInRecord) ... ok
+test_bool_false_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_bool_true_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_dict_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_empty_string_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_exactly_max_drops_accepted (test_payload_validate.TestAmountDrops) ... ok
+test_fractional_decimal_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_huge_string_drops_out_of_range (test_payload_validate.TestAmountDrops) ... ok
+test_infinity_string_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_int_valid (test_payload_validate.TestAmountDrops) ... ok
+test_leading_plus_sign_accepted (test_payload_validate.TestAmountDrops) ... ok
+test_list_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_max_drops_plus_one_out_of_range (test_payload_validate.TestAmountDrops) ... ok
+test_nan_string_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_negative_infinity_string_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_negative_int_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_negative_string_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_non_numeric_string_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_none_rejected (test_payload_validate.TestAmountDrops) ... ok
+test_scientific_notation_string_accepted (test_payload_validate.TestAmountDrops) ... ok
+test_string_integer_valid (test_payload_validate.TestAmountDrops) ... ok
+test_string_with_whitespace_valid (test_payload_validate.TestAmountDrops) ... ok
+test_whole_number_decimal_accepted (test_payload_validate.TestAmountDrops) ... ok
+test_zero_valid (test_payload_validate.TestAmountDrops) ... ok
+test_amount_drops_as_json_string_is_accepted (test_payload_validate.TestAmountFieldPresence) ... ok
+test_amount_drops_only_produces_amount_drops_output (test_payload_validate.TestAmountFieldPresence) ... ok
+test_amount_pft_only_produces_amount_pft_output (test_payload_validate.TestAmountFieldPresence) ... ok
+test_both_amount_fields_present (test_payload_validate.TestAmountFieldPresence) ... ok
+test_invalid_amount_leaves_output_field_none (test_payload_validate.TestAmountFieldPresence) ... ok
+test_neither_amount_field_present (test_payload_validate.TestAmountFieldPresence) ... ok
+test_bool_rejected (test_payload_validate.TestAmountPft) ... ok
+test_fractional_decimal_valid (test_payload_validate.TestAmountPft) ... ok
+test_fractional_string_valid (test_payload_validate.TestAmountPft) ... ok
+test_infinity_rejected (test_payload_validate.TestAmountPft) ... ok
+test_int_valid (test_payload_validate.TestAmountPft) ... ok
+test_large_pft_has_no_range_check (test_payload_validate.TestAmountPft) ... ok
+test_nan_string_rejected (test_payload_validate.TestAmountPft) ... ok
+test_negative_rejected (test_payload_validate.TestAmountPft) ... ok
+test_negative_string_rejected (test_payload_validate.TestAmountPft) ... ok
+test_non_numeric_rejected (test_payload_validate.TestAmountPft) ... ok
+test_zero_valid (test_payload_validate.TestAmountPft) ... ok
+test_amount_drops_given_as_string (test_payload_validate.TestBriefEdgeCases) ... ok
+test_both_amount_drops_and_amount_pft_present (test_payload_validate.TestBriefEdgeCases) ... ok
+test_empty_memo_hex (test_payload_validate.TestBriefEdgeCases) ... ok
+test_memo_exactly_at_byte_limit_is_ok_not_flagged (test_payload_validate.TestBriefEdgeCases) ... ok
+test_memo_one_over_byte_limit_is_flagged (test_payload_validate.TestBriefEdgeCases) ... ok
+test_record_that_is_not_an_object (test_payload_validate.TestBriefEdgeCases) ... ok
+test_unicode_in_decoded_memo (test_payload_validate.TestBriefEdgeCases) ... ok
+test_uppercase_vs_lowercase_hex_equivalent (test_payload_validate.TestBriefEdgeCases) ... ok
+test_all_valid_records_status_clean (test_payload_validate.TestBuildReport) ... ok
+test_any_finding_flips_status_to_issues (test_payload_validate.TestBuildReport) ... ok
+test_empty_array_is_clean (test_payload_validate.TestBuildReport) ... ok
+test_finding_counts_sum_matches_flat_findings (test_payload_validate.TestBuildReport) ... ok
+test_flat_findings_sorted_by_index_then_code (test_payload_validate.TestBuildReport) ... ok
+test_max_memo_bytes_recorded_in_report (test_payload_validate.TestBuildReport) ... ok
+test_per_record_findings_sorted_by_code (test_payload_validate.TestBuildReport) ... ok
+test_repeated_build_report_calls_are_identical (test_payload_validate.TestBuildReport) ... ok
+test_totals_counts_consistent (test_payload_validate.TestBuildReport) ... ok
+test_ensure_ascii_escapes_non_ascii (test_payload_validate.TestCanonicalJson) ... ok
+test_no_spaces_in_output (test_payload_validate.TestCanonicalJson) ... ok
+test_report_is_byte_identical_across_two_builds (test_payload_validate.TestCanonicalJson) ... ok
+test_sorted_keys_compact_separators_trailing_newline (test_payload_validate.TestCanonicalJson) ... ok
+test_amounts_emitted_as_strings_in_output (test_payload_validate.TestCli) ... ok
+test_checksum_flip_demo_address_triggers_invalid_address (test_payload_validate.TestCli) ... ok
+test_clean_input_exit_0 (test_payload_validate.TestCli) ... ok
+test_empty_array_input_exit_0 (test_payload_validate.TestCli) ... ok
+test_findings_input_exit_1 (test_payload_validate.TestCli) ... ok
+test_invalid_json_exit_2 (test_payload_validate.TestCli) ... ok
+test_max_memo_bytes_flag_changes_verdict (test_payload_validate.TestCli) ... ok
+test_max_memo_bytes_negative_rejected_by_argparse (test_payload_validate.TestCli) ... ok
+test_max_memo_bytes_non_integer_rejected (test_payload_validate.TestCli) ... ok
+test_missing_input_argument_exit_2 (test_payload_validate.TestCli) ... ok
+test_no_findings_report_has_empty_finding_counts (test_payload_validate.TestCli) ... ok
+test_nonexistent_file_exit_2 (test_payload_validate.TestCli) ... ok
+test_output_flag_prints_summary_to_stdout (test_payload_validate.TestCli) ... ok
+test_output_flag_writes_file (test_payload_validate.TestCli) ... ok
+test_stdin_dash_reads_stdin (test_payload_validate.TestCli) ... ok
+test_stdout_output_has_trailing_newline (test_payload_validate.TestCli) ... ok
+test_top_level_object_not_array_exit_2 (test_payload_validate.TestCli) ... ok
+test_two_runs_with_output_are_byte_identical (test_payload_validate.TestCli) ... ok
+test_distinct_ids_not_flagged (test_payload_validate.TestDuplicatePayloadId) ... ok
+test_duplicate_detail_references_first_index (test_payload_validate.TestDuplicatePayloadId) ... ok
+test_records_with_missing_payload_id_not_compared (test_payload_validate.TestDuplicatePayloadId) ... ok
+test_three_records_same_id_only_first_clean (test_payload_validate.TestDuplicatePayloadId) ... ok
+test_two_records_same_id_second_flagged (test_payload_validate.TestDuplicatePayloadId) ... ok
+test_fraction_preserved (test_payload_validate.TestFmtDecimal) ... ok
+test_integer_no_exponent (test_payload_validate.TestFmtDecimal) ... ok
+test_large_integer_no_scientific_notation (test_payload_validate.TestFmtDecimal) ... ok
+test_scientific_input_rendered_fixed (test_payload_validate.TestFmtDecimal) ... ok
+test_invalid_json_syntax_raises_input_error (test_payload_validate.TestJsonParsing) ... ok
+test_parse_float_yields_decimal (test_payload_validate.TestJsonParsing) ... ok
+test_parse_int_stays_int (test_payload_validate.TestJsonParsing) ... ok
+test_precision_not_lost_vs_naive_float_conversion (test_payload_validate.TestJsonParsing) ... ok
+test_quoted_nan_string_is_not_a_parse_error (test_payload_validate.TestJsonParsing) ... ok
+test_raw_infinity_literal_rejected (test_payload_validate.TestJsonParsing) ... ok
+test_raw_nan_literal_rejected (test_payload_validate.TestJsonParsing) ... ok
+test_raw_negative_infinity_literal_rejected (test_payload_validate.TestJsonParsing) ... ok
+test_truncated_json_raises_input_error (test_payload_validate.TestJsonParsing) ... ok
+test_bool_element_malformed (test_payload_validate.TestMalformedRecord) ... ok
+test_empty_dict_is_not_malformed_record (test_payload_validate.TestMalformedRecord) ... ok
+test_float_element_malformed (test_payload_validate.TestMalformedRecord) ... ok
+test_list_element_malformed (test_payload_validate.TestMalformedRecord) ... ok
+test_malformed_record_has_no_payload_id (test_payload_validate.TestMalformedRecord) ... ok
+test_malformed_record_skipped_by_duplicate_detection (test_payload_validate.TestMalformedRecord) ... ok
+test_null_element_malformed (test_payload_validate.TestMalformedRecord) ... ok
+test_number_element_malformed (test_payload_validate.TestMalformedRecord) ... ok
+test_string_element_malformed (test_payload_validate.TestMalformedRecord) ... ok
+test_ascii_memo_is_valid_utf8_subset (test_payload_validate.TestMemoHex) ... ok
+test_custom_max_memo_bytes_changes_verdict (test_payload_validate.TestMemoHex) ... ok
+test_emoji_memo_decodes_correctly (test_payload_validate.TestMemoHex) ... ok
+test_empty_memo_hex_is_valid_zero_bytes (test_payload_validate.TestMemoHex) ... ok
+test_internal_whitespace_rejected_not_silently_tolerated (test_payload_validate.TestMemoHex) ... ok
+test_invalid_utf8_ff_byte (test_payload_validate.TestMemoHex) ... ok
+test_invalid_utf8_lone_continuation_byte (test_payload_validate.TestMemoHex) ... ok
+test_limit_boundary_is_strictly_greater_than_not_gte (test_payload_validate.TestMemoHex) ... ok
+test_list_memo_hex_rejected (test_payload_validate.TestMemoHex) ... ok
+test_max_memo_bytes_zero_allows_empty_memo (test_payload_validate.TestMemoHex) ... ok
+test_max_memo_bytes_zero_flags_any_nonempty_memo (test_payload_validate.TestMemoHex) ... ok
+test_memo_exactly_at_limit_is_ok (test_payload_validate.TestMemoHex) ... ok
+test_memo_one_byte_over_limit_flagged (test_payload_validate.TestMemoHex) ... ok
+test_memo_one_byte_under_limit_ok (test_payload_validate.TestMemoHex) ... ok
+test_mixed_case_hex_decodes_same_as_lower_and_upper (test_payload_validate.TestMemoHex) ... ok
+test_non_hex_chars_rejected (test_payload_validate.TestMemoHex) ... ok
+test_non_string_memo_hex_rejected (test_payload_validate.TestMemoHex) ... ok
+test_none_memo_hex_rejected (test_payload_validate.TestMemoHex) ... ok
+test_odd_length_rejected (test_payload_validate.TestMemoHex) ... ok
+test_single_char_rejected_odd_length (test_payload_validate.TestMemoHex) ... ok
+test_too_large_and_not_utf8_can_co_occur (test_payload_validate.TestMemoHex) ... ok
+test_valid_lowercase_hex (test_payload_validate.TestMemoHex) ... ok
+test_valid_uppercase_hex (test_payload_validate.TestMemoHex) ... ok
+test_valid_utf8_multibyte_memo (test_payload_validate.TestMemoHex) ... ok
+test_empty_object_record_reports_all_missing_fields (test_payload_validate.TestRequiredFields) ... ok
+test_empty_string_account_treated_as_missing (test_payload_validate.TestRequiredFields) ... ok
+test_empty_string_destination_treated_as_missing (test_payload_validate.TestRequiredFields) ... ok
+test_empty_string_payload_id (test_payload_validate.TestRequiredFields) ... ok
+test_fully_valid_record_has_no_findings (test_payload_validate.TestRequiredFields) ... ok
+test_missing_account (test_payload_validate.TestRequiredFields) ... ok
+test_missing_amount_both_absent (test_payload_validate.TestRequiredFields) ... ok
+test_missing_destination (test_payload_validate.TestRequiredFields) ... ok
+test_missing_memo_hex (test_payload_validate.TestRequiredFields) ... ok
+test_missing_payload_id (test_payload_validate.TestRequiredFields) ... ok
+test_non_string_account_type (test_payload_validate.TestRequiredFields) ... ok
+test_non_string_destination_type (test_payload_validate.TestRequiredFields) ... ok
+test_non_string_payload_id_int (test_payload_validate.TestRequiredFields) ... ok
+test_non_string_payload_id_list (test_payload_validate.TestRequiredFields) ... ok
+test_non_string_payload_id_null (test_payload_validate.TestRequiredFields) ... ok
+test_alphabet_is_58_unique_chars (test_payload_validate.TestReusedAddressLogic) ... ok
+test_bitcoin_only_char_rejected (test_payload_validate.TestReusedAddressLogic) ... ok
+test_checksum_is_double_sha256_prefix (test_payload_validate.TestReusedAddressLogic) ... ok
+test_classic2_valid (test_payload_validate.TestReusedAddressLogic) ... ok
+test_classic_valid (test_payload_validate.TestReusedAddressLogic) ... ok
+test_corrupted_checksum (test_payload_validate.TestReusedAddressLogic) ... ok
+test_every_single_char_mutation_of_classic_detected (test_payload_validate.TestReusedAddressLogic) ... ok
+test_flipped_char_address_is_correct_length_and_alphabet (test_payload_validate.TestReusedAddressLogic)
+The BADSUM demo address differs from CLASSIC2 by exactly one ... ok
+test_punctuation_rejected (test_payload_validate.TestReusedAddressLogic) ... ok
+test_short_payload (test_payload_validate.TestReusedAddressLogic) ... ok
+test_too_short_overall (test_payload_validate.TestReusedAddressLogic) ... ok
+test_unknown_prefix (test_payload_validate.TestReusedAddressLogic) ... ok
+test_xaddress_mainnet_valid (test_payload_validate.TestReusedAddressLogic) ... ok
+test_xaddress_testnet_valid (test_payload_validate.TestReusedAddressLogic) ... ok
+test_xrpl_alphabet_is_not_bitcoin (test_payload_validate.TestReusedAddressLogic) ... ok
+test_different_valid_addresses_not_flagged (test_payload_validate.TestSelfPayment) ... ok
+test_identical_invalid_addresses_flag_both_self_payment_and_invalid (test_payload_validate.TestSelfPayment) ... ok
+test_identical_valid_addresses_flagged (test_payload_validate.TestSelfPayment) ... ok
+test_self_payment_not_flagged_when_account_missing (test_payload_validate.TestSelfPayment) ... ok
+test_self_payment_not_flagged_when_types_differ (test_payload_validate.TestSelfPayment) ... ok
+test_xaddress_vs_classic_same_underlying_account_not_flagged (test_payload_validate.TestSelfPayment) ... ok
+test_file_with_bom_parses_successfully (test_payload_validate.TestUtf8BomHandling) ... ok
+test_stdin_with_bom_parses_successfully (test_payload_validate.TestUtf8BomHandling) ... ok
+test_strip_bom_helper_noop_without_bom (test_payload_validate.TestUtf8BomHandling) ... ok
+test_strip_bom_helper_removes_leading_bom (test_payload_validate.TestUtf8BomHandling) ... ok
+
+----------------------------------------------------------------------
+Ran 179 tests in 0.386s
+
+OK
+
+$ python3 payload_validate.py payloads_ok.json ; echo "exit=$?"
+{"finding_counts":{},"findings":[],"max_memo_bytes":1024,"results":[{"amount_drops":"1000000","amount_pft":null,"findings":[],"index":0,"ok":true,"payload_id":"ok-1-ascii-memo"},{"amount_drops":null,"amount_pft":"12.5","findings":[],"index":1,"ok":true,"payload_id":"ok-2-empty-memo"},{"amount_drops":"500","amount_pft":null,"findings":[],"index":2,"ok":true,"payload_id":"ok-3-unicode-memo"},{"amount_drops":"0","amount_pft":null,"findings":[],"index":3,"ok":true,"payload_id":"ok-4-uppercase-hex"},{"amount_drops":"42","amount_pft":null,"findings":[],"index":4,"ok":true,"payload_id":"ok-5-memo-at-1024-byte-limit"},{"amount_drops":"100000000000000000","amount_pft":null,"findings":[],"index":5,"ok":true,"payload_id":"ok-6-max-drops-boundary"},{"amount_drops":null,"amount_pft":"0","findings":[],"index":6,"ok":true,"payload_id":"ok-7-xaddress-testnet-and-zero-pft"}],"schema_version":"1.0","status":"clean","totals":{"findings":0,"ok":7,"payloads":7,"with_findings":0}}
+exit=0
+
+$ python3 payload_validate.py payloads_bad.json -o r1.json ; echo "exit=$?"
+status=issues ok=1 findings=19
+exit=1
+
+$ python3 payload_validate.py payloads_bad.json -o r2.json ; echo "exit=$?"
+status=issues ok=1 findings=19
+exit=1
+
+$ sha256sum r1.json r2.json
+bc537f84acb0317a9d42cf0b752143e21b1b232e9209c04ea3eb90a636d85873  r1.json
+bc537f84acb0317a9d42cf0b752143e21b1b232e9209c04ea3eb90a636d85873  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 payload_validate.py payloads_bad.json --max-memo-bytes 1000000 ; echo "exit=$?"
+{"finding_counts":{"AMOUNT_OUT_OF_RANGE":1,"DUPLICATE_PAYLOAD_ID":1,"INVALID_ADDRESS":2,"INVALID_AMOUNT":4,"INVALID_HEX":2,"MALFORMED_RECORD":1,"MEMO_NOT_UTF8":1,"MISSING_REQUIRED_FIELD":5,"SELF_PAYMENT":1},"findings":[{"code":"MALFORMED_RECORD","detail":"array element is not a JSON object, got str","field":null,"index":0,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"account","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"one of amount_drops or amount_pft is required","field":"amount","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"destination","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"memo_hex","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"payload_id","index":1,"payload_id":null},{"code":"INVALID_HEX","detail":"memo_hex has odd length (3)","field":"memo_hex","index":2,"payload_id":"bad-hex-odd-length"},{"code":"INVALID_HEX","detail":"memo_hex contains non-hexadecimal characters","field":"memo_hex","index":3,"payload_id":"bad-hex-chars"},{"code":"MEMO_NOT_UTF8","detail":"'utf-8' codec can't decode byte 0xff in position 0: invalid start byte","field":"memo_hex","index":5,"payload_id":"memo-not-utf8"},{"code":"INVALID_ADDRESS","detail":"account failed XRPL Base58Check: BAD_CHECKSUM","field":"account","index":6,"payload_id":"checksum-flip-demo"},{"code":"INVALID_ADDRESS","detail":"destination failed XRPL Base58Check: BAD_ALPHABET","field":"destination","index":7,"payload_id":"bad-alphabet-addr"},{"code":"SELF_PAYMENT","detail":"account and destination are identical","field":"destination","index":8,"payload_id":"self-payment"},{"code":"INVALID_AMOUNT","detail":"amount_drops is negative","field":"amount_drops","index":9,"payload_id":"negative-drops"},{"code":"INVALID_AMOUNT","detail":"amount_drops must be a whole number of drops","field":"amount_drops","index":10,"payload_id":"fractional-drops"},{"code":"INVALID_AMOUNT","detail":"amount_pft is NaN/Infinity","field":"amount_pft","index":11,"payload_id":"nan-pft"},{"code":"INVALID_AMOUNT","detail":"both amount_drops and amount_pft are present; exactly one is required","field":"amount","index":12,"payload_id":"both-amounts"},{"code":"AMOUNT_OUT_OF_RANGE","detail":"amount_drops 100000000000000001 exceeds 100000000000000000 (100 billion XRP expressed in drops)","field":"amount_drops","index":13,"payload_id":"drops-out-of-range"},{"code":"DUPLICATE_PAYLOAD_ID","detail":"duplicate of payload_id first seen at index 14","field":"payload_id","index":15,"payload_id":"dup-id"}],"max_memo_bytes":1000000,"results":[{"amount_drops":null,"amount_pft":null,"findings":[{"code":"MALFORMED_RECORD","detail":"array element is not a JSON object, got str","field":null}],"index":0,"ok":false,"payload_id":null},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"account"},{"code":"MISSING_REQUIRED_FIELD","detail":"one of amount_drops or amount_pft is required","field":"amount"},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"destination"},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"memo_hex"},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"payload_id"}],"index":1,"ok":false,"payload_id":null},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_HEX","detail":"memo_hex has odd length (3)","field":"memo_hex"}],"index":2,"ok":false,"payload_id":"bad-hex-odd-length"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_HEX","detail":"memo_hex contains non-hexadecimal characters","field":"memo_hex"}],"index":3,"ok":false,"payload_id":"bad-hex-chars"},{"amount_drops":"100","amount_pft":null,"findings":[],"index":4,"ok":true,"payload_id":"memo-too-large"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"MEMO_NOT_UTF8","detail":"'utf-8' codec can't decode byte 0xff in position 0: invalid start byte","field":"memo_hex"}],"index":5,"ok":false,"payload_id":"memo-not-utf8"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_ADDRESS","detail":"account failed XRPL Base58Check: BAD_CHECKSUM","field":"account"}],"index":6,"ok":false,"payload_id":"checksum-flip-demo"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_ADDRESS","detail":"destination failed XRPL Base58Check: BAD_ALPHABET","field":"destination"}],"index":7,"ok":false,"payload_id":"bad-alphabet-addr"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"SELF_PAYMENT","detail":"account and destination are identical","field":"destination"}],"index":8,"ok":false,"payload_id":"self-payment"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"amount_drops is negative","field":"amount_drops"}],"index":9,"ok":false,"payload_id":"negative-drops"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"amount_drops must be a whole number of drops","field":"amount_drops"}],"index":10,"ok":false,"payload_id":"fractional-drops"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"amount_pft is NaN/Infinity","field":"amount_pft"}],"index":11,"ok":false,"payload_id":"nan-pft"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"both amount_drops and amount_pft are present; exactly one is required","field":"amount"}],"index":12,"ok":false,"payload_id":"both-amounts"},{"amount_drops":"100000000000000001","amount_pft":null,"findings":[{"code":"AMOUNT_OUT_OF_RANGE","detail":"amount_drops 100000000000000001 exceeds 100000000000000000 (100 billion XRP expressed in drops)","field":"amount_drops"}],"index":13,"ok":false,"payload_id":"drops-out-of-range"},{"amount_drops":"1","amount_pft":null,"findings":[],"index":14,"ok":true,"payload_id":"dup-id"},{"amount_drops":"2","amount_pft":null,"findings":[{"code":"DUPLICATE_PAYLOAD_ID","detail":"duplicate of payload_id first seen at index 14","field":"payload_id"}],"index":15,"ok":false,"payload_id":"dup-id"}],"schema_version":"1.0","status":"issues","totals":{"findings":18,"ok":2,"payloads":16,"with_findings":14}}
+exit=1
+
+$ cat payloads_bad.json | python3 payload_validate.py - ; echo "exit=$?"
+{"finding_counts":{"AMOUNT_OUT_OF_RANGE":1,"DUPLICATE_PAYLOAD_ID":1,"INVALID_ADDRESS":2,"INVALID_AMOUNT":4,"INVALID_HEX":2,"MALFORMED_RECORD":1,"MEMO_NOT_UTF8":1,"MEMO_TOO_LARGE":1,"MISSING_REQUIRED_FIELD":5,"SELF_PAYMENT":1},"findings":[{"code":"MALFORMED_RECORD","detail":"array element is not a JSON object, got str","field":null,"index":0,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"account","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"one of amount_drops or amount_pft is required","field":"amount","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"destination","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"memo_hex","index":1,"payload_id":null},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"payload_id","index":1,"payload_id":null},{"code":"INVALID_HEX","detail":"memo_hex has odd length (3)","field":"memo_hex","index":2,"payload_id":"bad-hex-odd-length"},{"code":"INVALID_HEX","detail":"memo_hex contains non-hexadecimal characters","field":"memo_hex","index":3,"payload_id":"bad-hex-chars"},{"code":"MEMO_TOO_LARGE","detail":"decoded memo is 1025 bytes, limit is 1024 (limit is inclusive: > is rejected, == is not)","field":"memo_hex","index":4,"payload_id":"memo-too-large"},{"code":"MEMO_NOT_UTF8","detail":"'utf-8' codec can't decode byte 0xff in position 0: invalid start byte","field":"memo_hex","index":5,"payload_id":"memo-not-utf8"},{"code":"INVALID_ADDRESS","detail":"account failed XRPL Base58Check: BAD_CHECKSUM","field":"account","index":6,"payload_id":"checksum-flip-demo"},{"code":"INVALID_ADDRESS","detail":"destination failed XRPL Base58Check: BAD_ALPHABET","field":"destination","index":7,"payload_id":"bad-alphabet-addr"},{"code":"SELF_PAYMENT","detail":"account and destination are identical","field":"destination","index":8,"payload_id":"self-payment"},{"code":"INVALID_AMOUNT","detail":"amount_drops is negative","field":"amount_drops","index":9,"payload_id":"negative-drops"},{"code":"INVALID_AMOUNT","detail":"amount_drops must be a whole number of drops","field":"amount_drops","index":10,"payload_id":"fractional-drops"},{"code":"INVALID_AMOUNT","detail":"amount_pft is NaN/Infinity","field":"amount_pft","index":11,"payload_id":"nan-pft"},{"code":"INVALID_AMOUNT","detail":"both amount_drops and amount_pft are present; exactly one is required","field":"amount","index":12,"payload_id":"both-amounts"},{"code":"AMOUNT_OUT_OF_RANGE","detail":"amount_drops 100000000000000001 exceeds 100000000000000000 (100 billion XRP expressed in drops)","field":"amount_drops","index":13,"payload_id":"drops-out-of-range"},{"code":"DUPLICATE_PAYLOAD_ID","detail":"duplicate of payload_id first seen at index 14","field":"payload_id","index":15,"payload_id":"dup-id"}],"max_memo_bytes":1024,"results":[{"amount_drops":null,"amount_pft":null,"findings":[{"code":"MALFORMED_RECORD","detail":"array element is not a JSON object, got str","field":null}],"index":0,"ok":false,"payload_id":null},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"account"},{"code":"MISSING_REQUIRED_FIELD","detail":"one of amount_drops or amount_pft is required","field":"amount"},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing or empty","field":"destination"},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"memo_hex"},{"code":"MISSING_REQUIRED_FIELD","detail":"required field is missing","field":"payload_id"}],"index":1,"ok":false,"payload_id":null},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_HEX","detail":"memo_hex has odd length (3)","field":"memo_hex"}],"index":2,"ok":false,"payload_id":"bad-hex-odd-length"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_HEX","detail":"memo_hex contains non-hexadecimal characters","field":"memo_hex"}],"index":3,"ok":false,"payload_id":"bad-hex-chars"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"MEMO_TOO_LARGE","detail":"decoded memo is 1025 bytes, limit is 1024 (limit is inclusive: > is rejected, == is not)","field":"memo_hex"}],"index":4,"ok":false,"payload_id":"memo-too-large"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"MEMO_NOT_UTF8","detail":"'utf-8' codec can't decode byte 0xff in position 0: invalid start byte","field":"memo_hex"}],"index":5,"ok":false,"payload_id":"memo-not-utf8"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_ADDRESS","detail":"account failed XRPL Base58Check: BAD_CHECKSUM","field":"account"}],"index":6,"ok":false,"payload_id":"checksum-flip-demo"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"INVALID_ADDRESS","detail":"destination failed XRPL Base58Check: BAD_ALPHABET","field":"destination"}],"index":7,"ok":false,"payload_id":"bad-alphabet-addr"},{"amount_drops":"100","amount_pft":null,"findings":[{"code":"SELF_PAYMENT","detail":"account and destination are identical","field":"destination"}],"index":8,"ok":false,"payload_id":"self-payment"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"amount_drops is negative","field":"amount_drops"}],"index":9,"ok":false,"payload_id":"negative-drops"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"amount_drops must be a whole number of drops","field":"amount_drops"}],"index":10,"ok":false,"payload_id":"fractional-drops"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"amount_pft is NaN/Infinity","field":"amount_pft"}],"index":11,"ok":false,"payload_id":"nan-pft"},{"amount_drops":null,"amount_pft":null,"findings":[{"code":"INVALID_AMOUNT","detail":"both amount_drops and amount_pft are present; exactly one is required","field":"amount"}],"index":12,"ok":false,"payload_id":"both-amounts"},{"amount_drops":"100000000000000001","amount_pft":null,"findings":[{"code":"AMOUNT_OUT_OF_RANGE","detail":"amount_drops 100000000000000001 exceeds 100000000000000000 (100 billion XRP expressed in drops)","field":"amount_drops"}],"index":13,"ok":false,"payload_id":"drops-out-of-range"},{"amount_drops":"1","amount_pft":null,"findings":[],"index":14,"ok":true,"payload_id":"dup-id"},{"amount_drops":"2","amount_pft":null,"findings":[{"code":"DUPLICATE_PAYLOAD_ID","detail":"duplicate of payload_id first seen at index 14","field":"payload_id"}],"index":15,"ok":false,"payload_id":"dup-id"}],"schema_version":"1.0","status":"issues","totals":{"findings":19,"ok":1,"payloads":16,"with_findings":15}}
+exit=1
+
+$ python3 payload_validate.py /nonexistent.json ; echo "exit=$?"
+INVALID_INPUT: file not found: /nonexistent.json
+exit=2
