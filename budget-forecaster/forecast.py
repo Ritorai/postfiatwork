@@ -26,7 +26,46 @@ class InputError(Exception):
     pass
 
 
+class _JsonDecimal(Decimal):
+    """A Decimal built from a JSON *float token*, e.g. the bare `3.5` in the
+    source text.
+
+    It is a Decimal, so its value is exact and taken from the original digits
+    rather than from a binary float. It is a distinguishable subclass so that
+    _dec() can still refuse float-shaped input, which is this tool's documented
+    stance on money: a caller who writes an unquoted number has not thought
+    about precision, and silently accepting it hides that.
+
+    The win over a plain json.load is that the refusal now happens on an exact
+    value rather than on one that was already rounded on the way in.
+    """
+
+
+class _NonFinite:
+    """Sentinel wrapping a bare NaN / Infinity / -Infinity JSON token.
+
+    json.load accepts these by default and hands back float('nan') or
+    float('inf'). Intercepting them keeps a non-finite value from ever reaching
+    Decimal, and lets _dec report the actual token instead of a type error.
+    """
+
+    def __init__(self, token):
+        self.token = token
+
+
+def _reject_nonfinite(token):
+    return _NonFinite(token)
+
+
 def _dec(raw, where, field):
+    if isinstance(raw, _NonFinite):
+        raise InputError(
+            f"{where}: '{field}' is {raw.token} (NaN/Infinity is not permitted)"
+        )
+    if isinstance(raw, _JsonDecimal):
+        # A JSON float token. Refused, as before -- but note the value in `raw`
+        # is exact, so this is a policy refusal and not a rounding artifact.
+        raise InputError(f"{where}: '{field}' must be a string or integer, got float")
     if isinstance(raw, bool) or not isinstance(raw, (str, int)):
         raise InputError(f"{where}: '{field}' must be a string or integer, got {type(raw).__name__}")
     try:
@@ -52,7 +91,13 @@ def _ts(value, where):
 def _load(path, label):
     try:
         with open(path, "r", encoding="utf-8") as fh:
-            data = json.load(fh)
+            # parse_float=Decimal converts at the parse boundary, from the
+            # original token text. Doing Decimal(str(x)) afterwards is too late:
+            # json has already built a binary float and str() renders that
+            # float's value, not the digits the file contained.
+            # parse_constant intercepts the bare NaN/Infinity/-Infinity tokens,
+            # which json.loads otherwise accepts and returns as floats.
+            data = json.load(fh, parse_float=_JsonDecimal, parse_constant=_reject_nonfinite)
     except FileNotFoundError:
         raise InputError(f"{label}: file not found: {path}")
     except json.JSONDecodeError as exc:
