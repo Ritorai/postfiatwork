@@ -144,8 +144,11 @@ class TestJsonify(unittest.TestCase):
     def test_jsonify_output_is_json_serializable(self):
         value = {"reward": Decimal("123456789012345678.123456789")}
         out = snapdiff.jsonify(value)
-        # must not raise
-        json.dumps(out)
+        # Decimal must become a string, preserving full precision that a
+        # float cast would silently truncate.
+        self.assertEqual(out, {"reward": "123456789012345678.123456789"})
+        dumped = json.dumps(out)
+        self.assertEqual(json.loads(dumped), out)
 
     def test_empty_dict_and_list(self):
         self.assertEqual(snapdiff.jsonify({}), {})
