@@ -1,0 +1,144 @@
+{
+  "tasks": [
+    {
+      "task_id": "DUP-1",
+      "title": "Duplicate A",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "DUP-1",
+      "title": "Duplicate B",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "MISS-TITLE",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "BAD-STATUS-TYPE",
+      "title": "Status is a number",
+      "status": 123,
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    null,
+    {
+      "title": "No task_id at all",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "MISMATCH-1",
+      "title": "Status/list disagree",
+      "status": "rewarded",
+      "list": "outstanding",
+      "reward": 20,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "NEG-REWARD",
+      "title": "Negative reward",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": -5,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "STR-REWARD",
+      "title": "Reward as JSON string",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": "10",
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "NAN-REWARD",
+      "title": "Reward is NaN",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": NaN,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "BOOL-REWARD",
+      "title": "Reward is a boolean",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "BAD-TS",
+      "title": "Unparseable created_at",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "not-a-timestamp",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "NONUTC-TS",
+      "title": "Non-UTC offset",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00+05:00",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "NAIVE-TS",
+      "title": "Naive timestamp, no offset",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "DEADLINE-BEFORE",
+      "title": "Deadline precedes creation",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "created_at": "2026-03-01T00:00:00Z",
+      "deadline": "2026-01-01T00:00:00Z"
+    },
+    {
+      "task_id": "UNKNOWN-BUCKET",
+      "title": "Bucket absent from summary",
+      "status": "archived",
+      "list": "archived",
+      "reward": 5,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    }
+  ],
+  "summary": {
+    "outstanding": 100,
+    "rewarded": 3,
+    "extra_bucket_not_used": 2,
+    "weird_bucket": "not-a-number"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "tasks": [
+    {
+      "task_id": "CLN-1001",
+      "title": "Sweep expired listings",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 25,
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "CLN-1002",
+      "title": "Reindex catalog — café branch",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 12.5,
+      "created_at": "2026-01-02T08:30:00+00:00",
+      "deadline": "2026-01-15T08:30:00+00:00"
+    },
+    {
+      "task_id": "CLN-1003",
+      "title": "Verify webhook retries",
+      "status": "in_progress",
+      "list": "in_progress",
+      "reward": 0,
+      "created_at": "2026-01-03T12:00:00Z",
+      "deadline": "2026-01-10T12:00:00Z"
+    },
+    {
+      "task_id": "CLN-1004",
+      "title": "Pay out bounty #4",
+      "status": "rewarded",
+      "list": "rewarded",
+      "reward": 100,
+      "created_at": "2025-12-20T00:00:00Z",
+      "deadline": "2025-12-27T00:00:00Z"
+    },
+    {
+      "task_id": "CLN-1005",
+      "title": "Pay out bounty #5",
+      "status": "rewarded",
+      "list": "rewarded",
+      "reward": 75.25,
+      "created_at": "2025-12-21T00:00:00Z",
+      "deadline": "2025-12-28T00:00:00Z"
+    },
+    {
+      "task_id": "CLN-1006",
+      "title": "Archive stale request",
+      "status": "expired",
+      "list": "expired",
+      "reward": 0,
+      "created_at": "2025-11-01T00:00:00Z",
+      "deadline": "2025-11-08T00:00:00Z"
+    }
+  ],
+  "summary": {
+    "outstanding": 2,
+    "in_progress": 1,
+    "rewarded": 2,
+    "expired": 1
+  }
+}

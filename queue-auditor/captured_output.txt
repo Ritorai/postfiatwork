@@ -1,0 +1,210 @@
+$ python3 -m unittest test_queue_audit -v
+test_clean_report (test_queue_audit.TestBuildReport) ... ok
+test_findings_report (test_queue_audit.TestBuildReport) ... ok
+test_clean_fixture_exit_0 (test_queue_audit.TestCLI) ... ok
+test_dirty_fixture_exit_1 (test_queue_audit.TestCLI) ... ok
+test_dirty_fixture_triggers_all_codes (test_queue_audit.TestCLI) ... ok
+test_empty_stdin_exit_2 (test_queue_audit.TestCLI) ... ok
+test_help_flag_exits_zero (test_queue_audit.TestCLI) ... ok
+test_invalid_top_level_shape_exit_2 (test_queue_audit.TestCLI) ... ok
+test_malformed_json_stdin_exit_2 (test_queue_audit.TestCLI) ... ok
+test_no_arguments_usage_error_exit_2 (test_queue_audit.TestCLI) ... ok
+test_nonexistent_file_exit_2 (test_queue_audit.TestCLI) ... ok
+test_output_ends_with_newline_on_stdout (test_queue_audit.TestCLI) ... ok
+test_output_flag_long_form (test_queue_audit.TestCLI) ... ok
+test_output_flag_writes_file (test_queue_audit.TestCLI) ... ok
+test_stdin_clean_fixture (test_queue_audit.TestCLI) ... ok
+test_stdin_dirty_fixture (test_queue_audit.TestCLI) ... ok
+test_two_runs_byte_identical (test_queue_audit.TestCLI) ... ok
+test_deterministic_across_calls (test_queue_audit.TestCanonicalDumps) ... ok
+test_ends_with_single_newline (test_queue_audit.TestCanonicalDumps) ... ok
+test_ensure_ascii_escapes_unicode (test_queue_audit.TestCanonicalDumps) ... ok
+test_keys_sorted (test_queue_audit.TestCanonicalDumps) ... ok
+test_no_spaces_after_separators (test_queue_audit.TestCanonicalDumps) ... ok
+test_output_is_valid_json_minus_trailing_newline (test_queue_audit.TestCanonicalDumps) ... ok
+test_all_codes_are_distinct_strings (test_queue_audit.TestConstants) ... ok
+test_deadline_before_created_value (test_queue_audit.TestConstants) ... ok
+test_duplicate_task_id_value (test_queue_audit.TestConstants) ... ok
+test_exit_codes (test_queue_audit.TestConstants) ... ok
+test_invalid_reward_value (test_queue_audit.TestConstants) ... ok
+test_invalid_timestamp_value (test_queue_audit.TestConstants) ... ok
+test_malformed_record_value (test_queue_audit.TestConstants) ... ok
+test_required_fields_tuple (test_queue_audit.TestConstants) ... ok
+test_status_list_mismatch_value (test_queue_audit.TestConstants) ... ok
+test_summary_count_mismatch_value (test_queue_audit.TestConstants) ... ok
+test_deadline_after_created_is_fine (test_queue_audit.TestDeadlineBeforeCreated) ... ok
+test_deadline_before_created_flagged (test_queue_audit.TestDeadlineBeforeCreated) ... ok
+test_different_utc_representations_equal_not_flagged (test_queue_audit.TestDeadlineBeforeCreated) ... ok
+test_equal_timestamps_not_flagged (test_queue_audit.TestDeadlineBeforeCreated) ... ok
+test_one_second_before_flagged (test_queue_audit.TestDeadlineBeforeCreated) ... ok
+test_skipped_when_created_at_invalid (test_queue_audit.TestDeadlineBeforeCreated) ... ok
+test_skipped_when_deadline_invalid (test_queue_audit.TestDeadlineBeforeCreated) ... ok
+test_dict_key_order_in_source_does_not_affect_output (test_queue_audit.TestDeterminism) ... ok
+test_findings_sorted_by_code_then_task_id_then_detail (test_queue_audit.TestDeterminism) ... ok
+test_repeated_audit_same_input_same_output (test_queue_audit.TestDeterminism) ... ok
+test_unicode_title_does_not_affect_other_findings (test_queue_audit.TestDeterminism) ... ok
+test_empty_tasks_list_is_valid_shape (test_queue_audit.TestDocumentShape) ... ok
+test_summary_missing_defaults_to_empty (test_queue_audit.TestDocumentShape) ... ok
+test_summary_missing_with_tasks_causes_mismatch (test_queue_audit.TestDocumentShape) ... ok
+test_summary_wrong_type (test_queue_audit.TestDocumentShape) ... ok
+test_tasks_is_dict_invalid (test_queue_audit.TestDocumentShape) ... ok
+test_tasks_missing (test_queue_audit.TestDocumentShape) ... ok
+test_tasks_wrong_type (test_queue_audit.TestDocumentShape) ... ok
+test_top_level_not_a_dict_list (test_queue_audit.TestDocumentShape) ... ok
+test_top_level_not_a_dict_null (test_queue_audit.TestDocumentShape) ... ok
+test_top_level_not_a_dict_number (test_queue_audit.TestDocumentShape) ... ok
+test_top_level_not_a_dict_string (test_queue_audit.TestDocumentShape) ... ok
+test_duplicate_finding_task_id_matches_shared_id (test_queue_audit.TestDuplicateTaskId) ... ok
+test_malformed_task_ids_not_counted_as_duplicates (test_queue_audit.TestDuplicateTaskId) ... ok
+test_multiple_duplicate_groups (test_queue_audit.TestDuplicateTaskId) ... ok
+test_no_duplicates (test_queue_audit.TestDuplicateTaskId) ... ok
+test_single_pair_duplicate (test_queue_audit.TestDuplicateTaskId) ... ok
+test_triple_duplicate (test_queue_audit.TestDuplicateTaskId) ... ok
+test_clean_fixture_file_is_actually_clean (test_queue_audit.TestIntegrationScenarios) ... ok
+test_clean_fixture_fractional_rewards_parse_without_precision_loss (test_queue_audit.TestIntegrationScenarios) ... ok
+test_dirty_fixture_file_covers_every_code (test_queue_audit.TestIntegrationScenarios) ... ok
+test_large_valid_document_no_findings (test_queue_audit.TestIntegrationScenarios) ... ok
+test_mixed_valid_and_malformed_tasks (test_queue_audit.TestIntegrationScenarios) ... ok
+test_repeated_ids_three_and_four_times_each_one_finding (test_queue_audit.TestIntegrationScenarios) ... ok
+test_reward_given_as_json_string_is_invalid_reward_not_malformed (test_queue_audit.TestIntegrationScenarios) ... ok
+test_single_fully_valid_task_document (test_queue_audit.TestIntegrationScenarios) ... ok
+test_task_triggers_multiple_codes_simultaneously (test_queue_audit.TestIntegrationScenarios) ... ok
+test_task_with_unknown_list_bucket_flags_summary_mismatch_only (test_queue_audit.TestIntegrationScenarios) ... ok
+test_empty_string_created_at (test_queue_audit.TestMalformedRecords) ... ok
+test_empty_string_deadline (test_queue_audit.TestMalformedRecords) ... ok
+test_empty_string_list (test_queue_audit.TestMalformedRecords) ... ok
+test_empty_string_status (test_queue_audit.TestMalformedRecords) ... ok
+test_empty_string_task_id (test_queue_audit.TestMalformedRecords) ... ok
+test_empty_string_title (test_queue_audit.TestMalformedRecords) ... ok
+test_missing_created_at (test_queue_audit.TestMalformedRecords) ... ok
+test_missing_deadline (test_queue_audit.TestMalformedRecords) ... ok
+test_missing_list (test_queue_audit.TestMalformedRecords) ... ok
+test_missing_status (test_queue_audit.TestMalformedRecords) ... ok
+test_missing_task_id (test_queue_audit.TestMalformedRecords) ... ok
+test_missing_title (test_queue_audit.TestMalformedRecords) ... ok
+test_null_created_at (test_queue_audit.TestMalformedRecords) ... ok
+test_null_deadline (test_queue_audit.TestMalformedRecords) ... ok
+test_null_list (test_queue_audit.TestMalformedRecords) ... ok
+test_null_status (test_queue_audit.TestMalformedRecords) ... ok
+test_null_task_id (test_queue_audit.TestMalformedRecords) ... ok
+test_null_title (test_queue_audit.TestMalformedRecords) ... ok
+test_wrong_type_created_at (test_queue_audit.TestMalformedRecords) ... ok
+test_wrong_type_deadline (test_queue_audit.TestMalformedRecords) ... ok
+test_wrong_type_list (test_queue_audit.TestMalformedRecords) ... ok
+test_wrong_type_status (test_queue_audit.TestMalformedRecords) ... ok
+test_wrong_type_task_id (test_queue_audit.TestMalformedRecords) ... ok
+test_wrong_type_title (test_queue_audit.TestMalformedRecords) ... ok
+test_missing_reward (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_multiple_missing_fields_all_reported (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_null_reward (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_record_not_a_dict_list (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_record_not_a_dict_null (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_record_not_a_dict_number (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_record_not_a_dict_string (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_unknown_extra_fields_are_ignored (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_valid_task_produces_no_malformed_finding (test_queue_audit.TestMalformedRecordsMisc) ... ok
+test_timestamp_date_only_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_empty_string_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_end_of_year_valid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_fractional_seconds_valid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_garbage_string_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_integer_value_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_invalid_day_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_invalid_month_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_leap_day_valid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_list_value_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_lowercase_z_valid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_minus_zero_offset_valid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_naive_no_offset_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_negative_offset_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_none_value_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_plus_zero_offset_valid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_positive_offset_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_trailing_garbage_invalid (test_queue_audit.TestParseTimestamp) ... ok
+test_timestamp_z_suffix_valid (test_queue_audit.TestParseTimestamp) ... ok
+test_cli_end_to_end_preserves_high_precision_reward (test_queue_audit.TestRewardPrecisionRegression) ... ok
+test_high_precision_reward_preserved_exactly_via_parse_float_decimal (test_queue_audit.TestRewardPrecisionRegression) ... ok
+test_high_precision_reward_would_have_been_corrupted_by_plain_float_parsing (test_queue_audit.TestRewardPrecisionRegression) ... ok
+test_tiny_negative_float_would_have_underflowed_to_negative_zero (test_queue_audit.TestRewardPrecisionRegression) ... ok
+test_tiny_negative_reward_flagged_via_decimal_no_underflow (test_queue_audit.TestRewardPrecisionRegression) ... ok
+test_matching_expired (test_queue_audit.TestStatusListMismatch) ... ok
+test_matching_outstanding (test_queue_audit.TestStatusListMismatch) ... ok
+test_matching_rewarded (test_queue_audit.TestStatusListMismatch) ... ok
+test_mismatch_case_sensitive (test_queue_audit.TestStatusListMismatch) ... ok
+test_mismatch_expired_rewarded (test_queue_audit.TestStatusListMismatch) ... ok
+test_mismatch_rewarded_outstanding (test_queue_audit.TestStatusListMismatch) ... ok
+test_skipped_when_list_missing (test_queue_audit.TestStatusListMismatch) ... ok
+test_skipped_when_status_missing (test_queue_audit.TestStatusListMismatch) ... ok
+test_boolean_summary_value_rejected (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_bucket_in_summary_but_absent_from_tasks (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_bucket_in_tasks_but_absent_from_summary (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_bucket_named_with_zero_tasks_matches (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_empty_tasks_and_empty_summary_is_clean (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_empty_tasks_nonzero_summary_mismatch (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_float_summary_value_matches_int_count (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_malformed_task_not_counted_in_any_bucket (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_matching_counts_no_findings (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_mismatch_too_high (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_mismatch_too_low (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_non_numeric_summary_value_null (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_non_numeric_summary_value_string (test_queue_audit.TestSummaryCountMismatch) ... ok
+test_bare_finite_float_is_rejected (test_queue_audit.TestValidateReward) ... ok
+test_positive_decimal_returns_decimal (test_queue_audit.TestValidateReward) ... ok
+test_positive_int_returns_decimal (test_queue_audit.TestValidateReward) ... ok
+test_reward_bare_finite_float_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_boolean_false_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_boolean_true_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_decimal_infinity_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_decimal_nan_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_dict_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_high_precision_decimal_valid (test_queue_audit.TestValidateReward) ... ok
+test_reward_large_int_valid (test_queue_audit.TestValidateReward) ... ok
+test_reward_list_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_nan_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_neg_inf_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_negative_decimal_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_negative_int_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_negative_large_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_negative_tiny_decimal_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_none_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_pos_inf_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_small_positive_decimal_valid (test_queue_audit.TestValidateReward) ... ok
+test_reward_string_empty_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_string_non_numeric_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_string_numeric_invalid (test_queue_audit.TestValidateReward) ... ok
+test_reward_zero_decimal_valid (test_queue_audit.TestValidateReward) ... ok
+test_reward_zero_int_valid (test_queue_audit.TestValidateReward) ... ok
+
+----------------------------------------------------------------------
+Ran 175 tests in 0.270s
+
+OK
+
+$ python3 queue_audit.py snapshot_clean.json ; echo "exit=$?"
+{"finding_count":0,"findings":[],"result":"clean","task_count":6}
+exit=0
+
+$ python3 queue_audit.py snapshot_dirty.json -o report_run1.json ; echo "exit=$?"
+exit=1
+
+$ python3 queue_audit.py snapshot_dirty.json -o report_run2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum report_run1.json report_run2.json
+8feb7955e0bad544759c0c6415273b11c2d729daa93a766fc81e8dca7c75f490  report_run1.json
+8feb7955e0bad544759c0c6415273b11c2d729daa93a766fc81e8dca7c75f490  report_run2.json
+
+$ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ cat snapshot_dirty.json | python3 queue_audit.py - ; echo "exit=$?"
+{"finding_count":19,"findings":[{"code":"DEADLINE_BEFORE_CREATED","detail":"deadline (2026-01-01T00:00:00Z) is before created_at (2026-03-01T00:00:00Z)","task_id":"DEADLINE-BEFORE"},{"code":"DUPLICATE_TASK_ID","detail":"task_id 'DUP-1' appears 2 times","task_id":"DUP-1"},{"code":"INVALID_REWARD","detail":"reward must be numeric, got boolean True","task_id":"BOOL-REWARD"},{"code":"INVALID_REWARD","detail":"reward is NaN","task_id":"NAN-REWARD"},{"code":"INVALID_REWARD","detail":"reward is negative (-5)","task_id":"NEG-REWARD"},{"code":"INVALID_REWARD","detail":"reward must be a JSON number, got a string ('10')","task_id":"STR-REWARD"},{"code":"INVALID_TIMESTAMP","detail":"created_at is not a valid UTC ISO-8601 timestamp ('not-a-timestamp')","task_id":"BAD-TS"},{"code":"INVALID_TIMESTAMP","detail":"created_at is not a valid UTC ISO-8601 timestamp ('2026-01-01T00:00:00')","task_id":"NAIVE-TS"},{"code":"INVALID_TIMESTAMP","detail":"created_at is not a valid UTC ISO-8601 timestamp ('2026-01-01T00:00:00+05:00')","task_id":"NONUTC-TS"},{"code":"MALFORMED_RECORD","detail":"task record at index 4 is not a JSON object (got NoneType)","task_id":"<index:4>"},{"code":"MALFORMED_RECORD","detail":"missing required field 'task_id'","task_id":"<index:5>"},{"code":"MALFORMED_RECORD","detail":"field 'status' must be a non-empty string, got int","task_id":"BAD-STATUS-TYPE"},{"code":"MALFORMED_RECORD","detail":"missing required field 'title'","task_id":"MISS-TITLE"},{"code":"STATUS_LIST_MISMATCH","detail":"status 'rewarded' does not match list 'outstanding'","task_id":"MISMATCH-1"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'archived' is 0 but actual count is 1","task_id":"archived"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'extra_bucket_not_used' is 2 but actual count is 0","task_id":"extra_bucket_not_used"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'outstanding' is 100 but actual count is 14","task_id":"outstanding"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'rewarded' is 3 but actual count is 0","task_id":"rewarded"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'weird_bucket' is not numeric (got str)","task_id":"weird_bucket"}],"result":"findings","task_count":16}
+exit=1
+
+$ python3 queue_audit.py /nonexistent.json ; echo "exit=$?"
+queue_audit.py: error: could not read '/nonexistent.json': [Errno 2] No such file or directory: '/nonexistent.json'
+exit=2
+
+$ echo '{not json' | python3 queue_audit.py - ; echo "exit=$?"
+queue_audit.py: error: invalid JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+exit=2
