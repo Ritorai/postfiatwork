@@ -1,0 +1,300 @@
+==============================================================
+ Bundle Index CLI -- verification transcript
+==============================================================
+
+$ uname -srm
+Linux 6.8.0-124-generic x86_64
+exit=0
+
+$ python3 --version
+Python 3.10.12
+exit=0
+
+$ pwd
+/tmp/build_bundleindex
+exit=0
+
+$ ls -1
+README.md
+__pycache__
+bundle_bad
+bundle_index.py
+bundle_ok
+test_bundle_index.py
+exit=0
+
+==============================================================
+ STEP 1  Test suite
+==============================================================
+
+$ python3 -m unittest test_bundle_index -v
+test_clean_bundle_exit_code_zero (test_bundle_index.TestBuildReportBasics) ... ok
+test_file_count_matches_files_length (test_bundle_index.TestBuildReportBasics) ... ok
+test_files_list_sorted_by_relative_path (test_bundle_index.TestBuildReportBasics) ... ok
+test_missing_root_raises_input_error (test_bundle_index.TestBuildReportBasics) ... ok
+test_report_has_expected_top_level_keys (test_bundle_index.TestBuildReportBasics) ... ok
+test_root_is_a_file_raises_input_error (test_bundle_index.TestBuildReportBasics) ... ok
+test_tool_name_and_version_present (test_bundle_index.TestBuildReportBasics) ... ok
+test_binary_file_line_count_is_null_not_zero (test_bundle_index.TestBuildReportFields) ... ok
+test_crlf_line_count (test_bundle_index.TestBuildReportFields) ... ok
+test_empty_file_detected_type_and_line_count (test_bundle_index.TestBuildReportFields) ... ok
+test_no_trailing_newline_line_count (test_bundle_index.TestBuildReportFields) ... ok
+test_sha256_matches_hashlib (test_bundle_index.TestBuildReportFields) ... ok
+test_size_bytes_correct (test_bundle_index.TestBuildReportFields) ... ok
+test_unicode_content_hashed_and_counted (test_bundle_index.TestBuildReportFields) ... ok
+test_clean_bundle_has_zero_findings (test_bundle_index.TestBuildReportFindings) ... ok
+test_duplicate_content_finding_reports_both_paths (test_bundle_index.TestBuildReportFindings) ... ok
+test_duplicate_content_three_way (test_bundle_index.TestBuildReportFindings) ... ok
+test_empty_file_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_missing_readme_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_missing_readme_implies_no_rerun_block (test_bundle_index.TestBuildReportFindings) ... ok
+test_no_false_positive_duplicate_for_distinct_content (test_bundle_index.TestBuildReportFindings) ... ok
+test_readme_present_with_rerun_block_no_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_readme_present_without_rerun_block (test_bundle_index.TestBuildReportFindings) ... ok
+test_suspicious_ds_store_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_suspicious_git_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_suspicious_pycache_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_unreadable_broken_symlink_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_unreadable_finding_detail_has_no_absolute_path (test_bundle_index.TestBuildReportFindings) ... ok
+test_unreadable_permission_denied_finding (test_bundle_index.TestBuildReportFindings) ... ok
+test_all_six_finding_codes_present (test_bundle_index.TestBundleBadFixture) ... ok
+test_exit_code_one (test_bundle_index.TestBundleBadFixture) ... ok
+test_has_findings (test_bundle_index.TestBundleBadFixture) ... ok
+test_missing_readme_present (test_bundle_index.TestBundleBadFixture) ... ok
+test_report_byte_identical_across_runs (test_bundle_index.TestBundleBadFixture) ... ok
+test_contains_expected_file_types (test_bundle_index.TestBundleOkFixture) ... ok
+test_exit_code_zero (test_bundle_index.TestBundleOkFixture) ... ok
+test_rerun_block_found (test_bundle_index.TestBundleOkFixture) ... ok
+test_zero_findings (test_bundle_index.TestBundleOkFixture) ... ok
+test_deterministic_for_same_input (test_bundle_index.TestCanonicalJsonBytes) ... ok
+test_ends_with_single_newline (test_bundle_index.TestCanonicalJsonBytes) ... ok
+test_ensure_ascii_escapes_non_ascii (test_bundle_index.TestCanonicalJsonBytes) ... ok
+test_keys_sorted (test_bundle_index.TestCanonicalJsonBytes) ... ok
+test_no_spaces_in_separators (test_bundle_index.TestCanonicalJsonBytes) ... ok
+test_output_is_valid_json (test_bundle_index.TestCanonicalJsonBytes) ... ok
+test_clean_bundle_exit_zero (test_bundle_index.TestCliExitCodes) ... ok
+test_findings_bundle_exit_one (test_bundle_index.TestCliExitCodes) ... ok
+test_long_form_output_flag (test_bundle_index.TestCliExitCodes) ... ok
+test_missing_argument_exit_two (test_bundle_index.TestCliExitCodes) ... ok
+test_nonexistent_dir_exit_two (test_bundle_index.TestCliExitCodes) ... ok
+test_output_flag_creates_parent_dirs (test_bundle_index.TestCliExitCodes) ... ok
+test_output_flag_file_matches_stdout (test_bundle_index.TestCliExitCodes) ... ok
+test_output_flag_writes_file (test_bundle_index.TestCliExitCodes) ... ok
+test_stdout_is_valid_canonical_json_with_trailing_newline (test_bundle_index.TestCliExitCodes) ... ok
+test_target_is_a_file_not_directory_exit_two (test_bundle_index.TestCliExitCodes) ... ok
+test_two_runs_produce_byte_identical_output_files (test_bundle_index.TestCliExitCodes) ... ok
+test_bare_cr_counts_as_line_terminator (test_bundle_index.TestCountLines) ... ok
+test_crlf_no_trailing_newline (test_bundle_index.TestCountLines) ... ok
+test_crlf_pair_counts_as_one_terminator (test_bundle_index.TestCountLines) ... ok
+test_empty_is_zero (test_bundle_index.TestCountLines) ... ok
+test_exactly_one_newline_byte (test_bundle_index.TestCountLines) ... ok
+test_long_multiline_body (test_bundle_index.TestCountLines) ... ok
+test_mixed_blank_lines (test_bundle_index.TestCountLines) ... ok
+test_no_trailing_newline_off_by_one_regression (test_bundle_index.TestCountLines) ... ok
+test_single_line_no_trailing_newline (test_bundle_index.TestCountLines) ... ok
+test_single_line_with_trailing_newline (test_bundle_index.TestCountLines) ... ok
+test_two_lines_no_trailing_newline (test_bundle_index.TestCountLines) ... ok
+test_two_lines_trailing_newline (test_bundle_index.TestCountLines) ... ok
+test_two_newlines_only (test_bundle_index.TestCountLines) ... ok
+test_c_header (test_bundle_index.TestDetectedTypeForText) ... ok
+test_c_source (test_bundle_index.TestDetectedTypeForText) ... ok
+test_case_insensitive_extension (test_bundle_index.TestDetectedTypeForText) ... ok
+test_css (test_bundle_index.TestDetectedTypeForText) ... ok
+test_csv (test_bundle_index.TestDetectedTypeForText) ... ok
+test_dotfile_with_extension (test_bundle_index.TestDetectedTypeForText) ... ok
+test_html (test_bundle_index.TestDetectedTypeForText) ... ok
+test_ini (test_bundle_index.TestDetectedTypeForText) ... ok
+test_javascript (test_bundle_index.TestDetectedTypeForText) ... ok
+test_json (test_bundle_index.TestDetectedTypeForText) ... ok
+test_log_maps_to_text (test_bundle_index.TestDetectedTypeForText) ... ok
+test_markdown_markdown_ext (test_bundle_index.TestDetectedTypeForText) ... ok
+test_markdown_md (test_bundle_index.TestDetectedTypeForText) ... ok
+test_nested_path_uses_final_suffix_only (test_bundle_index.TestDetectedTypeForText) ... ok
+test_no_extension_falls_back_to_text (test_bundle_index.TestDetectedTypeForText) ... ok
+test_python (test_bundle_index.TestDetectedTypeForText) ... ok
+test_rust (test_bundle_index.TestDetectedTypeForText) ... ok
+test_shell_bash (test_bundle_index.TestDetectedTypeForText) ... ok
+test_shell_sh (test_bundle_index.TestDetectedTypeForText) ... ok
+test_toml (test_bundle_index.TestDetectedTypeForText) ... ok
+test_txt (test_bundle_index.TestDetectedTypeForText) ... ok
+test_unknown_extension_falls_back_to_text (test_bundle_index.TestDetectedTypeForText) ... ok
+test_xml (test_bundle_index.TestDetectedTypeForText) ... ok
+test_yaml_yaml (test_bundle_index.TestDetectedTypeForText) ... ok
+test_yaml_yml (test_bundle_index.TestDetectedTypeForText) ... ok
+test_no_mtime_or_ctime_fields_present (test_bundle_index.TestDeterminismContract) ... ok
+test_relocation_at_very_different_depth (test_bundle_index.TestDeterminismContract) ... ok
+test_relocation_produces_byte_identical_report (test_bundle_index.TestDeterminismContract) ... ok
+test_report_contains_no_absolute_path_of_root (test_bundle_index.TestDeterminismContract) ... ok
+test_report_has_no_common_absolute_prefixes (test_bundle_index.TestDeterminismContract) ... ok
+test_two_runs_same_root_byte_identical (test_bundle_index.TestDeterminismContract) ... ok
+test_broken_symlink_still_discovered_as_file (test_bundle_index.TestDiscoverFiles) ... ok
+test_deeply_nested_five_levels (test_bundle_index.TestDiscoverFiles) ... ok
+test_dot_before_slash_ordering (test_bundle_index.TestDiscoverFiles) ... ok
+test_dotfile_discovered (test_bundle_index.TestDiscoverFiles) ... ok
+test_empty_directory_yields_no_files (test_bundle_index.TestDiscoverFiles) ... ok
+test_empty_subdirectory_produces_no_entries (test_bundle_index.TestDiscoverFiles) ... ok
+test_nested_subdirectories (test_bundle_index.TestDiscoverFiles) ... ok
+test_paths_use_forward_slashes (test_bundle_index.TestDiscoverFiles) ... ok
+test_single_file (test_bundle_index.TestDiscoverFiles) ... ok
+test_sorted_order (test_bundle_index.TestDiscoverFiles) ... ok
+test_symlink_to_real_file_discovered (test_bundle_index.TestDiscoverFiles) ... ok
+test_unicode_filename (test_bundle_index.TestDiscoverFiles) ... ok
+test_unicode_filename_with_accents (test_bundle_index.TestDiscoverFiles) ... ok
+test_bash_fence_found (test_bundle_index.TestExtractRerunBlock) ... ok
+test_console_fence_found (test_bundle_index.TestExtractRerunBlock) ... ok
+test_empty_readme_text (test_bundle_index.TestExtractRerunBlock) ... ok
+test_fence_before_heading_ignored_by_fallback (test_bundle_index.TestExtractRerunBlock) ... ok
+test_fence_with_extra_trailing_whitespace_on_close_line (test_bundle_index.TestExtractRerunBlock) ... ok
+test_first_qualifying_fence_wins_over_later_one (test_bundle_index.TestExtractRerunBlock) ... ok
+test_heading_case_insensitive (test_bundle_index.TestExtractRerunBlock) ... ok
+test_heading_fallback_commands_variant (test_bundle_index.TestExtractRerunBlock) ... ok
+test_heading_fallback_reproduce_variant (test_bundle_index.TestExtractRerunBlock) ... ok
+test_heading_fallback_when_no_language_match (test_bundle_index.TestExtractRerunBlock) ... ok
+test_heading_not_matching_topic_no_fallback (test_bundle_index.TestExtractRerunBlock) ... ok
+test_heading_present_but_no_fence_after_it (test_bundle_index.TestExtractRerunBlock) ... ok
+test_language_priority_beats_heading_fallback (test_bundle_index.TestExtractRerunBlock) ... ok
+test_language_tag_stripped_and_lowered (test_bundle_index.TestExtractRerunBlock) ... ok
+test_multiline_bash_block_preserved_verbatim (test_bundle_index.TestExtractRerunBlock) ... ok
+test_multiple_fenced_blocks_readme (test_bundle_index.TestExtractRerunBlock) ... ok
+test_no_fences_returns_none (test_bundle_index.TestExtractRerunBlock) ... ok
+test_python_fence_alone_not_selected_by_language (test_bundle_index.TestExtractRerunBlock) ... ok
+test_sh_fence_found (test_bundle_index.TestExtractRerunBlock) ... ok
+test_make_finding_dedupes_and_sorts_paths (test_bundle_index.TestFindingHelpers) ... ok
+test_make_finding_shape (test_bundle_index.TestFindingHelpers) ... ok
+test_sort_findings_by_code_then_paths (test_bundle_index.TestFindingHelpers) ... ok
+test_sort_findings_is_stable_and_deterministic_across_runs (test_bundle_index.TestFindingHelpers) ... ok
+test_crlf_text_is_not_binary (test_bundle_index.TestIsBinary) ... ok
+test_empty_bytes_is_not_binary (test_bundle_index.TestIsBinary) ... ok
+test_high_byte_valid_utf8_continuation_is_text (test_bundle_index.TestIsBinary) ... ok
+test_invalid_utf8_is_binary (test_bundle_index.TestIsBinary) ... ok
+test_null_byte_alone_forces_binary (test_bundle_index.TestIsBinary) ... ok
+test_null_byte_forces_binary (test_bundle_index.TestIsBinary) ... ok
+test_plain_ascii_is_text (test_bundle_index.TestIsBinary) ... ok
+test_png_header_is_binary (test_bundle_index.TestIsBinary) ... ok
+test_truncated_multibyte_sequence_is_binary (test_bundle_index.TestIsBinary) ... ok
+test_valid_utf8_multibyte_is_text (test_bundle_index.TestIsBinary) ... ok
+test_main_raises_systemexit_on_missing_argv (test_bundle_index.TestMainFunctionDirect) ... usage: bundle_index.py [-h] [-o OUTPUT] bundle_dir
+bundle_index.py: error: the following arguments are required: bundle_dir
+ok
+test_main_returns_one_for_findings_bundle (test_bundle_index.TestMainFunctionDirect) ... ok
+test_main_returns_two_for_missing_dir (test_bundle_index.TestMainFunctionDirect) ... bundle_index: input error: bundle directory '/sessions/sharp-stoic-knuth/tmp/bundle_index_test_xazjb16e/missing' does not exist
+ok
+test_main_returns_zero_for_clean_bundle (test_bundle_index.TestMainFunctionDirect) ... ok
+test_binary_readme_does_not_crash (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_bytes_with_only_null_and_ascii_mixed (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_deeply_nested_dirs_all_discovered (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_empty_directory_present_but_invisible (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_file_that_is_exactly_one_newline_byte (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_lowercase_readme_not_recognised (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_many_small_files_all_indexed (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_nested_readme_not_recognised_as_bundle_readme (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_readme_itself_is_indexed_as_a_file (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_readme_with_multiple_fenced_blocks_picks_first_bash (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_unicode_filename_roundtrips_through_json (test_bundle_index.TestSpecialEdgeCases) ... ok
+test_clean_path_has_no_reasons (test_bundle_index.TestSuspiciousReasons) ... ok
+test_ds_store_filename (test_bundle_index.TestSuspiciousReasons) ... ok
+test_ds_store_nested (test_bundle_index.TestSuspiciousReasons) ... ok
+test_filename_containing_git_substring_not_flagged (test_bundle_index.TestSuspiciousReasons) ... ok
+test_git_dir_component (test_bundle_index.TestSuspiciousReasons) ... ok
+test_git_nested_deep (test_bundle_index.TestSuspiciousReasons) ... ok
+test_pyc_suffix_flagged_even_outside_pycache (test_bundle_index.TestSuspiciousReasons) ... ok
+test_pycache_and_pyc_both_flagged_once_each (test_bundle_index.TestSuspiciousReasons) ... ok
+test_pycache_dir_component (test_bundle_index.TestSuspiciousReasons) ... ok
+test_pycache_like_name_not_exact_not_flagged (test_bundle_index.TestSuspiciousReasons) ... ok
+
+----------------------------------------------------------------------
+Ran 170 tests in 0.249s
+
+OK
+{"exit_code":1,"file_count":1,"files":[{"detected_type":"text","line_count":1,"relative_path":"a.txt","sha256":"2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881","size_bytes":1}],"finding_count":2,"findings":[{"code":"MISSING_README","detail":"no README.md at bundle root","paths":["README.md"]},{"code":"NO_RERUN_BLOCK","detail":"no README.md to extract a rerun block from","paths":["README.md"]}],"rerun_command":{"found":false,"language":null,"text":null},"schema_version":1,"status":"findings","tool":"bundle_index","tool_version":"1.0.0"}
+{"exit_code":0,"file_count":1,"files":[{"detected_type":"markdown","line_count":3,"relative_path":"README.md","sha256":"91d11e93a1fd71ac0b0a9569603c1d8a71a8a2849eda8d83e0161ab3e8f93816","size_bytes":14}],"finding_count":0,"findings":[],"rerun_command":{"found":true,"language":"bash","text":"x"},"schema_version":1,"status":"clean","tool":"bundle_index","tool_version":"1.0.0"}
+exit=0
+
+==============================================================
+ STEP 2  bundle_ok -- clean bundle
+==============================================================
+
+$ python3 bundle_index.py bundle_ok ; echo "exit=$?"
+{"exit_code":0,"file_count":4,"files":[{"detected_type":"markdown","line_count":14,"relative_path":"README.md","sha256":"91cd9077361439e05acc8ddd2b77fe571761ad1c81ddfd84d102dfa14a4ebdda","size_bytes":375},{"detected_type":"json","line_count":5,"relative_path":"data.json","sha256":"acf7743d238e9757bb40709acc518fe43b3945fe9ab6e1b6e3b06e5e680c4504","size_bytes":69},{"detected_type":"python","line_count":11,"relative_path":"greeter.py","sha256":"5d6ce54a0fe56a705f4cee18055d4ba2b4c45ebecd82b29c08c336d219784772","size_bytes":250},{"detected_type":"text","line_count":2,"relative_path":"notes.txt","sha256":"62fca1a8c9e1e954462d2d80d23e5aa50ea8823070e9259ea519e373ae5096fc","size_bytes":167}],"finding_count":0,"findings":[],"rerun_command":{"found":true,"language":"bash","text":"python3 -m unittest test_greeter -v\npython3 greeter.py --name Ada"},"schema_version":1,"status":"clean","tool":"bundle_index","tool_version":"1.0.0"}
+exit=0
+
+==============================================================
+ STEP 3  bundle_bad -- findings bundle, written twice
+==============================================================
+
+$ python3 bundle_index.py bundle_bad -o r1.json ; echo "exit=$?"
+{"exit_code":1,"file_count":10,"files":[{"detected_type":"binary","line_count":null,"relative_path":".DS_Store","sha256":"f6547627dbf5a6f9215ba108d8122181220926dbc55eb69b7a29dc45b7dbb208","size_bytes":33},{"detected_type":"text","line_count":1,"relative_path":".git/HEAD","sha256":"28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80","size_bytes":21},{"detected_type":"text","line_count":3,"relative_path":".git/config","sha256":"850b95ebbbb9dc7827cb07d1099222cebf6e0d98f7294879fbdbb49c1fc6de64","size_bytes":50},{"detected_type":"binary","line_count":null,"relative_path":"__pycache__/main.cpython-310.pyc","sha256":"f653f190a06b5a4a919f0d50a5f2ce0d501aa45f9016789ba403ffd179852bb9","size_bytes":55},{"detected_type":"unreadable","line_count":null,"relative_path":"broken_link.txt","sha256":null,"size_bytes":null},{"detected_type":"empty","line_count":0,"relative_path":"empty.txt","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0},{"detected_type":"binary","line_count":null,"relative_path":"image.bin","sha256":"dce925d10bea03f72bb047e039bbeb64a584944156b2a6830332c51e30ec92cc","size_bytes":65},{"detected_type":"python","line_count":9,"relative_path":"src/main.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"python","line_count":9,"relative_path":"src/main_copy.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"empty","line_count":0,"relative_path":"zero.bin","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0}],"finding_count":12,"findings":[{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","paths":["empty.txt","zero.bin"]},{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","paths":["src/main.py","src/main_copy.py"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["empty.txt"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["zero.bin"]},{"code":"MISSING_README","detail":"no README.md at bundle root","paths":["README.md"]},{"code":"NO_RERUN_BLOCK","detail":"no README.md to extract a rerun block from","paths":["README.md"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename is '.DS_Store'","paths":[".DS_Store"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/HEAD"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/config"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '__pycache__' directory","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename has suspicious suffix '.pyc'","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"UNREADABLE_FILE","detail":"file could not be read (FileNotFoundError)","paths":["broken_link.txt"]}],"rerun_command":{"found":false,"language":null,"text":null},"schema_version":1,"status":"findings","tool":"bundle_index","tool_version":"1.0.0"}
+exit=1
+
+$ python3 bundle_index.py bundle_bad -o r2.json ; echo "exit=$?"
+{"exit_code":1,"file_count":10,"files":[{"detected_type":"binary","line_count":null,"relative_path":".DS_Store","sha256":"f6547627dbf5a6f9215ba108d8122181220926dbc55eb69b7a29dc45b7dbb208","size_bytes":33},{"detected_type":"text","line_count":1,"relative_path":".git/HEAD","sha256":"28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80","size_bytes":21},{"detected_type":"text","line_count":3,"relative_path":".git/config","sha256":"850b95ebbbb9dc7827cb07d1099222cebf6e0d98f7294879fbdbb49c1fc6de64","size_bytes":50},{"detected_type":"binary","line_count":null,"relative_path":"__pycache__/main.cpython-310.pyc","sha256":"f653f190a06b5a4a919f0d50a5f2ce0d501aa45f9016789ba403ffd179852bb9","size_bytes":55},{"detected_type":"unreadable","line_count":null,"relative_path":"broken_link.txt","sha256":null,"size_bytes":null},{"detected_type":"empty","line_count":0,"relative_path":"empty.txt","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0},{"detected_type":"binary","line_count":null,"relative_path":"image.bin","sha256":"dce925d10bea03f72bb047e039bbeb64a584944156b2a6830332c51e30ec92cc","size_bytes":65},{"detected_type":"python","line_count":9,"relative_path":"src/main.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"python","line_count":9,"relative_path":"src/main_copy.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"empty","line_count":0,"relative_path":"zero.bin","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0}],"finding_count":12,"findings":[{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","paths":["empty.txt","zero.bin"]},{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","paths":["src/main.py","src/main_copy.py"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["empty.txt"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["zero.bin"]},{"code":"MISSING_README","detail":"no README.md at bundle root","paths":["README.md"]},{"code":"NO_RERUN_BLOCK","detail":"no README.md to extract a rerun block from","paths":["README.md"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename is '.DS_Store'","paths":[".DS_Store"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/HEAD"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/config"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '__pycache__' directory","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename has suspicious suffix '.pyc'","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"UNREADABLE_FILE","detail":"file could not be read (FileNotFoundError)","paths":["broken_link.txt"]}],"rerun_command":{"found":false,"language":null,"text":null},"schema_version":1,"status":"findings","tool":"bundle_index","tool_version":"1.0.0"}
+exit=1
+
+==============================================================
+ STEP 4  determinism -- hashes, byte comparison
+==============================================================
+
+$ sha256sum r1.json r2.json
+cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  r1.json
+cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  r2.json
+exit=0
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+exit=0
+
+==============================================================
+ STEP 5  invalid input
+==============================================================
+
+$ python3 bundle_index.py /nonexistent_dir ; echo "exit=$?"
+bundle_index: input error: bundle directory '/nonexistent_dir' does not exist
+exit=2
+
+==============================================================
+ STEP 6  no absolute paths in the report
+==============================================================
+
+$ grep -c "/sessions\|/tmp\|/home" r1.json
+0
+exit=1
+
+==============================================================
+ STEP 7  RELOCATION TEST -- the real determinism proof
+==============================================================
+
+Copying bundle_bad to a completely different absolute path and
+re-indexing it there. If the report is truly path-independent,
+its SHA-256 must match r1.json's SHA-256 exactly.
+
+$ cp -r bundle_bad /tmp/relocated_bundle
+(already copied above)
+exit=0
+
+$ python3 bundle_index.py /tmp/relocated_bundle -o /tmp/relocated_report.json ; echo "exit=$?"
+{"exit_code":1,"file_count":10,"files":[{"detected_type":"binary","line_count":null,"relative_path":".DS_Store","sha256":"f6547627dbf5a6f9215ba108d8122181220926dbc55eb69b7a29dc45b7dbb208","size_bytes":33},{"detected_type":"text","line_count":1,"relative_path":".git/HEAD","sha256":"28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80","size_bytes":21},{"detected_type":"text","line_count":3,"relative_path":".git/config","sha256":"850b95ebbbb9dc7827cb07d1099222cebf6e0d98f7294879fbdbb49c1fc6de64","size_bytes":50},{"detected_type":"binary","line_count":null,"relative_path":"__pycache__/main.cpython-310.pyc","sha256":"f653f190a06b5a4a919f0d50a5f2ce0d501aa45f9016789ba403ffd179852bb9","size_bytes":55},{"detected_type":"unreadable","line_count":null,"relative_path":"broken_link.txt","sha256":null,"size_bytes":null},{"detected_type":"empty","line_count":0,"relative_path":"empty.txt","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0},{"detected_type":"binary","line_count":null,"relative_path":"image.bin","sha256":"dce925d10bea03f72bb047e039bbeb64a584944156b2a6830332c51e30ec92cc","size_bytes":65},{"detected_type":"python","line_count":9,"relative_path":"src/main.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"python","line_count":9,"relative_path":"src/main_copy.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"empty","line_count":0,"relative_path":"zero.bin","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0}],"finding_count":12,"findings":[{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","paths":["empty.txt","zero.bin"]},{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","paths":["src/main.py","src/main_copy.py"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["empty.txt"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["zero.bin"]},{"code":"MISSING_README","detail":"no README.md at bundle root","paths":["README.md"]},{"code":"NO_RERUN_BLOCK","detail":"no README.md to extract a rerun block from","paths":["README.md"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename is '.DS_Store'","paths":[".DS_Store"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/HEAD"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/config"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '__pycache__' directory","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename has suspicious suffix '.pyc'","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"UNREADABLE_FILE","detail":"file could not be read (FileNotFoundError)","paths":["broken_link.txt"]}],"rerun_command":{"found":false,"language":null,"text":null},"schema_version":1,"status":"findings","tool":"bundle_index","tool_version":"1.0.0"}
+exit=1
+
+$ sha256sum r1.json /tmp/relocated_report.json
+cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  r1.json
+cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  /tmp/relocated_report.json
+exit=0
+
+$ cmp r1.json /tmp/relocated_report.json && echo "RELOCATION-IDENTICAL"
+RELOCATION-IDENTICAL
+exit=0
+
+==============================================================
+ Summary
+==============================================================
+
+test suite            : Ran 170 tests / OK, exit 0
+bundle_ok              : finding_count=0, exit=0
+bundle_bad (r1, r2)    : finding_count=12, exit=1 each, byte-identical
+invalid input          : exit=2, no report emitted
+absolute-path grep     : 0 matches in r1.json
+relocation test        : /tmp/relocated_bundle report == r1.json, sha256
+                          cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5 both
+
+r1.json and r2.json are scratch outputs of this transcript run and
+are intentionally NOT part of the delivered bundle-index/ tree or zip.
