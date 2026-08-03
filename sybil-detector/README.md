@@ -65,6 +65,20 @@ Raising `--alert-threshold` above 1.0 clears the alert, and the strict config
 (higher CID weight, tighter tolerances) still catches the real cluster. Both
 directions are exercised in the captured output.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `records` (positional) | Path to a JSON array of evidence submission records. Required. |
+| `-c`, `--config PATH` | Path to a JSON config file overriding any of `weights` (object keyed by signal name: `shared_cid`, `length_match`, `burst_timing`), `length_tolerance`, `burst_window`, `link_threshold`, `alert_threshold`. Unknown top-level keys, and unknown signal names inside `weights`, are rejected (`INVALID_INPUT`, exit 2). Optional. |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> clusters=<n> alerting=<n>`. |
+| `--length-tolerance N` | Overrides `length_tolerance` (default `0.05`), the relative evidence-length difference within which the `length_match` signal fires. Parsed as `float`. |
+| `--burst-window N` | Overrides `burst_window` (default `300` seconds), the submission-timestamp gap within which the `burst_timing` signal fires. Parsed as `float`. |
+| `--link-threshold N` | Overrides `link_threshold` (default `0.5`), the minimum pair score for two wallets to be linked into the same cluster. Parsed as `float`. |
+| `--alert-threshold N` | Overrides `alert_threshold` (default `0.8`), the minimum cluster score for a cluster to alert. Parsed as `float`. |
+
+Precedence: CLI flag > `--config` file value > built-in default (same rule as `evidence-scorer`).
+
 ## Exit codes
 
 0 = no cluster at/above alert threshold · 1 = alert · 2 = invalid input
