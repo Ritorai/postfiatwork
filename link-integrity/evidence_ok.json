@@ -1,0 +1,4 @@
+[
+  {"submission_id": "sub-001", "task_id": "task-001", "evidence_type": "screenshot", "value": "abc", "submitted_at": "2026-01-01T00:00:00Z"},
+  {"submission_id": "sub-002", "task_id": "task-002", "evidence_type": "link", "value": "http://example.com", "submitted_at": "2026-01-02T00:15:00Z"}
+]

@@ -1,0 +1,170 @@
+$ python3 -m unittest test_link_integrity -v
+test_build_report_clean (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_build_report_dirty (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_canonical_json_compact_separators (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_canonical_json_ensure_ascii (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_canonical_json_single_trailing_newline (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_canonical_json_sorted_keys (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_report_has_schema_version (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_violation_list_sorted_deterministically_regardless_of_input_order (test_link_integrity.CanonicalOutputAndReportTests) ... ok
+test_clean_exit_code_0 (test_link_integrity.CliEndToEndTests) ... ok
+test_dirty_exit_code_1 (test_link_integrity.CliEndToEndTests) ... ok
+test_empty_both_exports_exit_0 (test_link_integrity.CliEndToEndTests) ... ok
+test_help_flag_exits_zero (test_link_integrity.CliEndToEndTests) ... ok
+test_invalid_json_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_long_output_flag (test_link_integrity.CliEndToEndTests) ... ok
+test_missing_evidence_file_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_missing_lifecycle_file_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_missing_positional_arg_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_no_args_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_null_task_id_in_input_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_output_flag_writes_file (test_link_integrity.CliEndToEndTests) ... ok
+test_output_to_unwritable_dir_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_repeated_runs_byte_identical (test_link_integrity.CliEndToEndTests) ... ok
+test_stdout_output_matches_file_output (test_link_integrity.CliEndToEndTests) ... ok
+test_top_level_object_instead_of_array_exit_code_2 (test_link_integrity.CliEndToEndTests) ... ok
+test_utf8_bom_prefixed_file_is_readable (test_link_integrity.CliEndToEndTests) ... ok
+test_duplicate_across_two_tasks_lists_both_task_ids (test_link_integrity.DuplicateSubmissionIdTests) ... ok
+test_duplicate_flagged_once_per_group (test_link_integrity.DuplicateSubmissionIdTests) ... ok
+test_empty_evidence_no_duplicates (test_link_integrity.DuplicateSubmissionIdTests) ... ok
+test_multiple_duplicate_groups (test_link_integrity.DuplicateSubmissionIdTests) ... ok
+test_triplicate_counted_correctly (test_link_integrity.DuplicateSubmissionIdTests) ... ok
+test_unique_submission_ids_not_flagged (test_link_integrity.DuplicateSubmissionIdTests) ... ok
+test_after_refused_flagged (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_after_rewarded_flagged (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_before_terminal_not_flagged (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_earliest_terminal_occurrence_used_when_multiple (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_exact_same_instant_as_terminal_not_flagged (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_impossible_terminal_timestamp_skips_after_check (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_no_terminal_state_never_flagged (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_reward_then_later_anomalous_submitted_event_still_flags_evidence_after_first_terminal (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_reward_then_later_submitted_event_missing_evidence_still_flagged (test_link_integrity.EvidenceAfterTerminalStateTests) ... ok
+test_after_creation_not_flagged (test_link_integrity.EvidenceBeforeTaskCreatedTests) ... ok
+test_before_flagged (test_link_integrity.EvidenceBeforeTaskCreatedTests) ... ok
+test_exact_same_instant_not_flagged (test_link_integrity.EvidenceBeforeTaskCreatedTests) ... ok
+test_exact_same_instant_z_vs_plus_zero_not_flagged (test_link_integrity.EvidenceBeforeTaskCreatedTests) ... ok
+test_impossible_evidence_timestamp_skips_comparison (test_link_integrity.EvidenceBeforeTaskCreatedTests) ... ok
+test_impossible_task_timestamp_skips_comparison (test_link_integrity.EvidenceBeforeTaskCreatedTests) ... ok
+test_uses_earliest_lifecycle_event_not_first_in_list (test_link_integrity.EvidenceBeforeTaskCreatedTests) ... ok
+test_bad_fixtures_do_not_contain_orphan_code (test_link_integrity.FixtureFileTests) ... ok
+test_bad_fixtures_exist (test_link_integrity.FixtureFileTests) ... ok
+test_bad_fixtures_produce_exit_1 (test_link_integrity.FixtureFileTests) ... ok
+test_bad_fixtures_repeated_runs_identical (test_link_integrity.FixtureFileTests) ... ok
+test_bad_fixtures_trigger_all_six_codes (test_link_integrity.FixtureFileTests) ... ok
+test_ok_fixtures_are_valid_json_arrays (test_link_integrity.FixtureFileTests) ... ok
+test_ok_fixtures_exist (test_link_integrity.FixtureFileTests) ... ok
+test_ok_fixtures_produce_exit_0 (test_link_integrity.FixtureFileTests) ... ok
+test_both_exports_empty_no_violations (test_link_integrity.ImpossibleTimestampTests) ... ok
+test_evidence_bad_timestamp_flagged (test_link_integrity.ImpossibleTimestampTests) ... ok
+test_lifecycle_bad_timestamp_flagged (test_link_integrity.ImpossibleTimestampTests) ... ok
+test_multiple_bad_timestamps_all_flagged (test_link_integrity.ImpossibleTimestampTests) ... ok
+test_non_utc_offset_lifecycle_flagged (test_link_integrity.ImpossibleTimestampTests) ... ok
+test_year_out_of_range_evidence_flagged (test_link_integrity.ImpossibleTimestampTests) ... ok
+test_multiple_tasks_each_missing_evidence (test_link_integrity.MissingEvidenceForSubmittedStateTests) ... ok
+test_no_submitted_state_no_evidence_not_flagged_orphan (test_link_integrity.MissingEvidenceForSubmittedStateTests) ... ok
+test_orphan_with_only_rewarded_state_not_flagged (test_link_integrity.MissingEvidenceForSubmittedStateTests) ... ok
+test_submitted_no_evidence_flagged (test_link_integrity.MissingEvidenceForSubmittedStateTests) ... ok
+test_submitted_state_at_uses_first_occurrence_by_index_order (test_link_integrity.MissingEvidenceForSubmittedStateTests) ... ok
+test_submitted_with_evidence_not_flagged (test_link_integrity.MissingEvidenceForSubmittedStateTests) ... ok
+test_submitted_with_unrelated_task_evidence_still_flagged (test_link_integrity.MissingEvidenceForSubmittedStateTests) ... ok
+test_evidence_type_and_value_fields_ignored_entirely (test_link_integrity.MixedScenarioTests) ... ok
+test_large_number_of_tasks_no_crash (test_link_integrity.MixedScenarioTests) ... ok
+test_multiple_violation_types_same_task (test_link_integrity.MixedScenarioTests) ... ok
+test_same_task_id_reused_multiple_lifecycle_entries_fine (test_link_integrity.MixedScenarioTests) ... ok
+test_unknown_task_and_duplicate_combined (test_link_integrity.MixedScenarioTests) ... ok
+test_full_json_tiebreak_used_for_identical_code_task_submission (test_link_integrity.SortOrderTests) ... ok
+test_output_violations_actually_sorted (test_link_integrity.SortOrderTests) ... ok
+test_sort_key_handles_missing_submission_id (test_link_integrity.SortOrderTests) ... ok
+test_sort_key_handles_missing_task_id (test_link_integrity.SortOrderTests) ... ok
+test_sort_order_is_by_code_first (test_link_integrity.SortOrderTests) ... ok
+test_empty_list_ok (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_empty_task_id (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_evidence_type_and_value_not_validated (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_missing_submission_id (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_missing_submitted_at (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_missing_task_id (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_null_submission_id (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_null_task_id (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_record_not_dict (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_submitted_at_not_string (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_valid_minimal_record (test_link_integrity.StructuralValidationEvidenceTests) ... ok
+test_at_bad_string_content_does_not_raise (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_at_not_string (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_at_null (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_empty_list_ok (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_empty_state (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_empty_string_task_id (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_index_recorded (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_missing_at (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_missing_state (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_missing_task_id (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_null_state (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_null_task_id (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_numeric_task_id (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_record_not_dict (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_top_level_not_list_raises_via_cli (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_valid_minimal_record (test_link_integrity.StructuralValidationLifecycleTests) ... ok
+test_empty_string_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_fractional_seconds_accepted (test_link_integrity.TimestampParsingTests) ... ok
+test_fractional_seconds_short_padded (test_link_integrity.TimestampParsingTests) ... ok
+test_garbage_string_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_hour_24_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_integer_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_invalid_day_feb29_non_leap_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_invalid_day_feb30_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_invalid_month_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_leading_garbage_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_leap_second_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_lowercase_z_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_missing_seconds_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_missing_time_component_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_non_utc_offset_negative_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_non_utc_offset_positive_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_none_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_plus_zero_offset_valid (test_link_integrity.TimestampParsingTests) ... ok
+test_space_instead_of_t_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_trailing_garbage_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_valid_day_feb29_leap_year_accepted (test_link_integrity.TimestampParsingTests) ... ok
+test_year_2101_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_year_9999_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_year_below_2000_rejected (test_link_integrity.TimestampParsingTests) ... ok
+test_year_exactly_2000_accepted (test_link_integrity.TimestampParsingTests) ... ok
+test_year_exactly_2100_accepted (test_link_integrity.TimestampParsingTests) ... ok
+test_z_and_plus_zero_equal_instant (test_link_integrity.TimestampParsingTests) ... ok
+test_z_suffix_valid (test_link_integrity.TimestampParsingTests) ... ok
+test_empty_lifecycle_flags_all_evidence (test_link_integrity.UnknownTaskReferenceTests) ... ok
+test_flags_unknown_task (test_link_integrity.UnknownTaskReferenceTests) ... ok
+test_known_task_not_flagged (test_link_integrity.UnknownTaskReferenceTests) ... ok
+test_unknown_task_evidence_not_checked_for_time_violations (test_link_integrity.UnknownTaskReferenceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 137 tests in 0.443s
+
+OK
+exit=0
+
+$ python3 link_integrity.py lifecycle_ok.json evidence_ok.json ; echo "exit=$?"
+{"schema_version":"1.0","summary":{"counts_by_code":{},"is_clean":true,"violation_count":0},"violations":[]}
+exit=0
+
+$ python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run1.json ; echo "exit=$?"
+exit=1
+
+$ python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum report_run1.json report_run2.json
+f39bebe8fe88201bbbd0a30db96579f2a461b024af6f498db2c83792bfc01de2  report_run1.json
+f39bebe8fe88201bbbd0a30db96579f2a461b024af6f498db2c83792bfc01de2  report_run2.json
+
+$ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 link_integrity.py /nonexistent.json evidence_ok.json ; echo "exit=$?"
+link_integrity.py: error: lifecycle file not found: /nonexistent.json
+exit=2
+
+$ python3 link_integrity.py lifecycle_ok.json ; echo "exit=$?"
+usage: link_integrity.py [-h] [-o OUTPUT] lifecycle_file evidence_file
+link_integrity.py: error: the following arguments are required: evidence_file
+exit=2

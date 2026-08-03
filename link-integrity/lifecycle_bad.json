@@ -1,0 +1,17 @@
+[
+  {"task_id": "task-A", "state": "created", "at": "2026-02-01T00:00:00Z"},
+  {"task_id": "task-A", "state": "submitted", "at": "2026-02-01T01:00:00Z"},
+  {"task_id": "task-A", "state": "rewarded", "at": "2026-02-01T02:00:00Z"},
+
+  {"task_id": "task-B", "state": "created", "at": "2026-02-02T00:00:00Z"},
+  {"task_id": "task-B", "state": "submitted", "at": "2026-02-02T01:00:00Z"},
+
+  {"task_id": "task-C", "state": "created", "at": "2026-02-03T00:00:00Z"},
+  {"task_id": "task-C", "state": "refused", "at": "2026-02-03T01:00:00Z"},
+
+  {"task_id": "task-D", "state": "created", "at": "2026-02-04T05:00:00Z"},
+
+  {"task_id": "task-E", "state": "created", "at": "not-a-timestamp"},
+
+  {"task_id": "task-F", "state": "created", "at": "2026-02-06T00:00:00+02:00"}
+]
