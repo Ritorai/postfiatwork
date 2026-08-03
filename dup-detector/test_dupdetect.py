@@ -467,7 +467,13 @@ class TestCanonicalJson(unittest.TestCase):
 
     def test_output_is_pure_ascii(self):
         report = analyze(recs(("a", "café " * 12), ("b", "café " * 12)))
-        canonical_json(report).encode("ascii")
+        text = canonical_json(report)
+        # encode("ascii") raises UnicodeEncodeError on any non-ascii char,
+        # so this proves purity; also confirm the accented char actually
+        # made it into the report as an escape rather than being dropped.
+        encoded = text.encode("ascii")
+        self.assertTrue(all(b < 128 for b in encoded))
+        self.assertIn("\\u00e9", text)  # é from "café"
 
     def test_output_is_reparseable(self):
         self.assertEqual(json.loads(canonical_json(self.report)), self.report)
