@@ -1,0 +1,74 @@
+=== $ python3 -m unittest test_throughput -v ===
+test_breach_detected (test_throughput.TestBreachAndStatus) ... ok
+test_clean_status (test_throughput.TestBreachAndStatus) ... ok
+test_insufficient_data_never_breaches (test_throughput.TestBreachAndStatus)
+One refusal out of one task must not brand a newcomer as over ceiling. ... ok
+test_sorted_worst_first (test_throughput.TestBreachAndStatus) ... ok
+test_breach_exit_one (test_throughput.TestCli) ... ok
+test_missing_file_exit_two (test_throughput.TestCli) ... ok
+test_ok_exit_zero (test_throughput.TestCli) ... ok
+test_raising_ceiling_clears_breach (test_throughput.TestCli) ... ok
+test_repeated_runs_identical (test_throughput.TestCli) ... ok
+test_contributor_with_only_accept (test_throughput.TestCounts) ... ok
+test_counts_per_outcome (test_throughput.TestCounts) ... ok
+test_duplicate_state_uses_first_occurrence (test_throughput.TestCounts) ... ok
+test_tasks_seen_counts_distinct_tasks (test_throughput.TestCounts) ... ok
+test_ceiling_is_configurable (test_throughput.TestGrading) ... ok
+test_grade_a_fast_and_clean (test_throughput.TestGrading) ... ok
+test_grade_b_clean_but_slow (test_throughput.TestGrading) ... ok
+test_grade_c_moderate_refusals (test_throughput.TestGrading) ... ok
+test_grade_d_above_ceiling (test_throughput.TestGrading) ... ok
+test_insufficient_data_wins (test_throughput.TestGrading) ... ok
+test_bad_timestamp (test_throughput.TestMalformed) ... ok
+test_missing_field (test_throughput.TestMalformed) ... ok
+test_non_array (test_throughput.TestMalformed) ... ok
+test_unknown_state (test_throughput.TestMalformed) ... ok
+test_median_of_three_is_middle (test_throughput.TestMedians) ... ok
+test_median_of_two (test_throughput.TestMedians) ... ok
+test_median_submit_to_terminal (test_throughput.TestMedians) ... ok
+test_negative_duration_excluded (test_throughput.TestMedians)
+A submitted timestamp before accepted is data corruption, not a -5h median. ... ok
+test_none_when_no_pairs (test_throughput.TestMedians) ... ok
+test_half_refused (test_throughput.TestRefusalRate) ... ok
+test_no_terminal_no_divide_by_zero (test_throughput.TestRefusalRate) ... ok
+test_two_thirds_refused (test_throughput.TestRefusalRate) ... ok
+test_zero_refused (test_throughput.TestRefusalRate) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 0.439s
+
+OK
+
+=== $ python3 throughput.py events_ok.json -o report_ok.json ===
+status=ok contributors=3 over_ceiling=0
+exit=0
+
+=== $ python3 throughput.py events_breach.json -o report_breach_run1.json ===
+status=ceiling_breach contributors=3 over_ceiling=1
+exit=1
+=== $ python3 throughput.py events_breach.json -o report_breach_run2.json ===
+status=ceiling_breach contributors=3 over_ceiling=1
+exit=1
+
+=== $ sha256sum report_breach_run1.json report_breach_run2.json ===
+87b46866b8e98fca0c329414213b2dfa46966f00629472c50227b235f922fea1  report_breach_run1.json
+87b46866b8e98fca0c329414213b2dfa46966f00629472c50227b235f922fea1  report_breach_run2.json
+=== $ cmp ... && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+
+=== $ python3 throughput.py events_breach.json --refusal-ceiling 0.99 ===
+exit=0
+=== $ python3 throughput.py /nonexistent.json ===
+INVALID_INPUT: file not found: /nonexistent.json
+exit=2
+
+=== contributors, events_ok.json ===
+  bob      grade=C                  refusal=0.500 acc2sub=48.0 sub2term=24.0 counts={'accepted': 2, 'refused': 1, 'rewarded': 1, 'submitted': 2, 'tasks_seen': 2, 'terminal': 2}
+  alice    grade=A                  refusal=0.000 acc2sub=8.0 sub2term=21.0 counts={'accepted': 2, 'refused': 0, 'rewarded': 2, 'submitted': 2, 'tasks_seen': 2, 'terminal': 2}
+  carol    grade=INSUFFICIENT_DATA  refusal=0.000 acc2sub=None sub2term=None counts={'accepted': 1, 'refused': 0, 'rewarded': 0, 'submitted': 0, 'tasks_seen': 1, 'terminal': 0}
+ grade_counts {'A': 1, 'C': 1, 'INSUFFICIENT_DATA': 1}
+
+=== contributors, events_breach.json ===
+  dave     grade=D                  refusal=0.6667 over_ceiling=True
+  erin     grade=A                  refusal=0.0000 over_ceiling=False
+  frank    grade=INSUFFICIENT_DATA  refusal=0.0000 over_ceiling=False

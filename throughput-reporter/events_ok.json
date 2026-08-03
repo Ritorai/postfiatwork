@@ -1,0 +1,15 @@
+[
+  {"task_id":"t1","contributor":"alice","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t1","contributor":"alice","state":"submitted","occurred_at":"2026-07-28T15:00:00Z"},
+  {"task_id":"t1","contributor":"alice","state":"rewarded","occurred_at":"2026-07-29T09:00:00Z"},
+  {"task_id":"t2","contributor":"alice","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t2","contributor":"alice","state":"submitted","occurred_at":"2026-07-28T19:00:00Z"},
+  {"task_id":"t2","contributor":"alice","state":"rewarded","occurred_at":"2026-07-29T19:00:00Z"},
+  {"task_id":"t3","contributor":"bob","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t3","contributor":"bob","state":"submitted","occurred_at":"2026-07-30T09:00:00Z"},
+  {"task_id":"t3","contributor":"bob","state":"rewarded","occurred_at":"2026-07-31T09:00:00Z"},
+  {"task_id":"t4","contributor":"bob","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t4","contributor":"bob","state":"submitted","occurred_at":"2026-07-30T09:00:00Z"},
+  {"task_id":"t4","contributor":"bob","state":"refused","occurred_at":"2026-07-31T09:00:00Z"},
+  {"task_id":"t5","contributor":"carol","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"}
+]

@@ -1,0 +1,18 @@
+[
+  {"task_id":"t1","contributor":"dave","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t1","contributor":"dave","state":"submitted","occurred_at":"2026-07-28T10:00:00Z"},
+  {"task_id":"t1","contributor":"dave","state":"refused","occurred_at":"2026-07-28T12:00:00Z"},
+  {"task_id":"t2","contributor":"dave","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t2","contributor":"dave","state":"submitted","occurred_at":"2026-07-28T10:00:00Z"},
+  {"task_id":"t2","contributor":"dave","state":"refused","occurred_at":"2026-07-28T12:00:00Z"},
+  {"task_id":"t3","contributor":"dave","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t3","contributor":"dave","state":"submitted","occurred_at":"2026-07-28T10:00:00Z"},
+  {"task_id":"t3","contributor":"dave","state":"rewarded","occurred_at":"2026-07-28T12:00:00Z"},
+  {"task_id":"t4","contributor":"erin","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t4","contributor":"erin","state":"submitted","occurred_at":"2026-07-28T10:00:00Z"},
+  {"task_id":"t4","contributor":"erin","state":"rewarded","occurred_at":"2026-07-28T12:00:00Z"},
+  {"task_id":"t5","contributor":"erin","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"t5","contributor":"erin","state":"submitted","occurred_at":"2026-07-28T10:00:00Z"},
+  {"task_id":"t5","contributor":"erin","state":"rewarded","occurred_at":"2026-07-28T12:00:00Z"},
+  {"task_id":"t6","contributor":"frank","state":"accepted","occurred_at":"2026-07-28T09:00:00Z"}
+]

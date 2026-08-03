@@ -1,0 +1,39 @@
+test_breach_detected (test_throughput.TestBreachAndStatus) ... ok
+test_clean_status (test_throughput.TestBreachAndStatus) ... ok
+test_insufficient_data_never_breaches (test_throughput.TestBreachAndStatus)
+One refusal out of one task must not brand a newcomer as over ceiling. ... ok
+test_sorted_worst_first (test_throughput.TestBreachAndStatus) ... ok
+test_breach_exit_one (test_throughput.TestCli) ... ok
+test_missing_file_exit_two (test_throughput.TestCli) ... ok
+test_ok_exit_zero (test_throughput.TestCli) ... ok
+test_raising_ceiling_clears_breach (test_throughput.TestCli) ... ok
+test_repeated_runs_identical (test_throughput.TestCli) ... ok
+test_contributor_with_only_accept (test_throughput.TestCounts) ... ok
+test_counts_per_outcome (test_throughput.TestCounts) ... ok
+test_duplicate_state_uses_first_occurrence (test_throughput.TestCounts) ... ok
+test_tasks_seen_counts_distinct_tasks (test_throughput.TestCounts) ... ok
+test_ceiling_is_configurable (test_throughput.TestGrading) ... ok
+test_grade_a_fast_and_clean (test_throughput.TestGrading) ... ok
+test_grade_b_clean_but_slow (test_throughput.TestGrading) ... ok
+test_grade_c_moderate_refusals (test_throughput.TestGrading) ... ok
+test_grade_d_above_ceiling (test_throughput.TestGrading) ... ok
+test_insufficient_data_wins (test_throughput.TestGrading) ... ok
+test_bad_timestamp (test_throughput.TestMalformed) ... ok
+test_missing_field (test_throughput.TestMalformed) ... ok
+test_non_array (test_throughput.TestMalformed) ... ok
+test_unknown_state (test_throughput.TestMalformed) ... ok
+test_median_of_three_is_middle (test_throughput.TestMedians) ... ok
+test_median_of_two (test_throughput.TestMedians) ... ok
+test_median_submit_to_terminal (test_throughput.TestMedians) ... ok
+test_negative_duration_excluded (test_throughput.TestMedians)
+A submitted timestamp before accepted is data corruption, not a -5h median. ... ok
+test_none_when_no_pairs (test_throughput.TestMedians) ... ok
+test_half_refused (test_throughput.TestRefusalRate) ... ok
+test_no_terminal_no_divide_by_zero (test_throughput.TestRefusalRate) ... ok
+test_two_thirds_refused (test_throughput.TestRefusalRate) ... ok
+test_zero_refused (test_throughput.TestRefusalRate) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 0.439s
+
+OK
