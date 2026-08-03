@@ -1,0 +1,116 @@
+[
+  {
+    "task_id": "T-CLEAN-ANSWERED",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T14:00:00Z",
+        "text": "Why did the retry logic change in the client?"
+      },
+      {
+        "message_id": "m2",
+        "role": "contributor",
+        "at": "2026-08-02T15:00:00Z",
+        "text": "I capped exponential backoff at 30s and added jitter; see commit a1b2c3d and `retry_client.py`.",
+        "in_reply_to": "m1"
+      },
+      {
+        "message_id": "m3",
+        "role": "reviewer",
+        "at": "2026-08-02T16:00:00Z",
+        "text": "Looks good, thanks."
+      }
+    ]
+  },
+  {
+    "task_id": "T-CLEAN-NO-QUESTIONS",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "contributor",
+        "at": "2026-08-02T19:00:00Z",
+        "text": "Starting work on this task now."
+      },
+      {
+        "message_id": "m2",
+        "role": "reviewer",
+        "at": "2026-08-02T20:00:00Z",
+        "text": "Sounds good."
+      },
+      {
+        "message_id": "m3",
+        "role": "contributor",
+        "at": "2026-08-02T21:00:00Z",
+        "text": "Done. See `run_tests.sh` and https://ci.example.com/build/1042 for the green run."
+      }
+    ]
+  },
+  {
+    "task_id": "T-CLEAN-RECENT-ANSWERED",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T23:00:00Z",
+        "text": "Can you add a test for the timeout path?"
+      },
+      {
+        "message_id": "m2",
+        "role": "contributor",
+        "at": "2026-08-02T23:30:00Z",
+        "text": "Added test_client_retries_on_timeout in `test_client.py`.",
+        "in_reply_to": "m1"
+      }
+    ]
+  },
+  {
+    "task_id": "T-CLEAN-MULTI-QUESTION-ANSWERED",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T18:00:00Z",
+        "text": "Why did this fail initially?"
+      },
+      {
+        "message_id": "m2",
+        "role": "reviewer",
+        "at": "2026-08-02T19:00:00Z",
+        "text": "What is the plan to prevent recurrence?"
+      },
+      {
+        "message_id": "m3",
+        "role": "contributor",
+        "at": "2026-08-02T20:00:00Z",
+        "text": "It failed due to a stale cache entry (see test_cache_invalidation_evicts_stale_key). Prevention: added a TTL, see commit 9f8e7d6.",
+        "in_reply_to": "m1"
+      },
+      {
+        "message_id": "m4",
+        "role": "contributor",
+        "at": "2026-08-02T21:00:00Z",
+        "text": "Plan: nightly cache audit job in `scripts/audit_cache.py`, plus the TTL above from commit 9f8e7d6.",
+        "in_reply_to": "m2"
+      }
+    ]
+  },
+  {
+    "task_id": "T-CLEAN-UNICODE",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T22:00:00Z",
+        "text": "为什么这个测试失败了？"
+      },
+      {
+        "message_id": "m2",
+        "role": "contributor",
+        "at": "2026-08-02T23:00:00Z",
+        "text": "因为超时，已在 commit a1b2c3d 修复，见 `retry.py`。",
+        "in_reply_to": "m1"
+      }
+    ]
+  }
+]

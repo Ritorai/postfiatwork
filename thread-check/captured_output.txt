@@ -1,0 +1,271 @@
+$ python3 -m unittest test_thread_check -v
+test_all_digit_token_is_not_treated_as_commit_sha (test_thread_check.TestArtifactReferenceFalsePositiveRisk) ... ok
+test_sha256_not_double_counted_as_commit_sha (test_thread_check.TestArtifactReferenceFalsePositiveRisk) ... ok
+test_url_present_but_irrelevant_still_counts (test_thread_check.TestArtifactReferenceFalsePositiveRisk) ... ok
+test_empty_string (test_thread_check.TestArtifactReferenceNegative) ... ok
+test_none_value (test_thread_check.TestArtifactReferenceNegative) ... ok
+test_plain_seven_digit_number (test_thread_check.TestArtifactReferenceNegative) ... ok
+test_prose_assurance (test_thread_check.TestArtifactReferenceNegative) ... ok
+test_prose_checked_manually (test_thread_check.TestArtifactReferenceNegative) ... ok
+test_prose_ship_it (test_thread_check.TestArtifactReferenceNegative) ... ok
+test_sentence_with_period_abbreviation (test_thread_check.TestArtifactReferenceNegative) ... ok
+test_code_span (test_thread_check.TestArtifactReferencePositive) ... ok
+test_commit_sha_7 (test_thread_check.TestArtifactReferencePositive) ... ok
+test_commit_sha_long (test_thread_check.TestArtifactReferencePositive) ... ok
+test_file_path_bare (test_thread_check.TestArtifactReferencePositive) ... ok
+test_file_path_with_dir (test_thread_check.TestArtifactReferencePositive) ... ok
+test_file_path_yaml (test_thread_check.TestArtifactReferencePositive) ... ok
+test_git_command (test_thread_check.TestArtifactReferencePositive) ... ok
+test_sha256 (test_thread_check.TestArtifactReferencePositive) ... ok
+test_shell_known_binary (test_thread_check.TestArtifactReferencePositive) ... ok
+test_shell_prompt_style (test_thread_check.TestArtifactReferencePositive) ... ok
+test_test_method (test_thread_check.TestArtifactReferencePositive) ... ok
+test_url (test_thread_check.TestArtifactReferencePositive) ... ok
+test_counts_by_code_has_all_nine_codes_even_when_zero (test_thread_check.TestBuildReport) ... ok
+test_deterministic_finding_order_across_two_calls (test_thread_check.TestBuildReport) ... ok
+test_empty_array_zero_findings (test_thread_check.TestBuildReport) ... ok
+test_findings_sorted_by_task_id_then_code (test_thread_check.TestBuildReport) ... ok
+test_generated_at_echoes_now (test_thread_check.TestBuildReport) ... ok
+test_malformed_record_contributes_no_thread_summary (test_thread_check.TestBuildReport) ... ok
+test_options_echoes_unanswered_max_hours (test_thread_check.TestBuildReport) ... ok
+test_report_is_json_serializable (test_thread_check.TestBuildReport) ... ok
+test_root_not_a_list_raises_input_error (test_thread_check.TestBuildReport) ... ok
+test_root_string_raises_input_error (test_thread_check.TestBuildReport) ... ok
+test_thread_summaries_sorted_by_task_id_then_record_index (test_thread_check.TestBuildReport) ... ok
+test_top_level_keys (test_thread_check.TestBuildReport) ... ok
+test_total_findings_matches_len_findings (test_thread_check.TestBuildReport) ... ok
+test_total_threads_counts_all_records_including_malformed (test_thread_check.TestBuildReport) ... ok
+test_complete_fixture_exits_zero (test_thread_check.TestCLI) ... ok
+test_empty_array_is_valid_and_clean (test_thread_check.TestCLI) ... ok
+test_help_exits_zero (test_thread_check.TestCLI) ... ok
+test_incomplete_fixture_exits_one (test_thread_check.TestCLI) ... ok
+test_incomplete_fixture_triggers_all_nine_codes (test_thread_check.TestCLI) ... ok
+test_missing_now_is_usage_error (test_thread_check.TestCLI) ... ok
+test_negative_unanswered_max_hours_is_usage_error (test_thread_check.TestCLI) ... ok
+test_nonexistent_file_is_usage_error (test_thread_check.TestCLI) ... ok
+test_not_json_is_usage_error (test_thread_check.TestCLI) ... ok
+test_now_accepts_offset_form (test_thread_check.TestCLI) ... ok
+test_output_flag_writes_file (test_thread_check.TestCLI) ... ok
+test_root_object_not_array_is_usage_error (test_thread_check.TestCLI) ... ok
+test_stdout_used_when_no_output_flag (test_thread_check.TestCLI) ... ok
+test_two_runs_byte_identical (test_thread_check.TestCLI) ... ok
+test_unanswered_max_hours_flag_changes_verdict (test_thread_check.TestCLI) ... ok
+test_unparseable_now_is_usage_error (test_thread_check.TestCLI) ... ok
+test_ascii_only (test_thread_check.TestCanonicalJson) ... ok
+test_compact_separators (test_thread_check.TestCanonicalJson) ... ok
+test_ends_with_single_trailing_newline (test_thread_check.TestCanonicalJson) ... ok
+test_keys_sorted (test_thread_check.TestCanonicalJson) ... ok
+test_roundtrips (test_thread_check.TestCanonicalJson) ... ok
+test_example (test_thread_check.TestFormatAge) ... ok
+test_forty_eight_hours_exactly (test_thread_check.TestFormatAge) ... ok
+test_fractional_truncated_down (test_thread_check.TestFormatAge) ... ok
+test_just_under_a_day (test_thread_check.TestFormatAge) ... ok
+test_large_value (test_thread_check.TestFormatAge) ... ok
+test_negative_one_hour (test_thread_check.TestFormatAge) ... ok
+test_negative_zero (test_thread_check.TestFormatAge) ... ok
+test_one_day (test_thread_check.TestFormatAge) ... ok
+test_one_hour (test_thread_check.TestFormatAge) ... ok
+test_one_minute (test_thread_check.TestFormatAge) ... ok
+test_one_second (test_thread_check.TestFormatAge) ... ok
+test_sub_minute_truncated (test_thread_check.TestFormatAge) ... ok
+test_sub_minute_truncated_2 (test_thread_check.TestFormatAge) ... ok
+test_zero (test_thread_check.TestFormatAge) ... ok
+test_interrogative_sentence_without_lead_or_mark_is_missed (test_thread_check.TestHasQuestionDocumentedLimitation) ... ok
+test_empty_string (test_thread_check.TestHasQuestionNegative) ... ok
+test_lead_word_not_at_sentence_start (test_thread_check.TestHasQuestionNegative) ... ok
+test_multi_sentence_no_question (test_thread_check.TestHasQuestionNegative) ... ok
+test_none_value (test_thread_check.TestHasQuestionNegative) ... ok
+test_plain_statement (test_thread_check.TestHasQuestionNegative) ... ok
+test_praise (test_thread_check.TestHasQuestionNegative) ... ok
+test_status_update (test_thread_check.TestHasQuestionNegative) ... ok
+test_thanks (test_thread_check.TestHasQuestionNegative) ... ok
+test_lead_are_these (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_can_you (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_could_you (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_do_you (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_does_this (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_exact_phrase_no_trailing_words (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_how (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_in_second_sentence (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_is_this (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_what (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_when (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_where (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_which (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_who (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_why (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_will_you (test_thread_check.TestHasQuestionPositive) ... ok
+test_lead_would_you (test_thread_check.TestHasQuestionPositive) ... ok
+test_plain_question_mark (test_thread_check.TestHasQuestionPositive) ... ok
+test_please_clarify (test_thread_check.TestHasQuestionPositive) ... ok
+test_please_confirm (test_thread_check.TestHasQuestionPositive) ... ok
+test_please_describe (test_thread_check.TestHasQuestionPositive) ... ok
+test_please_explain (test_thread_check.TestHasQuestionPositive) ... ok
+test_please_provide (test_thread_check.TestHasQuestionPositive) ... ok
+test_please_share (test_thread_check.TestHasQuestionPositive) ... ok
+test_question_mark_mid_message (test_thread_check.TestHasQuestionPositive) ... ok
+test_two_questions_one_message (test_thread_check.TestHasQuestionPositive) ... ok
+test_unicode_with_question_mark (test_thread_check.TestHasQuestionPositive) ... ok
+test_ends_with_z_not_offset (test_thread_check.TestIsoZ) ... ok
+test_preserves_microseconds (test_thread_check.TestIsoZ) ... ok
+test_replaces_plus_zero_offset_with_z (test_thread_check.TestIsoZ) ... ok
+test_roundtrips_through_parse (test_thread_check.TestIsoZ) ... ok
+test_source_has_no_forbidden_wall_clock_calls (test_thread_check.TestNoWallClockRead) ... ok
+test_invalid_bad_day (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_hour (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_month (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_boolean_value (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_date_only_no_z (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_dict_value (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_empty_string (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_float_value (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_garbage_text (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_integer_value (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_list_value (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_negative_offset_0800 (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_none_value (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_positive_offset_0530 (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_slash_date (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_timezone_naive (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_trailing_garbage_after_z (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_whitespace_only (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_invalid_z_with_embedded_offset (test_thread_check.TestParseUtcTimestampInvalid) ... ok
+test_valid_end_of_year (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_leading_trailing_whitespace (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_leap_day (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_lowercase_z (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_offset (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_z (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_minus_zero_offset (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_plus_zero_offset (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_space_separator_with_offset (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_valid_uppercase_z (test_thread_check.TestParseUtcTimestampValid) ... ok
+test_dangling_reply_from_reviewer_message (test_thread_check.TestProcessThreadDanglingReply) ... ok
+test_dangling_reply_to_nonexistent_id (test_thread_check.TestProcessThreadDanglingReply) ... ok
+test_reply_to_existing_id_not_dangling (test_thread_check.TestProcessThreadDanglingReply) ... ok
+test_reply_to_id_that_only_exists_on_malformed_message (test_thread_check.TestProcessThreadDanglingReply) ... ok
+test_self_reply_is_not_dangling (test_thread_check.TestProcessThreadDanglingReply) ... ok
+test_empty_thread_finding_task_id (test_thread_check.TestProcessThreadEmptyThread) ... ok
+test_zero_messages_is_empty_thread (test_thread_check.TestProcessThreadEmptyThread) ... ok
+test_in_reply_to_empty_string (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_in_reply_to_explicit_null_is_legal (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_in_reply_to_non_string (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_invalid_timestamp_finding_has_at_raw (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_malformed_message_finding_has_message_index (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_at_non_string (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_at_non_utc_offset (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_at_unparseable_string (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_id_empty_string (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_id_non_string (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_id_valid_but_role_bad_still_known_for_dangling_reply (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_missing_at (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_missing_message_id (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_missing_role (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_missing_text (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_not_a_dict (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_role_case_sensitive (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_role_invalid_value (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_text_empty_string_is_legal (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_message_text_non_string (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_multiple_independent_field_errors_both_reported (test_thread_check.TestProcessThreadMessageShape) ... ok
+test_response_with_artifact_not_flagged (test_thread_check.TestProcessThreadNoArtifactReference) ... ok
+test_response_without_artifact_flagged (test_thread_check.TestProcessThreadNoArtifactReference) ... ok
+test_unmatched_contributor_message_not_evaluated (test_thread_check.TestProcessThreadNoArtifactReference) ... ok
+test_identical_timestamps_not_flagged (test_thread_check.TestProcessThreadOutOfOrder) ... ok
+test_malformed_and_invalid_timestamp_messages_excluded_from_check (test_thread_check.TestProcessThreadOutOfOrder) ... ok
+test_monotonic_order_not_flagged (test_thread_check.TestProcessThreadOutOfOrder) ... ok
+test_out_of_order_finding_has_at_field (test_thread_check.TestProcessThreadOutOfOrder) ... ok
+test_second_message_earlier_than_first_is_flagged (test_thread_check.TestProcessThreadOutOfOrder) ... ok
+test_watermark_tracks_true_max_not_last_flagged_value (test_thread_check.TestProcessThreadOutOfOrder) ... ok
+test_malformed_record_finding_has_record_index (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_messages_not_a_list_dict (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_messages_not_a_list_string (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_missing_messages_key (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_missing_task_id_key (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_record_not_a_dict_list (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_record_not_a_dict_none (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_record_not_a_dict_number (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_record_not_a_dict_string (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_task_id_is_empty_string (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_task_id_is_integer (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_task_id_is_none (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_valid_task_id_unicode (test_thread_check.TestProcessThreadRecordShape) ... ok
+test_genuine_answer_with_artifact_flags_neither (test_thread_check.TestProcessThreadRestatementOnlyIntegration) ... ok
+test_restatement_finding_carries_ratios (test_thread_check.TestProcessThreadRestatementOnlyIntegration) ... ok
+test_restatement_only_flagged_in_thread (test_thread_check.TestProcessThreadRestatementOnlyIntegration) ... ok
+test_restatement_only_implies_no_artifact_reference_too (test_thread_check.TestProcessThreadRestatementOnlyIntegration) ... ok
+test_restatement_with_artifact_only_no_artifact_absent (test_thread_check.TestProcessThreadRestatementOnlyIntegration) ... ok
+test_answered_question_no_unanswered_finding (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_contributor_message_before_any_reviewer_message_ignored (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_empty_text_reviewer_message_is_not_a_question (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_explicit_reply_can_resolve_older_open_question (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_explicit_reply_to_non_open_target_does_not_fall_back_implicit (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_identical_timestamp_question_and_response_resolved_by_index (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_implicit_reply_binds_to_nearest_open_question (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_overdue_finding_has_age_fields (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_reply_to_already_answered_question_does_not_reopen (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_reviewer_message_with_no_question_mark_but_interrogative_is_detected (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_reviewer_non_question_no_finding (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_reviewer_question_no_response_is_unanswered (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_self_reply_contributor_binds_to_nothing (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_thread_with_only_reviewer_messages_all_unanswered (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_two_questions_in_one_message_counts_as_one_question (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_unanswered_beyond_threshold_is_overdue (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_unanswered_exactly_at_threshold_not_overdue (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_unanswered_one_second_past_threshold_is_overdue (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_unanswered_within_threshold_not_overdue (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_unicode_question_and_response (test_thread_check.TestProcessThreadUnanswered) ... ok
+test_completely_different_response_not_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_empty_question_not_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_empty_response_not_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_new_token_ratio_exactly_at_threshold_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_new_token_ratio_just_above_threshold_not_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_overlap_exactly_at_threshold_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_overlap_just_below_threshold_not_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_question_exactly_at_min_tokens_is_checked (test_thread_check.TestRestatementOnly) ... ok
+test_quote_plus_substantial_new_content_not_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_short_question_below_min_tokens_never_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_unicode_restatement (test_thread_check.TestRestatementOnly) ... ok
+test_verbatim_quote_no_artifact_flagged (test_thread_check.TestRestatementOnly) ... ok
+test_verbatim_quote_plus_commit_sha_not_flagged (test_thread_check.TestRestatementOnly) ... ok
+
+----------------------------------------------------------------------
+Ran 229 tests in 0.310s
+
+OK
+
+$ python3 thread_check.py threads_complete.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+{"findings":[],"generated_at":"2026-08-03T00:00:00Z","options":{"unanswered_max_hours":48},"summary":{"counts_by_code":{"DANGLING_REPLY":0,"EMPTY_THREAD":0,"INVALID_TIMESTAMP":0,"MALFORMED_RECORD":0,"NO_ARTIFACT_REFERENCE":0,"OUT_OF_ORDER_MESSAGE":0,"RESTATEMENT_ONLY":0,"UNANSWERED_OVERDUE":0,"UNANSWERED_QUESTION":0},"total_findings":0,"total_threads":5},"thread_summaries":[{"answered_count":1,"message_count":3,"question_count":1,"task_id":"T-CLEAN-ANSWERED","unanswered_count":0},{"answered_count":2,"message_count":4,"question_count":2,"task_id":"T-CLEAN-MULTI-QUESTION-ANSWERED","unanswered_count":0},{"answered_count":0,"message_count":3,"question_count":0,"task_id":"T-CLEAN-NO-QUESTIONS","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-CLEAN-RECENT-ANSWERED","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-CLEAN-UNICODE","unanswered_count":0}]}
+exit=0
+
+$ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+b651d3418ed1d440430f122d26859f852ed0eb885f1f54a267db8f3e47d779e5  r1.json
+b651d3418ed1d440430f122d26859f852ed0eb885f1f54a267db8f3e47d779e5  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z --unanswered-max-hours 99999 ; echo "exit=$?"
+{"findings":[{"code":"MALFORMED_RECORD","message":"record at index 0 is not a JSON object","record_index":0,"task_id":"<index:0>"},{"code":"DANGLING_REPLY","in_reply_to":"m-does-not-exist","message":"thread 'T-DANGLING-REPLY' message 'm2' (index 1) has in_reply_to 'm-does-not-exist', which does not match any message_id in this thread","message_id":"m2","message_index":1,"task_id":"T-DANGLING-REPLY"},{"code":"UNANSWERED_QUESTION","message":"thread 'T-DANGLING-REPLY' reviewer message 'm1' (index 0) contains a question with no contributor response after it","message_id":"m1","message_index":0,"task_id":"T-DANGLING-REPLY"},{"code":"EMPTY_THREAD","message":"thread 'T-EMPTY' has zero messages","task_id":"T-EMPTY"},{"at_raw":"not-a-real-timestamp","code":"INVALID_TIMESTAMP","message":"thread 'T-INVALID-TIMESTAMP' message 'm1' (index 0): unparseable ISO-8601 timestamp: 'not-a-real-timestamp'","message_id":"m1","message_index":0,"task_id":"T-INVALID-TIMESTAMP"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message at index 0 has a missing or invalid 'message_id' (must be a non-empty string)","message_index":0,"task_id":"T-MALFORMED-MESSAGES"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message 'm2' (index 1) has a missing or invalid 'role' (must be 'reviewer' or 'contributor'): 'coordinator'","message_id":"m2","message_index":1,"task_id":"T-MALFORMED-MESSAGES"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message 'm3' (index 2) has a missing or non-string 'text'","message_id":"m3","message_index":2,"task_id":"T-MALFORMED-MESSAGES"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message 'm4' (index 3) is missing required key: at","message_id":"m4","message_index":3,"task_id":"T-MALFORMED-MESSAGES"},{"code":"NO_ARTIFACT_REFERENCE","in_response_to":"m1","message":"thread 'T-NO-ARTIFACT' contributor message 'm2' (index 1), answering 'm1', cites no concrete artifact reference","message_id":"m2","message_index":1,"task_id":"T-NO-ARTIFACT"},{"at":"2026-08-02T19:00:00Z","code":"OUT_OF_ORDER_MESSAGE","conflicts_with_at":"2026-08-02T23:00:00Z","conflicts_with_message_id":"m1","message":"thread 'T-OUT-OF-ORDER' message 'm2' (index 1) has timestamp 2026-08-02T19:00:00Z, which is earlier than 2026-08-02T23:00:00Z on message 'm1', which appears earlier in the input array","message_id":"m2","message_index":1,"task_id":"T-OUT-OF-ORDER"},{"code":"NO_ARTIFACT_REFERENCE","in_response_to":"m1","message":"thread 'T-RESTATEMENT-ONLY' contributor message 'm2' (index 1), answering 'm1', cites no concrete artifact reference","message_id":"m2","message_index":1,"task_id":"T-RESTATEMENT-ONLY"},{"code":"RESTATEMENT_ONLY","in_response_to":"m1","message":"thread 'T-RESTATEMENT-ONLY' contributor message 'm2' (index 1), answering 'm1', is substantially a restatement of the question rather than an answer -- candidate for human review, not a verdict","message_id":"m2","message_index":1,"new_token_ratio":0.0,"overlap_ratio":1.0,"task_id":"T-RESTATEMENT-ONLY"},{"code":"UNANSWERED_QUESTION","message":"thread 'T-UNANSWERED-OVERDUE' reviewer message 'm1' (index 0) contains a question with no contributor response after it","message_id":"m1","message_index":0,"task_id":"T-UNANSWERED-OVERDUE"},{"code":"UNANSWERED_QUESTION","message":"thread 'T-UNANSWERED-RECENT' reviewer message 'm1' (index 0) contains a question with no contributor response after it","message_id":"m1","message_index":0,"task_id":"T-UNANSWERED-RECENT"}],"generated_at":"2026-08-03T00:00:00Z","options":{"unanswered_max_hours":99999.0},"summary":{"counts_by_code":{"DANGLING_REPLY":1,"EMPTY_THREAD":1,"INVALID_TIMESTAMP":1,"MALFORMED_RECORD":5,"NO_ARTIFACT_REFERENCE":2,"OUT_OF_ORDER_MESSAGE":1,"RESTATEMENT_ONLY":1,"UNANSWERED_OVERDUE":0,"UNANSWERED_QUESTION":3},"total_findings":15,"total_threads":10},"thread_summaries":[{"answered_count":0,"message_count":2,"question_count":1,"task_id":"T-DANGLING-REPLY","unanswered_count":1},{"answered_count":0,"message_count":0,"question_count":0,"task_id":"T-EMPTY","unanswered_count":0},{"answered_count":0,"message_count":2,"question_count":0,"task_id":"T-INVALID-TIMESTAMP","unanswered_count":0},{"answered_count":0,"message_count":4,"question_count":0,"task_id":"T-MALFORMED-MESSAGES","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-NO-ARTIFACT","unanswered_count":0},{"answered_count":0,"message_count":2,"question_count":0,"task_id":"T-OUT-OF-ORDER","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-RESTATEMENT-ONLY","unanswered_count":0},{"answered_count":0,"message_count":1,"question_count":1,"task_id":"T-UNANSWERED-OVERDUE","unanswered_count":1},{"answered_count":0,"message_count":1,"question_count":1,"task_id":"T-UNANSWERED-RECENT","unanswered_count":1}]}
+exit=1
+
+$ python3 thread_check.py threads_incomplete.json ; echo "exit=$?"
+usage: thread_check.py [-h] --now NOW
+                       [--unanswered-max-hours UNANSWERED_MAX_HOURS]
+                       [-o OUTPUT]
+                       input_file
+thread_check.py: error: the following arguments are required: --now
+exit=2
+
+$ python3 thread_check.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+thread_check.py: error: input file not found: /nonexistent.json
+exit=2
+
+$ grep -n "now()\|utcnow\|time.time" thread_check.py
+(grep exit code: 1; no output above means no matches found)

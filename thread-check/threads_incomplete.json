@@ -1,0 +1,143 @@
+[
+  "this record is not even a JSON object",
+  {
+    "task_id": "T-EMPTY",
+    "messages": []
+  },
+  {
+    "task_id": "T-MALFORMED-MESSAGES",
+    "messages": [
+      {
+        "role": "reviewer",
+        "at": "2026-08-02T19:00:00Z",
+        "text": "missing message_id entirely"
+      },
+      {
+        "message_id": "m2",
+        "role": "coordinator",
+        "at": "2026-08-02T20:00:00Z",
+        "text": "invalid role value"
+      },
+      {
+        "message_id": "m3",
+        "role": "reviewer",
+        "at": "2026-08-02T21:00:00Z"
+      },
+      {
+        "message_id": "m4",
+        "role": "contributor",
+        "text": "missing at field"
+      }
+    ]
+  },
+  {
+    "task_id": "T-INVALID-TIMESTAMP",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "not-a-real-timestamp",
+        "text": "Why did this fail?"
+      },
+      {
+        "message_id": "m2",
+        "role": "reviewer",
+        "at": "2026-08-02T23:00:00Z",
+        "text": "This one has a valid timestamp, and no question here."
+      }
+    ]
+  },
+  {
+    "task_id": "T-DANGLING-REPLY",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T21:00:00Z",
+        "text": "Why did this fail?"
+      },
+      {
+        "message_id": "m2",
+        "role": "contributor",
+        "at": "2026-08-02T22:00:00Z",
+        "text": "See commit a1b2c3d for the fix.",
+        "in_reply_to": "m-does-not-exist"
+      }
+    ]
+  },
+  {
+    "task_id": "T-OUT-OF-ORDER",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T23:00:00Z",
+        "text": "Status update, no question."
+      },
+      {
+        "message_id": "m2",
+        "role": "contributor",
+        "at": "2026-08-02T19:00:00Z",
+        "text": "This message's timestamp is earlier than m1's, despite appearing after it."
+      }
+    ]
+  },
+  {
+    "task_id": "T-UNANSWERED-RECENT",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T23:00:00Z",
+        "text": "Can you clarify the rollback plan?"
+      }
+    ]
+  },
+  {
+    "task_id": "T-UNANSWERED-OVERDUE",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-07-29T20:00:00Z",
+        "text": "Why was this never addressed?"
+      }
+    ]
+  },
+  {
+    "task_id": "T-NO-ARTIFACT",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T20:00:00Z",
+        "text": "Why did the deployment fail?"
+      },
+      {
+        "message_id": "m2",
+        "role": "contributor",
+        "at": "2026-08-02T21:00:00Z",
+        "text": "I verified this works and confirmed it now.",
+        "in_reply_to": "m1"
+      }
+    ]
+  },
+  {
+    "task_id": "T-RESTATEMENT-ONLY",
+    "messages": [
+      {
+        "message_id": "m1",
+        "role": "reviewer",
+        "at": "2026-08-02T22:00:00Z",
+        "text": "Why did you change the retry logic in the client implementation?"
+      },
+      {
+        "message_id": "m2",
+        "role": "contributor",
+        "at": "2026-08-02T23:00:00Z",
+        "text": "Why did you change the retry logic in the client implementation?",
+        "in_reply_to": "m1"
+      }
+    ]
+  }
+]
