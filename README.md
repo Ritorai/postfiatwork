@@ -3,6 +3,11 @@
 Verification and integrity tooling for the [Post Fiat](https://postfiat.org) /
 Task Node contributor network.
 
+What these tools cannot detect or prove is collected in [LIMITATIONS.md](LIMITATIONS.md), grouped by
+false positive, false negative, scope boundary, and precision gap. Contributor
+workflow is in [CONTRIBUTING.md](CONTRIBUTING.md); the output contract every
+tool follows is in [EVIDENCE_STANDARD.md](EVIDENCE_STANDARD.md).
+
 Thirteen standalone command-line tools. **Standard-library Python 3 only** — no
 third-party packages, no network calls, no build step. Clone and run.
 
