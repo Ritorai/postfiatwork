@@ -1303,7 +1303,10 @@ class TestCLI(unittest.TestCase):
 
     def test_healthy_fixture_stdout_is_valid_json(self):
         result = run_cli([HEALTHY_FIXTURE, "--now", "2026-08-03T00:00:00Z"])
-        json.loads(result.stdout)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["findings"], [])
+        self.assertEqual(report["summary"]["total_findings"], 0)
+        self.assertEqual(set(report["summary"]["counts_by_code"]), set(lh.ALL_CODES))
 
     def test_unhealthy_fixture_exits_1(self):
         result = run_cli([UNHEALTHY_FIXTURE, "--now", "2026-08-03T00:00:00Z"])
