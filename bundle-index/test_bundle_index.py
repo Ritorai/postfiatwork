@@ -426,8 +426,10 @@ class TestCanonicalJsonBytes(unittest.TestCase):
         self.assertEqual(bi.canonical_json_bytes(obj), bi.canonical_json_bytes(dict(obj)))
 
     def test_output_is_valid_json(self):
-        out = bi.canonical_json_bytes({"a": [1, 2, {"b": None}]})
-        json.loads(out.decode("utf-8"))  # must not raise
+        original = {"a": [1, 2, {"b": None}]}
+        out = bi.canonical_json_bytes(original)
+        parsed = json.loads(out.decode("utf-8"))
+        self.assertEqual(parsed, original)
 
 
 # ---------------------------------------------------------------------
