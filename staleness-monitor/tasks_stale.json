@@ -1,0 +1,142 @@
+[
+  {
+    "task_id": "S-1",
+    "title": "Proposed, deadline 48h in the past (critical overdue)",
+    "status": "proposed",
+    "created_at": "2026-07-20T00:00:00Z",
+    "deadline": "2026-07-31T00:00:00Z"
+  },
+  {
+    "task_id": "S-2",
+    "title": "Proposed, deadline 10h in the past (warning overdue)",
+    "status": "proposed",
+    "created_at": "2026-07-25T00:00:00Z",
+    "deadline": "2026-08-01T14:00:00Z"
+  },
+  {
+    "task_id": "S-3",
+    "title": "Proposed, deadline 1h in the past (info overdue)",
+    "status": "proposed",
+    "created_at": "2026-07-25T00:00:00Z",
+    "deadline": "2026-08-01T23:00:00Z"
+  },
+  {
+    "task_id": "S-4",
+    "title": "Accepted, 100h old (critical stale, >= 2x 48h window)",
+    "status": "accepted",
+    "created_at": "2026-07-28T20:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-5",
+    "title": "Accepted, 80h old (warning stale)",
+    "status": "accepted",
+    "created_at": "2026-07-29T16:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-6",
+    "title": "Accepted, 55h old (info stale)",
+    "status": "accepted",
+    "created_at": "2026-07-30T17:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-7",
+    "title": "Submitted, 150h old (critical stale, >= 2x 72h window)",
+    "status": "submitted",
+    "created_at": "2026-07-26T18:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-8",
+    "title": "Submitted, 120h old (warning stale)",
+    "status": "submitted",
+    "created_at": "2026-07-28T00:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-9",
+    "title": "Submitted, 80h old (info stale)",
+    "status": "submitted",
+    "created_at": "2026-07-29T16:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-10",
+    "title": "Deadline given with a non-UTC +05:30 offset",
+    "status": "proposed",
+    "created_at": "2026-08-01T00:00:00Z",
+    "deadline": "2026-08-05T00:00:00+05:30"
+  },
+  {
+    "task_id": "S-11",
+    "title": "Deadline is an unparseable string",
+    "status": "proposed",
+    "created_at": "2026-08-01T00:00:00Z",
+    "deadline": "not-a-real-date"
+  },
+  {
+    "task_id": "S-12",
+    "title": "created_at is an unparseable string",
+    "status": "accepted",
+    "created_at": "not-a-real-date",
+    "deadline": null
+  },
+  {
+    "task_id": "S-13",
+    "title": "created_at given with a non-UTC +05:30 offset",
+    "status": "submitted",
+    "created_at": "2026-08-01T00:00:00+05:30",
+    "deadline": null
+  },
+  {
+    "task_id": "S-14",
+    "title": "Deadline earlier than created_at, and also already overdue vs now",
+    "status": "proposed",
+    "created_at": "2026-08-01T00:00:00Z",
+    "deadline": "2026-07-30T00:00:00Z"
+  },
+  {
+    "task_id": "S-15",
+    "title": "Unrecognized status is inert even with old created_at / past deadline",
+    "status": "cancelled",
+    "created_at": "2026-07-01T00:00:00Z",
+    "deadline": "2026-09-01T00:00:00Z"
+  },
+  {
+    "task_id": "S-16",
+    "title": "Proposed with no deadline is inert",
+    "status": "proposed",
+    "created_at": "2026-07-01T00:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-17",
+    "title": "Accepted with created_at in the future relative to now (negative age)",
+    "status": "accepted",
+    "created_at": "2026-08-03T00:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-18",
+    "title": "Accepted exactly at the 48h boundary (not yet stale)",
+    "status": "accepted",
+    "created_at": "2026-07-31T00:00:00Z",
+    "deadline": null
+  },
+  {
+    "task_id": "S-19",
+    "title": "Proposed with deadline exactly equal to now (not yet overdue)",
+    "status": "proposed",
+    "created_at": "2026-07-30T00:00:00Z",
+    "deadline": "2026-08-02T00:00:00Z"
+  },
+  {
+    "task_id": "S-20",
+    "title": "Submitted exactly at the 72h boundary (not yet stale)",
+    "status": "submitted",
+    "created_at": "2026-07-30T00:00:00Z",
+    "deadline": null
+  }
+]

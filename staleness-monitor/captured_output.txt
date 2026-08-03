@@ -1,0 +1,199 @@
+$ python3 -m unittest test_staleness -v
+test_exactly_24h_is_critical (test_staleness.TestBucketForOverdueProposed) ... ok
+test_exactly_6h_is_warning (test_staleness.TestBucketForOverdueProposed) ... ok
+test_just_above_zero_is_info (test_staleness.TestBucketForOverdueProposed) ... ok
+test_just_below_24h_is_warning (test_staleness.TestBucketForOverdueProposed) ... ok
+test_just_below_6h_is_info (test_staleness.TestBucketForOverdueProposed) ... ok
+test_way_above_24h_is_critical (test_staleness.TestBucketForOverdueProposed) ... ok
+test_different_window_submitted_default (test_staleness.TestBucketForStale) ... ok
+test_exactly_1_5x_window_is_warning (test_staleness.TestBucketForStale) ... ok
+test_exactly_2x_window_is_critical (test_staleness.TestBucketForStale) ... ok
+test_just_above_window_is_info (test_staleness.TestBucketForStale) ... ok
+test_just_below_1_5x_window_is_info (test_staleness.TestBucketForStale) ... ok
+test_just_below_2x_window_is_warning (test_staleness.TestBucketForStale) ... ok
+test_way_above_2x_window_is_critical (test_staleness.TestBucketForStale) ... ok
+test_zero_window (test_staleness.TestBucketForStale) ... ok
+test_empty_list_zero_findings (test_staleness.TestBuildReportShape) ... ok
+test_findings_sorted_by_code_within_same_task_id (test_staleness.TestBuildReportShape) ... ok
+test_findings_sorted_by_task_id_within_bucket (test_staleness.TestBuildReportShape) ... ok
+test_generated_at_reflects_now (test_staleness.TestBuildReportShape) ... ok
+test_list_of_non_objects_raises (test_staleness.TestBuildReportShape) ... ok
+test_missing_created_at_raises (test_staleness.TestBuildReportShape) ... ok
+test_missing_deadline_key_raises (test_staleness.TestBuildReportShape) ... ok
+test_missing_status_raises (test_staleness.TestBuildReportShape) ... ok
+test_missing_task_id_raises (test_staleness.TestBuildReportShape) ... ok
+test_missing_title_raises (test_staleness.TestBuildReportShape) ... ok
+test_multiple_tasks_all_contribute (test_staleness.TestBuildReportShape) ... ok
+test_not_a_list_raises (test_staleness.TestBuildReportShape) ... ok
+test_order_is_deterministic_across_calls (test_staleness.TestBuildReportShape) ... ok
+test_summary_counts_match_buckets (test_staleness.TestBuildReportShape) ... ok
+test_windows_reflected_in_report (test_staleness.TestBuildReportShape) ... ok
+test_bad_json_file_exit_2 (test_staleness.TestCLI) ... ok
+test_custom_windows_reduce_finding_count (test_staleness.TestCLI) ... ok
+test_custom_windows_reflected_in_output (test_staleness.TestCLI) ... ok
+test_default_windows_in_output (test_staleness.TestCLI) ... ok
+test_empty_array_exit_0 (test_staleness.TestCLI) ... ok
+test_fresh_fixture_exit_0 (test_staleness.TestCLI) ... ok
+test_help_exits_zero (test_staleness.TestCLI) ... ok
+test_json_object_instead_of_array_exit_2 (test_staleness.TestCLI) ... ok
+test_long_output_flag_form (test_staleness.TestCLI) ... ok
+test_missing_now_exit_2 (test_staleness.TestCLI) ... ok
+test_missing_required_key_exit_2 (test_staleness.TestCLI) ... ok
+test_negative_accepted_window_exit_2 (test_staleness.TestCLI) ... ok
+test_negative_submitted_window_exit_2 (test_staleness.TestCLI) ... ok
+test_non_utc_now_exit_2 (test_staleness.TestCLI) ... ok
+test_nonexistent_input_file_exit_2 (test_staleness.TestCLI) ... ok
+test_output_flag_writes_file (test_staleness.TestCLI) ... ok
+test_relative_and_absolute_paths_both_work (test_staleness.TestCLI) ... ok
+test_reproducible_byte_identical_across_runs (test_staleness.TestCLI) ... ok
+test_stale_fixture_all_buckets_present (test_staleness.TestCLI) ... ok
+test_stale_fixture_exit_1 (test_staleness.TestCLI) ... ok
+test_stale_fixture_findings_all_codes_present (test_staleness.TestCLI) ... ok
+test_stdout_has_no_extra_prints (test_staleness.TestCLI) ... ok
+test_unknown_status_task_does_not_crash (test_staleness.TestCLI) ... ok
+test_unparseable_now_exit_2 (test_staleness.TestCLI) ... ok
+test_ascii_only_with_unicode_title (test_staleness.TestCanonicalJson) ... ok
+test_deterministic_for_same_input (test_staleness.TestCanonicalJson) ... ok
+test_ends_with_single_newline (test_staleness.TestCanonicalJson) ... ok
+test_keys_are_sorted (test_staleness.TestCanonicalJson) ... ok
+test_no_extra_whitespace_separators (test_staleness.TestCanonicalJson) ... ok
+test_round_trips_through_json_loads (test_staleness.TestCanonicalJson) ... ok
+test_basic_case (test_staleness.TestEvaluateTaskDeadlineBeforeCreated) ... ok
+test_combines_with_overdue_proposed (test_staleness.TestEvaluateTaskDeadlineBeforeCreated) ... ok
+test_deadline_after_created_no_finding (test_staleness.TestEvaluateTaskDeadlineBeforeCreated) ... ok
+test_deadline_equal_created_no_finding (test_staleness.TestEvaluateTaskDeadlineBeforeCreated) ... ok
+test_null_deadline_no_finding (test_staleness.TestEvaluateTaskDeadlineBeforeCreated) ... ok
+test_works_for_non_proposed_status_too (test_staleness.TestEvaluateTaskDeadlineBeforeCreated) ... ok
+test_garbage_string (test_staleness.TestEvaluateTaskMalformedCreatedAt) ... ok
+test_malformed_created_at_suppresses_deadline_before_created (test_staleness.TestEvaluateTaskMalformedCreatedAt) ... ok
+test_malformed_created_at_suppresses_stale_accepted (test_staleness.TestEvaluateTaskMalformedCreatedAt) ... ok
+test_malformed_created_at_suppresses_stale_submitted (test_staleness.TestEvaluateTaskMalformedCreatedAt) ... ok
+test_non_utc_offset (test_staleness.TestEvaluateTaskMalformedCreatedAt) ... ok
+test_null_created_at (test_staleness.TestEvaluateTaskMalformedCreatedAt) ... ok
+test_boolean_deadline_value (test_staleness.TestEvaluateTaskMalformedDeadline) ... ok
+test_garbage_string (test_staleness.TestEvaluateTaskMalformedDeadline) ... ok
+test_malformed_deadline_does_not_crash_on_accepted_status (test_staleness.TestEvaluateTaskMalformedDeadline) ... ok
+test_non_string_deadline_value (test_staleness.TestEvaluateTaskMalformedDeadline) ... ok
+test_non_utc_offset (test_staleness.TestEvaluateTaskMalformedDeadline) ... ok
+test_null_deadline_is_not_malformed (test_staleness.TestEvaluateTaskMalformedDeadline) ... ok
+test_accepted_status_with_past_deadline_not_overdue_proposed (test_staleness.TestEvaluateTaskOverdueProposed) ... ok
+test_deadline_equal_now_no_finding (test_staleness.TestEvaluateTaskOverdueProposed) ... ok
+test_deadline_one_second_past_triggers_info (test_staleness.TestEvaluateTaskOverdueProposed) ... ok
+test_deadline_two_days_past_triggers_critical (test_staleness.TestEvaluateTaskOverdueProposed) ... ok
+test_finding_includes_task_metadata (test_staleness.TestEvaluateTaskOverdueProposed) ... ok
+test_future_deadline_no_finding (test_staleness.TestEvaluateTaskOverdueProposed) ... ok
+test_no_deadline_no_finding (test_staleness.TestEvaluateTaskOverdueProposed) ... ok
+test_critical_bucket_at_2x_window (test_staleness.TestEvaluateTaskStaleAccepted) ... ok
+test_custom_window_respected (test_staleness.TestEvaluateTaskStaleAccepted) ... ok
+test_exactly_at_boundary_no_finding (test_staleness.TestEvaluateTaskStaleAccepted) ... ok
+test_fresh_no_finding (test_staleness.TestEvaluateTaskStaleAccepted) ... ok
+test_negative_age_future_created_at_no_finding (test_staleness.TestEvaluateTaskStaleAccepted) ... ok
+test_one_second_past_boundary_triggers (test_staleness.TestEvaluateTaskStaleAccepted) ... ok
+test_submitted_status_not_flagged_as_stale_accepted (test_staleness.TestEvaluateTaskStaleAccepted) ... ok
+test_critical_bucket_at_2x_window (test_staleness.TestEvaluateTaskStaleSubmitted) ... ok
+test_custom_window_respected (test_staleness.TestEvaluateTaskStaleSubmitted) ... ok
+test_exactly_at_boundary_no_finding (test_staleness.TestEvaluateTaskStaleSubmitted) ... ok
+test_fresh_no_finding (test_staleness.TestEvaluateTaskStaleSubmitted) ... ok
+test_one_second_past_boundary_triggers (test_staleness.TestEvaluateTaskStaleSubmitted) ... ok
+test_warning_bucket_at_1_5x_window (test_staleness.TestEvaluateTaskStaleSubmitted) ... ok
+test_case_sensitive_status (test_staleness.TestEvaluateTaskUnknownStatus) ... ok
+test_unknown_status_empty_string (test_staleness.TestEvaluateTaskUnknownStatus) ... ok
+test_unknown_status_still_flags_malformed_deadline (test_staleness.TestEvaluateTaskUnknownStatus) ... ok
+test_unknown_status_with_old_created_at_no_stale (test_staleness.TestEvaluateTaskUnknownStatus) ... ok
+test_unknown_status_with_past_deadline_no_overdue (test_staleness.TestEvaluateTaskUnknownStatus) ... ok
+test_fresh_fixture_every_task_id_unique (test_staleness.TestFixtureIntegrity) ... ok
+test_fresh_fixture_is_valid_json_array (test_staleness.TestFixtureIntegrity) ... ok
+test_fresh_fixture_produces_zero_findings_via_library (test_staleness.TestFixtureIntegrity) ... ok
+test_stale_fixture_every_task_id_unique (test_staleness.TestFixtureIntegrity) ... ok
+test_stale_fixture_is_valid_json_array (test_staleness.TestFixtureIntegrity) ... ok
+test_stale_fixture_triggers_every_bucket (test_staleness.TestFixtureIntegrity) ... ok
+test_stale_fixture_triggers_every_finding_code (test_staleness.TestFixtureIntegrity) ... ok
+test_exactly_60_days (test_staleness.TestFormatAge) ... ok
+test_example_from_spec (test_staleness.TestFormatAge) ... ok
+test_float_input_truncated (test_staleness.TestFormatAge) ... ok
+test_just_under_a_day (test_staleness.TestFormatAge) ... ok
+test_large_value (test_staleness.TestFormatAge) ... ok
+test_negative_float_input (test_staleness.TestFormatAge) ... ok
+test_negative_large (test_staleness.TestFormatAge) ... ok
+test_negative_one_hour (test_staleness.TestFormatAge) ... ok
+test_negative_small (test_staleness.TestFormatAge) ... ok
+test_one_day (test_staleness.TestFormatAge) ... ok
+test_one_hour (test_staleness.TestFormatAge) ... ok
+test_one_minute (test_staleness.TestFormatAge) ... ok
+test_sub_minute_truncated (test_staleness.TestFormatAge) ... ok
+test_sub_minute_truncated_2 (test_staleness.TestFormatAge) ... ok
+test_zero (test_staleness.TestFormatAge) ... ok
+test_main_only_source_of_now_is_the_now_argument (test_staleness.TestNoWallClockRead) ... ok
+test_now_is_always_a_function_parameter (test_staleness.TestNoWallClockRead) ... ok
+test_source_has_no_datetime_now (test_staleness.TestNoWallClockRead) ... ok
+test_invalid_bad_day (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_hour (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_month (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_boolean_value (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_date_only_no_z (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_dict_value (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_empty_string (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_float_value (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_garbage_text (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_integer_value (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_list_value (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_negative_offset_0800 (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_none_value (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_positive_offset_0530 (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_slash_date (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_timezone_naive (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_trailing_garbage_after_z (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_whitespace_only (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_invalid_z_with_embedded_offset (test_staleness.TestParseUtcTimestampInvalid) ... ok
+test_valid_end_of_year (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_leading_trailing_whitespace (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_leap_day (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_lowercase_z (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_offset (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_z (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_minus_zero_offset (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_plus_zero_offset (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_space_separator_with_offset (test_staleness.TestParseUtcTimestampValid) ... ok
+test_valid_uppercase_z (test_staleness.TestParseUtcTimestampValid) ... ok
+
+----------------------------------------------------------------------
+Ran 156 tests in 0.413s
+
+OK
+
+$ python3 staleness.py tasks_fresh.json --now 2026-08-02T00:00:00Z ; echo "exit=$?"
+{"findings":{"critical":[],"info":[],"warning":[]},"generated_at":"2026-08-02T00:00:00Z","summary":{"critical":0,"info":0,"total_findings":0,"total_tasks":8,"warning":0},"windows":{"accepted_stale_hours":48,"submitted_stale_hours":72}}
+exit=0
+
+$ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run1.json ; echo "exit=$?"
+exit=1
+
+$ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum report_run1.json report_run2.json
+3651e155d9e4b9e4663a396bfd7564bbd6ca9b2ee9e6c584a0177494732b85cc  report_run1.json
+3651e155d9e4b9e4663a396bfd7564bbd6ca9b2ee9e6c584a0177494732b85cc  report_run2.json
+
+$ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z --accepted-stale-hours 9999 --submitted-stale-hours 9999 ; echo "exit=$?"
+{"findings":{"critical":[{"age_human":"2d 0h 0m","age_seconds":172800,"bucket":"critical","code":"OVERDUE_PROPOSED","deadline":"2026-07-31T00:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-1","title":"Proposed, deadline 48h in the past (critical overdue)"},{"bucket":"critical","code":"MALFORMED_DEADLINE","deadline_raw":"2026-08-05T00:00:00+05:30","message":"timestamp is not expressed in UTC (non-zero offset): '2026-08-05T00:00:00+05:30'","status":"proposed","task_id":"S-10","title":"Deadline given with a non-UTC +05:30 offset"},{"bucket":"critical","code":"MALFORMED_DEADLINE","deadline_raw":"not-a-real-date","message":"unparseable ISO-8601 timestamp: 'not-a-real-date'","status":"proposed","task_id":"S-11","title":"Deadline is an unparseable string"},{"bucket":"critical","code":"MALFORMED_CREATED_AT","created_at_raw":"not-a-real-date","message":"unparseable ISO-8601 timestamp: 'not-a-real-date'","status":"accepted","task_id":"S-12","title":"created_at is an unparseable string"},{"bucket":"critical","code":"MALFORMED_CREATED_AT","created_at_raw":"2026-08-01T00:00:00+05:30","message":"timestamp is not expressed in UTC (non-zero offset): '2026-08-01T00:00:00+05:30'","status":"submitted","task_id":"S-13","title":"created_at given with a non-UTC +05:30 offset"},{"age_human":"2d 0h 0m","age_seconds":172800,"bucket":"critical","code":"DEADLINE_BEFORE_CREATED","created_at":"2026-08-01T00:00:00Z","deadline":"2026-07-30T00:00:00Z","message":"deadline is earlier than created_at (deadline was already past when the task was created)","status":"proposed","task_id":"S-14","title":"Deadline earlier than created_at, and also already overdue vs now"},{"age_human":"3d 0h 0m","age_seconds":259200,"bucket":"critical","code":"OVERDUE_PROPOSED","deadline":"2026-07-30T00:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-14","title":"Deadline earlier than created_at, and also already overdue vs now"}],"info":[{"age_human":"0d 1h 0m","age_seconds":3600,"bucket":"info","code":"OVERDUE_PROPOSED","deadline":"2026-08-01T23:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-3","title":"Proposed, deadline 1h in the past (info overdue)"}],"warning":[{"age_human":"0d 10h 0m","age_seconds":36000,"bucket":"warning","code":"OVERDUE_PROPOSED","deadline":"2026-08-01T14:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-2","title":"Proposed, deadline 10h in the past (warning overdue)"}]},"generated_at":"2026-08-02T00:00:00Z","summary":{"critical":7,"info":1,"total_findings":9,"total_tasks":20,"warning":1},"windows":{"accepted_stale_hours":9999.0,"submitted_stale_hours":9999.0}}
+exit=1
+
+$ python3 staleness.py tasks_stale.json ; echo "exit=$?"
+usage: staleness.py [-h] --now NOW
+                    [--accepted-stale-hours ACCEPTED_STALE_HOURS]
+                    [--submitted-stale-hours SUBMITTED_STALE_HOURS]
+                    [-o OUTPUT]
+                    input_file
+staleness.py: error: the following arguments are required: --now
+exit=2
+
+$ python3 staleness.py /nonexistent.json --now 2026-08-02T00:00:00Z ; echo "exit=$?"
+staleness.py: error: input file not found: /nonexistent.json
+exit=2
+
+$ grep -n "now()\|utcnow\|time.time" staleness.py
+(no matches -- no wall-clock read found)
