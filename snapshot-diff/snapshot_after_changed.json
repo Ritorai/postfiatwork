@@ -1,0 +1,144 @@
+{
+  "tasks": [
+    {
+      "task_id": "TASK-STABLE",
+      "title": "Reindex catalog — café branch",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 100,
+      "evidence": [
+        {"id": "EV-S1", "type": "screenshot"}
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "deadline": "2026-02-01T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-STATUS",
+      "title": "Verify webhook retries",
+      "status": "in_progress",
+      "list": "outstanding",
+      "reward": 30,
+      "evidence": [],
+      "created_at": "2026-01-02T00:00:00Z",
+      "deadline": "2026-02-02T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-REWARD-BIG",
+      "title": "Pay out bounty batch",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 750.25,
+      "evidence": [
+        {"id": "EV-B1", "type": "log"}
+      ],
+      "created_at": "2026-01-03T00:00:00Z",
+      "deadline": "2026-02-03T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-PRECISION",
+      "title": "High-precision reward audit",
+      "status": "rewarded",
+      "list": "rewarded",
+      "reward": 123456789012345678.123456790,
+      "evidence": [
+        {"id": "EV-P1", "type": "ledger"}
+      ],
+      "created_at": "2026-01-04T00:00:00Z",
+      "deadline": "2026-02-04T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-REWARD-NULL",
+      "title": "Reward not yet assigned",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 50,
+      "evidence": [],
+      "created_at": "2026-01-05T00:00:00Z",
+      "deadline": "2026-02-05T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-REWARD-TYPEEQ",
+      "title": "Reward as number vs string",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": "42",
+      "evidence": [],
+      "created_at": "2026-01-06T00:00:00Z",
+      "deadline": "2026-02-06T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-EVIDENCE-ADD",
+      "title": "Evidence will be added",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 10,
+      "evidence": [
+        {"id": "EV-A1", "type": "screenshot"},
+        {"id": "EV-A2", "type": "link"}
+      ],
+      "created_at": "2026-01-07T00:00:00Z",
+      "deadline": "2026-02-07T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-EVIDENCE-REMOVE",
+      "title": "Evidence will be removed",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 10,
+      "evidence": [
+        {"id": "EV-R1", "type": "log"}
+      ],
+      "created_at": "2026-01-08T00:00:00Z",
+      "deadline": "2026-02-08T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-EVIDENCE-REORDER",
+      "title": "Evidence will only be reordered",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 10,
+      "evidence": [
+        {"id": "EV-O2", "type": "doc"},
+        {"id": "EV-O1", "type": "log"}
+      ],
+      "created_at": "2026-01-09T00:00:00Z",
+      "deadline": "2026-02-09T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-FIELD-LIST",
+      "title": "List bucket will change",
+      "status": "outstanding",
+      "list": "archived",
+      "reward": 10,
+      "evidence": [],
+      "created_at": "2026-01-10T00:00:00Z",
+      "deadline": "2026-02-10T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-FIELD-TITLE-UNICODE",
+      "title": "Ångström calibration — 京都 run",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 10,
+      "evidence": [],
+      "created_at": "2026-01-11T00:00:00Z",
+      "deadline": "2026-02-11T00:00:00Z"
+    },
+    {
+      "task_id": "TASK-ADDED-ONE",
+      "title": "New scouting task",
+      "status": "outstanding",
+      "list": "outstanding",
+      "reward": 5,
+      "evidence": [],
+      "created_at": "2026-01-13T00:00:00Z",
+      "deadline": "2026-02-13T00:00:00Z"
+    }
+  ],
+  "summary": {
+    "outstanding": 7,
+    "in_progress": 2,
+    "rewarded": 3,
+    "archived": 1
+  }
+}

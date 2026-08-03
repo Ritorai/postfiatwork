@@ -1,0 +1,264 @@
+$ python3 -m unittest test_snapdiff -v
+test_ignored_fields_sorted (test_snapdiff.TestBuildReport) ... ok
+test_no_changes_result (test_snapdiff.TestBuildReport) ... ok
+test_report_contains_no_wallclock_or_path_fields (test_snapdiff.TestBuildReport) ... ok
+test_with_changes_result (test_snapdiff.TestBuildReport) ... ok
+test_ascii_escapes_cjk (test_snapdiff.TestCanonicalDumps) ... ok
+test_ascii_escapes_non_ascii (test_snapdiff.TestCanonicalDumps) ... ok
+test_deterministic_repeated_calls (test_snapdiff.TestCanonicalDumps) ... ok
+test_empty_object (test_snapdiff.TestCanonicalDumps) ... ok
+test_key_order_independent (test_snapdiff.TestCanonicalDumps) ... ok
+test_list_order_preserved_not_sorted (test_snapdiff.TestCanonicalDumps) ... ok
+test_nested_key_sorting (test_snapdiff.TestCanonicalDumps) ... ok
+test_no_extraneous_whitespace (test_snapdiff.TestCanonicalDumps) ... ok
+test_sorts_keys (test_snapdiff.TestCanonicalDumps) ... ok
+test_trailing_newline_exactly_one (test_snapdiff.TestCanonicalDumps) ... ok
+test_changed_snapshot_hits_every_category (test_snapdiff.TestCliBasic) ... ok
+test_changed_snapshots_exit_1 (test_snapdiff.TestCliBasic) ... ok
+test_identical_snapshots_exit_0 (test_snapdiff.TestCliBasic) ... ok
+test_ignore_flag_recorded_in_report (test_snapdiff.TestCliBasic) ... ok
+test_ignore_reward_and_status_reduces_finding_count (test_snapdiff.TestCliBasic) ... ok
+test_no_absolute_paths_leak_into_output (test_snapdiff.TestCliBasic) ... ok
+test_output_ends_with_single_newline (test_snapdiff.TestCliBasic) ... ok
+test_output_flag_long_form (test_snapdiff.TestCliBasic) ... ok
+test_output_flag_writes_file_not_stdout (test_snapdiff.TestCliBasic) ... ok
+test_reorder_only_task_absent_from_changes (test_snapdiff.TestCliBasic) ... ok
+test_reversed_diff_is_exact_inverse (test_snapdiff.TestCliBasic) ... ok
+test_reward_type_flip_task_absent_from_changes (test_snapdiff.TestCliBasic) ... ok
+test_stable_task_absent_from_changes (test_snapdiff.TestCliBasic) ... ok
+test_two_runs_byte_identical (test_snapdiff.TestCliBasic) ... ok
+test_both_snapshots_empty_exit_0 (test_snapdiff.TestCliEdgeCases) ... ok
+test_diffing_file_against_itself_is_no_changes (test_snapdiff.TestCliEdgeCases) ... ok
+test_duplicate_ignore_flag_deduplicated_in_report (test_snapdiff.TestCliEdgeCases) ... ok
+test_grep_no_tmp_or_sessions_paths_in_real_fixture_output (test_snapdiff.TestCliEdgeCases) ... ok
+test_ignore_field_that_does_not_exist_anywhere (test_snapdiff.TestCliEdgeCases) ... ok
+test_null_reward_handled_without_crash (test_snapdiff.TestCliEdgeCases) ... ok
+test_task_present_both_zero_changes_specific_task (test_snapdiff.TestCliEdgeCases) ... ok
+test_unicode_task_titles_round_trip (test_snapdiff.TestCliEdgeCases) ... ok
+test_duplicate_task_id_in_after_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_duplicate_task_id_in_before_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_error_message_on_stderr_not_stdout (test_snapdiff.TestCliErrors) ... ok
+test_evidence_wrong_type_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_help_exit_0 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_json_syntax_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_array_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_boolean_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_infinity_literal_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_nan_literal_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_object_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_invalid_reward_string_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_missing_required_arg_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_missing_task_id_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_missing_tasks_key_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_no_args_at_all_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_nonexistent_file_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_output_write_failure_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_summary_wrong_type_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_task_not_object_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_tasks_wrong_type_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_top_level_not_object_exit_2 (test_snapdiff.TestCliErrors) ... ok
+test_negative_value (test_snapdiff.TestDecimalStr) ... ok
+test_never_scientific_for_huge_value (test_snapdiff.TestDecimalStr) ... ok
+test_never_scientific_for_tiny_value (test_snapdiff.TestDecimalStr) ... ok
+test_plain_fraction (test_snapdiff.TestDecimalStr) ... ok
+test_plain_integer_value (test_snapdiff.TestDecimalStr) ... ok
+test_zero (test_snapdiff.TestDecimalStr) ... ok
+test_changes_sorted_by_type_first (test_snapdiff.TestDeterminism) ... ok
+test_full_report_canonical_dumps_deterministic (test_snapdiff.TestDeterminism) ... ok
+test_input_task_order_does_not_affect_output_order (test_snapdiff.TestDeterminism) ... ok
+test_repeated_diff_calls_produce_identical_output (test_snapdiff.TestDeterminism) ... ok
+test_tiebreak_uses_full_entry_content (test_snapdiff.TestDeterminism) ... ok
+test_evidence_added (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_both_empty_no_entries (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_duplicate_item_collapses_as_set (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_ignored_via_ignore_flag (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_items_sorted_deterministically (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_missing_treated_as_empty (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_non_dict_items_supported (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_removed (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_reordered_not_a_change (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_type_change_same_id_is_remove_plus_add (test_snapdiff.TestDiffEvidence) ... ok
+test_evidence_unchanged_no_entries (test_snapdiff.TestDiffEvidence) ... ok
+test_field_absent_to_present (test_snapdiff.TestDiffFieldChanged) ... ok
+test_field_change_ignored_via_ignore_flag (test_snapdiff.TestDiffFieldChanged) ... ok
+test_field_null_and_absent_treated_the_same (test_snapdiff.TestDiffFieldChanged) ... ok
+test_field_present_to_absent (test_snapdiff.TestDiffFieldChanged) ... ok
+test_generic_field_change_detected (test_snapdiff.TestDiffFieldChanged) ... ok
+test_ignore_nonexistent_field_is_a_harmless_noop (test_snapdiff.TestDiffFieldChanged) ... ok
+test_multiple_field_changes_all_reported (test_snapdiff.TestDiffFieldChanged) ... ok
+test_nested_list_field_change_detected (test_snapdiff.TestDiffFieldChanged) ... ok
+test_nested_list_field_reorder_is_a_change (test_snapdiff.TestDiffFieldChanged) ... ok
+test_no_field_changed_for_zero_diff_task (test_snapdiff.TestDiffFieldChanged) ... ok
+test_unicode_field_change_detected (test_snapdiff.TestDiffFieldChanged) ... ok
+test_unicode_title_unchanged_no_entry (test_snapdiff.TestDiffFieldChanged) ... ok
+test_negative_reward_delta (test_snapdiff.TestDiffRewardChanged) ... ok
+test_precision_demo_detected_as_change (test_snapdiff.TestDiffRewardChanged) ... ok
+test_precision_demo_would_be_invisible_to_float_diff (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_decrease (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_delta_exact_for_large_numbers (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_ignored_via_ignore_flag (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_increase (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_missing_key_treated_as_null (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_null_both_sides_no_entry (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_null_to_value (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_string_vs_number_same_value_no_entry (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_string_vs_number_trailing_zero_same_value_no_entry (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_unchanged_no_entry (test_snapdiff.TestDiffRewardChanged) ... ok
+test_reward_value_to_null (test_snapdiff.TestDiffRewardChanged) ... ok
+test_status_change_detected (test_snapdiff.TestDiffStatusTransition) ... ok
+test_status_ignored_via_ignore_flag (test_snapdiff.TestDiffStatusTransition) ... ok
+test_status_missing_to_present_is_a_transition (test_snapdiff.TestDiffStatusTransition) ... ok
+test_status_not_leaked_into_field_changed (test_snapdiff.TestDiffStatusTransition) ... ok
+test_status_unchanged_no_entry (test_snapdiff.TestDiffStatusTransition) ... ok
+test_summary_both_empty_no_entry (test_snapdiff.TestDiffSummaryChanged) ... ok
+test_summary_change_detected (test_snapdiff.TestDiffSummaryChanged) ... ok
+test_summary_ignored_via_ignore_flag (test_snapdiff.TestDiffSummaryChanged) ... ok
+test_summary_key_order_does_not_matter (test_snapdiff.TestDiffSummaryChanged) ... ok
+test_summary_new_bucket_added (test_snapdiff.TestDiffSummaryChanged) ... ok
+test_summary_unchanged_no_entry (test_snapdiff.TestDiffSummaryChanged) ... ok
+test_empty_both_sides_no_added_removed (test_snapdiff.TestDiffTaskAddedRemoved) ... ok
+test_multiple_added_sorted_by_task_id (test_snapdiff.TestDiffTaskAddedRemoved) ... ok
+test_multiple_removed_sorted_by_task_id (test_snapdiff.TestDiffTaskAddedRemoved) ... ok
+test_no_added_or_removed_when_ids_match (test_snapdiff.TestDiffTaskAddedRemoved) ... ok
+test_task_added (test_snapdiff.TestDiffTaskAddedRemoved) ... ok
+test_task_added_task_field_is_full_record_jsonified (test_snapdiff.TestDiffTaskAddedRemoved) ... ok
+test_task_removed (test_snapdiff.TestDiffTaskAddedRemoved) ... ok
+test_large_positive (test_snapdiff.TestFormatSignedDelta) ... ok
+test_negative_keeps_minus (test_snapdiff.TestFormatSignedDelta) ... ok
+test_positive_gets_plus (test_snapdiff.TestFormatSignedDelta) ... ok
+test_tiny_negative_fixed_point (test_snapdiff.TestFormatSignedDelta) ... ok
+test_tiny_positive_fixed_point (test_snapdiff.TestFormatSignedDelta) ... ok
+test_zero_gets_plus (test_snapdiff.TestFormatSignedDelta) ... ok
+test_ignore_task_id_is_noop (test_snapdiff.TestIgnoreMechanics) ... ok
+test_ignoring_all_differing_fields_flips_to_no_changes (test_snapdiff.TestIgnoreMechanics) ... ok
+test_ignoring_reduces_but_does_not_always_zero_change_count (test_snapdiff.TestIgnoreMechanics) ... ok
+test_multiple_ignore_flags_combine (test_snapdiff.TestIgnoreMechanics) ... ok
+test_bool_passthrough (test_snapdiff.TestJsonify) ... ok
+test_decimal_to_string (test_snapdiff.TestJsonify) ... ok
+test_dict_recursion (test_snapdiff.TestJsonify) ... ok
+test_empty_dict_and_list (test_snapdiff.TestJsonify) ... ok
+test_int_passthrough (test_snapdiff.TestJsonify) ... ok
+test_jsonify_output_is_json_serializable (test_snapdiff.TestJsonify) ... ok
+test_list_recursion (test_snapdiff.TestJsonify) ... ok
+test_nested_mixed_structure (test_snapdiff.TestJsonify) ... ok
+test_none_passthrough (test_snapdiff.TestJsonify) ... ok
+test_str_passthrough (test_snapdiff.TestJsonify) ... ok
+test_empty_string_raises_decode_error (test_snapdiff.TestParseJsonDocument) ... ok
+test_float_literal_becomes_decimal (test_snapdiff.TestParseJsonDocument) ... ok
+test_high_precision_literal_preserved_exactly (test_snapdiff.TestParseJsonDocument) ... ok
+test_infinity_literal_rejected (test_snapdiff.TestParseJsonDocument) ... ok
+test_integer_literal_stays_int (test_snapdiff.TestParseJsonDocument) ... ok
+test_invalid_json_syntax_raises_decode_error (test_snapdiff.TestParseJsonDocument) ... ok
+test_nan_literal_rejected (test_snapdiff.TestParseJsonDocument) ... ok
+test_neg_infinity_literal_rejected (test_snapdiff.TestParseJsonDocument) ... ok
+test_parses_plain_object (test_snapdiff.TestParseJsonDocument) ... ok
+test_plain_naive_float_parse_would_lose_precision (test_snapdiff.TestParseJsonDocument) ... ok
+test_invalid_bare_finite_float (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_bare_inf_float (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_bare_nan_float (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_bool_false (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_bool_true (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_decimal_infinity (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_decimal_nan (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_decimal_neg_infinity (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_empty_dict (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_empty_list (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_nonempty_dict (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_nonempty_list (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_string_empty (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_string_infinity (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_string_nan (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_string_neg_infinity (test_snapdiff.TestParseRewardField) ... ok
+test_invalid_string_not_a_number (test_snapdiff.TestParseRewardField) ... ok
+test_valid_decimal_from_float_literal (test_snapdiff.TestParseRewardField) ... ok
+test_valid_decimal_high_precision (test_snapdiff.TestParseRewardField) ... ok
+test_valid_decimal_negative (test_snapdiff.TestParseRewardField) ... ok
+test_valid_decimal_zero (test_snapdiff.TestParseRewardField) ... ok
+test_valid_large_int (test_snapdiff.TestParseRewardField) ... ok
+test_valid_negative_int_allowed (test_snapdiff.TestParseRewardField) ... ok
+test_valid_none_is_no_reward (test_snapdiff.TestParseRewardField) ... ok
+test_valid_positive_int (test_snapdiff.TestParseRewardField) ... ok
+test_valid_string_decimal (test_snapdiff.TestParseRewardField) ... ok
+test_valid_string_high_precision (test_snapdiff.TestParseRewardField) ... ok
+test_valid_string_integer (test_snapdiff.TestParseRewardField) ... ok
+test_valid_string_leading_plus (test_snapdiff.TestParseRewardField) ... ok
+test_valid_string_negative (test_snapdiff.TestParseRewardField) ... ok
+test_valid_string_scientific (test_snapdiff.TestParseRewardField) ... ok
+test_valid_zero_int (test_snapdiff.TestParseRewardField) ... ok
+test_precision_preserved_from_decimal_source (test_snapdiff.TestParseRewardFieldExtra) ... ok
+test_string_reward_equals_number_reward_same_value (test_snapdiff.TestParseRewardFieldExtra) ... ok
+test_string_reward_with_trailing_zero_equals_shorter_form (test_snapdiff.TestParseRewardFieldExtra) ... ok
+test_tiny_precision_difference_is_not_equal (test_snapdiff.TestParseRewardFieldExtra) ... ok
+test_duplicate_error_message_mentions_label_and_id (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_duplicate_task_id_pair (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_duplicate_task_id_triple (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_empty_list (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_empty_string_task_id (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_evidence_empty_list_is_allowed (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_evidence_missing_is_allowed (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_evidence_null_is_allowed (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_evidence_wrong_type_dict (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_evidence_wrong_type_string (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_index_preserves_full_record (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_invalid_reward_propagates_with_task_id (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_missing_task_id (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_non_string_task_id (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_null_task_id (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_reward_missing_defaults_to_none (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_single_valid_task (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_task_record_is_list_not_dict (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_task_record_is_string_not_dict (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_task_record_not_a_dict (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_unicode_task_title_survives (test_snapdiff.TestValidateAndIndexTasks) ... ok
+test_error_message_includes_label (test_snapdiff.TestValidateShape) ... ok
+test_missing_tasks_key (test_snapdiff.TestValidateShape) ... ok
+test_summary_is_string_not_dict (test_snapdiff.TestValidateShape) ... ok
+test_summary_not_a_dict (test_snapdiff.TestValidateShape) ... ok
+test_tasks_is_dict_not_list (test_snapdiff.TestValidateShape) ... ok
+test_tasks_not_a_list (test_snapdiff.TestValidateShape) ... ok
+test_top_level_not_object_list (test_snapdiff.TestValidateShape) ... ok
+test_top_level_not_object_none (test_snapdiff.TestValidateShape) ... ok
+test_top_level_not_object_string (test_snapdiff.TestValidateShape) ... ok
+test_valid_minimal_document (test_snapdiff.TestValidateShape) ... ok
+test_valid_with_summary (test_snapdiff.TestValidateShape) ... ok
+
+----------------------------------------------------------------------
+Ran 222 tests in 0.739s
+
+OK
+
+$ python3 snapdiff.py snapshot_before.json snapshot_after_same.json ; echo "exit=$?"
+{"change_count":0,"changes":[],"ignored_fields":[],"result":"identical","task_count_after":12,"task_count_before":12}
+exit=0
+
+$ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+ca482c447dd77ad9bdcc3bdf57b75aaa38397be473a9585bb5394bd695ad2eca  r1.json
+ca482c447dd77ad9bdcc3bdf57b75aaa38397be473a9585bb5394bd695ad2eca  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --ignore reward --ignore status ; echo "exit=$?"
+{"change_count":7,"changes":[{"items":[{"id":"EV-A2","type":"link"}],"task_id":"TASK-EVIDENCE-ADD","type":"EVIDENCE_ADDED"},{"items":[{"id":"EV-R2","type":"doc"}],"task_id":"TASK-EVIDENCE-REMOVE","type":"EVIDENCE_REMOVED"},{"field":"list","from":"outstanding","task_id":"TASK-FIELD-LIST","to":"archived","type":"FIELD_CHANGED"},{"field":"title","from":"\u00c5ngstr\u00f6m calibration \u2014 caf\u00e9 run","task_id":"TASK-FIELD-TITLE-UNICODE","to":"\u00c5ngstr\u00f6m calibration \u2014 \u4eac\u90fd run","type":"FIELD_CHANGED"},{"from":{"in_progress":1,"outstanding":8,"rewarded":3},"task_id":null,"to":{"archived":1,"in_progress":2,"outstanding":7,"rewarded":3},"type":"SUMMARY_CHANGED"},{"task":{"created_at":"2026-01-13T00:00:00Z","deadline":"2026-02-13T00:00:00Z","evidence":[],"list":"outstanding","reward":"5","status":"outstanding","task_id":"TASK-ADDED-ONE","title":"New scouting task"},"task_id":"TASK-ADDED-ONE","type":"TASK_ADDED"},{"task":{"created_at":"2026-01-12T00:00:00Z","deadline":"2026-02-12T00:00:00Z","evidence":[],"list":"outstanding","reward":"15","status":"outstanding","task_id":"TASK-REMOVED-ONE","title":"This task will be removed"},"task_id":"TASK-REMOVED-ONE","type":"TASK_REMOVED"}],"ignored_fields":["reward","status"],"result":"changed","task_count_after":12,"task_count_before":12}
+exit=1
+
+$ python3 snapdiff.py snapshot_after_changed.json snapshot_before.json -o rev.json ; echo "exit=$?"
+exit=1
+
+$ python3 snapdiff.py /nonexistent.json snapshot_before.json ; echo "exit=$?"
+snapdiff.py: error: could not read '/nonexistent.json': [Errno 2] No such file or directory: '/nonexistent.json'
+exit=2
+
+$ python3 snapdiff.py snapshot_before.json ; echo "exit=$?"
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: the following arguments are required: after
+exit=2
+
+$ grep -c "/sessions\|/tmp\|/home" r1.json
+0
