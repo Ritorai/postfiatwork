@@ -1,0 +1,12 @@
+Verifier notes for the claimcheck fixture bundle "bundle_truthful".
+
+Every claim below is true and should be reported MATCHED by claimcheck.
+
+File hash check:
+sha256(checker.py) = 66795f3166b8fd02d5f054849a469fcb7199a669c69adac08bf386b901430b89
+
+Test suite run:
+Ran 3 tests in 0.000s, all green.
+
+Rerun command and its result:
+Ran `python3 checker.py` and observed exit code 0.
