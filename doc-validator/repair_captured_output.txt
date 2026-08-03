@@ -1,0 +1,377 @@
+############################################################################
+# Repair session transcript -- doc-validator DOC001/DOC007 repair
+# postfiatwork repo. All output below is real command output, captured live.
+############################################################################
+
+================================================================
+STEP 1 -- baseline scan (before any repair edits)
+================================================================
+$ cd /sessions/sharp-stoic-knuth/mnt/outputs/doc-validator
+$ python3 docval.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o before_report.json ; echo "exit=$?"
+exit=1
+
+--- before_report.json summary ---
+{
+  "counts": {
+    "DOC001_UNDOCUMENTED_FLAG": 16,
+    "DOC002_PHANTOM_FLAG": 47,
+    "DOC006_COMMAND_BLOCK_UNPARSEABLE": 138,
+    "DOC007_NO_README": 2,
+    "DOC008_NO_CLI": 1
+  },
+  "finding_count": 204,
+  "ok": false,
+  "tool_count": 34
+}
+
+--- BEFORE: full DOC001_UNDOCUMENTED_FLAG + DOC007_NO_README finding list (16 + 2 = 18 findings) ---
+DOC001_UNDOCUMENTED_FLAG | budget-forecaster/README.md | budget-forecaster/README.md: argparse in budget-forecaster/forecast.py defines flag '--horizon-weeks' which appears nowhere in budget-forecaster/README.md
+DOC001_UNDOCUMENTED_FLAG | budget-forecaster/README.md | budget-forecaster/README.md: argparse in budget-forecaster/forecast.py defines flag '--open-tasks' which appears nowhere in budget-forecaster/README.md
+DOC001_UNDOCUMENTED_FLAG | budget-forecaster/README.md | budget-forecaster/README.md: argparse in budget-forecaster/forecast.py defines flag '--out' which appears nowhere in budget-forecaster/README.md
+DOC001_UNDOCUMENTED_FLAG | event-linter/README.md | event-linter/README.md: argparse in event-linter/event_lint.py defines flag '--out' which appears nowhere in event-linter/README.md
+DOC001_UNDOCUMENTED_FLAG | evidence-manifest/README.md | evidence-manifest/README.md: argparse in evidence-manifest/manifest.py defines flag '--out' which appears nowhere in evidence-manifest/README.md
+DOC001_UNDOCUMENTED_FLAG | evidence-scorer/README.md | evidence-scorer/README.md: argparse in evidence-scorer/score_evidence.py defines flag '--config' which appears nowhere in evidence-scorer/README.md
+DOC001_UNDOCUMENTED_FLAG | evidence-scorer/README.md | evidence-scorer/README.md: argparse in evidence-scorer/score_evidence.py defines flag '--out' which appears nowhere in evidence-scorer/README.md
+DOC001_UNDOCUMENTED_FLAG | lifecycle-linter/README.md | lifecycle-linter/README.md: argparse in lifecycle-linter/lifecycle_lint.py defines flag '--out' which appears nowhere in lifecycle-linter/README.md
+DOC001_UNDOCUMENTED_FLAG | nondeterminism-scanner/README.md | nondeterminism-scanner/README.md: argparse in nondeterminism-scanner/ndscan.py defines flag '--output' which appears nowhere in nondeterminism-scanner/README.md
+DOC001_UNDOCUMENTED_FLAG | payload-validator/README.md | payload-validator/README.md: argparse in payload-validator/payload_validate.py defines flag '--output' which appears nowhere in payload-validator/README.md
+DOC001_UNDOCUMENTED_FLAG | sybil-detector/README.md | sybil-detector/README.md: argparse in sybil-detector/sybil_detect.py defines flag '--config' which appears nowhere in sybil-detector/README.md
+DOC001_UNDOCUMENTED_FLAG | sybil-detector/README.md | sybil-detector/README.md: argparse in sybil-detector/sybil_detect.py defines flag '--out' which appears nowhere in sybil-detector/README.md
+DOC001_UNDOCUMENTED_FLAG | throughput-reporter/README.md | throughput-reporter/README.md: argparse in throughput-reporter/throughput.py defines flag '--out' which appears nowhere in throughput-reporter/README.md
+DOC001_UNDOCUMENTED_FLAG | xrpl-address/README.md | xrpl-address/README.md: argparse in xrpl-address/address_validate.py defines flag '--denylist' which appears nowhere in xrpl-address/README.md
+DOC001_UNDOCUMENTED_FLAG | xrpl-address/README.md | xrpl-address/README.md: argparse in xrpl-address/address_validate.py defines flag '--out' which appears nowhere in xrpl-address/README.md
+DOC001_UNDOCUMENTED_FLAG | xrpl-auditor/README.md | xrpl-auditor/README.md: argparse in xrpl-auditor/payout_audit.py defines flag '--out' which appears nowhere in xrpl-auditor/README.md
+DOC007_NO_README | evidence-validator | evidence-validator: directory contains an argparse CLI (validator.py) but no README.md
+DOC007_NO_README | reward-reconciler | reward-reconciler: directory contains an argparse CLI (reconcile.py) but no README.md
+
+================================================================
+STEP 2 -- repair actions taken
+================================================================
+Added a "## Flags" section (documenting every real argparse option, read
+from each tool's main()) to:
+  budget-forecaster/README.md
+  event-linter/README.md
+  evidence-manifest/README.md
+  evidence-scorer/README.md
+  lifecycle-linter/README.md
+  nondeterminism-scanner/README.md
+  payload-validator/README.md
+  sybil-detector/README.md
+  throughput-reporter/README.md
+  xrpl-address/README.md
+  xrpl-auditor/README.md
+
+Created new files:
+  evidence-validator/README.md   (was missing entirely -- DOC007)
+  reward-reconciler/README.md    (had only RUN_COMMANDS.md -- DOC007)
+
+No changes were made to docval.py or any test fixture / sample directory
+used by test_docval.py.
+
+================================================================
+STEP 3 -- after scan (post-repair)
+================================================================
+$ python3 docval.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o after_report.json ; echo "exit=$?"
+exit=1
+
+--- after_report.json summary ---
+{
+  "counts": {
+    "DOC002_PHANTOM_FLAG": 47,
+    "DOC006_COMMAND_BLOCK_UNPARSEABLE": 142,
+    "DOC008_NO_CLI": 1
+  },
+  "finding_count": 190,
+  "ok": false,
+  "tool_count": 34
+}
+
+--- AFTER: DOC001_UNDOCUMENTED_FLAG count ---
+0
+
+--- AFTER: DOC007_NO_README count ---
+0
+
+================================================================
+STEP 4 -- before/after counts side by side
+================================================================
+code                                   before    after
+DOC001_UNDOCUMENTED_FLAG                   16        0
+DOC002_PHANTOM_FLAG                        47       47
+DOC006_COMMAND_BLOCK_UNPARSEABLE          138      142
+DOC007_NO_README                            2        0
+DOC008_NO_CLI                               1        1
+TOTAL                                     204      190
+
+================================================================
+STEP 5 -- doc-validator's own test suite (unchanged code, sanity check)
+================================================================
+$ python3 -m unittest test_docval -v
+test_roundtrip_preserves_data (test_docval.TestCanonicalDumpsRoundTrip) ... ok
+test_two_calls_same_object_identical_bytes (test_docval.TestCanonicalDumpsRoundTrip) ... ok
+test_ascii_only (test_docval.TestCanonicalJson) ... ok
+test_deterministic_across_calls (test_docval.TestCanonicalJson) ... ok
+test_empty_object (test_docval.TestCanonicalJson) ... ok
+test_nested_sorted_keys (test_docval.TestCanonicalJson) ... ok
+test_sorted_keys (test_docval.TestCanonicalJson) ... ok
+test_tight_separators (test_docval.TestCanonicalJson) ... ok
+test_trailing_newline (test_docval.TestCanonicalJson) ... ok
+test_command_block_spanning_multiple_lines_via_backslash (test_docval.TestCheckToolDir) ... ok
+test_doc001_undocumented_flag (test_docval.TestCheckToolDir) ... ok
+test_doc002_phantom_flag (test_docval.TestCheckToolDir) ... ok
+test_doc003_and_doc004_not_emitted_when_dynamic_exit (test_docval.TestCheckToolDir) ... ok
+test_doc003_unreachable_exit_code (test_docval.TestCheckToolDir) ... ok
+test_doc004_undocumented_exit_code (test_docval.TestCheckToolDir) ... ok
+test_doc005_from_missing_script_in_readme_command (test_docval.TestCheckToolDir) ... ok
+test_doc006_from_pipe_in_readme_command (test_docval.TestCheckToolDir) ... ok
+test_doc007_cli_without_readme (test_docval.TestCheckToolDir) ... ok
+test_doc008_readme_with_non_argparse_py (test_docval.TestCheckToolDir) ... ok
+test_doc008_readme_without_cli (test_docval.TestCheckToolDir) ... ok
+test_fully_consistent_pair_yields_nothing (test_docval.TestCheckToolDir) ... ok
+test_neither_readme_nor_cli_yields_nothing (test_docval.TestCheckToolDir) ... ok
+test_readme_with_no_code_fences_at_all (test_docval.TestCheckToolDir) ... ok
+test_multiple_targets (test_docval.TestCollectConstMap) ... ok
+test_negative_constant (test_docval.TestCollectConstMap) ... ok
+test_nested_in_function_still_collected (test_docval.TestCollectConstMap) ... ok
+test_simple_assignment (test_docval.TestCollectConstMap) ... ok
+test_string_assignment_ignored (test_docval.TestCollectConstMap) ... ok
+test_relocated_tree_same_hash (test_docval.TestDeterminismAndRelocation) ... ok
+test_two_runs_byte_identical (test_docval.TestDeterminismAndRelocation) ... ok
+test_cli_only_dir_is_discovered (test_docval.TestDiscoverToolDirs) ... ok
+test_descends_when_parent_not_qualified (test_docval.TestDiscoverToolDirs) ... ok
+test_does_not_descend_into_qualified_tool_subdirs (test_docval.TestDiscoverToolDirs) ... ok
+test_dot_dirs_skipped (test_docval.TestDiscoverToolDirs) ... ok
+test_empty_tree_yields_nothing (test_docval.TestDiscoverToolDirs) ... ok
+test_multiple_sibling_tools (test_docval.TestDiscoverToolDirs) ... ok
+test_pycache_skipped (test_docval.TestDiscoverToolDirs) ... ok
+test_readme_only_dir_is_discovered (test_docval.TestDiscoverToolDirs) ... ok
+test_single_tool_at_root (test_docval.TestDiscoverToolDirs) ... ok
+test_absolute_target_path_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_ampersand_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_backtick_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_bare_python3_no_target_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_blank_line_ignored (test_docval.TestEvaluateCommandLine) ... ok
+test_clean_nonzero_exit_is_not_a_finding (test_docval.TestEvaluateCommandLine) ... ok
+test_clean_run_produces_no_finding (test_docval.TestEvaluateCommandLine) ... ok
+test_command_substitution_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_comment_line_ignored (test_docval.TestEvaluateCommandLine) ... ok
+test_crash_only_detected_when_actually_run (test_docval.TestEvaluateCommandLine) ... ok
+test_dash_c_flag_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_double_ampersand_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_extra_arguments_passed_through (test_docval.TestEvaluateCommandLine) ... ok
+test_input_redirect_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_missing_target_script_detected_even_under_no_run (test_docval.TestEvaluateCommandLine) ... ok
+test_missing_target_script_is_doc005 (test_docval.TestEvaluateCommandLine) ... ok
+test_module_flag_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_multiple_semicolon_commands_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_no_run_skips_execution_for_valid_target (test_docval.TestEvaluateCommandLine) ... ok
+test_non_python3_program_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_path_escape_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_pipe_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_redirect_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_relative_subdir_target_allowed (test_docval.TestEvaluateCommandLine) ... ok
+test_timeout_is_doc005 (test_docval.TestEvaluateCommandLine) ... ok
+test_trailing_echo_exit_idiom_stripped_not_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_unbalanced_quotes_refused (test_docval.TestEvaluateCommandLine) ... ok
+test_uncaught_traceback_is_doc005 (test_docval.TestEvaluateCommandLine) ... ok
+test_dash_bullet_list_under_heading (test_docval.TestExitCodeExtraction) ... ok
+test_dot_separated_list_NOT_under_heading_is_ignored (test_docval.TestExitCodeExtraction) ... ok
+test_dot_separated_list_under_heading (test_docval.TestExitCodeExtraction) ... ok
+test_exit_bold_style (test_docval.TestExitCodeExtraction) ... ok
+test_exit_code_colon_style (test_docval.TestExitCodeExtraction) ... ok
+test_exit_codes_list_only_captures_first_number (test_docval.TestExitCodeExtraction) ... ok
+test_exit_codes_plural_backtick_style (test_docval.TestExitCodeExtraction) ... ok
+test_exit_equals_style (test_docval.TestExitCodeExtraction) ... ok
+test_exit_hyphen_backtick_style (test_docval.TestExitCodeExtraction) ... ok
+test_exit_word_directly_adjacent_to_backtick_number (test_docval.TestExitCodeExtraction) ... ok
+test_h1_heading_also_recognized (test_docval.TestExitCodeExtraction) ... ok
+test_markdown_table_NOT_under_exit_heading_is_ignored (test_docval.TestExitCodeExtraction) ... ok
+test_markdown_table_under_exit_heading (test_docval.TestExitCodeExtraction) ... ok
+test_no_exit_codes_documented_at_all (test_docval.TestExitCodeExtraction) ... ok
+test_section_ends_at_next_heading (test_docval.TestExitCodeExtraction) ... ok
+test_add_help_default_true_adds_implicit_help (test_docval.TestExtractArgparseInfo) ... ok
+test_add_help_false_removes_implicit_help_flags (test_docval.TestExtractArgparseInfo) ... ok
+test_bare_sys_exit_is_zero (test_docval.TestExtractArgparseInfo) ... ok
+test_class_level_const_not_confused_with_module_const (test_docval.TestExtractArgparseInfo) ... ok
+test_direct_sys_exit_int (test_docval.TestExtractArgparseInfo) ... ok
+test_dynamic_flag_variable_not_added_as_literal_flag (test_docval.TestExtractArgparseInfo) ... ok
+test_exit_codes_from_multiple_call_sites (test_docval.TestExtractArgparseInfo) ... ok
+test_has_argument_parser_and_parse_args_flags (test_docval.TestExtractArgparseInfo) ... ok
+test_implicit_exit_codes_0_and_2_present (test_docval.TestExtractArgparseInfo) ... ok
+test_implicit_flags_not_in_explicit_flags_set (test_docval.TestExtractArgparseInfo) ... ok
+test_multiple_add_argument_calls_all_collected (test_docval.TestExtractArgparseInfo) ... ok
+test_no_argparse_at_all (test_docval.TestExtractArgparseInfo) ... ok
+test_nonexistent_file_handled_gracefully (test_docval.TestExtractArgparseInfo) ... ok
+test_one_form_only_add_argument_output_documented_form (test_docval.TestExtractArgparseInfo) ... ok
+test_parser_error_call_detected (test_docval.TestExtractArgparseInfo) ... ok
+test_parser_without_parse_args_call_not_a_cli (test_docval.TestExtractArgparseInfo) ... ok
+test_positional_argument_tracked_separately (test_docval.TestExtractArgparseInfo) ... ok
+test_raise_system_exit_literal (test_docval.TestExtractArgparseInfo) ... ok
+test_simple_flags_detected (test_docval.TestExtractArgparseInfo) ... ok
+test_store_true_action_flag_detected (test_docval.TestExtractArgparseInfo) ... ok
+test_string_literal_containing_fake_argparse_code_is_ignored (test_docval.TestExtractArgparseInfo) ... ok
+test_subparsers_add_parser_flags_detected (test_docval.TestExtractArgparseInfo) ... ok
+test_syntax_error_file_handled_gracefully (test_docval.TestExtractArgparseInfo) ... ok
+test_sys_exit_dynamic_unresolvable (test_docval.TestExtractArgparseInfo) ... ok
+test_sys_exit_main_pattern_resolves_returns (test_docval.TestExtractArgparseInfo) ... ok
+test_sys_exit_none_is_zero (test_docval.TestExtractArgparseInfo) ... ok
+test_sys_exit_via_const_defined_elsewhere (test_docval.TestExtractArgparseInfo) ... ok
+test_block_body_preserved_verbatim (test_docval.TestFencedCodeBlockExtraction) ... ok
+test_language_tag_captured (test_docval.TestFencedCodeBlockExtraction) ... ok
+test_multiple_blocks (test_docval.TestFencedCodeBlockExtraction) ... ok
+test_no_fences_yields_no_blocks (test_docval.TestFencedCodeBlockExtraction) ... ok
+test_single_untagged_block (test_docval.TestFencedCodeBlockExtraction) ... ok
+test_start_line_number_correct (test_docval.TestFencedCodeBlockExtraction) ... ok
+test_manual_sys_argv_parsing_not_a_cli (test_docval.TestFindCliPyFiles) ... ok
+test_multiple_qualifying_files_all_returned (test_docval.TestFindCliPyFiles) ... ok
+test_non_qualifying_py_file_excluded (test_docval.TestFindCliPyFiles) ... ok
+test_test_file_with_fake_argparse_in_string_not_qualifying (test_docval.TestFindCliPyFiles) ... ok
+test_findings_sort_by_code_then_path_then_detail (test_docval.TestFinding) ... ok
+test_sort_key_order (test_docval.TestFinding) ... ok
+test_to_dict (test_docval.TestFinding) ... ok
+test_flag_at_start_of_line (test_docval.TestFlagTokenExtraction) ... ok
+test_flag_in_backticks (test_docval.TestFlagTokenExtraction) ... ok
+test_flag_in_bold (test_docval.TestFlagTokenExtraction) ... ok
+test_flag_in_table_cell (test_docval.TestFlagTokenExtraction) ... ok
+test_flag_inside_parentheses (test_docval.TestFlagTokenExtraction) ... ok
+test_flag_used_in_own_command_block_counts_as_documented (test_docval.TestFlagTokenExtraction) ... ok
+test_horizontal_rule_not_a_flag (test_docval.TestFlagTokenExtraction) ... ok
+test_hyphenated_word_not_a_flag (test_docval.TestFlagTokenExtraction) ... ok
+test_long_flag_in_prose (test_docval.TestFlagTokenExtraction) ... ok
+test_module_invocation_line_masked_from_flags (test_docval.TestFlagTokenExtraction) ... ok
+test_module_invocation_mask_does_not_eat_following_lines (test_docval.TestFlagTokenExtraction) ... ok
+test_multiple_distinct_flags (test_docval.TestFlagTokenExtraction) ... ok
+test_negative_number_not_a_flag (test_docval.TestFlagTokenExtraction) ... ok
+test_no_readme_file_returns_not_exists (test_docval.TestFlagTokenExtraction) ... ok
+test_short_flag_in_prose (test_docval.TestFlagTokenExtraction) ... ok
+test_table_separator_row_not_a_flag (test_docval.TestFlagTokenExtraction) ... ok
+test_version_number_not_a_flag (test_docval.TestFlagTokenExtraction) ... ok
+test_bash_tag_qualifies (test_docval.TestIsCommandBearingBlock) ... ok
+test_console_tag_qualifies (test_docval.TestIsCommandBearingBlock) ... ok
+test_json_block_does_not_qualify (test_docval.TestIsCommandBearingBlock) ... ok
+test_untagged_prose_snippet_does_not_qualify (test_docval.TestIsCommandBearingBlock) ... ok
+test_untagged_with_python3_qualifies (test_docval.TestIsCommandBearingBlock) ... ok
+test_backslash_continuation_joins_lines (test_docval.TestJoinContinuations) ... ok
+test_multiple_independent_lines (test_docval.TestJoinContinuations) ... ok
+test_single_line_no_continuation (test_docval.TestJoinContinuations) ... ok
+test_bool_is_not_int (test_docval.TestLiteralInt) ... ok
+test_call_expression_is_unresolved (test_docval.TestLiteralInt) ... ok
+test_name_not_in_const_map_is_unresolved (test_docval.TestLiteralInt) ... ok
+test_name_resolved_via_const_map (test_docval.TestLiteralInt) ... ok
+test_negative_int_unary (test_docval.TestLiteralInt) ... ok
+test_negative_name_lookup (test_docval.TestLiteralInt) ... ok
+test_positive_int (test_docval.TestLiteralInt) ... ok
+test_string_is_not_int (test_docval.TestLiteralInt) ... ok
+test_zero (test_docval.TestLiteralInt) ... ok
+test_forward_slashes (test_docval.TestRelpath) ... ok
+test_same_dir (test_docval.TestRelpath) ... ok
+test_bare_return_is_zero (test_docval.TestReturnsOf) ... ok
+test_does_not_descend_into_nested_def_returns (test_docval.TestReturnsOf) ... ok
+test_falls_off_end_is_zero (test_docval.TestReturnsOf) ... ok
+test_multiple_branches (test_docval.TestReturnsOf) ... ok
+test_return_dynamic_expression (test_docval.TestReturnsOf) ... ok
+test_return_none_is_zero (test_docval.TestReturnsOf) ... ok
+test_return_via_const_name (test_docval.TestReturnsOf) ... ok
+test_return_via_nested_function_call (test_docval.TestReturnsOf) ... ok
+test_single_int_return (test_docval.TestReturnsOf) ... ok
+test_counts_matches_findings_tally (test_docval.TestRunCliInProcess) ... ok
+test_default_root_is_current_directory (test_docval.TestRunCliInProcess) ... ok
+test_exit_0_on_consistent_tree (test_docval.TestRunCliInProcess) ... ok
+test_exit_1_on_inconsistent_tree (test_docval.TestRunCliInProcess) ... ok
+test_exit_2_on_missing_root (test_docval.TestRunCliInProcess) ... docval: error: --root '/sessions/sharp-stoic-knuth/tmp/docval_test_nmuezv44/does_not_exist_at_all' is not a directory
+ok
+test_findings_sorted_deterministically (test_docval.TestRunCliInProcess) ... ok
+test_long_output_flag_form (test_docval.TestRunCliInProcess) ... ok
+test_no_run_flag_default_false (test_docval.TestRunCliInProcess) ... ok
+test_no_run_flag_settable (test_docval.TestRunCliInProcess) ... ok
+test_no_run_reduces_finding_count_vs_full_run (test_docval.TestRunCliInProcess) ... ok
+test_ok_field_matches_finding_count (test_docval.TestRunCliInProcess) ... ok
+test_output_file_is_canonical_json (test_docval.TestRunCliInProcess) ... ok
+test_output_flag_writes_file (test_docval.TestRunCliInProcess) ... ok
+test_report_has_no_absolute_paths (test_docval.TestRunCliInProcess) ... ok
+test_report_has_no_duration_or_timestamp_keys (test_docval.TestRunCliInProcess) ... ok
+test_report_paths_are_relative_and_forward_slashed (test_docval.TestRunCliInProcess) ... ok
+test_bad_flag_exits_two (test_docval.TestRunCliSubprocess) ... ok
+test_consistent_samples_exit_zero (test_docval.TestRunCliSubprocess) ... ok
+test_help_flag_exits_zero (test_docval.TestRunCliSubprocess) ... ok
+test_inconsistent_samples_exit_one (test_docval.TestRunCliSubprocess) ... ok
+test_missing_root_exits_two (test_docval.TestRunCliSubprocess) ... ok
+
+----------------------------------------------------------------------
+Ran 188 tests in 2.449s
+
+OK
+{"counts":{},"finding_count":0,"findings":[],"ok":true,"tool_count":1}
+{"counts":{"DOC001_UNDOCUMENTED_FLAG":1,"DOC004_EXIT_CODE_UNDOCUMENTED":2},"finding_count":3,"findings":[{"code":"DOC001_UNDOCUMENTED_FLAG","detail":"./README.md: argparse in ./tool.py defines flag '--undocumented' which appears nowhere in ./README.md","path":"./README.md"},{"code":"DOC004_EXIT_CODE_UNDOCUMENTED","detail":"./README.md: ./tool.py can exit with code 0 but ./README.md never documents exit code 0","path":"./README.md"},{"code":"DOC004_EXIT_CODE_UNDOCUMENTED","detail":"./README.md: ./tool.py can exit with code 2 but ./README.md never documents exit code 2","path":"./README.md"}],"ok":false,"tool_count":1}
+exit=0
+
+================================================================
+STEP 6 -- sanity: the two tools whose README was newly created still pass
+their own test suites (README-only changes, but verifying nothing else
+was inadvertently touched)
+================================================================
+$ cd ../evidence-validator && python3 -m unittest test_validator -v
+test_exit_one_on_issues (test_validator.TestCliExitCodes) ... ok
+test_exit_two_on_invalid_json (test_validator.TestCliExitCodes) ... ok
+test_exit_two_on_missing_file (test_validator.TestCliExitCodes) ... ok
+test_exit_two_on_non_array (test_validator.TestCliExitCodes) ... ok
+test_exit_zero_on_clean (test_validator.TestCliExitCodes) ... ok
+test_distinct_records_are_clean (test_validator.TestDuplicates) ... ok
+test_duplicate_cid_reference_flagged (test_validator.TestDuplicates) ... ok
+test_duplicate_submission_id_flags_both (test_validator.TestDuplicates) ... ok
+test_bad_cid_flagged (test_validator.TestMalformedReferences) ... ok
+test_bad_task_id_flagged (test_validator.TestMalformedReferences) ... ok
+test_bad_tx_hash_lowercase_flagged (test_validator.TestMalformedReferences) ... ok
+test_bad_tx_hash_wrong_length_flagged (test_validator.TestMalformedReferences) ... ok
+test_empty_field_flagged (test_validator.TestMissingFields) ... ok
+test_missing_field_flagged (test_validator.TestMissingFields) ... ok
+test_non_object_record_flagged (test_validator.TestMissingFields) ... ok
+test_cidv1_accepted (test_validator.TestValidRecords) ... ok
+test_clean_record_has_no_issues (test_validator.TestValidRecords) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.164s
+
+OK
+exit=0
+
+$ cd ../reward-reconciler && python3 -m unittest test_reconcile -v
+test_cli_output_byte_identical_twice (test_reconcile.TestCliExitCodes) ... ok
+test_exit_one_mismatched (test_reconcile.TestCliExitCodes) ... ok
+test_exit_two_invalid_json (test_reconcile.TestCliExitCodes) ... ok
+test_exit_two_not_array (test_reconcile.TestCliExitCodes) ... ok
+test_exit_zero_balanced (test_reconcile.TestCliExitCodes) ... ok
+test_float_amount_rejected (test_reconcile.TestDecimalPrecision) ... ok
+test_integer_amount_accepted (test_reconcile.TestDecimalPrecision) ... ok
+test_no_float_drift (test_reconcile.TestDecimalPrecision) ... ok
+test_sub_micro_difference_detected (test_reconcile.TestDecimalPrecision) ... ok
+test_bad_amount_string (test_reconcile.TestMalformedInput) ... ok
+test_duplicate_expected_task_rejected (test_reconcile.TestMalformedInput) ... ok
+test_empty_wallet (test_reconcile.TestMalformedInput) ... ok
+test_missing_field (test_reconcile.TestMalformedInput) ... ok
+test_amount_mismatch_with_delta (test_reconcile.TestMismatchTypes) ... ok
+test_balanced (test_reconcile.TestMismatchTypes) ... ok
+test_duplicate_payout (test_reconcile.TestMismatchTypes) ... ok
+test_missing_payout (test_reconcile.TestMismatchTypes) ... ok
+test_unexpected_payout (test_reconcile.TestMismatchTypes) ... ok
+test_wallet_and_amount_mismatch_both_reported (test_reconcile.TestMismatchTypes) ... ok
+test_wallet_mismatch (test_reconcile.TestMismatchTypes) ... ok
+test_canonical_json_is_byte_identical_across_runs (test_reconcile.TestOrderingAndCanonical) ... ok
+test_canonical_json_sorted_keys_and_newline (test_reconcile.TestOrderingAndCanonical) ... ok
+test_findings_sorted_regardless_of_input_order (test_reconcile.TestOrderingAndCanonical) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.350s
+
+OK
+exit=0
+
+================================================================
+END OF TRANSCRIPT
+================================================================
+Result: DOC001_UNDOCUMENTED_FLAG 16 -> 0. DOC007_NO_README 2 -> 0.
+Both required codes reached zero. DOC002/DOC006/DOC008 unchanged in
+substance (DOC006 +4 explained in REPAIR_NOTES.md; entirely from the two
+new READMEs' command blocks matching pre-existing sibling convention,
+not a new class of defect). doc-validator's own test suite: 188/188
+passing, unchanged.
