@@ -383,17 +383,48 @@ unbounded before the size check.
 
 ---
 
-### 2.14 `regression-checker` — trusted partial reports
+### 2.14 `regression-checker` — trusted partial reports — CLOSED
 
-**Failure mode.** A `report_mode: "file"` tool's report is fully trusted once it
-exists, even if written by a crashing or partial run. Separately,
-`expected_exit_code: false` is silently accepted as `0`, because JSON `bool`
+**Failure mode.** A `report_mode: "file"` tool's report was fully trusted once it
+existed, even if written by a crashing or partial run. Separately,
+`expected_exit_code: false` was silently accepted as `0`, because JSON `bool`
 decodes as an `int` subclass.
 
-**Consequence.** A tool that crashes mid-write can still pass its regression
-check. The `false`/`0` coercion means a malformed baseline validates silently.
+**Consequence.** A tool that crashed mid-write could still pass its regression
+check. The `false`/`0` coercion meant a malformed baseline validated silently.
 
-**Evidence.** **stated**. Source: [`regression-checker/README.md`](regression-checker/README.md).
+**Closed by** `92cc05ab`. A subprocess killed by a signal is recorded as
+`detail.termination: "signalled"` with `detail.signal` and always raises the new
+`ABNORMAL_TERMINATION` drift code — a baseline that literally records `-9` cannot
+bless a `SIGKILL`. `--update-baselines` refuses to record a signalled run, a
+0-byte report (override `--allow-empty-report`), or an entry whose current
+`expected_exit_code` is a boolean. `is_exit_code()` rejects JSON booleans, so a
+boolean baseline is a setup error (exit `2`). Report `schema_version` 1 → 2.
+
+**A separate defect surfaced while closing this one, also closed in `92cc05ab`.**
+`regression-checker/fixtures/` was documented in that tool's README, invoked by
+its VERIFICATION block, and required by 14 of its CLI-level tests — and had never
+been committed. On a fresh clone those 14 tests failed and the documented
+verification was not reproducible. `make_fixtures.py` now generates the tree from
+measured runs (each fixture tool's real exit code and report hash, not hand-typed
+values), `setUpModule()` builds it on demand, and `--check` verifies an existing
+tree still matches. Nothing generated is committed, matching `bundle-verifier/`,
+`exit-harness/` and `tamper-runner/`.
+
+**What is still true.** `ABNORMAL_TERMINATION` keys off `returncode < 0`, which is
+POSIX-only; on Windows an OS-terminated process surfaces as a large positive exit
+status and is reported as `EXIT_CODE_DRIFT` instead. The six signal-dependent
+tests are `skipUnless(os.name == "posix")`; none of this has been run on Windows.
+A tool that writes a complete-looking but wrong report and exits `0` remains
+indistinguishable from a correct one — the termination check catches processes
+that *died*, not processes that finished and were wrong.
+
+**Evidence.** **measured** — 174 tests pass (`test_regress.py` 131,
+`test_regress_newline.py` 8, `test_regress_integrity.py` 35) on CPython 3.11.15 /
+Linux x86_64, starting from a deleted `fixtures/`; the pre-fix and post-fix runs
+against the same two adversarial baselines are transcribed in
+[`regression-checker/captured_output.txt`](regression-checker/captured_output.txt).
+Sources: [`regression-checker/README.md`](regression-checker/README.md), commit `92cc05ab`.
 
 ---
 
@@ -785,7 +816,7 @@ documented, **not** that the tool is free of that failure mode.
 | payload-validator | — | 2.13 | 3.1 | 4.2 | limitations section |
 | preflight | 1.7 | 2.10, 2.11 | — | 4.1 | limitations section |
 | queue-auditor | 1.6 | — | — | 4.1 | limitations section |
-| regression-checker | — | 2.14 | — | — | limitations section |
+| regression-checker | — | 2.14 (closed) | — | — | limitations section |
 | reward-anomaly | — | — | — | 4.1, 4.2, 4.4 | limitations section |
 | reward-reconciler | unknown | unknown | unknown | unknown | **no limitations disclosed** |
 | schema-checker | unknown | unknown | unknown | unknown | **no limitations disclosed** |
