@@ -68,6 +68,13 @@ Bad lines never abort the run. Each is recorded as `MALFORMED_RECORD` with its
 `events_invalid.jsonl` ends with three such lines: a record missing
 `occurred_at`, a non-JSON line, and a JSON array instead of an object.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `events` (positional) | Path to a JSONL file of task lifecycle events (one JSON object per line). Required. |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> findings=<count>`. |
+
 ## Exit codes
 
 0 = clean · 1 = findings present · 2 = unreadable input
