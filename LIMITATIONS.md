@@ -734,10 +734,27 @@ checks a directory against the contract as a whole. `captured_output.txt` has no
 schema, so drift between a README's documented commands and its committed
 transcript is undetectable.
 
-Three specific divergences are recorded in `EVIDENCE_STANDARD.md`: no tool
-implements the canonical-dump sort tiebreak; `regression-checker/regress.py`
-writes without `newline="\n"`; and `budget-forecaster/forecast.py` uses a type
-gate rather than `parse_float=Decimal`.
+Three specific divergences were recorded in `EVIDENCE_STANDARD.md`. **All three
+are now closed**, and the entries are kept here as history rather than as open
+findings:
+
+| Divergence | Closed by | Tests added |
+|---|---|---|
+| No tool implemented the canonical-dump sort tiebreak | `96271b93` (consolidate), `8523e2b0` (schema-checker), `52640e6a` (nondeterminism-scanner) | 9 + 8 + 9 |
+| `regression-checker/regress.py` wrote without `newline="\n"` | `f229dae9`, tests in `95a97571` | 8 |
+| `budget-forecaster/forecast.py` type-gated instead of parsing with `Decimal` | `2b11448c` | 15, plus its 36 existing tests still passing |
+
+Two notes worth keeping. The `ndscan` tiebreak had to be shown **dedup-neutral**,
+because `Finding.sort_key()` is also the de-duplication key: `severity` is
+`RULE_SEVERITY[rule_id]`, a pure function of `rule_id`, so two findings agreeing
+on the five leading fields always serialise identically and still collapse to
+one. And `forecast.py`'s behaviour is deliberately **unchanged** — float-shaped
+tokens are still refused; what changed is that the refusal now happens on an
+exact value, and bare `NaN`/`Infinity` tokens are intercepted before they can
+become floats.
+
+What this section still says remains true: the standard is prose, and no tool
+checks a directory against it as a whole.
 
 ---
 

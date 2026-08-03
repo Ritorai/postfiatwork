@@ -22,6 +22,15 @@ such). Nothing here is a fresh measurement. Where this guide tells you a claim
 is true, it means the claim is internally consistent with committed artifacts —
 not that this guide re-derived it.
 
+**One amendment, added later.** The original guide was written entirely by static
+inspection, and the paragraph above describes how it was produced. A subsequent
+change closed the three contract failures named in Phase 1 and updated §1 and
+§4.6 to say so. Those commit references and test counts **do** come from real
+runs — `python3 -m unittest` executed against each changed tool — so they are
+measurements, not static claims. Everything else in this document remains
+static-inspection only. The distinction is kept explicit rather than quietly
+letting "nothing was run" go stale.
+
 The register of what each tool cannot do is [`LIMITATIONS.md`](LIMITATIONS.md);
 the output contract is [`EVIDENCE_STANDARD.md`](EVIDENCE_STANDARD.md); this
 guide is about **how to check**, and deliberately does not restate either.
@@ -62,12 +71,19 @@ retires the same question for every tool at once:
 | Clock | `--now` present and `required=True`; no `time.time`, `utcnow`, or `now()` substrings |
 | Money | `parse_float=Decimal` at the parse boundary; amounts emitted as strings |
 
-Three known failures of this phase are already documented in
-[`EVIDENCE_STANDARD.md`](EVIDENCE_STANDARD.md) and you should expect to find
-them: no tool implements the canonical-dump sort tiebreak; `regress.py` omits
-`newline="\n"`; `forecast.py` type-gates instead of using `parse_float=Decimal`.
-Finding exactly those three and nothing else is a good sign. Finding a fourth is
-a real result.
+Three known failures of this phase were documented in
+[`EVIDENCE_STANDARD.md`](EVIDENCE_STANDARD.md): no tool implemented the
+canonical-dump sort tiebreak; `regress.py` omitted `newline="\n"`; and
+`forecast.py` type-gated instead of using `parse_float=Decimal`. **All three are
+now fixed** — `96271b93`, `8523e2b0`, `52640e6a`, `f229dae9` and `2b11448c`
+respectively, with 49 focused tests added across them.
+
+So this phase should now come back **clean**, and that changes what it tells
+you: a failure here is no longer an expected finding to tick off, it is new
+information. Check the three anyway — a fix that silently regresses is exactly
+what this phase exists to catch — but treat any *fourth* failure as a real
+result, and note that only 8 of the 33 tools were ever verified at source level
+(see §6), so the unverified 25 are where a fourth is most likely to be hiding.
 
 ### Phase 2 — Evidence integrity (cheap, and where the weak spots are)
 
@@ -359,9 +375,13 @@ silently accepted as `0` because JSON `bool` decodes as an `int` subclass.
 
 **Why it matters disproportionately:** this is the tool that guards every other
 tool's output stability. A weakness here weakens the whole regression story, not
-one directory. Combined with its missing `newline="\n"`
-(see [`EVIDENCE_STANDARD.md`](EVIDENCE_STANDARD.md) §1.1), the drift-detection
-layer is the least sound part of the repository.
+one directory.
+
+**Partially closed.** The missing `newline="\n"` is fixed in `f229dae9`, pinned
+by 8 tests in `95a97571`, so its report hash is now cross-platform stable. The
+two defects named above — trusting a partial report, and coercing
+`expected_exit_code: false` to `0` — are **still open**, and are why this entry
+stays in the ranking.
 
 ### 4.7 `captured_output.txt` has no schema
 
