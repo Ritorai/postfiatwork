@@ -1,0 +1,31 @@
+test_invalid_fixture_covers_every_code (test_lifecycle_lint.TestCli) ... ok
+test_invalid_fixture_exit_one (test_lifecycle_lint.TestCli) ... ok
+test_missing_file_exit_two (test_lifecycle_lint.TestCli) ... ok
+test_repeated_runs_byte_identical (test_lifecycle_lint.TestCli) ... ok
+test_valid_fixture_exit_zero (test_lifecycle_lint.TestCli) ... ok
+test_blank_lines_ignored (test_lifecycle_lint.TestMalformedParsing) ... ok
+test_invalid_json_line (test_lifecycle_lint.TestMalformedParsing) ... ok
+test_line_numbers_preserved (test_lifecycle_lint.TestMalformedParsing) ... ok
+test_missing_fields (test_lifecycle_lint.TestMalformedParsing) ... ok
+test_non_object_line (test_lifecycle_lint.TestMalformedParsing) ... ok
+test_unknown_state (test_lifecycle_lint.TestMalformedParsing) ... ok
+test_clean_status (test_lifecycle_lint.TestReportDeterminism) ... ok
+test_counts_aggregate (test_lifecycle_lint.TestReportDeterminism) ... ok
+test_finding_order_stable (test_lifecycle_lint.TestReportDeterminism) ... ok
+test_serialize_repeatable (test_lifecycle_lint.TestReportDeterminism) ... ok
+test_early_refusal_clean (test_lifecycle_lint.TestValidHistories) ... ok
+test_full_happy_path_clean (test_lifecycle_lint.TestValidHistories) ... ok
+test_resubmit_loop_allowed_not_duplicate (test_lifecycle_lint.TestValidHistories) ... ok
+test_submitted_direct_to_rewarded_clean (test_lifecycle_lint.TestValidHistories) ... ok
+test_backward_transition (test_lifecycle_lint.TestViolations) ... ok
+test_duplicate_state_back_to_back (test_lifecycle_lint.TestViolations) ... ok
+test_missing_start (test_lifecycle_lint.TestViolations) ... ok
+test_non_monotonic_time (test_lifecycle_lint.TestViolations) ... ok
+test_post_terminal_event (test_lifecycle_lint.TestViolations) ... ok
+test_skipped_state (test_lifecycle_lint.TestViolations) ... ok
+test_tasks_are_independent (test_lifecycle_lint.TestViolations) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.327s
+
+OK

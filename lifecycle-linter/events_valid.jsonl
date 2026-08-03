@@ -1,0 +1,12 @@
+{"task_id":"task_aaa","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_aaa","state":"accepted","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"}
+{"task_id":"task_aaa","state":"submitted","occurred_at":"2026-07-30T10:00:00Z","actor":"operator"}
+{"task_id":"task_aaa","state":"verification_requested","occurred_at":"2026-07-30T10:10:00Z","actor":"authority"}
+{"task_id":"task_aaa","state":"submitted","occurred_at":"2026-07-30T10:30:00Z","actor":"operator"}
+{"task_id":"task_aaa","state":"rewarded","occurred_at":"2026-07-30T11:00:00Z","actor":"authority"}
+{"task_id":"task_bbb","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_bbb","state":"refused","occurred_at":"2026-07-30T09:30:00Z","actor":"operator"}
+{"task_id":"task_ccc","state":"proposed","occurred_at":"2026-07-30T12:00:00Z","actor":"board"}
+{"task_id":"task_ccc","state":"accepted","occurred_at":"2026-07-30T12:01:00Z","actor":"operator"}
+{"task_id":"task_ccc","state":"submitted","occurred_at":"2026-07-30T12:40:00Z","actor":"operator"}
+{"task_id":"task_ccc","state":"rewarded","occurred_at":"2026-07-30T13:00:00Z","actor":"authority"}

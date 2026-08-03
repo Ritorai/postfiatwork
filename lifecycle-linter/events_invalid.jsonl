@@ -1,0 +1,23 @@
+{"task_id":"task_missing_start","state":"accepted","occurred_at":"2026-07-30T09:00:00Z","actor":"operator"}
+{"task_id":"task_missing_start","state":"submitted","occurred_at":"2026-07-30T09:10:00Z","actor":"operator"}
+{"task_id":"task_skipped","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_skipped","state":"submitted","occurred_at":"2026-07-30T09:10:00Z","actor":"operator"}
+{"task_id":"task_backward","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_backward","state":"accepted","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"}
+{"task_id":"task_backward","state":"submitted","occurred_at":"2026-07-30T09:20:00Z","actor":"operator"}
+{"task_id":"task_backward","state":"proposed","occurred_at":"2026-07-30T09:30:00Z","actor":"board"}
+{"task_id":"task_dup","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_dup","state":"accepted","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"}
+{"task_id":"task_dup","state":"accepted","occurred_at":"2026-07-30T09:06:00Z","actor":"operator"}
+{"task_id":"task_postterm","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_postterm","state":"accepted","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"}
+{"task_id":"task_postterm","state":"submitted","occurred_at":"2026-07-30T09:20:00Z","actor":"operator"}
+{"task_id":"task_postterm","state":"rewarded","occurred_at":"2026-07-30T09:40:00Z","actor":"authority"}
+{"task_id":"task_postterm","state":"submitted","occurred_at":"2026-07-30T09:50:00Z","actor":"operator"}
+{"task_id":"task_time","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_time","state":"accepted","occurred_at":"2026-07-30T08:00:00Z","actor":"operator"}
+{"task_id":"task_unknown","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"}
+{"task_id":"task_unknown","state":"teleported","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"}
+{"task_id":"task_bad","state":"proposed"}
+not json at all
+["array","not","object"]
