@@ -1,0 +1,262 @@
+$ python3 -m unittest test_weakassert -v
+test_category_choices_enforced (test_weakassert.TestArgParser) ... ok
+test_category_repeatable (test_weakassert.TestArgParser) ... ok
+test_default_category_is_none (test_weakassert.TestArgParser) ... ok
+test_default_output_is_none (test_weakassert.TestArgParser) ... ok
+test_default_root_is_dot (test_weakassert.TestArgParser) ... ok
+test_long_output_flag (test_weakassert.TestArgParser) ... ok
+test_root_flag_parsed (test_weakassert.TestArgParser) ... ok
+test_short_output_flag (test_weakassert.TestArgParser) ... ok
+test_category_filter_recorded_in_report (test_weakassert.TestBuildReportOrdering) ... ok
+test_category_filter_reduces_findings (test_weakassert.TestBuildReportOrdering) ... ok
+test_errors_sorted_by_path (test_weakassert.TestBuildReportOrdering) ... ok
+test_files_scanned_counts_files (test_weakassert.TestBuildReportOrdering) ... ok
+test_findings_by_category_matches_findings_list (test_weakassert.TestBuildReportOrdering) ... ok
+test_findings_sorted_by_category_then_path_then_line_then_name (test_weakassert.TestBuildReportOrdering) ... ok
+test_no_filter_records_null (test_weakassert.TestBuildReportOrdering) ... ok
+test_tests_scanned_counts_all_test_defs (test_weakassert.TestBuildReportOrdering) ... ok
+test_assert_statement_disqualifies (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_assign_from_call (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_docstring_not_first_statement_counts_as_expr (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_docstring_then_call (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_for_statement_disqualifies (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_if_statement_disqualifies (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_multiple_calls (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_pass_only_returns_empty_list_not_none (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_plain_assignment_non_call_disqualifies (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_return_statement_disqualifies (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_single_expr_call (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_try_statement_disqualifies (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_with_statement_disqualifies (test_weakassert.TestCallOnlyBodyCalls) ... ok
+test_empty_body_flags_wa001_not_wa002 (test_weakassert.TestCallOnlyCategory) ... ok
+test_has_assertion_never_flags_wa002 (test_weakassert.TestCallOnlyCategory) ... ok
+test_non_subject_call_only_flags_wa001_not_wa002 (test_weakassert.TestCallOnlyCategory)
+Distinguishing rule: calling stdlib-only code with no assertion ... ok
+test_subject_call_only_flags_wa002 (test_weakassert.TestCallOnlyCategory) ... ok
+test_deterministic_across_calls (test_weakassert.TestCanonicalJson) ... ok
+test_ends_with_single_trailing_newline (test_weakassert.TestCanonicalJson) ... ok
+test_ensure_ascii_escapes_non_ascii (test_weakassert.TestCanonicalJson) ... ok
+test_no_spaces_in_separators (test_weakassert.TestCanonicalJson) ... ok
+test_real_report_round_trips_through_json_loads (test_weakassert.TestCanonicalJson) ... ok
+test_sort_keys_applied (test_weakassert.TestCanonicalJson) ... ok
+test_category_filter_can_flip_exit_code_to_zero (test_weakassert.TestCli) ... ok
+test_category_filter_repeated_flag (test_weakassert.TestCli) ... ok
+test_clean_dir_exit_0 (test_weakassert.TestCli) ... ok
+test_default_root_is_cwd (test_weakassert.TestCli) ... ok
+test_findings_dir_exit_1 (test_weakassert.TestCli) ... ok
+test_help_flag_exits_zero (test_weakassert.TestCli) ... ok
+test_invalid_category_exit_2 (test_weakassert.TestCli) ... ok
+test_missing_root_exit_2 (test_weakassert.TestCli) ... ok
+test_no_output_flag_prints_to_stdout (test_weakassert.TestCli) ... ok
+test_output_flag_writes_file (test_weakassert.TestCli) ... ok
+test_output_json_matches_stdout_json_for_same_scan (test_weakassert.TestCli) ... ok
+test_repeat_scans_are_byte_identical (test_weakassert.TestCli) ... ok
+test_root_is_a_file_not_a_directory_exit_2 (test_weakassert.TestCli) ... ok
+test_stderr_used_for_usage_errors (test_weakassert.TestCli) ... ok
+test_unknown_flag_exits_two (test_weakassert.TestCli) ... ok
+test_subprocess_bad_root_exit_2 (test_weakassert.TestCliSubprocess) ... ok
+test_subprocess_clean_exit_0 (test_weakassert.TestCliSubprocess) ... ok
+test_subprocess_findings_exit_1 (test_weakassert.TestCliSubprocess) ... ok
+test_multiple_calls_collected (test_weakassert.TestCollectSubjectCalls) ... ok
+test_none_expr_returns_empty (test_weakassert.TestCollectSubjectCalls) ... ok
+test_returns_empty_for_no_calls (test_weakassert.TestCollectSubjectCalls) ... ok
+test_returns_unparsed_calls (test_weakassert.TestCollectSubjectCalls) ... ok
+test_call_nested_in_binop (test_weakassert.TestContainsSubjectCall) ... ok
+test_call_nested_in_comprehension (test_weakassert.TestContainsSubjectCall) ... ok
+test_call_nested_in_kwarg (test_weakassert.TestContainsSubjectCall) ... ok
+test_call_nested_in_list_literal (test_weakassert.TestContainsSubjectCall) ... ok
+test_chained_attribute_call (test_weakassert.TestContainsSubjectCall) ... ok
+test_descend_to_name_no_name_returns_none (test_weakassert.TestContainsSubjectCall) ... ok
+test_descend_to_name_simple (test_weakassert.TestContainsSubjectCall) ... ok
+test_direct_attribute_call (test_weakassert.TestContainsSubjectCall) ... ok
+test_direct_bare_symbol_call (test_weakassert.TestContainsSubjectCall) ... ok
+test_empty_modules_and_symbols_is_false (test_weakassert.TestContainsSubjectCall) ... ok
+test_literal_is_false (test_weakassert.TestContainsSubjectCall) ... ok
+test_none_expr_is_false (test_weakassert.TestContainsSubjectCall) ... ok
+test_other_module_call_is_false (test_weakassert.TestContainsSubjectCall) ... ok
+test_plain_name_no_call_is_false (test_weakassert.TestContainsSubjectCall) ... ok
+test_subscript_wrapped_call (test_weakassert.TestContainsSubjectCall) ... ok
+test_unrelated_call_is_false (test_weakassert.TestContainsSubjectCall) ... ok
+test_empty_dir_returns_empty_list (test_weakassert.TestDiscoverTestFiles) ... ok
+test_finds_nested_test_files (test_weakassert.TestDiscoverTestFiles) ... ok
+test_finds_top_level_test_file (test_weakassert.TestDiscoverTestFiles) ... ok
+test_ignores_non_test_files (test_weakassert.TestDiscoverTestFiles) ... ok
+test_multiple_files_all_found (test_weakassert.TestDiscoverTestFiles) ... ok
+test_result_sorted (test_weakassert.TestDiscoverTestFiles) ... ok
+test_skips_git_dir (test_weakassert.TestDiscoverTestFiles) ... ok
+test_skips_hidden_dirs (test_weakassert.TestDiscoverTestFiles) ... ok
+test_skips_pycache_dirs (test_weakassert.TestDiscoverTestFiles) ... ok
+test_suffix_style_test_file_found (test_weakassert.TestDiscoverTestFiles) ... ok
+test_findings_sort_correctly_with_python_sort (test_weakassert.TestFinding) ... ok
+test_sort_key_matches_spec_order (test_weakassert.TestFinding) ... ok
+test_to_dict_has_expected_keys (test_weakassert.TestFinding) ... ok
+test_helper_referencing_itself_does_not_infinite_loop (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_module_level_helper_resolved (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_module_level_helper_without_assertion_not_resolved (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_multiple_helper_calls_second_one_asserts (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_no_calls_at_all_not_resolved (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_same_class_helper_resolved (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_same_class_helper_without_assertion_not_resolved (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_two_level_helper_chain_not_resolved (test_weakassert.TestHasAssertionViaHelper)
+Documented limitation: only one level of helper indirection is ... ok
+test_unrelated_self_call_not_in_class_methods_ignored (test_weakassert.TestHasAssertionViaHelper) ... ok
+test_addcleanup_is_not_an_assertion (test_weakassert.TestHasDirectAssertion) ... ok
+test_assert_raises_as_context_manager (test_weakassert.TestHasDirectAssertion) ... ok
+test_assert_raises_as_plain_call (test_weakassert.TestHasDirectAssertion) ... ok
+test_assertion_inside_for_loop (test_weakassert.TestHasDirectAssertion) ... ok
+test_assertion_inside_if_elif_else (test_weakassert.TestHasDirectAssertion) ... ok
+test_assertion_inside_try_except (test_weakassert.TestHasDirectAssertion) ... ok
+test_assertion_inside_while_loop (test_weakassert.TestHasDirectAssertion) ... ok
+test_assertion_inside_with_subtest (test_weakassert.TestHasDirectAssertion) ... ok
+test_bare_assert (test_weakassert.TestHasDirectAssertion) ... ok
+test_bare_assert_with_message (test_weakassert.TestHasDirectAssertion) ... ok
+test_classmethod_cls_assert (test_weakassert.TestHasDirectAssertion) ... ok
+test_docstring_only_is_false (test_weakassert.TestHasDirectAssertion) ... ok
+test_empty_function_is_false (test_weakassert.TestHasDirectAssertion) ... ok
+test_multiple_statements_none_asserting (test_weakassert.TestHasDirectAssertion) ... ok
+test_nested_function_def_is_a_documented_blind_spot (test_weakassert.TestHasDirectAssertion)
+Dead code inside a never-called nested def is still (incorrectly ... ok
+test_pass_only_is_false (test_weakassert.TestHasDirectAssertion) ... ok
+test_self_assert_equal (test_weakassert.TestHasDirectAssertion) ... ok
+test_self_assert_true (test_weakassert.TestHasDirectAssertion) ... ok
+test_self_fail (test_weakassert.TestHasDirectAssertion) ... ok
+test_setup_call_is_not_an_assertion (test_weakassert.TestHasDirectAssertion) ... ok
+test_both_prefix_and_suffix_pattern (test_weakassert.TestIsTestFilename) ... ok
+test_conftest_does_not_match (test_weakassert.TestIsTestFilename) ... ok
+test_dunder_init_does_not_match (test_weakassert.TestIsTestFilename) ... ok
+test_exact_test_py_matches_prefix_rule (test_weakassert.TestIsTestFilename) ... ok
+test_non_py_extension_does_not_match (test_weakassert.TestIsTestFilename) ... ok
+test_plain_module_does_not_match (test_weakassert.TestIsTestFilename) ... ok
+test_test_prefix_matches (test_weakassert.TestIsTestFilename) ... ok
+test_test_suffix_matches (test_weakassert.TestIsTestFilename) ... ok
+test_testing_prefix_without_underscore_does_not_match (test_weakassert.TestIsTestFilename) ... ok
+test_uppercase_test_does_not_match (test_weakassert.TestIsTestFilename) ... ok
+test_assignment_inside_if_not_captured_top_level_only (test_weakassert.TestLocalAssignResolution) ... ok
+test_multiple_assignment_targets_ignored (test_weakassert.TestLocalAssignResolution) ... ok
+test_reassignment_keeps_both_in_order (test_weakassert.TestLocalAssignResolution) ... ok
+test_simple_assignment_captured (test_weakassert.TestLocalAssignResolution) ... ok
+test_with_locals_direct_call_without_indirection (test_weakassert.TestLocalAssignResolution) ... ok
+test_with_locals_false_when_unresolved (test_weakassert.TestLocalAssignResolution) ... ok
+test_with_locals_resolves_name (test_weakassert.TestLocalAssignResolution) ... ok
+test_error_paths_are_relative (test_weakassert.TestNoAbsolutePathLeakage) ... ok
+test_finding_paths_are_relative (test_weakassert.TestNoAbsolutePathLeakage) ... ok
+test_output_does_not_contain_scan_root_absolute_path (test_weakassert.TestNoAbsolutePathLeakage) ... ok
+test_relocated_tree_produces_identical_report_text (test_weakassert.TestNoAbsolutePathLeakage) ... ok
+test_dotted_import_binds_top_segment (test_weakassert.TestResolveSubjectAliases) ... ok
+test_from_import_as_alias_symbol_is_subject (test_weakassert.TestResolveSubjectAliases) ... ok
+test_from_import_symbol_is_subject (test_weakassert.TestResolveSubjectAliases) ... ok
+test_from_stdlib_import_excluded (test_weakassert.TestResolveSubjectAliases) ... ok
+test_future_import_excluded (test_weakassert.TestResolveSubjectAliases) ... ok
+test_import_as_alias_is_subject (test_weakassert.TestResolveSubjectAliases) ... ok
+test_import_multiple_names_one_statement (test_weakassert.TestResolveSubjectAliases) ... ok
+test_multiple_imports_combined (test_weakassert.TestResolveSubjectAliases) ... ok
+test_no_imports_gives_empty_sets (test_weakassert.TestResolveSubjectAliases) ... ok
+test_plain_import_is_subject (test_weakassert.TestResolveSubjectAliases) ... ok
+test_relative_import_is_always_subject (test_weakassert.TestResolveSubjectAliases) ... ok
+test_star_import_ignored (test_weakassert.TestResolveSubjectAliases) ... ok
+test_stdlib_import_excluded (test_weakassert.TestResolveSubjectAliases) ... ok
+test_stdlib_json_excluded (test_weakassert.TestResolveSubjectAliases) ... ok
+test_unittest_import_excluded (test_weakassert.TestResolveSubjectAliases) ... ok
+test_all_four_categories_in_one_file (test_weakassert.TestScanFileIntegration) ... ok
+test_async_test_method_scanned (test_weakassert.TestScanFileIntegration) ... ok
+test_class_with_no_test_methods_contributes_zero (test_weakassert.TestScanFileIntegration) ... ok
+test_counts_test_methods (test_weakassert.TestScanFileIntegration) ... ok
+test_module_level_test_function_counted (test_weakassert.TestScanFileIntegration) ... ok
+test_module_level_test_function_no_assertion_flagged (test_weakassert.TestScanFileIntegration) ... ok
+test_relative_path_uses_forward_slashes (test_weakassert.TestScanFileIntegration) ... ok
+test_setup_assertion_does_not_leak_to_sibling_test (test_weakassert.TestScanFileIntegration) ... ok
+test_syntax_error_reported_as_error_not_crash (test_weakassert.TestScanFileIntegration) ... ok
+test_unreadable_binary_file_reported_as_error (test_weakassert.TestScanFileIntegration) ... ok
+test_both_sides_direct_calls_flagged (test_weakassert.TestSelfDerivedExpectationDetection) ... ok
+test_chained_alias_not_resolved_documented_limitation (test_weakassert.TestSelfDerivedExpectationDetection)
+Two levels of variable indirection (a = subject.f(); b = a) are ... ok
+test_different_subject_functions_both_sides_still_flagged (test_weakassert.TestSelfDerivedExpectationDetection)
+Both sides call the module, even via different functions - the ... ok
+test_finding_line_matches_assertequal_call (test_weakassert.TestSelfDerivedExpectationDetection) ... ok
+test_local_variable_indirection_flagged (test_weakassert.TestSelfDerivedExpectationDetection)
+Regression test for the real bug found during development: the ... ok
+test_local_variable_pointing_at_non_subject_not_flagged (test_weakassert.TestSelfDerivedExpectationDetection) ... ok
+test_multiple_assertequal_only_offending_one_flagged (test_weakassert.TestSelfDerivedExpectationDetection) ... ok
+test_neither_side_subject_not_flagged (test_weakassert.TestSelfDerivedExpectationDetection) ... ok
+test_one_side_literal_not_flagged (test_weakassert.TestSelfDerivedExpectationDetection) ... ok
+test_bare_imported_skip_name_form (test_weakassert.TestSkipDetection) ... ok
+test_class_level_no_skip_returns_none (test_weakassert.TestSkipDetection) ... ok
+test_class_level_skip_detected (test_weakassert.TestSkipDetection) ... ok
+test_expected_failure_is_not_skip (test_weakassert.TestSkipDetection) ... ok
+test_multiple_decorators_only_skip_returned (test_weakassert.TestSkipDetection) ... ok
+test_no_decorators_returns_empty (test_weakassert.TestSkipDetection) ... ok
+test_patch_decorator_is_not_skip (test_weakassert.TestSkipDetection) ... ok
+test_skip_decorator_names_empty_list_input (test_weakassert.TestSkipDetection) ... ok
+test_skiptest_nested_inside_if_not_detected_top_level (test_weakassert.TestSkipDetection)
+Documented limitation: only unconditional top-level skipTest ... ok
+test_skiptest_not_present_returns_false (test_weakassert.TestSkipDetection) ... ok
+test_skiptest_unconditional_top_level_detected (test_weakassert.TestSkipDetection) ... ok
+test_skiptest_with_other_statements_after (test_weakassert.TestSkipDetection) ... ok
+test_unittest_skip_call_form (test_weakassert.TestSkipDetection) ... ok
+test_unittest_skipif_call_form (test_weakassert.TestSkipDetection) ... ok
+test_unittest_skipunless_call_form (test_weakassert.TestSkipDetection) ... ok
+test_assert_raises_context_manager_is_not_wa001 (test_weakassert.TestSpecEdgeCases) ... ok
+test_assertion_inside_try_except_counted (test_weakassert.TestSpecEdgeCases) ... ok
+test_assertion_only_in_for_loop_is_not_wa001 (test_weakassert.TestSpecEdgeCases) ... ok
+test_file_that_fails_to_parse_is_handled_gracefully (test_weakassert.TestSpecEdgeCases) ... ok
+test_full_scan_of_samples_strong_directory_is_clean (test_weakassert.TestSpecEdgeCases) ... ok
+test_full_scan_of_samples_weak_directory_trips_all_four (test_weakassert.TestSpecEdgeCases) ... ok
+test_module_level_helper_not_self_method_resolved (test_weakassert.TestSpecEdgeCases) ... ok
+test_setup_that_asserts_does_not_mask_sibling_weak_test (test_weakassert.TestSpecEdgeCases) ... ok
+test_subtest_block_assertion_counted (test_weakassert.TestSpecEdgeCases) ... ok
+test_test_function_outside_any_class_is_scanned (test_weakassert.TestSpecEdgeCases) ... ok
+test_basic_roundtrip (test_weakassert.TestUnparse) ... ok
+test_short_expression_not_truncated (test_weakassert.TestUnparse) ... ok
+test_truncates_long_expressions (test_weakassert.TestUnparse) ... ok
+
+----------------------------------------------------------------------
+Ran 202 tests in 0.075s
+
+OK
+exit=0
+
+$ python3 weakassert.py --root samples_strong ; echo "exit=$?"
+{"category_filter":null,"errors":[],"files_scanned":1,"findings":[],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA001_NO_ASSERTION":0,"WA002_CALL_ONLY":0,"WA003_SELF_DERIVED_EXPECTATION":0,"WA004_SKIPPED_TEST":0},"findings_total":0},"tests_scanned":14,"tool":"weakassert"}
+exit=0
+
+$ python3 weakassert.py --root samples_weak -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 weakassert.py --root samples_weak -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+d76cc52792d197f82f38b713a9ca39b5a1d271a728e31af2aee271ea8b72e9d9  r1.json
+d76cc52792d197f82f38b713a9ca39b5a1d271a728e31af2aee271ea8b72e9d9  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo "exit=$?"
+{"category_filter":["WA004_SKIPPED_TEST"],"errors":[],"files_scanned":1,"findings":[{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): skip","line":51,"path":"test_subject.py","test_name":"TestSkipped.test_decorator_skip"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): skipIf","line":55,"path":"test_subject.py","test_name":"TestSkipped.test_decorator_skip_if"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): skipUnless","line":59,"path":"test_subject.py","test_name":"TestSkipped.test_decorator_skip_unless"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): self.skipTest","line":62,"path":"test_subject.py","test_name":"TestSkipped.test_body_only_skip_test"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): class:skip","line":68,"path":"test_subject.py","test_name":"TestWholeClassSkipped.test_member_a"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): class:skip","line":71,"path":"test_subject.py","test_name":"TestWholeClassSkipped.test_member_b"}],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA004_SKIPPED_TEST":6},"findings_total":6},"tests_scanned":15,"tool":"weakassert"}
+exit=1
+
+$ python3 weakassert.py --root /nonexistent_dir ; echo "exit=$?"
+weakassert: error: --root '/nonexistent_dir' is not a directory
+exit=2
+
+$ grep -c "/sessions\|/tmp\|/home" r1.json
+0
+
+=== RELOCATION TEST ===
+$ cp -r samples_weak /tmp/relocated_weak_copy
+$ python3 weakassert.py --root samples_weak > /tmp/reloc_a.json
+$ python3 weakassert.py --root /tmp/relocated_weak_copy > /tmp/reloc_b.json
+$ sha256sum /tmp/reloc_a.json /tmp/reloc_b.json
+d76cc52792d197f82f38b713a9ca39b5a1d271a728e31af2aee271ea8b72e9d9  /tmp/reloc_a.json
+d76cc52792d197f82f38b713a9ca39b5a1d271a728e31af2aee271ea8b72e9d9  /tmp/reloc_b.json
+$ cmp /tmp/reloc_a.json /tmp/reloc_b.json && echo RELOCATION-IDENTICAL
+RELOCATION-IDENTICAL
+
+=== --category DEMO (extra, beyond mandatory list) ===
+$ python3 weakassert.py --root demo_category ; echo "exit=$?"
+{"category_filter":null,"errors":[],"files_scanned":1,"findings":[{"category":"WA001_NO_ASSERTION","detail":"no self.assert*/fail/bare-assert/assertRaises found in body (checked one level of self./bare helper calls)","line":7,"path":"test_only_no_assertion.py","test_name":"TestDemo.test_nothing_is_checked"}],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA001_NO_ASSERTION":1,"WA002_CALL_ONLY":0,"WA003_SELF_DERIVED_EXPECTATION":0,"WA004_SKIPPED_TEST":0},"findings_total":1},"tests_scanned":1,"tool":"weakassert"}
+exit=1
+$ python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo "exit=$?"
+{"category_filter":["WA004_SKIPPED_TEST"],"errors":[],"files_scanned":1,"findings":[],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA004_SKIPPED_TEST":0},"findings_total":0},"tests_scanned":1,"tool":"weakassert"}
+exit=0
