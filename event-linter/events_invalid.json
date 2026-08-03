@@ -1,0 +1,21 @@
+[
+  {"task_id":"task_illegal","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"},
+  {"task_id":"task_illegal","state":"submitted","occurred_at":"2026-07-30T09:10:00Z","actor":"operator"},
+  {"task_id":"task_postterm","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"},
+  {"task_id":"task_postterm","state":"accepted","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"},
+  {"task_id":"task_postterm","state":"submitted","occurred_at":"2026-07-30T09:20:00Z","actor":"operator"},
+  {"task_id":"task_postterm","state":"rewarded","occurred_at":"2026-07-30T09:40:00Z","actor":"authority"},
+  {"task_id":"task_postterm","state":"submitted","occurred_at":"2026-07-30T09:50:00Z","actor":"operator"},
+  {"task_id":"task_disorder","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"},
+  {"task_id":"task_disorder","state":"accepted","occurred_at":"2026-07-30T08:00:00Z","actor":"operator"},
+  {"task_id":"task_dupe","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"},
+  {"task_id":"task_dupe","state":"accepted","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"},
+  {"task_id":"task_dupe","state":"accepted","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"},
+  {"task_id":"task_noproposed","state":"accepted","occurred_at":"2026-07-30T09:00:00Z","actor":"operator"},
+  {"task_id":"task_noproposed","state":"submitted","occurred_at":"2026-07-30T09:10:00Z","actor":"operator"},
+  {"task_id":"task_unknown","state":"proposed","occurred_at":"2026-07-30T09:00:00Z","actor":"board"},
+  {"task_id":"task_unknown","state":"teleported","occurred_at":"2026-07-30T09:05:00Z","actor":"operator"},
+  {"task_id":"task_bad","state":"proposed"},
+  "not-an-object",
+  {"task_id":"task_blank","state":"   ","occurred_at":"2026-07-30T09:00:00Z"}
+]

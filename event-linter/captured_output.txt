@@ -1,0 +1,64 @@
+=== $ python3 -m unittest test_event_lint -v ===
+test_all_violation_classes_covered (test_event_lint.TestCli) ... ok
+test_invalid_exit_one (test_event_lint.TestCli) ... ok
+test_missing_file_exit_two (test_event_lint.TestCli) ... ok
+test_repeated_runs_identical (test_event_lint.TestCli) ... ok
+test_valid_exit_zero (test_event_lint.TestCli) ... ok
+test_blank_field (test_event_lint.TestMalformed) ... ok
+test_index_preserved (test_event_lint.TestMalformed) ... ok
+test_missing_fields (test_event_lint.TestMalformed) ... ok
+test_non_array_raises (test_event_lint.TestMalformed) ... ok
+test_non_object (test_event_lint.TestMalformed) ... ok
+test_unknown_state (test_event_lint.TestMalformed) ... ok
+test_clean_status (test_event_lint.TestReportShape) ... ok
+test_per_task_counts (test_event_lint.TestReportShape) ... ok
+test_serialize_repeatable (test_event_lint.TestReportShape) ... ok
+test_tasks_sorted_and_grouped (test_event_lint.TestReportShape) ... ok
+test_early_refuse_clean (test_event_lint.TestValidSequences) ... ok
+test_full_path_clean (test_event_lint.TestValidSequences) ... ok
+test_resubmission_loop_clean (test_event_lint.TestValidSequences) ... ok
+test_submitted_to_rewarded_clean (test_event_lint.TestValidSequences) ... ok
+test_duplicate_event (test_event_lint.TestViolationClasses) ... ok
+test_illegal_transition (test_event_lint.TestViolationClasses) ... ok
+test_missing_proposed (test_event_lint.TestViolationClasses) ... ok
+test_post_terminal (test_event_lint.TestViolationClasses) ... ok
+test_post_terminal_suppresses_transition_noise (test_event_lint.TestViolationClasses) ... ok
+test_same_state_different_timestamp_not_duplicate (test_event_lint.TestViolationClasses) ... ok
+test_timestamp_disorder (test_event_lint.TestViolationClasses) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.385s
+
+OK
+
+=== $ python3 event_lint.py events_valid.json -o report_valid.json ===
+status=clean violations=0
+exit=0
+
+=== $ python3 event_lint.py events_invalid.json -o report_invalid_run1.json ===
+status=violations violations=10
+exit=1
+=== $ python3 event_lint.py events_invalid.json -o report_invalid_run2.json ===
+status=violations violations=10
+exit=1
+
+=== $ sha256sum report_invalid_run1.json report_invalid_run2.json ===
+9ca2b3bd063b7eabb0c2c085a3aac33fb5abb9c994923cfb3d55ed6b16b775ab  report_invalid_run1.json
+9ca2b3bd063b7eabb0c2c085a3aac33fb5abb9c994923cfb3d55ed6b16b775ab  report_invalid_run2.json
+=== $ cmp ... && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+
+=== $ python3 event_lint.py /nonexistent.json ===
+UNREADABLE_INPUT: file not found: /nonexistent.json
+exit=2
+
+=== violation_counts ===
+{
+  "DUPLICATE_EVENT": 1,
+  "ILLEGAL_TRANSITION": 2,
+  "MALFORMED_EVENT": 3,
+  "MISSING_PROPOSED": 1,
+  "POST_TERMINAL_EVENT": 1,
+  "TIMESTAMP_DISORDER": 1,
+  "UNKNOWN_STATE": 1
+}
