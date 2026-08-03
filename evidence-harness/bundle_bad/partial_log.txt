@@ -1,0 +1,32 @@
+=== Partial evidence capture for 'tool.py' ===
+NOTE: this capture is deliberately incomplete.
+
+--- 1. Tests ------------------------------------------------------
+$ python3 test_tool.py -v
+test_empty (__main__.TestLongestWord) ... ok
+test_ignores_extra_whitespace (__main__.TestLongestWord) ... ok
+test_picks_longest (__main__.TestLongestWord) ... ok
+test_single (__main__.TestLongestWord) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+exit=0
+
+--- 2. JSON sanity check ------------------------------------------
+$ echo {"artefact":"tool.py"} | python3 -m json.tool
+{
+    "artefact": "tool.py"
+}
+exit=0
+
+--- 3. A command that failed --------------------------------------
+$ test -f README.md
+exit=1
+
+--- 4. Checksums (sha1 only) --------------------------------------
+$ sha1sum tool.py test_tool.py
+99354073feb34aeb69409ae8e63f07e94010fbb9  tool.py
+60ffde0d01b39c270470a96c79832493311fe5d7  test_tool.py
+exit=0
