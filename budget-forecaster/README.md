@@ -68,6 +68,16 @@ in task volume, pricing, or contributor count. The variance band communicates
 historical spread, not forecast confidence — it is not a statistical prediction
 interval and should not be read as one.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `history` (positional) | Path to a JSON array of historical rewarded-task records (`task_id`, `reward`, `rewarded_at`). Required. |
+| `-k`, `--open-tasks PATH` | Path to a JSON array of still-open task estimates (`task_id`, `estimate`). Optional; if omitted, `open_tasks.records` is `0` and `committed` is `0`. |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> projected_total=<amount>`. |
+| `--horizon-weeks N` | Number of weeks to project the burn rate forward. Parsed as a `Decimal` string; default `4`. Must not be negative — a negative value is rejected as `INVALID_INPUT` (exit 2). |
+| `--budget-cap N` | Optional `Decimal` spending ceiling. If `projected_total` exceeds it, `over_budget` is `true` and the process exits `1`. If omitted, no budget breach is possible regardless of projected spend. |
+
 ## Exit codes
 
 0 = within budget (or no cap set) · 1 = projected spend exceeds cap · 2 = invalid input
