@@ -1,0 +1,84 @@
+=== $ python3 -m unittest test_address_validate -v ===
+test_alphabet_is_58_unique_chars (test_address_validate.TestAlphabet) ... ok
+test_bitcoin_only_char_rejected (test_address_validate.TestAlphabet)
+'0' and 'l' are absent from XRPL's alphabet. ... ok
+test_punctuation_rejected (test_address_validate.TestAlphabet) ... ok
+test_xrpl_alphabet_is_not_bitcoin (test_address_validate.TestAlphabet) ... ok
+test_checksum_is_double_sha256_prefix (test_address_validate.TestChecksum) ... ok
+test_corrupted_char_fails_checksum (test_address_validate.TestChecksum) ... ok
+test_every_single_char_mutation_detected (test_address_validate.TestChecksum)
+Flip each position to a different alphabet char; all must fail. ... ok
+test_denylist_absent_makes_that_address_pass (test_address_validate.TestCli) ... ok
+test_invalid_fixture_covers_all_codes (test_address_validate.TestCli) ... ok
+test_invalid_fixture_exit_one (test_address_validate.TestCli) ... ok
+test_missing_file_exit_two (test_address_validate.TestCli) ... ok
+test_repeated_runs_identical (test_address_validate.TestCli) ... ok
+test_valid_fixture_exit_zero (test_address_validate.TestCli) ... ok
+test_denylist_loader_rejects_non_array (test_address_validate.TestDenylist) ... ok
+test_denylist_only_applies_to_structurally_valid (test_address_validate.TestDenylist)
+A malformed address is reported as malformed, not as denylisted. ... ok
+test_denylisted_flagged (test_address_validate.TestDenylist) ... ok
+test_not_denylisted_clean (test_address_validate.TestDenylist) ... ok
+test_empty_string (test_address_validate.TestMalformedRecords) ... ok
+test_malformed_does_not_abort (test_address_validate.TestMalformedRecords) ... ok
+test_non_array_input_raises (test_address_validate.TestMalformedRecords) ... ok
+test_non_string_element (test_address_validate.TestMalformedRecords) ... ok
+test_classic_wrong_payload_length (test_address_validate.TestPrefixAndLength) ... ok
+test_short_payload (test_address_validate.TestPrefixAndLength) ... ok
+test_too_short_overall (test_address_validate.TestPrefixAndLength) ... ok
+test_unknown_prefix (test_address_validate.TestPrefixAndLength) ... ok
+test_issue_counts_aggregate (test_address_validate.TestReport) ... ok
+test_serialize_repeatable (test_address_validate.TestReport) ... ok
+test_status_clean_when_all_valid (test_address_validate.TestReport) ... ok
+test_classic_starts_with_r (test_address_validate.TestValidAddresses) ... ok
+test_classic_valid (test_address_validate.TestValidAddresses) ... ok
+test_xaddress_mainnet_valid (test_address_validate.TestValidAddresses) ... ok
+test_xaddress_testnet_valid (test_address_validate.TestValidAddresses) ... ok
+test_xmain_starts_with_X (test_address_validate.TestValidAddresses) ... ok
+test_xtest_starts_with_T (test_address_validate.TestValidAddresses) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 0.561s
+
+OK
+
+=== $ python3 address_validate.py addresses_valid.json -o report_valid.json ===
+status=clean valid=4 invalid=0
+exit=0
+
+=== $ python3 address_validate.py addresses_invalid.json -d denylist.json -o report_invalid_run1.json ===
+status=issues valid=1 invalid=7
+exit=1
+=== $ python3 address_validate.py addresses_invalid.json -d denylist.json -o report_invalid_run2.json ===
+status=issues valid=1 invalid=7
+exit=1
+
+=== $ sha256sum report_invalid_run1.json report_invalid_run2.json ===
+cd46dafe514eb23f38f5cbf2a402c4e5c0450e22c3af74b43f6da94afe9f6c0d  report_invalid_run1.json
+cd46dafe514eb23f38f5cbf2a402c4e5c0450e22c3af74b43f6da94afe9f6c0d  report_invalid_run2.json
+=== $ cmp ... && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+
+=== $ python3 address_validate.py /nonexistent.json ===
+UNREADABLE_INPUT: file not found: /nonexistent.json
+exit=2
+
+=== issue_counts ===
+{
+  "BAD_ALPHABET": 1,
+  "BAD_CHECKSUM": 1,
+  "BAD_LENGTH": 1,
+  "BAD_PREFIX": 1,
+  "DENYLISTED": 1,
+  "MALFORMED_RECORD": 2
+}
+
+=== per-address results ===
+  [0] kind=classic         valid=True  issues=[]
+  [1] kind=classic         valid=False issues=['BAD_CHECKSUM']
+  [2] kind=None            valid=False issues=['BAD_PREFIX']
+  [3] kind=classic         valid=False issues=['BAD_LENGTH']
+  [4] kind=None            valid=False issues=['BAD_ALPHABET']
+  [5] kind=None            valid=False issues=['MALFORMED_RECORD']
+  [6] kind=None            valid=False issues=['MALFORMED_RECORD']
+  [7] kind=classic         valid=False issues=['DENYLISTED']
