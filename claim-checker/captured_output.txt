@@ -1,0 +1,305 @@
+==============================================================
+ claimcheck.py -- verification transcript
+==============================================================
+
+$ uname -srm
+Linux 6.8.0-124-generic x86_64
+exit=0
+
+$ python3 --version
+Python 3.10.12
+exit=0
+
+$ pwd
+/tmp/build_claimcheck
+exit=0
+
+$ ls -1
+__pycache__
+_run_capture.sh
+bundle_false
+bundle_truthful
+captured_output.txt
+claimcheck.py
+test_claimcheck.py
+exit=0
+
+==============================================================
+ STEP 1  Test suite
+==============================================================
+
+$ python3 -m unittest test_claimcheck -v
+test_all_matched_claims_exit_zero (test_claimcheck.TestBuildReport) ... ok
+test_bundle_dir_and_notes_file_echo_cli_args_verbatim (test_claimcheck.TestBuildReport) ... ok
+test_claim_count_matches_len_claims (test_claimcheck.TestBuildReport) ... ok
+test_empty_notes_file_zero_claims_exit_zero (test_claimcheck.TestBuildReport) ... ok
+test_input_error_bundle_dir_is_a_file (test_claimcheck.TestBuildReport) ... ok
+test_input_error_bundle_dir_missing (test_claimcheck.TestBuildReport) ... ok
+test_input_error_notes_file_missing (test_claimcheck.TestBuildReport) ... ok
+test_input_error_notes_not_utf8 (test_claimcheck.TestBuildReport) ... ok
+test_input_error_notes_path_is_a_directory (test_claimcheck.TestBuildReport) ... ok
+test_no_test_count_claim_means_no_unittest_run (test_claimcheck.TestBuildReport) ... ok
+test_notes_with_no_claims_at_all_exit_zero (test_claimcheck.TestBuildReport) ... ok
+test_one_mismatch_gives_exit_one (test_claimcheck.TestBuildReport) ... ok
+test_one_unsubstantiated_gives_exit_one (test_claimcheck.TestBuildReport) ... ok
+test_one_unverifiable_command_gives_exit_one (test_claimcheck.TestBuildReport) ... ok
+test_report_exit_code_field_matches_returned_exit_code (test_claimcheck.TestBuildReport) ... ok
+test_report_has_expected_top_level_keys (test_claimcheck.TestBuildReport) ... ok
+test_summary_counts_add_up (test_claimcheck.TestBuildReport) ... ok
+test_test_count_claim_triggers_real_unittest_run (test_claimcheck.TestBuildReport) ... ok
+test_test_run_only_happens_once_even_with_multiple_claims (test_claimcheck.TestBuildReport) ... ok
+test_all_matched_exit_0 (test_claimcheck.TestCLI) ... ok
+test_bundle_dir_is_a_file_exit_2 (test_claimcheck.TestCLI) ... ok
+test_empty_notes_file_exit_0 (test_claimcheck.TestCLI) ... ok
+test_help_flag_exit_0 (test_claimcheck.TestCLI) ... ok
+test_mismatch_exit_1 (test_claimcheck.TestCLI) ... ok
+test_missing_all_args_exit_2 (test_claimcheck.TestCLI) ... ok
+test_missing_notes_arg_exit_2 (test_claimcheck.TestCLI) ... ok
+test_nonexistent_bundle_dir_exit_2 (test_claimcheck.TestCLI) ... ok
+test_nonexistent_notes_file_exit_2 (test_claimcheck.TestCLI) ... ok
+test_notes_not_utf8_exit_2 (test_claimcheck.TestCLI) ... ok
+test_output_creates_parent_directories (test_claimcheck.TestCLI) ... ok
+test_output_flag_writes_identical_bytes_to_stdout (test_claimcheck.TestCLI) ... ok
+test_output_long_flag (test_claimcheck.TestCLI) ... ok
+test_stderr_empty_on_success (test_claimcheck.TestCLI) ... ok
+test_ascii_only_escapes_unicode (test_claimcheck.TestCanonicalJsonBytes) ... ok
+test_ends_with_single_trailing_newline (test_claimcheck.TestCanonicalJsonBytes) ... ok
+test_is_pure_ascii_bytes (test_claimcheck.TestCanonicalJsonBytes) ... ok
+test_keys_sorted (test_claimcheck.TestCanonicalJsonBytes) ... ok
+test_no_spaces_after_separators (test_claimcheck.TestCanonicalJsonBytes) ... ok
+test_round_trips_through_json_loads (test_claimcheck.TestCanonicalJsonBytes) ... ok
+test_claims_list_order_independent_of_dict_iteration (test_claimcheck.TestDeterminismAndNoAbsolutePath) ... ok
+test_no_absolute_path_fragments_in_report (test_claimcheck.TestDeterminismAndNoAbsolutePath) ... ok
+test_relocation_produces_byte_identical_report (test_claimcheck.TestDeterminismAndNoAbsolutePath) ... ok
+test_two_runs_byte_identical (test_claimcheck.TestDeterminismAndNoAbsolutePath) ... ok
+test_discover_files_forward_slash (test_claimcheck.TestDiscoverAndHash) ... ok
+test_discover_files_sorted (test_claimcheck.TestDiscoverAndHash) ... ok
+test_empty_bundle_no_files (test_claimcheck.TestDiscoverAndHash) ... ok
+test_hash_bundle_files_real_sha256 (test_claimcheck.TestDiscoverAndHash) ... ok
+test_all_occurrences_same_line_number_when_all_on_one_line (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_claim_on_second_line (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_empty_notes_text_no_claims (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_mixed_claim_types_same_line_sorted_by_offset (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_no_trailing_newline_still_scans_last_line (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_notes_with_no_claims_at_all (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_single_claim_line_number_is_one_indexed (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_sorted_by_line_then_offset_then_type (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_whitespace_only_notes_no_claims (test_claimcheck.TestExtractClaimOccurrences) ... ok
+test_claim_text_is_whole_line (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_command_after_exit_mention_not_chosen (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_command_with_arguments_captured_whole (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_exit_code_colon_form (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_exit_code_space_form (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_exit_code_underscore_form (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_exit_equals_form (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_exit_status_word_not_required (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_line_number_recorded (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_nearest_preceding_command_chosen (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_negative_exit_code (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_no_command_present (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_no_exit_mention_no_claim (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_two_exit_claims_one_line (test_claimcheck.TestExtractExitCodeOccurrences) ... ok
+test_63_hex_chars_not_a_claim (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_64_hex_bounded_by_hex_is_not_a_claim (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_65_hex_chars_not_a_claim (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_bare_64_hex_no_filename (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_claim_text_is_whole_line (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_decimal_number_not_misread_as_filename (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_extension_starting_with_letter_still_matches (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_filename_colon_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_filename_equals_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_filename_sha256_colon_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_filename_sha256_equals_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_filename_token_stops_at_backtick (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_filename_with_path_separator (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_line_number_recorded (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_mixed_case_hex_extracted (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_no_filename_when_preceding_token_has_no_extension (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_no_hash_no_claims (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_numeric_extension_real_filename_still_not_matched_as_such (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_offsets_are_increasing_left_to_right (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha256_paren_case_insensitive_tag (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha256_paren_colon_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha256_paren_equals_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha256_paren_no_separator_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha256sum_style_one_space (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha256sum_style_star_binary_marker (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha256sum_style_two_spaces (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_sha_dash_256_paren_form (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_two_bare_claims_one_line (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_two_claims_one_line_both_have_filenames (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_two_claims_one_line_sha256sum_style (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_uppercase_hex_extracted_verbatim (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_version_number_not_misread_as_filename (test_claimcheck.TestExtractSha256Occurrences) ... ok
+test_bare_1_test_singular (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_bare_n_tests_no_ran_prefix (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_claim_text_is_whole_line (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_line_number_recorded (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_no_number_no_claim (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_number_not_adjacent_to_tests_word_is_not_a_claim (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_ran_1_test_singular (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_ran_and_bare_together_distinct (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_ran_case_insensitive (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_ran_n_tests_does_not_double_count_as_bare (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_ran_n_tests_plural (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_two_bare_counts_one_line (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_word_testsuite_is_not_a_claim (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_zero_tests (test_claimcheck.TestExtractTestCountOccurrences) ... ok
+test_bundle_false_every_claim_has_evidence_source (test_claimcheck.TestFixtureBundles) ... ok
+test_bundle_false_exit_1 (test_claimcheck.TestFixtureBundles) ... ok
+test_bundle_false_two_runs_identical (test_claimcheck.TestFixtureBundles) ... ok
+test_bundle_truthful_exit_0 (test_claimcheck.TestFixtureBundles) ... ok
+test_backslash_normalised_to_forward_slash (test_claimcheck.TestResolveFilename) ... ok
+test_basename_ambiguous_match (test_claimcheck.TestResolveFilename) ... ok
+test_basename_unique_match (test_claimcheck.TestResolveFilename) ... ok
+test_exact_relpath_match (test_claimcheck.TestResolveFilename) ... ok
+test_leading_dot_slash_normalised (test_claimcheck.TestResolveFilename) ... ok
+test_not_found (test_claimcheck.TestResolveFilename) ... ok
+test_command_output_does_not_affect_returncode (test_claimcheck.TestRunCommand) ... ok
+test_negative_style_large_exit_code_wraps_like_os (test_claimcheck.TestRunCommand) ... ok
+test_nonexistent_interpreter_reports_none (test_claimcheck.TestRunCommand) ... ok
+test_nonzero_exit_captured (test_claimcheck.TestRunCommand) ... ok
+test_successful_run_exit_zero (test_claimcheck.TestRunCommand) ... ok
+test_timeout_reports_none_and_detail (test_claimcheck.TestRunCommand) ... ok
+test_asserted_value_carries_command_and_exit_code (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_command_cache_reused_for_identical_command (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_matched (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_mismatched (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_no_command_text_is_unverifiable (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_refused_command_is_unverifiable (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_shell_metacharacter_never_executed (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_timeout_is_unverifiable (test_claimcheck.TestVerifyExitCodeClaim) ... ok
+test_ambiguous_filename_is_unsubstantiated (test_claimcheck.TestVerifySha256Claim) ... ok
+test_bare_hash_case_insensitive_match (test_claimcheck.TestVerifySha256Claim) ... ok
+test_bare_hash_matched (test_claimcheck.TestVerifySha256Claim) ... ok
+test_bare_hash_matches_multiple_files (test_claimcheck.TestVerifySha256Claim) ... ok
+test_bare_hash_mismatched_no_file_found (test_claimcheck.TestVerifySha256Claim) ... ok
+test_claim_type_field (test_claimcheck.TestVerifySha256Claim) ... ok
+test_evidence_source_is_nonempty_string_for_every_result (test_claimcheck.TestVerifySha256Claim) ... ok
+test_filename_matched (test_claimcheck.TestVerifySha256Claim) ... ok
+test_filename_matched_case_insensitive (test_claimcheck.TestVerifySha256Claim) ... ok
+test_filename_mismatch_reports_where_hash_actually_lives (test_claimcheck.TestVerifySha256Claim) ... ok
+test_filename_mismatch_with_no_elsewhere_match (test_claimcheck.TestVerifySha256Claim) ... ok
+test_filename_mismatched (test_claimcheck.TestVerifySha256Claim) ... ok
+test_filename_missing_is_unsubstantiated (test_claimcheck.TestVerifySha256Claim) ... ok
+test_result_always_has_all_seven_fields (test_claimcheck.TestVerifySha256Claim) ... ok
+test_unreadable_file_is_unsubstantiated (test_claimcheck.TestVerifySha256Claim) ... ok
+test_evidence_source_mentions_real_command (test_claimcheck.TestVerifyTestCountClaim) ... ok
+test_matched (test_claimcheck.TestVerifyTestCountClaim) ... ok
+test_mismatched (test_claimcheck.TestVerifyTestCountClaim) ... ok
+test_unsubstantiated_when_run_failed (test_claimcheck.TestVerifyTestCountClaim) ... ok
+test_zero_matches_zero (test_claimcheck.TestVerifyTestCountClaim) ... ok
+test_absolute_interpreter_path_refused (test_claimcheck.TestVetCommand) ... ok
+test_absolute_target_path_refused (test_claimcheck.TestVetCommand) ... ok
+test_ampersand_refused (test_claimcheck.TestVetCommand) ... ok
+test_dollar_refused (test_claimcheck.TestVetCommand) ... ok
+test_empty_command_refused (test_claimcheck.TestVetCommand) ... ok
+test_nested_file_allowed (test_claimcheck.TestVetCommand) ... ok
+test_no_target_file_refused (test_claimcheck.TestVetCommand) ... ok
+test_non_python3_interpreter_refused (test_claimcheck.TestVetCommand) ... ok
+test_parent_traversal_refused (test_claimcheck.TestVetCommand) ... ok
+test_pipe_refused (test_claimcheck.TestVetCommand) ... ok
+test_python3_dot_version_refused (test_claimcheck.TestVetCommand) ... ok
+test_python_without_3_refused (test_claimcheck.TestVetCommand) ... ok
+test_quoted_target_with_spaces_allowed_if_exists (test_claimcheck.TestVetCommand) ... ok
+test_redirect_in_refused (test_claimcheck.TestVetCommand) ... ok
+test_redirect_refused (test_claimcheck.TestVetCommand) ... ok
+test_semicolon_refused (test_claimcheck.TestVetCommand) ... ok
+test_target_not_in_bundle_refused (test_claimcheck.TestVetCommand) ... ok
+test_unbalanced_quotes_refused (test_claimcheck.TestVetCommand) ... ok
+test_valid_python3_invocation_allowed (test_claimcheck.TestVetCommand) ... ok
+test_valid_with_arguments_allowed (test_claimcheck.TestVetCommand) ... ok
+
+----------------------------------------------------------------------
+Ran 180 tests in 3.119s
+
+OK
+exit=0
+
+==============================================================
+ STEP 2  bundle_truthful -- every claim substantiated
+==============================================================
+
+$ python3 claimcheck.py bundle_truthful bundle_truthful/notes_truthful.txt ; echo "exit=$?"
+{"bundle_dir":"bundle_truthful","claim_count":3,"claims":[{"asserted_value":{"filename":"checker.py","sha256":"66795f3166b8fd02d5f054849a469fcb7199a669c69adac08bf386b901430b89"},"claim_text":"sha256(checker.py) = 66795f3166b8fd02d5f054849a469fcb7199a669c69adac08bf386b901430b89","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 matches the claim","notes_line_number":6,"observed_value":{"filename":"checker.py","sha256":"66795f3166b8fd02d5f054849a469fcb7199a669c69adac08bf386b901430b89"},"result":"MATCHED"},{"asserted_value":{"tests":3},"claim_text":"Ran 3 tests in 0.000s, all green.","claim_type":"TEST_COUNT_CLAIM","evidence_source":"ran `python3 -m unittest discover -s . -v` inside the bundle; observed summary line 'Ran 3 tests'","notes_line_number":9,"observed_value":{"tests":3},"result":"MATCHED"},{"asserted_value":{"command":"python3 checker.py","exit_code":0},"claim_text":"Ran `python3 checker.py` and observed exit code 0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"executed 'python3 checker.py' inside the bundle directory (python3 invocation of a file inside the bundle); observed real exit code 0","notes_line_number":12,"observed_value":{"exit_code":0},"result":"MATCHED"}],"exit_code":0,"notes_file":"bundle_truthful/notes_truthful.txt","schema_version":1,"status":"all_matched","summary":{"matched":3,"mismatched":0,"unsubstantiated":0,"unverifiable_command":0},"tool":"claimcheck","tool_version":"1.0.0"}
+exit=0
+
+==============================================================
+ STEP 3  bundle_false -- mismatched / unsubstantiated / unverifiable, written twice
+==============================================================
+
+$ python3 claimcheck.py bundle_false bundle_false/notes_false.txt -o r1.json ; echo "exit=$?"
+{"bundle_dir":"bundle_false","claim_count":12,"claims":[{"asserted_value":{"filename":"checker.py","sha256":"6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62"},"claim_text":"sha256(checker.py) = 6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim","notes_line_number":11,"observed_value":{"filename":"checker.py","hash_claimed_found_at":[],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"missing.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(missing.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61","claim_type":"SHA256_CLAIM","evidence_source":"nothing in the bundle could substantiate this: no file named 'missing.py' exists in the bundle","notes_line_number":14,"observed_value":null,"result":"UNSUBSTANTIATED"},{"asserted_value":{"filename":null,"sha256":"8cb602f9158f8d450987ac8fd9723f12683abde387888a175a79dc48b220f8ef"},"claim_text":"Reference digest 8cb602f9158f8d450987ac8fd9723f12683abde387888a175a79dc48b220f8ef was not found anywhere.","claim_type":"SHA256_CLAIM","evidence_source":"hashed every file in the bundle (5 file(s)); no file matches this hash","notes_line_number":17,"observed_value":{"matched_files":[]},"result":"MISMATCHED"},{"asserted_value":{"filename":"checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(checker.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim (the claimed hash actually belongs to test_checker.py)","notes_line_number":23,"observed_value":{"filename":"checker.py","hash_claimed_found_at":["test_checker.py"],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61  test_checker.py    6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62  checker.py","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'test_checker.py': sha256 matches the claim","notes_line_number":27,"observed_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"result":"MATCHED"},{"asserted_value":{"filename":"checker.py","sha256":"6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62"},"claim_text":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61  test_checker.py    6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62  checker.py","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim","notes_line_number":27,"observed_value":{"filename":"checker.py","hash_claimed_found_at":[],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(test_checker.py) = 6D846E99C18B31880EA939F3779AF9EC72FCC76F59348D0821072AFD662BCC61","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'test_checker.py': sha256 matches the claim","notes_line_number":31,"observed_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"result":"MATCHED"},{"asserted_value":{"tests":10},"claim_text":"Ran 10 tests, all passing.","claim_type":"TEST_COUNT_CLAIM","evidence_source":"ran `python3 -m unittest discover -s . -v` inside the bundle; observed summary line 'Ran 2 tests'","notes_line_number":36,"observed_value":{"tests":2},"result":"MISMATCHED"},{"asserted_value":{"command":"python3 checker.py","exit_code":1},"claim_text":"Ran `python3 checker.py` and observed exit code 1.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"executed 'python3 checker.py' inside the bundle directory (python3 invocation of a file inside the bundle); observed real exit code 0","notes_line_number":41,"observed_value":{"exit_code":0},"result":"MISMATCHED"},{"asserted_value":{"command":"bash checker.py","exit_code":0},"claim_text":"Ran `bash checker.py` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: only a bare 'python3 <file>' invocation is permitted; argv[0] was 'bash'","notes_line_number":44,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"},{"asserted_value":{"command":"python3 checker.py; echo pwned","exit_code":0},"claim_text":"Ran `python3 checker.py; echo pwned` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: command text contains shell metacharacter(s) ';'; this tool never runs commands through a shell, and text like this is exactly what an untrusted notes file could use to hide a second command","notes_line_number":48,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"},{"asserted_value":{"command":"python3 /etc/hostname","exit_code":0},"claim_text":"Ran `python3 /etc/hostname` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: target '/etc/hostname' is an absolute path, not a bundle-relative one","notes_line_number":51,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"}],"exit_code":1,"notes_file":"bundle_false/notes_false.txt","schema_version":1,"status":"issues_found","summary":{"matched":2,"mismatched":6,"unsubstantiated":1,"unverifiable_command":3},"tool":"claimcheck","tool_version":"1.0.0"}
+exit=1
+
+$ python3 claimcheck.py bundle_false bundle_false/notes_false.txt -o r2.json ; echo "exit=$?"
+{"bundle_dir":"bundle_false","claim_count":12,"claims":[{"asserted_value":{"filename":"checker.py","sha256":"6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62"},"claim_text":"sha256(checker.py) = 6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim","notes_line_number":11,"observed_value":{"filename":"checker.py","hash_claimed_found_at":[],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"missing.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(missing.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61","claim_type":"SHA256_CLAIM","evidence_source":"nothing in the bundle could substantiate this: no file named 'missing.py' exists in the bundle","notes_line_number":14,"observed_value":null,"result":"UNSUBSTANTIATED"},{"asserted_value":{"filename":null,"sha256":"8cb602f9158f8d450987ac8fd9723f12683abde387888a175a79dc48b220f8ef"},"claim_text":"Reference digest 8cb602f9158f8d450987ac8fd9723f12683abde387888a175a79dc48b220f8ef was not found anywhere.","claim_type":"SHA256_CLAIM","evidence_source":"hashed every file in the bundle (5 file(s)); no file matches this hash","notes_line_number":17,"observed_value":{"matched_files":[]},"result":"MISMATCHED"},{"asserted_value":{"filename":"checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(checker.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim (the claimed hash actually belongs to test_checker.py)","notes_line_number":23,"observed_value":{"filename":"checker.py","hash_claimed_found_at":["test_checker.py"],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61  test_checker.py    6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62  checker.py","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'test_checker.py': sha256 matches the claim","notes_line_number":27,"observed_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"result":"MATCHED"},{"asserted_value":{"filename":"checker.py","sha256":"6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62"},"claim_text":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61  test_checker.py    6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62  checker.py","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim","notes_line_number":27,"observed_value":{"filename":"checker.py","hash_claimed_found_at":[],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(test_checker.py) = 6D846E99C18B31880EA939F3779AF9EC72FCC76F59348D0821072AFD662BCC61","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'test_checker.py': sha256 matches the claim","notes_line_number":31,"observed_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"result":"MATCHED"},{"asserted_value":{"tests":10},"claim_text":"Ran 10 tests, all passing.","claim_type":"TEST_COUNT_CLAIM","evidence_source":"ran `python3 -m unittest discover -s . -v` inside the bundle; observed summary line 'Ran 2 tests'","notes_line_number":36,"observed_value":{"tests":2},"result":"MISMATCHED"},{"asserted_value":{"command":"python3 checker.py","exit_code":1},"claim_text":"Ran `python3 checker.py` and observed exit code 1.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"executed 'python3 checker.py' inside the bundle directory (python3 invocation of a file inside the bundle); observed real exit code 0","notes_line_number":41,"observed_value":{"exit_code":0},"result":"MISMATCHED"},{"asserted_value":{"command":"bash checker.py","exit_code":0},"claim_text":"Ran `bash checker.py` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: only a bare 'python3 <file>' invocation is permitted; argv[0] was 'bash'","notes_line_number":44,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"},{"asserted_value":{"command":"python3 checker.py; echo pwned","exit_code":0},"claim_text":"Ran `python3 checker.py; echo pwned` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: command text contains shell metacharacter(s) ';'; this tool never runs commands through a shell, and text like this is exactly what an untrusted notes file could use to hide a second command","notes_line_number":48,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"},{"asserted_value":{"command":"python3 /etc/hostname","exit_code":0},"claim_text":"Ran `python3 /etc/hostname` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: target '/etc/hostname' is an absolute path, not a bundle-relative one","notes_line_number":51,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"}],"exit_code":1,"notes_file":"bundle_false/notes_false.txt","schema_version":1,"status":"issues_found","summary":{"matched":2,"mismatched":6,"unsubstantiated":1,"unverifiable_command":3},"tool":"claimcheck","tool_version":"1.0.0"}
+exit=1
+
+==============================================================
+ STEP 4  determinism -- hashes, byte comparison
+==============================================================
+
+$ sha256sum r1.json r2.json
+336b661ed2e601c0fd3aa268ed91be70e0164286d021c8c8d03eb126b12405d1  r1.json
+336b661ed2e601c0fd3aa268ed91be70e0164286d021c8c8d03eb126b12405d1  r2.json
+exit=0
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+exit=0
+
+$ wc -c r1.json r2.json
+ 5850 r1.json
+ 5850 r2.json
+11700 total
+exit=0
+
+==============================================================
+ STEP 5  invalid input
+==============================================================
+
+$ python3 claimcheck.py /nonexistent_dir bundle_truthful/notes_truthful.txt ; echo "exit=$?"
+claimcheck: input error: bundle directory '/nonexistent_dir' does not exist
+exit=2
+
+$ python3 claimcheck.py bundle_truthful ; echo "exit=$?"
+usage: claimcheck.py [-h] [-o OUTPUT] bundle_dir notes_file
+claimcheck.py: error: the following arguments are required: notes_file
+exit=2
+
+==============================================================
+ STEP 6  no absolute paths in the report
+==============================================================
+
+$ grep -c "/sessions\|/tmp\|/home" r1.json
+0
+exit=1
+
+==============================================================
+ STEP 7  RELOCATION TEST -- copy bundle_false to a different absolute
+         path, run there, prove the report hash is IDENTICAL
+==============================================================
+
+$ mkdir -p /tmp/relocated_elsewhere/deep/path
+exit=0
+
+$ cp -r bundle_false /tmp/relocated_elsewhere/deep/path/bundle_false
+exit=0
+
+$ (cd /tmp/relocated_elsewhere/deep/path && python3 /tmp/build_claimcheck/claimcheck.py bundle_false bundle_false/notes_false.txt -o relocated_r.json) ; echo "exit=$?"
+{"bundle_dir":"bundle_false","claim_count":12,"claims":[{"asserted_value":{"filename":"checker.py","sha256":"6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62"},"claim_text":"sha256(checker.py) = 6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim","notes_line_number":11,"observed_value":{"filename":"checker.py","hash_claimed_found_at":[],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"missing.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(missing.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61","claim_type":"SHA256_CLAIM","evidence_source":"nothing in the bundle could substantiate this: no file named 'missing.py' exists in the bundle","notes_line_number":14,"observed_value":null,"result":"UNSUBSTANTIATED"},{"asserted_value":{"filename":null,"sha256":"8cb602f9158f8d450987ac8fd9723f12683abde387888a175a79dc48b220f8ef"},"claim_text":"Reference digest 8cb602f9158f8d450987ac8fd9723f12683abde387888a175a79dc48b220f8ef was not found anywhere.","claim_type":"SHA256_CLAIM","evidence_source":"hashed every file in the bundle (5 file(s)); no file matches this hash","notes_line_number":17,"observed_value":{"matched_files":[]},"result":"MISMATCHED"},{"asserted_value":{"filename":"checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(checker.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim (the claimed hash actually belongs to test_checker.py)","notes_line_number":23,"observed_value":{"filename":"checker.py","hash_claimed_found_at":["test_checker.py"],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61  test_checker.py    6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62  checker.py","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'test_checker.py': sha256 matches the claim","notes_line_number":27,"observed_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"result":"MATCHED"},{"asserted_value":{"filename":"checker.py","sha256":"6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62"},"claim_text":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61  test_checker.py    6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62  checker.py","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'checker.py': sha256 does not match the claim","notes_line_number":27,"observed_value":{"filename":"checker.py","hash_claimed_found_at":[],"sha256":"077283d5713e46f1fc6609de72bf01a79e20303f75dadef3840c980e62808075"},"result":"MISMATCHED"},{"asserted_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"claim_text":"sha256(test_checker.py) = 6D846E99C18B31880EA939F3779AF9EC72FCC76F59348D0821072AFD662BCC61","claim_type":"SHA256_CLAIM","evidence_source":"hashed bundle file 'test_checker.py': sha256 matches the claim","notes_line_number":31,"observed_value":{"filename":"test_checker.py","sha256":"6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61"},"result":"MATCHED"},{"asserted_value":{"tests":10},"claim_text":"Ran 10 tests, all passing.","claim_type":"TEST_COUNT_CLAIM","evidence_source":"ran `python3 -m unittest discover -s . -v` inside the bundle; observed summary line 'Ran 2 tests'","notes_line_number":36,"observed_value":{"tests":2},"result":"MISMATCHED"},{"asserted_value":{"command":"python3 checker.py","exit_code":1},"claim_text":"Ran `python3 checker.py` and observed exit code 1.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"executed 'python3 checker.py' inside the bundle directory (python3 invocation of a file inside the bundle); observed real exit code 0","notes_line_number":41,"observed_value":{"exit_code":0},"result":"MISMATCHED"},{"asserted_value":{"command":"bash checker.py","exit_code":0},"claim_text":"Ran `bash checker.py` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: only a bare 'python3 <file>' invocation is permitted; argv[0] was 'bash'","notes_line_number":44,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"},{"asserted_value":{"command":"python3 checker.py; echo pwned","exit_code":0},"claim_text":"Ran `python3 checker.py; echo pwned` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: command text contains shell metacharacter(s) ';'; this tool never runs commands through a shell, and text like this is exactly what an untrusted notes file could use to hide a second command","notes_line_number":48,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"},{"asserted_value":{"command":"python3 /etc/hostname","exit_code":0},"claim_text":"Ran `python3 /etc/hostname` and observed exit=0.","claim_type":"EXIT_CODE_CLAIM","evidence_source":"refused to execute: target '/etc/hostname' is an absolute path, not a bundle-relative one","notes_line_number":51,"observed_value":null,"result":"UNVERIFIABLE_COMMAND"}],"exit_code":1,"notes_file":"bundle_false/notes_false.txt","schema_version":1,"status":"issues_found","summary":{"matched":2,"mismatched":6,"unsubstantiated":1,"unverifiable_command":3},"tool":"claimcheck","tool_version":"1.0.0"}
+exit=1
+
+$ sha256sum r1.json /tmp/relocated_elsewhere/deep/path/relocated_r.json
+336b661ed2e601c0fd3aa268ed91be70e0164286d021c8c8d03eb126b12405d1  r1.json
+336b661ed2e601c0fd3aa268ed91be70e0164286d021c8c8d03eb126b12405d1  /tmp/relocated_elsewhere/deep/path/relocated_r.json
+exit=0
+
+$ cmp r1.json /tmp/relocated_elsewhere/deep/path/relocated_r.json && echo RELOCATION-BYTE-IDENTICAL
+RELOCATION-BYTE-IDENTICAL
+exit=0
+
+==============================================================
+ DONE
+==============================================================
