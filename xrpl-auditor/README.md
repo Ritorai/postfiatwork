@@ -67,6 +67,14 @@ Issues sorted by `(issue, index, payout_id)`; hash groups walked in sorted order
 `json.dumps` with `sort_keys=True`, `separators=(",",":")`, `ensure_ascii=True`,
 trailing newline, explicit utf-8 on write.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `payouts` (positional) | Path to a JSON array of recorded payouts to audit. Required. |
+| `roster` (positional) | Path to a JSON array of known task_ids (each entry a bare string or an object with a `task_id` field) that payouts are checked against. Required. |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> issues=<n>`. |
+
 ## Exit codes
 
 0 = clean · 1 = issues found · 2 = unreadable input
