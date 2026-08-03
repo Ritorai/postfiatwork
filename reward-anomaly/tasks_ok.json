@@ -1,0 +1,10 @@
+[
+  {"task_id": "t_proposed_1", "status": "proposed", "price": "10.00"},
+  {"task_id": "t_accepted_1", "status": "accepted", "price": 25},
+  {"task_id": "t_submitted_1", "status": "submitted", "price": "0"},
+  {"task_id": "t_rewarded_exact", "status": "rewarded", "price": "99.990000"},
+  {"task_id": "t_rewarded_zero", "status": "rewarded", "price": "0"},
+  {"task_id": "t_price_as_number", "status": "accepted", "price": 123.45},
+  {"task_id": "t_precision", "status": "rewarded", "price": 123456789012345678.123456789},
+  {"task_id": "t_refused_no_payout", "status": "refused", "price": "5.00"}
+]

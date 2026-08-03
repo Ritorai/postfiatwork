@@ -1,0 +1,6 @@
+[
+  {"payout_id": "pay_1", "task_id": "t_rewarded_exact", "amount": "99.99", "at": "2026-01-01T00:00:00Z"},
+  {"payout_id": "pay_2", "task_id": "t_rewarded_zero", "amount": "0", "at": "2026-01-01T00:05:00Z"},
+  {"payout_id": "pay_3", "task_id": "t_price_as_number", "amount": "123.45", "at": "2026-01-01T00:10:00Z"},
+  {"payout_id": "pay_4", "task_id": "t_precision", "amount": 123456789012345678.123456789, "at": "2026-01-01T00:15:00Z"}
+]

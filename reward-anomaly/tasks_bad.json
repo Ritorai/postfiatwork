@@ -1,0 +1,14 @@
+[
+  {"task_id": "task_refused_1", "status": "refused", "price": "100.00"},
+  {"task_id": "task_dup_payout", "status": "accepted", "price": "50.00"},
+  {"task_id": "task_above", "status": "rewarded", "price": "20.00"},
+  {"task_id": "task_below", "status": "rewarded", "price": "30.00"},
+  {"task_id": "task_dupid_a", "status": "accepted", "price": "5.00"},
+  {"task_id": "task_dupid_b", "status": "accepted", "price": "5.00"},
+  {"task_id": "task_invalid_amount", "status": "accepted", "price": "15.00"},
+  {"task_id": "task_invalid_price", "status": "accepted", "price": "not-a-price"},
+  {"task_id": "task_malformed_1", "price": "10.00"},
+  {"task_id": "task_dup_task_id", "status": "accepted", "price": "10.00"},
+  {"task_id": "task_dup_task_id", "status": "rewarded", "price": "999.00"},
+  {"task_id": "task_clean_rewarded", "status": "rewarded", "price": "42.00"}
+]

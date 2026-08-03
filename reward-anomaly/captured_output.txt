@@ -1,0 +1,194 @@
+$ python3 -m unittest test_reconcile_anomaly -v
+test_basic (test_reconcile_anomaly.TestAmountAbovePrice) ... ok
+test_tolerance_boundary_exactly_equal_not_flagged (test_reconcile_anomaly.TestAmountAbovePrice) ... ok
+test_tolerance_boundary_one_cent_over_flags (test_reconcile_anomaly.TestAmountAbovePrice) ... ok
+test_tolerance_suppresses (test_reconcile_anomaly.TestAmountAbovePrice) ... ok
+test_basic (test_reconcile_anomaly.TestAmountBelowPrice) ... ok
+test_price_invalid_skips_amount_check (test_reconcile_anomaly.TestAmountBelowPrice) ... ok
+test_tolerance_boundary_exactly_equal_not_flagged (test_reconcile_anomaly.TestAmountBelowPrice) ... ok
+test_tolerance_boundary_one_cent_under_flags (test_reconcile_anomaly.TestAmountBelowPrice) ... ok
+test_negative_zero_normalized (test_reconcile_anomaly.TestAmtStr) ... ok
+test_no_scientific_notation_small_delta (test_reconcile_anomaly.TestAmtStr) ... ok
+test_plain_value (test_reconcile_anomaly.TestAmtStr) ... ok
+test_empty_both (test_reconcile_anomaly.TestClean) ... ok
+test_matching_amount_clean (test_reconcile_anomaly.TestClean) ... ok
+test_refused_task_no_payout_not_flagged (test_reconcile_anomaly.TestClean) ... ok
+test_rewarded_task_with_matching_payout_not_flagged (test_reconcile_anomaly.TestClean) ... ok
+test_tasks_no_payouts_clean (test_reconcile_anomaly.TestClean) ... ok
+test_trailing_zero_decimal_equality (test_reconcile_anomaly.TestClean) ... ok
+test_zero_zero_clean (test_reconcile_anomaly.TestClean) ... ok
+test_exit_one_anomalies (test_reconcile_anomaly.TestCli) ... ok
+test_exit_two_bad_json (test_reconcile_anomaly.TestCli) ... ok
+test_exit_two_missing_arg (test_reconcile_anomaly.TestCli) ... ok
+test_exit_two_nonexistent_file (test_reconcile_anomaly.TestCli) ... ok
+test_exit_two_top_level_not_array (test_reconcile_anomaly.TestCli) ... ok
+test_exit_zero_clean (test_reconcile_anomaly.TestCli) ... ok
+test_output_flag_long (test_reconcile_anomaly.TestCli) ... ok
+test_output_flag_short (test_reconcile_anomaly.TestCli) ... ok
+test_repeat_runs_byte_identical (test_reconcile_anomaly.TestCli) ... ok
+test_stderr_empty_on_success (test_reconcile_anomaly.TestCli) ... ok
+test_stdout_used_when_no_output_flag (test_reconcile_anomaly.TestCli) ... ok
+test_tolerance_changes_findings (test_reconcile_anomaly.TestCli) ... ok
+test_tolerance_rejects_negative (test_reconcile_anomaly.TestCli) ... ok
+test_duplicate_suppresses_amount_check (test_reconcile_anomaly.TestDuplicatePayout) ... ok
+test_duplicate_with_missing_task_reports_both (test_reconcile_anomaly.TestDuplicatePayout) ... ok
+test_three_payouts_same_task (test_reconcile_anomaly.TestDuplicatePayout) ... ok
+test_two_payouts_same_task (test_reconcile_anomaly.TestDuplicatePayout) ... ok
+test_same_payout_id_different_tasks (test_reconcile_anomaly.TestDuplicatePayoutId) ... ok
+test_same_payout_id_same_task (test_reconcile_anomaly.TestDuplicatePayoutId) ... ok
+test_three_occurrences (test_reconcile_anomaly.TestDuplicatePayoutId) ... ok
+test_basic (test_reconcile_anomaly.TestInvalidAmount) ... ok
+test_invalid_amount_skips_price_comparison (test_reconcile_anomaly.TestInvalidAmount) ... ok
+test_invalid_amount_still_flags_refused (test_reconcile_anomaly.TestInvalidAmount) ... ok
+test_basic (test_reconcile_anomaly.TestInvalidPrice) ... ok
+test_nan_price (test_reconcile_anomaly.TestInvalidPrice) ... ok
+test_negative_price (test_reconcile_anomaly.TestInvalidPrice) ... ok
+test_empty_rejected (test_reconcile_anomaly.TestIso8601Check) ... ok
+test_garbage_rejected (test_reconcile_anomaly.TestIso8601Check) ... ok
+test_naive_rejected (test_reconcile_anomaly.TestIso8601Check) ... ok
+test_non_utc_offset_still_parses (test_reconcile_anomaly.TestIso8601Check) ... ok
+test_offset_ok (test_reconcile_anomaly.TestIso8601Check) ... ok
+test_z_suffix_ok (test_reconcile_anomaly.TestIso8601Check) ... ok
+test_bare_nan_becomes_nonfinite (test_reconcile_anomaly.TestLoadJson) ... ok
+test_directory_raises (test_reconcile_anomaly.TestLoadJson) ... ok
+test_file_not_found (test_reconcile_anomaly.TestLoadJson) ... ok
+test_invalid_json_syntax (test_reconcile_anomaly.TestLoadJson) ... ok
+test_load_array_accepts_list (test_reconcile_anomaly.TestLoadJson) ... ok
+test_load_array_rejects_object (test_reconcile_anomaly.TestLoadJson) ... ok
+test_parse_float_is_decimal (test_reconcile_anomaly.TestLoadJson) ... ok
+test_duplicate_task_id (test_reconcile_anomaly.TestMalformedRecord) ... ok
+test_payout_missing_field (test_reconcile_anomaly.TestMalformedRecord) ... ok
+test_task_missing_field (test_reconcile_anomaly.TestMalformedRecord) ... ok
+test_unknown_status (test_reconcile_anomaly.TestMalformedRecord) ... ok
+test_canonical_json_no_spaces (test_reconcile_anomaly.TestOrderingAndDeterminism) ... ok
+test_canonical_json_sorted_keys_and_trailing_newline (test_reconcile_anomaly.TestOrderingAndDeterminism) ... ok
+test_finding_set_independent_of_payout_input_order (test_reconcile_anomaly.TestOrderingAndDeterminism) ... ok
+test_findings_order_independent_of_task_input_order (test_reconcile_anomaly.TestOrderingAndDeterminism) ... ok
+test_multiple_anomaly_codes_all_present_and_sorted (test_reconcile_anomaly.TestOrderingAndDeterminism) ... ok
+test_repeated_calls_byte_identical (test_reconcile_anomaly.TestOrderingAndDeterminism) ... ok
+test_accepts_decimal_passthrough (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_accepts_int (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_accepts_negative_string (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_accepts_plain_string (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_accepts_zero (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_high_precision_string_exact (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_bool_false (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_bool_true (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_decimal_infinity_directly (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_decimal_nan_directly (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_dict (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_empty_string (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_junk_string (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_list (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_none (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_nonfinite_infinity_sentinel (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_nonfinite_nan_sentinel (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_string_infinity (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_string_nan (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_rejects_whitespace_string (test_reconcile_anomaly.TestParseFiniteDecimal) ... ok
+test_negative_allowed_when_flagged (test_reconcile_anomaly.TestParseMoney) ... ok
+test_negative_rejected_by_default (test_reconcile_anomaly.TestParseMoney) ... ok
+test_zero_allowed (test_reconcile_anomaly.TestParseMoney) ... ok
+test_amount_as_number (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_bad_at_format (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_empty_list (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_empty_payout_id (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_empty_task_id (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_invalid_amount_string (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_missing_amount (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_missing_at (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_missing_payout_id (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_missing_task_id (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_naive_at_rejected (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_nan_amount_invalid (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_negative_amount_invalid (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_non_dict_record (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_valid_payout (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_zero_amount_valid (test_reconcile_anomaly.TestParsePayouts) ... ok
+test_all_five_statuses_accepted (test_reconcile_anomaly.TestParseTasks) ... ok
+test_duplicate_task_id_first_wins (test_reconcile_anomaly.TestParseTasks) ... ok
+test_empty_list (test_reconcile_anomaly.TestParseTasks) ... ok
+test_empty_task_id (test_reconcile_anomaly.TestParseTasks) ... ok
+test_invalid_price_string (test_reconcile_anomaly.TestParseTasks) ... ok
+test_missing_price (test_reconcile_anomaly.TestParseTasks) ... ok
+test_missing_status (test_reconcile_anomaly.TestParseTasks) ... ok
+test_missing_task_id (test_reconcile_anomaly.TestParseTasks) ... ok
+test_negative_price_invalid (test_reconcile_anomaly.TestParseTasks) ... ok
+test_non_dict_record (test_reconcile_anomaly.TestParseTasks) ... ok
+test_non_string_task_id (test_reconcile_anomaly.TestParseTasks) ... ok
+test_price_as_number (test_reconcile_anomaly.TestParseTasks) ... ok
+test_price_as_string_vs_number_equal (test_reconcile_anomaly.TestParseTasks) ... ok
+test_price_precision_preserved (test_reconcile_anomaly.TestParseTasks) ... ok
+test_unknown_status_malformed (test_reconcile_anomaly.TestParseTasks) ... ok
+test_valid_task (test_reconcile_anomaly.TestParseTasks) ... ok
+test_zero_price_valid (test_reconcile_anomaly.TestParseTasks) ... ok
+test_basic (test_reconcile_anomaly.TestPayoutForRefusedTask) ... ok
+test_non_refused_statuses_not_flagged (test_reconcile_anomaly.TestPayoutForRefusedTask) ... ok
+test_refused_and_amount_mismatch_both_reported (test_reconcile_anomaly.TestPayoutForRefusedTask) ... ok
+test_basic (test_reconcile_anomaly.TestPayoutWithoutTask) ... ok
+test_other_tasks_unaffected (test_reconcile_anomaly.TestPayoutWithoutTask) ... ok
+test_float_would_have_corrupted_this_value (test_reconcile_anomaly.TestPrecision) ... ok
+test_high_precision_exact_match_clean (test_reconcile_anomaly.TestPrecision) ... ok
+test_high_precision_exact_match_via_real_json_file (test_reconcile_anomaly.TestPrecision) ... ok
+test_sub_cent_delta_detected (test_reconcile_anomaly.TestPrecision) ... ok
+test_decimal_to_str (test_reconcile_anomaly.TestSafeRepr) ... ok
+test_int_passthrough (test_reconcile_anomaly.TestSafeRepr) ... ok
+test_list_to_repr_string (test_reconcile_anomaly.TestSafeRepr) ... ok
+test_none_passthrough (test_reconcile_anomaly.TestSafeRepr) ... ok
+test_nonfinite_to_token (test_reconcile_anomaly.TestSafeRepr) ... ok
+test_string_passthrough (test_reconcile_anomaly.TestSafeRepr) ... ok
+test_default_zero (test_reconcile_anomaly.TestToleranceParsing) ... ok
+test_parses_decimal_string (test_reconcile_anomaly.TestToleranceParsing) ... ok
+test_rejects_junk (test_reconcile_anomaly.TestToleranceParsing) ... ok
+test_rejects_nan_string (test_reconcile_anomaly.TestToleranceParsing) ... ok
+test_rejects_negative (test_reconcile_anomaly.TestToleranceParsing) ... ok
+
+----------------------------------------------------------------------
+Ran 143 tests in 0.251s
+
+OK
+
+$ python3 reconcile_anomaly.py tasks_ok.json payouts_ok.json ; echo "exit=$?"
+{"finding_counts":{},"findings":[],"report_version":"1.0","status":"clean","tolerance":"0","totals":{"findings":0,"payout_records":4,"task_records":8}}
+exit=0
+
+$ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run1.json ; echo "exit=$?"
+exit=1
+
+$ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum report_run1.json report_run2.json
+baccebdafe6b2d365892554b60f8b3bb6d811e22505976c0ae76679c73da75ff  report_run1.json
+baccebdafe6b2d365892554b60f8b3bb6d811e22505976c0ae76679c73da75ff  report_run2.json
+
+$ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json --tolerance 1000000 ; echo "exit=$?"
+{"finding_counts":{"DUPLICATE_PAYOUT":1,"DUPLICATE_PAYOUT_ID":1,"INVALID_AMOUNT":1,"INVALID_PRICE":1,"MALFORMED_RECORD":3,"PAYOUT_FOR_REFUSED_TASK":1,"PAYOUT_WITHOUT_TASK":1},"findings":[{"code":"DUPLICATE_PAYOUT","count":3,"index":null,"payout_id":null,"payout_ids":["payout_dup_a","payout_dup_b","payout_dup_c"],"source":"payouts","task_id":"task_dup_payout"},{"code":"DUPLICATE_PAYOUT_ID","count":2,"index":null,"indices":[7,8],"payout_id":"payout_shared_id","source":"payouts","task_id":null,"task_ids":["task_dupid_a","task_dupid_b"]},{"amount":"NaN","code":"INVALID_AMOUNT","detail":"is NaN (NaN/Infinity is not permitted)","index":9,"payout_id":"payout_bad_amount","source":"payouts","task_id":"task_invalid_amount"},{"code":"INVALID_PRICE","detail":"is not a valid decimal number: 'not-a-price'","index":7,"payout_id":null,"price":"not-a-price","source":"tasks","task_id":"task_invalid_price"},{"code":"MALFORMED_RECORD","detail":"duplicate task_id, first seen at index 9","index":10,"payout_id":null,"source":"tasks","task_id":"task_dup_task_id"},{"code":"MALFORMED_RECORD","detail":"missing required field(s): status","index":8,"payout_id":null,"source":"tasks","task_id":"task_malformed_1"},{"code":"MALFORMED_RECORD","detail":"missing required field(s): at","index":11,"payout_id":"payout_malformed_1","source":"payouts","task_id":"task_refused_1"},{"amount":"100.00","code":"PAYOUT_FOR_REFUSED_TASK","index":0,"payout_id":"payout_refused_1","price":"100.00","source":"payouts","task_id":"task_refused_1"},{"code":"PAYOUT_WITHOUT_TASK","index":6,"payout_id":"payout_no_task","source":"payouts","task_id":"task_ghost"}],"report_version":"1.0","status":"anomalies","tolerance":"1000000","totals":{"findings":9,"payout_records":14,"task_records":12}}
+exit=1
+
+$ python3 reconcile_anomaly.py /nonexistent.json payouts_ok.json ; echo "exit=$?"
+{"detail":"file not found: /nonexistent.json","error":"INVALID_INPUT"}
+exit=2
+
+$ python3 reconcile_anomaly.py tasks_ok.json ; echo "exit=$?"
+usage: reconcile_anomaly.py [-h] [-o OUTPUT] [--tolerance TOLERANCE]
+                            tasks payouts
+reconcile_anomaly.py: error: the following arguments are required: payouts
+exit=2
+
+--- PRECISION DEMONSTRATION (no float corruption) ---
+$ cat tasks.json
+[{"task_id": "precision_task", "status": "rewarded", "price": 123456789012345678.123456789}]
+$ cat payouts.json
+[{"payout_id": "precision_payout", "task_id": "precision_task", "amount": 123456789012345678.123456789, "at": "2026-01-01T00:00:00Z"}]
+$ python3 reconcile_anomaly.py tasks.json payouts.json ; echo "exit=$?"
+{"finding_counts":{},"findings":[],"report_version":"1.0","status":"clean","tolerance":"0","totals":{"findings":0,"payout_records":1,"task_records":1}}
+exit=0
+
+# Proof the naive Decimal(str(json_parsed_float)) pattern would have corrupted this value:
+correct (parse_float=Decimal): 123456789012345678.123456789
+naive Decimal(str(float(x))) would give: 1.2345678901234568E+17
+corrupted: True

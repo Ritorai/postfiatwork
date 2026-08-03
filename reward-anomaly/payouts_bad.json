@@ -1,0 +1,16 @@
+[
+  {"payout_id": "payout_refused_1", "task_id": "task_refused_1", "amount": "100.00", "at": "2026-01-01T00:00:00Z"},
+  {"payout_id": "payout_dup_a", "task_id": "task_dup_payout", "amount": "50.00", "at": "2026-01-01T00:01:00Z"},
+  {"payout_id": "payout_dup_b", "task_id": "task_dup_payout", "amount": "50.00", "at": "2026-01-01T00:02:00Z"},
+  {"payout_id": "payout_dup_c", "task_id": "task_dup_payout", "amount": "50.00", "at": "2026-01-01T00:03:00Z"},
+  {"payout_id": "payout_above", "task_id": "task_above", "amount": "25.50", "at": "2026-01-01T00:04:00Z"},
+  {"payout_id": "payout_below", "task_id": "task_below", "amount": "10.00", "at": "2026-01-01T00:05:00Z"},
+  {"payout_id": "payout_no_task", "task_id": "task_ghost", "amount": "5.00", "at": "2026-01-01T00:06:00Z"},
+  {"payout_id": "payout_shared_id", "task_id": "task_dupid_a", "amount": "5.00", "at": "2026-01-01T00:07:00Z"},
+  {"payout_id": "payout_shared_id", "task_id": "task_dupid_b", "amount": "5.00", "at": "2026-01-01T00:08:00Z"},
+  {"payout_id": "payout_bad_amount", "task_id": "task_invalid_amount", "amount": NaN, "at": "2026-01-01T00:09:00Z"},
+  {"payout_id": "payout_for_invalid_price", "task_id": "task_invalid_price", "amount": "15.00", "at": "2026-01-01T00:10:00Z"},
+  {"payout_id": "payout_malformed_1", "task_id": "task_refused_1", "amount": "5"},
+  {"payout_id": "payout_dup_task_id_ok", "task_id": "task_dup_task_id", "amount": "10.00", "at": "2026-01-01T00:11:00Z"},
+  {"payout_id": "payout_clean_1", "task_id": "task_clean_rewarded", "amount": "42.00", "at": "2026-01-01T00:12:00Z"}
+]
