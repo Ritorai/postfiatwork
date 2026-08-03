@@ -1,0 +1,32 @@
+test_clean_exit_zero (test_payout_audit.TestCli) ... ok
+test_dirty_covers_all_codes (test_payout_audit.TestCli) ... ok
+test_dirty_exit_one (test_payout_audit.TestCli) ... ok
+test_missing_file_exit_two (test_payout_audit.TestCli) ... ok
+test_repeated_runs_identical (test_payout_audit.TestCli) ... ok
+test_order_independent (test_payout_audit.TestDeterminism) ... ok
+test_serialize_repeatable (test_payout_audit.TestDeterminism) ... ok
+test_lowercase_rejected (test_payout_audit.TestHashStructure) ... ok
+test_non_hex_rejected (test_payout_audit.TestHashStructure) ... ok
+test_too_long_rejected (test_payout_audit.TestHashStructure) ... ok
+test_too_short_rejected (test_payout_audit.TestHashStructure) ... ok
+test_valid_hash_clean (test_payout_audit.TestHashStructure) ... ok
+test_blank_field (test_payout_audit.TestMalformed) ... ok
+test_index_preserved (test_payout_audit.TestMalformed) ... ok
+test_malformed_does_not_abort (test_payout_audit.TestMalformed) ... ok
+test_missing_field (test_payout_audit.TestMalformed) ... ok
+test_non_object_element (test_payout_audit.TestMalformed) ... ok
+test_distinct_hashes_clean (test_payout_audit.TestReuse) ... ok
+test_reuse_across_tasks_flags_both (test_payout_audit.TestReuse) ... ok
+test_reuse_within_task_flags_both (test_payout_audit.TestReuse) ... ok
+test_three_way_reuse_flags_all (test_payout_audit.TestReuse) ... ok
+test_within_task_reuse_is_not_across_task (test_payout_audit.TestReuse) ... ok
+test_known_task_clean (test_payout_audit.TestRoster) ... ok
+test_roster_accepts_objects (test_payout_audit.TestRoster) ... ok
+test_roster_accepts_plain_strings (test_payout_audit.TestRoster) ... ok
+test_roster_rejects_bad_element (test_payout_audit.TestRoster) ... ok
+test_unknown_task_flagged (test_payout_audit.TestRoster) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.495s
+
+OK

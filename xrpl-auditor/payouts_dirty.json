@@ -1,0 +1,11 @@
+[
+  {"payout_id":"p1","task_id":"task_b3a3e54adcac730636afd7e9ca80b798","wallet":"rJ8St5nxoH4DvX","tx_hash":"9F2BE303A1C4D5E6F708192A3B4C5D6E7F8091A2B3C4D5E6F708192A3B4C5D6E"},
+  {"payout_id":"p2","task_id":"task_a2df370465b16b8923304d8605b7c448","wallet":"rJ8St5nxoH4DvX","tx_hash":"9F2BE303A1C4D5E6F708192A3B4C5D6E7F8091A2B3C4D5E6F708192A3B4C5D6E"},
+  {"payout_id":"p3","task_id":"task_3cba49902d2a112046b5b11b0b99fc51","wallet":"rPJ3VzY3L41jE2","tx_hash":"CAFE0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789AB"},
+  {"payout_id":"p4","task_id":"task_3cba49902d2a112046b5b11b0b99fc51","wallet":"rPJ3VzY3L41jE2","tx_hash":"CAFE0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789AB"},
+  {"payout_id":"p5","task_id":"task_f0831bc4a26544b92abd4e9f8c936f06","wallet":"rJ8St5nxoH4DvX","tx_hash":"9f2be303a1c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e"},
+  {"payout_id":"p6","task_id":"task_NOT_IN_ROSTER","wallet":"rJ8St5nxoH4DvX","tx_hash":"DEAD0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789AB"},
+  {"payout_id":"p7","task_id":"task_fddd6e9069871a4b57e2f45df274da0a","wallet":"rJ8St5nxoH4DvX","tx_hash":"SHORT"},
+  {"payout_id":"p8","task_id":"task_fddd6e9069871a4b57e2f45df274da0a"},
+  "not-an-object"
+]
