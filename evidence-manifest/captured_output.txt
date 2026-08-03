@@ -1,0 +1,65 @@
+=== $ python3 -m unittest test_manifest -v ===
+test_distinct_content_distinct_digest (test_manifest.TestCanonicalization) ... ok
+test_key_order_irrelevant (test_manifest.TestCanonicalization) ... ok
+test_nested_key_order_irrelevant (test_manifest.TestCanonicalization) ... ok
+test_newlines_and_tabs_collapse (test_manifest.TestCanonicalization) ... ok
+test_non_string_scalars_untouched (test_manifest.TestCanonicalization) ... ok
+test_whitespace_normalized (test_manifest.TestCanonicalization) ... ok
+test_build_stdout_repeatable (test_manifest.TestCli) ... ok
+test_build_then_verify_ok (test_manifest.TestCli) ... ok
+test_invalid_json_exits_two (test_manifest.TestCli) ... ok
+test_missing_file_exits_two (test_manifest.TestCli) ... ok
+test_non_array_exits_two (test_manifest.TestCli) ... ok
+test_verify_tampered_exits_one (test_manifest.TestCli) ... ok
+test_empty_batch_root_constant (test_manifest.TestMerkleStructure) ... ok
+test_four_records_balanced (test_manifest.TestMerkleStructure) ... ok
+test_odd_count_promotes_not_duplicates (test_manifest.TestMerkleStructure) ... ok
+test_odd_promotion_not_equal_to_duplication (test_manifest.TestMerkleStructure) ... ok
+test_order_changes_root (test_manifest.TestMerkleStructure) ... ok
+test_single_record_root_is_the_leaf (test_manifest.TestMerkleStructure) ... ok
+test_two_records_parent_hash (test_manifest.TestMerkleStructure) ... ok
+test_rebuild_same_bytes (test_manifest.TestRepeatability) ... ok
+test_reordered_keys_same_manifest_bytes (test_manifest.TestRepeatability) ... ok
+test_serialize_repeatable (test_manifest.TestRepeatability) ... ok
+test_clean_manifest_verifies (test_manifest.TestVerification) ... ok
+test_dropped_entry_detected (test_manifest.TestVerification) ... ok
+test_malformed_entry_raises (test_manifest.TestVerification) ... ok
+test_record_count_mismatch_detected (test_manifest.TestVerification) ... ok
+test_tampered_digest_detected (test_manifest.TestVerification) ... ok
+test_tampered_record_detected (test_manifest.TestVerification) ... ok
+test_tampered_root_detected (test_manifest.TestVerification) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.338s
+
+OK
+
+=== $ python3 manifest.py build submissions.json -o manifest_run1.json ===
+batch_root=ac454cee291d825e13310a14214f1d665a457f7251d22d2aefab2e64fc8ec28b
+records=3
+exit=0
+
+=== $ python3 manifest.py build submissions.json -o manifest_run2.json ===
+batch_root=ac454cee291d825e13310a14214f1d665a457f7251d22d2aefab2e64fc8ec28b
+records=3
+exit=0
+
+=== $ sha256sum manifest_run1.json manifest_run2.json ===
+ba351b028a8b85f8aa93cd2769cd54dba23433ae8f7868da4bc6ecad3cd112f3  manifest_run1.json
+ba351b028a8b85f8aa93cd2769cd54dba23433ae8f7868da4bc6ecad3cd112f3  manifest_run2.json
+
+=== $ cmp manifest_run1.json manifest_run2.json && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+
+=== $ python3 manifest.py verify manifest_run1.json ===
+VERIFIED batch_root=ac454cee291d825e13310a14214f1d665a457f7251d22d2aefab2e64fc8ec28b records=3
+exit=0
+
+--- create tampering case: flip one cid inside the manifest ---
+wrote tampered_manifest.json (entries[0].canonical.cid altered)
+
+=== $ python3 manifest.py verify tampered_manifest.json ===
+VERIFICATION FAILED
+  - entries[0] leaf_digest drift: stored 9e023b987adfed4b55daefc26ef7e61784ec07fc56e2b7ffb620eeb78eb5328b, recomputed cd104436d9c0f52e13191f40329e0c5bcb0c304e92469ac82c1a77093a62aff2
+  - batch_root drift: stored ac454cee291d825e13310a14214f1d665a457f7251d22d2aefab2e64fc8ec28b, recomputed b90781b6750c36171d4d715c1f0d2ea28ae86f9309b7fbda995e80b51df1d28c
+exit=1

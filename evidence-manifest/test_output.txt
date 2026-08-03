@@ -1,0 +1,34 @@
+test_distinct_content_distinct_digest (test_manifest.TestCanonicalization) ... ok
+test_key_order_irrelevant (test_manifest.TestCanonicalization) ... ok
+test_nested_key_order_irrelevant (test_manifest.TestCanonicalization) ... ok
+test_newlines_and_tabs_collapse (test_manifest.TestCanonicalization) ... ok
+test_non_string_scalars_untouched (test_manifest.TestCanonicalization) ... ok
+test_whitespace_normalized (test_manifest.TestCanonicalization) ... ok
+test_build_stdout_repeatable (test_manifest.TestCli) ... ok
+test_build_then_verify_ok (test_manifest.TestCli) ... ok
+test_invalid_json_exits_two (test_manifest.TestCli) ... ok
+test_missing_file_exits_two (test_manifest.TestCli) ... ok
+test_non_array_exits_two (test_manifest.TestCli) ... ok
+test_verify_tampered_exits_one (test_manifest.TestCli) ... ok
+test_empty_batch_root_constant (test_manifest.TestMerkleStructure) ... ok
+test_four_records_balanced (test_manifest.TestMerkleStructure) ... ok
+test_odd_count_promotes_not_duplicates (test_manifest.TestMerkleStructure) ... ok
+test_odd_promotion_not_equal_to_duplication (test_manifest.TestMerkleStructure) ... ok
+test_order_changes_root (test_manifest.TestMerkleStructure) ... ok
+test_single_record_root_is_the_leaf (test_manifest.TestMerkleStructure) ... ok
+test_two_records_parent_hash (test_manifest.TestMerkleStructure) ... ok
+test_rebuild_same_bytes (test_manifest.TestRepeatability) ... ok
+test_reordered_keys_same_manifest_bytes (test_manifest.TestRepeatability) ... ok
+test_serialize_repeatable (test_manifest.TestRepeatability) ... ok
+test_clean_manifest_verifies (test_manifest.TestVerification) ... ok
+test_dropped_entry_detected (test_manifest.TestVerification) ... ok
+test_malformed_entry_raises (test_manifest.TestVerification) ... ok
+test_record_count_mismatch_detected (test_manifest.TestVerification) ... ok
+test_tampered_digest_detected (test_manifest.TestVerification) ... ok
+test_tampered_record_detected (test_manifest.TestVerification) ... ok
+test_tampered_root_detected (test_manifest.TestVerification) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.338s
+
+OK
