@@ -84,6 +84,14 @@ Validation is offline. A structurally valid, correctly checksummed address may
 still be unfunded or never activated on-ledger; confirming that needs an XRPL
 node query, which is deliberately out of scope here.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `addresses` (positional) | Path to a JSON array of address strings to validate. Required. |
+| `-d`, `--denylist PATH` | Path to a JSON array of denylisted address strings. Optional; if omitted, no address is ever reported `DENYLISTED`. Checked only after structural validation passes (see "Denylist semantics" above). |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> valid=<n> invalid=<n>`. |
+
 ## Exit codes
 
 0 = all valid and allowed · 1 = issues found · 2 = unreadable input
