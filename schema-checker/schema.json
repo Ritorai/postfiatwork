@@ -1,0 +1,102 @@
+{
+  "name": "evidence-batch",
+  "version": 1,
+  "description": "Fixture schema exercising every constraint kind supported by schema_check.py.",
+  "root": {
+    "type": "object",
+    "description": "One evidence batch document.",
+    "required": ["batch_id", "records"],
+    "additional_properties": false,
+    "properties": {
+      "batch_id": {
+        "type": "string",
+        "description": "Batch identifier, e.g. B-0042.",
+        "pattern": "^B-[0-9]{4}$"
+      },
+      "collected_by": {
+        "type": ["string", "null"],
+        "max_length": 32
+      },
+      "records": {
+        "type": "array",
+        "min_items": 1,
+        "max_items": 10,
+        "items": {
+          "type": "object",
+          "required": ["cid", "kind", "confidence", "tags", "source"],
+          "additional_properties": false,
+          "properties": {
+            "cid": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}$"
+            },
+            "kind": {
+              "type": "string",
+              "enum": ["log", "screenshot", "transcript", "artifact"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "retries": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "reviewed": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": ["string", "null"],
+              "max_length": 40
+            },
+            "tags": {
+              "type": "array",
+              "min_items": 1,
+              "max_items": 4,
+              "unique_items": true,
+              "items": {
+                "type": "string",
+                "min_length": 2,
+                "max_length": 16,
+                "pattern": "^[a-z][a-z0-9_]*$"
+              }
+            },
+            "source": {
+              "type": "object",
+              "required": ["system", "uri"],
+              "additional_properties": false,
+              "properties": {
+                "system": {
+                  "type": "string",
+                  "enum": ["s3", "gcs", "local"]
+                },
+                "uri": {
+                  "type": "string",
+                  "min_length": 5,
+                  "max_length": 120
+                },
+                "meta": {
+                  "type": "object",
+                  "additional_properties": true,
+                  "properties": {
+                    "region": {
+                      "type": "string",
+                      "pattern": "^[a-z]{2}-[a-z]+-[0-9]$"
+                    },
+                    "checksum": {
+                      "type": "string",
+                      "min_length": 8,
+                      "max_length": 64
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

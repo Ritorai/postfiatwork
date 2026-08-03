@@ -1,0 +1,44 @@
+{
+  "batch_id": "B-0042",
+  "collected_by": "ingest-worker-3",
+  "records": [
+    {
+      "cid": "a1b2c3d4",
+      "kind": "log",
+      "confidence": 0.91,
+      "retries": 0,
+      "reviewed": true,
+      "note": "clean capture",
+      "tags": ["stdout", "primary"],
+      "source": {
+        "system": "s3",
+        "uri": "s3://evidence/batch-42/a1b2c3d4.log",
+        "meta": {"region": "eu-west-1", "checksum": "9f8e7d6c5b4a3210"}
+      }
+    },
+    {
+      "cid": "0f0f0f0f",
+      "kind": "screenshot",
+      "confidence": 1,
+      "reviewed": false,
+      "note": null,
+      "tags": ["ui"],
+      "source": {
+        "system": "local",
+        "uri": "/var/evidence/0f0f0f0f.png"
+      }
+    },
+    {
+      "cid": "deadbeef",
+      "kind": "transcript",
+      "confidence": 0,
+      "retries": 5,
+      "tags": ["audio", "en_us", "raw", "verified"],
+      "source": {
+        "system": "gcs",
+        "uri": "gs://evidence/deadbeef.txt",
+        "meta": {"region": "us-east-1", "notes": "meta accepts extra keys"}
+      }
+    }
+  ]
+}

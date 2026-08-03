@@ -1,0 +1,33 @@
+{
+  "name": "broken-fixture",
+  "flavour": "unknown top-level keyword",
+  "root": {
+    "type": "object",
+    "required": ["id", 7],
+    "additional_properties": "no",
+    "properties": {
+      "id": {
+        "type": "strings",
+        "pattern": "^[a-z"
+      },
+      "score": {
+        "type": "number",
+        "minimum": 10,
+        "maximum": 1,
+        "pattern": "^x$"
+      },
+      "items_list": {
+        "type": "array",
+        "min_items": "two",
+        "items": {
+          "type": "string",
+          "enum": [],
+          "colour": "red"
+        }
+      },
+      "nameless": {
+        "description": "this node forgot its type"
+      }
+    }
+  }
+}

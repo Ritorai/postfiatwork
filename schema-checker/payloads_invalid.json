@@ -1,0 +1,62 @@
+{
+  "batch_id": "BATCH-42",
+  "collected_by": "ingest-worker-3",
+  "records": [
+    {
+      "cid": "ZZZZ",
+      "kind": "log",
+      "confidence": 0.5,
+      "tags": ["ok"],
+      "source": {"system": "s3", "uri": "s3://evidence/zzzz.log"}
+    },
+    {
+      "cid": "11223344",
+      "kind": "video",
+      "confidence": 0.5,
+      "tags": ["ok"],
+      "source": {"system": "s3", "uri": "s3://evidence/11223344.mp4"}
+    },
+    {
+      "cid": "55667788",
+      "kind": "log",
+      "confidence": "high",
+      "bogus": 1,
+      "source": {"system": "ftp", "uri": "ftp://evidence/55667788.log"}
+    },
+    {
+      "cid": "99aabbcc",
+      "kind": "artifact",
+      "confidence": 0.7,
+      "tags": ["dup", "dup", "A!"],
+      "source": {"system": "local", "uri": "/var/evidence/99aabbcc.bin"}
+    },
+    {
+      "cid": "ddeeff00",
+      "kind": "log",
+      "confidence": 0.4,
+      "note": "this note is far too long to fit inside the declared forty character ceiling",
+      "tags": [],
+      "source": {"system": "local", "uri": "/x"}
+    },
+    {
+      "cid": "1234abcd",
+      "kind": "log",
+      "confidence": -0.2,
+      "retries": 9,
+      "tags": ["net"],
+      "source": {
+        "system": "s3",
+        "uri": "s3://evidence/1234abcd.log",
+        "meta": {"region": "US-East-1", "checksum": "short"}
+      }
+    },
+    {
+      "cid": "abcdef01",
+      "kind": "log",
+      "confidence": 0.6,
+      "reviewed": "yes",
+      "tags": ["a1", "b2", "c3", "d4", "e5"],
+      "source": {"uri": "s3://evidence/abcdef01.log"}
+    }
+  ]
+}
