@@ -520,7 +520,7 @@ def main(argv=None):
 
         if args.output:
             try:
-                with open(args.output, "w", encoding="utf-8") as fh:
+                with open(args.output, "w", encoding="utf-8", newline="\n") as fh:
                     fh.write(text)
             except OSError as exc:
                 raise SetupError("could not write --output %s: %s" % (args.output, exc))
@@ -539,7 +539,7 @@ def main(argv=None):
         text = canonical_json(error_report)
         if args.output:
             try:
-                with open(args.output, "w", encoding="utf-8") as fh:
+                with open(args.output, "w", encoding="utf-8", newline="\n") as fh:
                     fh.write(text)
             except OSError:
                 sys.stderr.write(text)
