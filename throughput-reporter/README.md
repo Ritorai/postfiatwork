@@ -78,6 +78,15 @@ Contributors sorted by `(-refusal_rate, contributor)`; tasks and events walked
 in sorted order; rates rounded to 6 dp and hours to 4 dp; `json.dumps` with
 `sort_keys=True`, `separators=(",",":")`, `ensure_ascii=True`, trailing newline.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `events` (positional) | Path to a JSON array of task events. Required. |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> contributors=<n> over_ceiling=<n>`. |
+| `--refusal-ceiling N` | Contributors whose refusal rate exceeds this (with at least `--min-tasks` terminal tasks) are flagged `over_ceiling`; also the cutoff between grade `C` and grade `D`. Parsed as `float`, default `0.5`. |
+| `--min-tasks N` | Contributors with fewer than this many terminal (completed/refused) tasks are graded `INSUFFICIENT_DATA` instead of being scored, and are exempt from `over_ceiling`. Parsed as `int`, default `2`. |
+
 ## Exit codes
 
 0 = no contributor over ceiling · 1 = at least one over · 2 = invalid input
