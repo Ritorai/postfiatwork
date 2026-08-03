@@ -1,0 +1,1 @@
+{"issue_counts":{"UNKNOWN_TASK_ID":1},"issues":[{"detail":"task_id 'task_shared_demo' is not in the roster","index":0,"issue":"UNKNOWN_TASK_ID","payout_id":"pX","task_id":"task_shared_demo"}],"report_version":"1.0","status":"issues","totals":{"distinct_tx_hashes":1,"issues":1,"payouts":1,"roster_tasks":0,"well_formed_payouts":0}}
