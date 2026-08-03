@@ -1,0 +1,347 @@
+{
+  "tools": {
+    "budget-forecaster": {
+      "command": [
+        "python3",
+        "forecast.py",
+        "history.json",
+        "-k",
+        "open_tasks.json",
+        "--budget-cap",
+        "10000",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 0,
+      "expected_report_sha256": "6cf2662f5ff02f9efbb31f7ee988694159312057bc2e08e96d71201b85fa0ebe",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "bundle-index": {
+      "command": [
+        "python3",
+        "bundle_index.py",
+        "bundle_bad",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "consolidate": {
+      "command": [
+        "python3",
+        "consolidate.py",
+        "reports_mixed",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "e17d99004dac99e5c9e1f658777a452d843f7f0298bf587d365f9c8f09bd2abe",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "dup-detector": {
+      "command": [
+        "python3",
+        "dupdetect.py",
+        "records_dupes.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "45aa1f80d3304103b703fa7527ff58b3f9c313f03b5bd41e4ec3cbfa3a879081",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "event-linter": {
+      "command": [
+        "python3",
+        "event_lint.py",
+        "events_invalid.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "9ca2b3bd063b7eabb0c2c085a3aac33fb5abb9c994923cfb3d55ed6b16b775ab",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "evidence-harness": {
+      "command": [
+        "python3",
+        "harness.py",
+        "requirements.json",
+        "bundle_bad",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "64ec48dc2f0a27ab85f9b3b80001e13bfc5d9fe8f8d5ad258db0caa255a81b73",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "evidence-manifest": {
+      "command": [
+        "python3",
+        "manifest.py",
+        "build",
+        "submissions.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 0,
+      "expected_report_sha256": "ba351b028a8b85f8aa93cd2769cd54dba23433ae8f7868da4bc6ecad3cd112f3",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "evidence-scorer": {
+      "command": [
+        "python3",
+        "score_evidence.py",
+        "evidence_mixed.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "07da05086eaca2e6321cca9c97065af621ba1d5db7f076881f0a31aa5bbd7534",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "lifecycle-linter": {
+      "command": [
+        "python3",
+        "lifecycle_lint.py",
+        "events_invalid.jsonl",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "cca584f0202398e4d793528415d078414299727f4715b17e4f7ef34c6ac8e1aa",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "link-integrity": {
+      "command": [
+        "python3",
+        "link_integrity.py",
+        "lifecycle_bad.json",
+        "evidence_bad.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "f39bebe8fe88201bbbd0a30db96579f2a461b024af6f498db2c83792bfc01de2",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "loop-health": {
+      "command": [
+        "python3",
+        "loop_health.py",
+        "histories_unhealthy.json",
+        "--now",
+        "2026-08-03T00:00:00Z",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "57fd4e82ab7a7478aabd11a2c0be87eb442d4d1cd40d926d1cbcbd39dada7ae5",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "path-collision-scanner": {
+      "command": [
+        "python3",
+        "pathscan.py",
+        "--paths-from",
+        "fixtures/dirty.paths"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": null,
+      "report_mode": "stdout",
+      "status": "baselined"
+    },
+    "payload-validator": {
+      "command": [
+        "python3",
+        "payload_validate.py",
+        "payloads_bad.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "bc537f84acb0317a9d42cf0b752143e21b1b232e9209c04ea3eb90a636d85873",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "preflight": {
+      "command": [
+        "python3",
+        "preflight.py",
+        "tasks_issues.json",
+        "evidence_issues.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "dcec3443f4a10d90f6c970de0cd21d45382b863df7c1dd102bcf3fb7e99e1953",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "queue-auditor": {
+      "command": [
+        "python3",
+        "queue_audit.py",
+        "snapshot_dirty.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "8feb7955e0bad544759c0c6415273b11c2d729daa93a766fc81e8dca7c75f490",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "regression-checker": {
+      "command": [
+        "python3",
+        "regress.py",
+        "--root",
+        "fixtures",
+        "--baselines",
+        "fixtures/baselines_drift.json"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": null,
+      "report_mode": "stdout",
+      "status": "baselined"
+    },
+    "reward-anomaly": {
+      "command": [
+        "python3",
+        "reconcile_anomaly.py",
+        "tasks_bad.json",
+        "payouts_bad.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "baccebdafe6b2d365892554b60f8b3bb6d811e22505976c0ae76679c73da75ff",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "reward-reconciler": {
+      "command": [
+        "python3",
+        "reconcile.py",
+        "expected_rewards.json",
+        "recorded_payouts.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "bc5a197234abcba48ef039e9d0f3dd20c590dfa9782c057481550c8c7d9e7b56",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "schema-checker": {
+      "command": [
+        "python3",
+        "schema_check.py",
+        "schema.json",
+        "payloads_invalid.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "786fd1f71c588c9b8ade9d41e832735b30a0473659301739cdf2cb14a24b391c",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "staleness-monitor": {
+      "command": [
+        "python3",
+        "staleness.py",
+        "tasks_stale.json",
+        "--now",
+        "2026-08-02T00:00:00Z",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "3651e155d9e4b9e4663a396bfd7564bbd6ca9b2ee9e6c584a0177494732b85cc",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "sybil-detector": {
+      "command": [
+        "python3",
+        "sybil_detect.py",
+        "submissions_sybil.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "5dac57123e9f654668115f7da7299c1afdf2176c472710069984b0b047fa1a51",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "throughput-reporter": {
+      "command": [
+        "python3",
+        "throughput.py",
+        "events_breach.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "87b46866b8e98fca0c329414213b2dfa46966f00629472c50227b235f922fea1",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "wallet-reconciler": {
+      "command": [
+        "python3",
+        "wallet_reconcile.py",
+        "ledger_bad.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "76b74d9a61902ede1b54de72539eb1aed7146a371774ee45aaf61d9c7ea74aee",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "xrpl-address": {
+      "command": [
+        "python3",
+        "address_validate.py",
+        "addresses_invalid.json",
+        "-d",
+        "denylist.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "cd46dafe514eb23f38f5cbf2a402c4e5c0450e22c3af74b43f6da94afe9f6c0d",
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "xrpl-auditor": {
+      "command": [
+        "python3",
+        "payout_audit.py",
+        "payouts_dirty.json",
+        "roster.json",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": "0f4a873696761cf94b9b1da8b7d18fe2ddb01f0ac32c3c21b71aa5f2e9c195b6",
+      "report_mode": "file",
+      "status": "baselined"
+    }
+  }
+}

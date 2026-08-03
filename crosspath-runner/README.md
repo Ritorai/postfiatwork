@@ -36,6 +36,8 @@ network. Verified on CPython 3.11.15, Linux x86_64.
 |---|---|
 | `crosspath.py` | the runner |
 | `test_crosspath.py` | 72 unit/integration tests (`unittest`, stdlib only) |
+| `manifest_local.json` | `regression-checker/baselines.json` plus the two entries runnable in this environment |
+| `crosspath_report.json` | the generated result artifact, with its `coverage` block |
 | `captured_output.txt` | real terminal output of the verification commands below |
 
 ## Usage
@@ -168,6 +170,50 @@ one divergent tool (`leaky_tool`: `PATH_LEAK` + `REPORT_HASH_DIVERGENCE`,
 pinpointed at JSON Pointer `/cwd`); the same run with the planted defect
 excluded exits `0` with three identical tools; the absolute-path grep
 prints `0`.
+
+## The committed coverage artifact
+
+`crosspath_report.json` is the generated result, committed as produced.
+Its `coverage` block is the execution accounting, not a summary written by
+hand:
+
+```json
+"coverage": {
+  "directories_under_root": 40,
+  "manifest_entries": 25,
+  "executed_both_paths": 2,
+  "not_executed": 23,
+  "directories_with_no_manifest_entry": 15,
+  "executed_tools": ["path-collision-scanner", "regression-checker"],
+  "not_executed_tools": [{"tool": "...", "reason": "..."}],
+  "tools_with_no_manifest_entry": ["bundle-verifier", "..."]
+}
+```
+
+Read it as three separate gaps, all named rather than averaged away:
+
+1. **2 of 25 manifest entries actually executed** — `path-collision-scanner`
+   and `regression-checker`, both `identical` across the two paths.
+2. **23 entries did not execute**, each with its own `reason` string. In
+   this run every one of them reads `report file was not created
+   (report_mode=file)`, because this environment has no clone: the tree was
+   materialised from the repository's 388 tracked *path names* only, so
+   those directories contain placeholder files rather than runnable source.
+   That is a property of this environment, not of those tools.
+3. **15 of the 40 tool directories have no manifest entry at all** and were
+   therefore never even attempted. `baselines.json` lists 23; the runner
+   discovers directories purely to *report* this gap and never invents a
+   command for one, because guessing an invocation is how you end up
+   verifying the wrong thing.
+
+Because 23 entries failed to execute, the run exits **2** and
+`"status": "error"` — not `0`. A partial run is not a clean run, and this
+tool refuses to report one as such.
+
+The manifest used is `manifest_local.json`: `regression-checker/baselines.json`
+verbatim, plus entries for the two tools that are runnable here. Neither of
+those two is in `baselines.json`, which is itself worth noting — the tool
+that guards output stability is not in its own baseline.
 
 ## Coverage of the real repository — read this before quoting the result
 

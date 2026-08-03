@@ -367,7 +367,57 @@ def make_copies(root, work_dir):
 # Report
 # --------------------------------------------------------------------------
 
-def build_report(results, mode):
+def discover_tool_dirs(root):
+    """Immediate subdirectories of root that look like tool directories.
+
+    Used only to account for coverage -- the runner never invents a command
+    for a directory it finds, because guessing an invocation is how you end
+    up verifying the wrong thing. Directories with no manifest entry are
+    reported by name so "0 divergences" can never be read as "everything
+    was checked".
+    """
+    if not os.path.isdir(root):
+        return []
+    names = []
+    for name in sorted(os.listdir(root)):
+        if name.startswith(".") or name == "__pycache__":
+            continue
+        if os.path.isdir(os.path.join(root, name)):
+            names.append(name)
+    return names
+
+
+def build_coverage(root, tools, results):
+    """Explicit execution accounting: what ran, what did not, and why."""
+    dirs = discover_tool_dirs(root)
+    by_name = {r["tool"]: r for r in results}
+    executed, not_executed = [], []
+    for name in sorted(tools):
+        r = by_name.get(name)
+        if r is not None and r["status"] in ("identical", "divergent"):
+            executed.append(name)
+        else:
+            reason = "unknown"
+            if r is not None and r["status"] == "skipped":
+                reason = "manifest marks it unbaselineable: %s" % r["detail"]["reason"]
+            elif r is not None and r["status"] == "error":
+                detail = r["detail"]
+                reason = detail.get("error_a") or detail.get("error_b") or "execution error"
+            not_executed.append({"tool": name, "reason": reason})
+    no_entry = [d for d in dirs if d not in tools]
+    return {
+        "directories_under_root": len(dirs),
+        "manifest_entries": len(tools),
+        "executed_both_paths": len(executed),
+        "not_executed": len(not_executed),
+        "directories_with_no_manifest_entry": len(no_entry),
+        "executed_tools": executed,
+        "not_executed_tools": not_executed,
+        "tools_with_no_manifest_entry": no_entry,
+    }
+
+
+def build_report(results, mode, coverage=None):
     summary = {"identical": 0, "divergent": 0, "error": 0, "skipped": 0}
     code_counts = {c: 0 for c in sorted(ALL_CODES)}
     for r in results:
@@ -377,7 +427,7 @@ def build_report(results, mode):
     any_divergent = summary["divergent"] > 0
     any_error = summary["error"] > 0
     status = "error" if any_error else ("divergent" if any_divergent else "identical")
-    return {
+    report = {
         "schema_version": SCHEMA_VERSION,
         "tool": TOOL_NAME,
         "status": status,
@@ -387,6 +437,9 @@ def build_report(results, mode):
         "code_counts": code_counts,
         "results": sorted(results, key=lambda r: r["tool"]),
     }
+    if coverage is not None:
+        report["coverage"] = coverage
+    return report
 
 
 def build_arg_parser():
@@ -455,7 +508,8 @@ def main(argv=None):
 
         results = [compare_tool(name, tools[name], root_a, root_b, args.timeout)
                    for name in sorted(tools)]
-        report = build_report(results, mode)
+        coverage = build_coverage(root_a, tools, results)
+        report = build_report(results, mode, coverage)
         text = canonical_json(report)
 
         if args.output:

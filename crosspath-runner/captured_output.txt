@@ -255,3 +255,142 @@ length difference. The difference is now 41, a prime, so every period from
 difference is prime so the property cannot regress quietly. A period of
 exactly 41 or a multiple still cancels; that residual gap is limitation 1
 in README.md.
+
+### COMMITTED COVERAGE ARTIFACT
+# Tree: the repository's 388 tracked path names materialised as placeholder
+# files (no clone available), with the real source of the two tools present in
+# this environment restored on top. Manifest: regression-checker/baselines.json
+# verbatim plus those two entries. This is how crosspath_report.json was made.
+
+$ python3 crosspath.py --root <tree> --manifest manifest_local.json -o crosspath_report.json ; echo "exit=$?"
+exit=2
+
+$ python3 -c "print the coverage block"
+{
+  "directories_under_root": 40,
+  "directories_with_no_manifest_entry": 15,
+  "executed_both_paths": 2,
+  "executed_tools": [
+    "path-collision-scanner",
+    "regression-checker"
+  ],
+  "manifest_entries": 25,
+  "not_executed": 23,
+  "not_executed_tools": [
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "budget-forecaster"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "bundle-index"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "consolidate"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "dup-detector"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "event-linter"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "evidence-harness"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "evidence-manifest"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "evidence-scorer"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "lifecycle-linter"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "link-integrity"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "loop-health"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "payload-validator"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "preflight"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "queue-auditor"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "reward-anomaly"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "reward-reconciler"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "schema-checker"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "staleness-monitor"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "sybil-detector"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "throughput-reporter"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "wallet-reconciler"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "xrpl-address"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "xrpl-auditor"
+    }
+  ],
+  "tools_with_no_manifest_entry": [
+    "bundle-verifier",
+    "claim-checker",
+    "commit-claim-auditor",
+    "contradiction-detector",
+    "crosspath-runner",
+    "doc-validator",
+    "evidence-validator",
+    "exit-harness",
+    "index-generator",
+    "nondeterminism-scanner",
+    "scorecard",
+    "snapshot-diff",
+    "tamper-runner",
+    "thread-check",
+    "weak-assertion-scanner"
+  ]
+}
+
+$ cmp crosspath_report.json <(rerun) && echo REPRODUCIBLE
+REPRODUCIBLE
+
+$ grep -c "/root\|/tmp\|/home\|xp_a\|xp_b" crosspath_report.json
+0
