@@ -1,0 +1,42 @@
+=== Evidence capture for the toy 'sum_lines' artefact ===
+Regenerate with: cd bundle_good && bash ../../gen_good.sh > verification.txt 2>&1
+
+--- 1. Unit tests -------------------------------------------------
+$ python3 -m unittest discover -v
+test_blank_lines_ignored (test_sum_lines.TestSumLines) ... ok
+test_empty_iterable (test_sum_lines.TestSumLines) ... ok
+test_generator_input (test_sum_lines.TestSumLines) ... ok
+test_large_values (test_sum_lines.TestSumLines) ... ok
+test_leading_whitespace_stripped (test_sum_lines.TestSumLines) ... ok
+test_negative_values (test_sum_lines.TestSumLines) ... ok
+test_non_numeric_raises (test_sum_lines.TestSumLines) ... ok
+test_only_blank_lines (test_sum_lines.TestSumLines) ... ok
+test_single_value (test_sum_lines.TestSumLines) ... ok
+test_trailing_newlines_stripped (test_sum_lines.TestSumLines) ... ok
+test_two_values (test_sum_lines.TestSumLines) ... ok
+test_zero (test_sum_lines.TestSumLines) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.000s
+
+OK
+exit=0
+
+--- 2. Manual smoke run -------------------------------------------
+$ printf "1\n2\n3\n" | python3 sum_lines.py
+6
+exit=0
+
+--- 3. JSON sanity check ------------------------------------------
+$ echo {"artefact":"sum_lines.py","tests":12} | python3 -m json.tool
+{
+    "artefact": "sum_lines.py",
+    "tests": 12
+}
+exit=0
+
+--- 4. Artefact digests -------------------------------------------
+$ sha256sum sum_lines.py test_sum_lines.py
+078fd1389f695e00c7a0fb03e8fac36c5a0a4953b93b9cfa393941e1f8ef1d5d  sum_lines.py
+61d8f294247ffd26d7d477a0156d778efab30466493b28d4307cfca3ea746a67  test_sum_lines.py
+exit=0
