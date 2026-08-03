@@ -1,0 +1,10 @@
+[
+  {
+    "submission_id": "good_1",
+    "text": "Built the validator and ran it end to end.\n\n```\n$ python3 -m unittest test_validator -v\nRan 17 tests in 0.115s\nOK\nexit=0\n$ python3 validator.py sample_valid.json --pretty\nexit=0\n$ python3 validator.py sample_invalid.json --pretty\nexit=1\n```\n\nArtifacts live at /outputs/evidence-validator/validator.py and /outputs/evidence-validator/test_validator.py.\nThe batch root digest is bc5a197234abcba48ef039e9d0f3dd20c590dfa9782c057481550c8c7d9e7b56 and the evidence CID is QmYvH6Y2VpnFUops1WaVY9fCKy1c6u6BFdDJfEwpffgLuE.\nReference docs at https://example.org/spec were followed for the required_fields contract.\nRecord index 2 reported MISSING_FIELD:wallet plus DUPLICATE_SUBMISSION_ID, which matches the fixture design."
+  },
+  {
+    "submission_id": "good_2",
+    "text": "Built the reconciler and ran it end to end.\n\n```\n$ python3 -m unittest test_reconciler -v\nRan 23 tests in 0.115s\nOK\nexit=0\n$ python3 reconciler.py sample_valid.json --pretty\nexit=0\n$ python3 reconciler.py sample_invalid.json --pretty\nexit=1\n```\n\nArtifacts live at /outputs/evidence-reconciler/reconciler.py and /outputs/evidence-reconciler/test_reconciler.py.\nThe batch root digest is 0f4a873696761cf94b9b1da8b7d18fe2ddb01f0ac32c3c21b71aa5f2e9c195b6 and the evidence CID is QmYvH6Y2VpnFUops1WaVY9fCKy1c6u6BFdDJfEwpffgLuE.\nReference docs at https://example.org/spec were followed for the required_fields contract.\nRecord index 2 reported MISSING_FIELD:wallet plus DUPLICATE_SUBMISSION_ID, which matches the fixture design."
+  }
+]

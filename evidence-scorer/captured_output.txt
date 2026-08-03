@@ -1,0 +1,81 @@
+=== $ python3 -m unittest test_score_evidence -v ===
+test_cid_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_code_fence_counted_as_one_block (test_score_evidence.TestArtifactDetection) ... ok
+test_exit_code_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_exit_code_wordy_form (test_score_evidence.TestArtifactDetection) ... ok
+test_hash_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_path_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_prose_has_no_artifacts (test_score_evidence.TestArtifactDetection) ... ok
+test_shell_prompt_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_url_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_identical_records_lose_originality (test_score_evidence.TestBoilerplate) ... ok
+test_partial_overlap_partial_penalty (test_score_evidence.TestBoilerplate) ... ok
+test_short_fragments_ignored (test_score_evidence.TestBoilerplate) ... ok
+test_single_record_is_original (test_score_evidence.TestBoilerplate) ... ok
+test_unique_records_keep_originality (test_score_evidence.TestBoilerplate) ... ok
+test_missing_file_exit_two (test_score_evidence.TestCli) ... ok
+test_mixed_fixture_exit_one (test_score_evidence.TestCli) ... ok
+test_pass_fixture_exit_zero (test_score_evidence.TestCli) ... ok
+test_repeated_runs_identical (test_score_evidence.TestCli) ... ok
+test_threshold_flag_flips_result (test_score_evidence.TestCli) ... ok
+test_cli_beats_file (test_score_evidence.TestConfig) ... ok
+test_defaults (test_score_evidence.TestConfig) ... ok
+test_file_overrides (test_score_evidence.TestConfig) ... ok
+test_unknown_key_rejected (test_score_evidence.TestConfig) ... ok
+test_unknown_signal_rejected (test_score_evidence.TestConfig) ... ok
+test_blank_submission_id (test_score_evidence.TestMalformed) ... ok
+test_missing_text (test_score_evidence.TestMalformed) ... ok
+test_non_array (test_score_evidence.TestMalformed) ... ok
+test_non_string_text (test_score_evidence.TestMalformed) ... ok
+test_boilerplate_fails_default_threshold (test_score_evidence.TestScoringAndThreshold) ... ok
+test_records_sorted_worst_first (test_score_evidence.TestScoringAndThreshold) ... ok
+test_score_is_weighted_sum (test_score_evidence.TestScoringAndThreshold) ... ok
+test_strong_record_passes (test_score_evidence.TestScoringAndThreshold) ... ok
+test_threshold_is_configurable (test_score_evidence.TestScoringAndThreshold) ... ok
+test_tiny_record_fails (test_score_evidence.TestScoringAndThreshold) ... ok
+test_empty_text (test_score_evidence.TestSpecificity) ... ok
+test_full_confidence_at_threshold (test_score_evidence.TestSpecificity) ... ok
+test_prose_low_specificity (test_score_evidence.TestSpecificity) ... ok
+test_tiny_sample_is_damped (test_score_evidence.TestSpecificity)
+A one-token record cannot be 100% specific; it is unmeasurable. ... ok
+test_trailing_punctuation_not_specific (test_score_evidence.TestSpecificity)
+'Done.' must not count as specific just because of the full stop. ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.425s
+
+OK
+
+=== $ python3 score_evidence.py evidence_pass.json -o report_pass.json ===
+status=pass passed=2 failed=0
+exit=0
+
+=== $ python3 score_evidence.py evidence_mixed.json -o report_mixed_run1.json ===
+status=fail passed=1 failed=4
+exit=1
+=== $ python3 score_evidence.py evidence_mixed.json -o report_mixed_run2.json ===
+status=fail passed=1 failed=4
+exit=1
+
+=== $ sha256sum report_mixed_run1.json report_mixed_run2.json ===
+07da05086eaca2e6321cca9c97065af621ba1d5db7f076881f0a31aa5bbd7534  report_mixed_run1.json
+07da05086eaca2e6321cca9c97065af621ba1d5db7f076881f0a31aa5bbd7534  report_mixed_run2.json
+=== $ cmp ... && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+
+=== $ python3 score_evidence.py evidence_mixed.json -c config_strict.json -o report_strict.json ===
+status=fail passed=1 failed=4
+exit=1
+=== $ python3 score_evidence.py evidence_mixed.json --threshold 0.0 ===
+exit=0
+=== $ python3 score_evidence.py /nonexistent.json ===
+INVALID_INPUT: file not found: /nonexistent.json
+exit=2
+
+=== per-record scores, evidence_mixed.json (default config) ===
+boiler_a   score=0.0281 pass=False art=0.000 spec=0.000 len=0.188 orig=0.000
+boiler_b   score=0.0281 pass=False art=0.000 spec=0.000 len=0.188 orig=0.000
+tiny_1     score=0.2509 pass=False art=0.000 spec=0.000 len=0.006 orig=1.000
+vague_1    score=0.2776 pass=False art=0.000 spec=0.000 len=0.184 orig=1.000
+strong_1   score=0.8013 pass=True  art=1.000 spec=0.270 len=0.891 orig=1.000
+totals {'failed': 4, 'passed': 1, 'records': 5}

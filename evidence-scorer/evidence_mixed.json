@@ -1,0 +1,22 @@
+[
+  {
+    "submission_id": "strong_1",
+    "text": "Built the validator and ran it end to end.\n\n```\n$ python3 -m unittest test_validator -v\nRan 17 tests in 0.115s\nOK\nexit=0\n$ python3 validator.py sample_valid.json --pretty\nexit=0\n$ python3 validator.py sample_invalid.json --pretty\nexit=1\n```\n\nArtifacts live at /outputs/evidence-validator/validator.py and /outputs/evidence-validator/test_validator.py.\nThe batch root digest is bc5a197234abcba48ef039e9d0f3dd20c590dfa9782c057481550c8c7d9e7b56 and the evidence CID is QmYvH6Y2VpnFUops1WaVY9fCKy1c6u6BFdDJfEwpffgLuE.\nReference docs at https://example.org/spec were followed for the required_fields contract.\nRecord index 2 reported MISSING_FIELD:wallet plus DUPLICATE_SUBMISSION_ID, which matches the fixture design."
+  },
+  {
+    "submission_id": "boiler_a",
+    "text": "Completed as specified in the task description above. Reviewed for completeness and applied it as a first test run this week. No blockers encountered."
+  },
+  {
+    "submission_id": "boiler_b",
+    "text": "Completed as specified in the task description above. Reviewed for completeness and applied it as a first test run this week. No blockers encountered."
+  },
+  {
+    "submission_id": "vague_1",
+    "text": "Completed the work as requested. Everything looks good and the task is finished. I reviewed it carefully and there were no issues to report at all."
+  },
+  {
+    "submission_id": "tiny_1",
+    "text": "Done."
+  }
+]

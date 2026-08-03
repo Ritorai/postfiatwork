@@ -1,0 +1,6 @@
+{
+  "weights": {"artifacts": 0.45, "specificity": 0.25, "length": 0.05, "originality": 0.25},
+  "target_length": 1200,
+  "artifact_target": 10,
+  "threshold": 0.7
+}

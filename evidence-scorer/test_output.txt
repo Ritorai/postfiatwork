@@ -1,0 +1,46 @@
+test_cid_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_code_fence_counted_as_one_block (test_score_evidence.TestArtifactDetection) ... ok
+test_exit_code_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_exit_code_wordy_form (test_score_evidence.TestArtifactDetection) ... ok
+test_hash_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_path_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_prose_has_no_artifacts (test_score_evidence.TestArtifactDetection) ... ok
+test_shell_prompt_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_url_detected (test_score_evidence.TestArtifactDetection) ... ok
+test_identical_records_lose_originality (test_score_evidence.TestBoilerplate) ... ok
+test_partial_overlap_partial_penalty (test_score_evidence.TestBoilerplate) ... ok
+test_short_fragments_ignored (test_score_evidence.TestBoilerplate) ... ok
+test_single_record_is_original (test_score_evidence.TestBoilerplate) ... ok
+test_unique_records_keep_originality (test_score_evidence.TestBoilerplate) ... ok
+test_missing_file_exit_two (test_score_evidence.TestCli) ... ok
+test_mixed_fixture_exit_one (test_score_evidence.TestCli) ... ok
+test_pass_fixture_exit_zero (test_score_evidence.TestCli) ... ok
+test_repeated_runs_identical (test_score_evidence.TestCli) ... ok
+test_threshold_flag_flips_result (test_score_evidence.TestCli) ... ok
+test_cli_beats_file (test_score_evidence.TestConfig) ... ok
+test_defaults (test_score_evidence.TestConfig) ... ok
+test_file_overrides (test_score_evidence.TestConfig) ... ok
+test_unknown_key_rejected (test_score_evidence.TestConfig) ... ok
+test_unknown_signal_rejected (test_score_evidence.TestConfig) ... ok
+test_blank_submission_id (test_score_evidence.TestMalformed) ... ok
+test_missing_text (test_score_evidence.TestMalformed) ... ok
+test_non_array (test_score_evidence.TestMalformed) ... ok
+test_non_string_text (test_score_evidence.TestMalformed) ... ok
+test_boilerplate_fails_default_threshold (test_score_evidence.TestScoringAndThreshold) ... ok
+test_records_sorted_worst_first (test_score_evidence.TestScoringAndThreshold) ... ok
+test_score_is_weighted_sum (test_score_evidence.TestScoringAndThreshold) ... ok
+test_strong_record_passes (test_score_evidence.TestScoringAndThreshold) ... ok
+test_threshold_is_configurable (test_score_evidence.TestScoringAndThreshold) ... ok
+test_tiny_record_fails (test_score_evidence.TestScoringAndThreshold) ... ok
+test_empty_text (test_score_evidence.TestSpecificity) ... ok
+test_full_confidence_at_threshold (test_score_evidence.TestSpecificity) ... ok
+test_prose_low_specificity (test_score_evidence.TestSpecificity) ... ok
+test_tiny_sample_is_damped (test_score_evidence.TestSpecificity)
+A one-token record cannot be 100% specific; it is unmeasurable. ... ok
+test_trailing_punctuation_not_specific (test_score_evidence.TestSpecificity)
+'Done.' must not count as specific just because of the full stop. ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.425s
+
+OK
