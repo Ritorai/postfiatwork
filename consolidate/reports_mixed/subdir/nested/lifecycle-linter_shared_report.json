@@ -1,0 +1,1 @@
+{"finding_counts":{"BACKWARD_TRANSITION":1},"findings":[{"code":"BACKWARD_TRANSITION","detail":"'submitted' -> 'proposed' moves backward","line":3,"task_id":"task_shared_demo"}],"report_version":"1.0","status":"issues","totals":{"events":3,"findings":1,"tasks":1}}
