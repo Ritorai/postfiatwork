@@ -48,6 +48,25 @@ Domain separation (`leaf:` vs `node:`) prevents a leaf digest from being replaye
 (`"  validator   delivered  "`, `"reconciler\tdelivered"`) so that the
 canonicalization rules are actually exercised rather than assumed.
 
+## Flags
+
+Two subcommands, each with its own arguments.
+
+`build`:
+
+| flag | description |
+|------|-------------|
+| `records` (positional) | Path to a JSON array of submission records to manifest. Required. |
+| `-o`, `--out PATH` | Write the canonical manifest JSON to this file instead of stdout. When set, stdout instead gets a two-line summary: `batch_root=<hash>` and `records=<count>`. |
+
+`verify`:
+
+| flag | description |
+|------|-------------|
+| `manifest` (positional) | Path to a previously built manifest JSON file to re-verify (digests + batch root). Required. |
+
+`-o`/`--out` is only accepted under `build`; `verify` takes no output-path option and always reports to stdout.
+
 ## Exit codes
 
 0 = ok · 1 = verification drift · 2 = invalid input
