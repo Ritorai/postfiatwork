@@ -113,6 +113,14 @@ same flags produces byte-identical output (verified below).
   (including a bare `NaN`/`Infinity` token), top-level JSON value is not an
   array, or a bad CLI argument (argparse's own usage errors also exit 2)
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `input` (positional) | Path to a payload JSON file, or `-` to read from stdin. Required. |
+| `-o`, `--output PATH` | Write the report JSON to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> ok=<n> findings=<n>`. |
+| `--max-memo-bytes N` | Max decoded memo size in bytes. Custom `nonneg_int` type -- must be a non-negative integer or argparse itself rejects it. Default `1024`. |
+
 ## Exact rerun commands
 
 ```
