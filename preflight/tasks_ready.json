@@ -1,0 +1,20 @@
+[
+  {
+    "task_id": "T-1001",
+    "title": "Write onboarding guide",
+    "status": "in_review",
+    "required_evidence": ["url", "text"]
+  },
+  {
+    "task_id": "T-1002",
+    "title": "Fix login bug",
+    "status": "in_review",
+    "required_evidence": ["code"]
+  },
+  {
+    "task_id": "T-1003",
+    "title": "Design new logo",
+    "status": "in_review",
+    "required_evidence": []
+  }
+]

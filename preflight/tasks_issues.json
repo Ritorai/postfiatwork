@@ -1,0 +1,32 @@
+[
+  {
+    "task_id": "T-2001",
+    "title": "Translate docs",
+    "status": "in_review",
+    "required_evidence": ["url", "text"]
+  },
+  {
+    "task_id": "T-2002",
+    "title": "Refactor module",
+    "status": "refused",
+    "required_evidence": ["code"]
+  },
+  {
+    "task_id": "T-2003",
+    "title": "Update pricing page",
+    "status": "rewarded",
+    "required_evidence": ["url"]
+  },
+  {
+    "task_id": "T-2004",
+    "title": "Record demo video",
+    "status": "in_review",
+    "required_evidence": ["video"]
+  },
+  {
+    "task_id": "T-2005",
+    "title": "Malformed status field",
+    "status": 123,
+    "required_evidence": ["text"]
+  }
+]

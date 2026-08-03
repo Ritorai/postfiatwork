@@ -1,0 +1,64 @@
+[
+  {
+    "submission_id": "S-3001",
+    "task_id": "T-2001",
+    "evidence_type": "url",
+    "value": "https://example.com/translated",
+    "notes": ""
+  },
+  {
+    "submission_id": "S-3002",
+    "task_id": "T-2002",
+    "evidence_type": "code",
+    "value": "print('ok')",
+    "notes": ""
+  },
+  {
+    "submission_id": "S-3003",
+    "task_id": "T-2003",
+    "evidence_type": "url",
+    "value": "https://example.com/pricing",
+    "notes": ""
+  },
+  {
+    "submission_id": "S-3004",
+    "task_id": "T-2004",
+    "evidence_type": "image",
+    "value": "https://example.com/photo.png",
+    "notes": ""
+  },
+  {
+    "submission_id": "S-3004",
+    "task_id": "T-2001",
+    "evidence_type": "text",
+    "value": "  ",
+    "notes": "whitespace only, unicode nbsp"
+  },
+  {
+    "submission_id": "S-3005",
+    "task_id": "T-9999",
+    "evidence_type": "url",
+    "value": "https://example.com/ghost",
+    "notes": ""
+  },
+  {
+    "submission_id": "S-3006",
+    "task_id": "T-2005",
+    "evidence_type": "text",
+    "value": "some text value here",
+    "notes": ""
+  },
+  {
+    "submission_id": "",
+    "task_id": "T-2001",
+    "evidence_type": "url",
+    "value": "https://example.com/x",
+    "notes": ""
+  },
+  {
+    "task_id": "T-2002",
+    "evidence_type": "code",
+    "value": "x",
+    "notes": "missing submission_id key entirely"
+  }
+]

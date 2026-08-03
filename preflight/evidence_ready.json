@@ -1,0 +1,23 @@
+[
+  {
+    "submission_id": "S-1",
+    "task_id": "T-1001",
+    "evidence_type": "url",
+    "value": "https://example.com/guide",
+    "notes": "draft link"
+  },
+  {
+    "submission_id": "S-2",
+    "task_id": "T-1001",
+    "evidence_type": "text",
+    "value": "Completed the onboarding guide as requested.",
+    "notes": ""
+  },
+  {
+    "submission_id": "S-3",
+    "task_id": "T-1002",
+    "evidence_type": "code",
+    "value": "diff --git a/login.py b/login.py\n+fix\n",
+    "notes": "PR #42"
+  }
+]

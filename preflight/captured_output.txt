@@ -1,0 +1,220 @@
+$ python3 -m unittest test_preflight -v
+test_malformed_duplicate_records_not_counted (test_preflight.AnalyzeDuplicateSubmissionIdTests) ... ok
+test_three_duplicates_flagged_once_with_count_3 (test_preflight.AnalyzeDuplicateSubmissionIdTests) ... ok
+test_two_duplicates_flagged_once_with_count_2 (test_preflight.AnalyzeDuplicateSubmissionIdTests) ... ok
+test_unique_submission_ids_not_flagged (test_preflight.AnalyzeDuplicateSubmissionIdTests) ... ok
+test_duplicate_task_id_does_not_crash_and_first_wins (test_preflight.AnalyzeDuplicateTaskIdTests) ... ok
+test_ascii_whitespace_value_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_empty_dict_value_not_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_empty_list_value_not_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_empty_string_value_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_empty_value_still_reported_for_orphan_evidence (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_non_empty_value_not_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_null_value_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_numeric_value_not_flagged_even_if_zero (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_unicode_ideographic_space_value_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_unicode_nbsp_value_flagged (test_preflight.AnalyzeEmptyEvidenceValueTests) ... ok
+test_case_sensitive_mismatch (test_preflight.AnalyzeEvidenceTypeMismatchTests) ... ok
+test_evidence_for_task_with_empty_required_list_is_always_mismatch (test_preflight.AnalyzeEvidenceTypeMismatchTests) ... ok
+test_type_in_required_list_is_not_mismatch (test_preflight.AnalyzeEvidenceTypeMismatchTests) ... ok
+test_type_not_in_required_list_is_mismatch (test_preflight.AnalyzeEvidenceTypeMismatchTests) ... ok
+test_malformed_evidence_reported (test_preflight.AnalyzeMalformedRecordTests) ... ok
+test_malformed_task_reported (test_preflight.AnalyzeMalformedRecordTests) ... ok
+test_non_dict_evidence_item_reported (test_preflight.AnalyzeMalformedRecordTests) ... ok
+test_non_dict_task_item_reported (test_preflight.AnalyzeMalformedRecordTests) ... ok
+test_evidence_for_malformed_task_becomes_orphan (test_preflight.AnalyzeOrphanEvidenceTests) ... ok
+test_evidence_for_unknown_task_is_orphan (test_preflight.AnalyzeOrphanEvidenceTests) ... ok
+test_no_orphan_when_task_id_matches (test_preflight.AnalyzeOrphanEvidenceTests) ... ok
+test_both_empty_arrays_is_ready (test_preflight.AnalyzeReadyTests) ... ok
+test_matching_single_task_and_evidence_is_ready (test_preflight.AnalyzeReadyTests) ... ok
+test_multiple_evidence_records_same_type_satisfy_requirement_once (test_preflight.AnalyzeReadyTests) ... ok
+test_summary_issue_counts_by_code_includes_all_codes_when_ready (test_preflight.AnalyzeReadyTests) ... ok
+test_task_with_empty_required_evidence_and_no_evidence_is_ready (test_preflight.AnalyzeReadyTests) ... ok
+test_duplicate_entries_in_required_evidence_deduped (test_preflight.AnalyzeTaskMissingEvidenceTests) ... ok
+test_duplicate_entries_in_required_evidence_with_matching_evidence (test_preflight.AnalyzeTaskMissingEvidenceTests) ... ok
+test_no_missing_evidence_issue_when_required_evidence_empty (test_preflight.AnalyzeTaskMissingEvidenceTests) ... ok
+test_one_of_two_required_types_missing (test_preflight.AnalyzeTaskMissingEvidenceTests) ... ok
+test_present_but_empty_value_does_not_count_as_missing (test_preflight.AnalyzeTaskMissingEvidenceTests) ... ok
+test_required_type_with_no_evidence_at_all_is_missing (test_preflight.AnalyzeTaskMissingEvidenceTests) ... ok
+test_in_review_status_not_flagged (test_preflight.AnalyzeUnsubmittableStatusTests) ... ok
+test_refused_status_flagged (test_preflight.AnalyzeUnsubmittableStatusTests) ... ok
+test_rewarded_status_flagged (test_preflight.AnalyzeUnsubmittableStatusTests) ... ok
+test_status_case_sensitive (test_preflight.AnalyzeUnsubmittableStatusTests) ... ok
+test_ready_false_when_issues_present (test_preflight.BuildReportStructureTests) ... ok
+test_ready_true_when_no_issues (test_preflight.BuildReportStructureTests) ... ok
+test_report_has_expected_top_level_keys (test_preflight.BuildReportStructureTests) ... ok
+test_summary_has_expected_keys (test_preflight.BuildReportStructureTests) ... ok
+test_empty_evidence_type (test_preflight.CheckEvidenceRecordTests) ... ok
+test_empty_submission_id (test_preflight.CheckEvidenceRecordTests) ... ok
+test_missing_evidence_type (test_preflight.CheckEvidenceRecordTests) ... ok
+test_missing_submission_id (test_preflight.CheckEvidenceRecordTests) ... ok
+test_missing_task_id (test_preflight.CheckEvidenceRecordTests) ... ok
+test_missing_value_key (test_preflight.CheckEvidenceRecordTests) ... ok
+test_non_string_submission_id (test_preflight.CheckEvidenceRecordTests) ... ok
+test_not_a_dict (test_preflight.CheckEvidenceRecordTests) ... ok
+test_notes_missing_is_fine (test_preflight.CheckEvidenceRecordTests) ... ok
+test_notes_wrong_type_is_fine (test_preflight.CheckEvidenceRecordTests) ... ok
+test_valid_record (test_preflight.CheckEvidenceRecordTests) ... ok
+test_value_dict_is_not_malformed (test_preflight.CheckEvidenceRecordTests) ... ok
+test_value_list_is_not_malformed (test_preflight.CheckEvidenceRecordTests) ... ok
+test_value_null_is_not_malformed (test_preflight.CheckEvidenceRecordTests) ... ok
+test_value_number_is_not_malformed (test_preflight.CheckEvidenceRecordTests) ... ok
+test_empty_string_status_invalid (test_preflight.CheckTaskRecordTests) ... ok
+test_empty_string_task_id (test_preflight.CheckTaskRecordTests) ... ok
+test_empty_string_title_is_valid (test_preflight.CheckTaskRecordTests) ... ok
+test_missing_required_evidence (test_preflight.CheckTaskRecordTests) ... ok
+test_missing_status (test_preflight.CheckTaskRecordTests) ... ok
+test_missing_task_id (test_preflight.CheckTaskRecordTests) ... ok
+test_missing_title (test_preflight.CheckTaskRecordTests) ... ok
+test_multiple_bad_fields_produce_multiple_issues (test_preflight.CheckTaskRecordTests) ... ok
+test_non_string_status (test_preflight.CheckTaskRecordTests) ... ok
+test_non_string_task_id (test_preflight.CheckTaskRecordTests) ... ok
+test_non_string_title (test_preflight.CheckTaskRecordTests) ... ok
+test_not_a_dict (test_preflight.CheckTaskRecordTests) ... ok
+test_required_evidence_empty_list_is_valid (test_preflight.CheckTaskRecordTests) ... ok
+test_required_evidence_not_a_list (test_preflight.CheckTaskRecordTests) ... ok
+test_required_evidence_with_non_string_item (test_preflight.CheckTaskRecordTests) ... ok
+test_valid_record (test_preflight.CheckTaskRecordTests) ... ok
+test_canonical_json_ascii_only (test_preflight.DeterminismTests) ... ok
+test_canonical_json_ends_with_single_newline (test_preflight.DeterminismTests) ... ok
+test_canonical_json_has_sorted_keys (test_preflight.DeterminismTests) ... ok
+test_canonical_json_uses_compact_separators (test_preflight.DeterminismTests) ... ok
+test_issue_order_independent_of_evidence_record_order (test_preflight.DeterminismTests) ... ok
+test_issue_order_independent_of_task_record_order (test_preflight.DeterminismTests) ... ok
+test_no_wallclock_or_host_fields_in_report (test_preflight.DeterminismTests) ... ok
+test_repeated_analyze_same_input_byte_identical_output (test_preflight.DeterminismTests) ... ok
+test_issues_fixtures_exit_1 (test_preflight.FixtureIntegrationTests) ... ok
+test_issues_fixtures_summary_counts_match_issue_list (test_preflight.FixtureIntegrationTests) ... ok
+test_issues_fixtures_trigger_every_issue_code (test_preflight.FixtureIntegrationTests) ... ok
+test_ready_fixtures_exit_0 (test_preflight.FixtureIntegrationTests) ... ok
+test_array_is_returned_as_is (test_preflight.LoadRecordsTests) ... ok
+test_array_with_non_object_items_preserved (test_preflight.LoadRecordsTests) ... ok
+test_directory_raises (test_preflight.LoadRecordsTests) ... ok
+test_empty_array_returns_empty_list (test_preflight.LoadRecordsTests) ... ok
+test_empty_file_raises (test_preflight.LoadRecordsTests) ... ok
+test_file_not_found_raises (test_preflight.LoadRecordsTests) ... ok
+test_invalid_json_raises (test_preflight.LoadRecordsTests) ... ok
+test_single_object_is_wrapped_in_list (test_preflight.LoadRecordsTests) ... ok
+test_top_level_bool_raises (test_preflight.LoadRecordsTests) ... ok
+test_top_level_null_raises (test_preflight.LoadRecordsTests) ... ok
+test_top_level_number_raises (test_preflight.LoadRecordsTests) ... ok
+test_top_level_string_raises (test_preflight.LoadRecordsTests) ... ok
+test_invalid_json_exits_2 (test_preflight.MainCliTests) ... ok
+test_issues_input_exits_1 (test_preflight.MainCliTests) ... ok
+test_no_args_exits_2 (test_preflight.MainCliTests) ... ok
+test_nonexistent_evidence_file_exits_2 (test_preflight.MainCliTests) ... ok
+test_nonexistent_tasks_file_exits_2 (test_preflight.MainCliTests) ... ok
+test_one_arg_exits_2 (test_preflight.MainCliTests) ... ok
+test_output_flag_long_form (test_preflight.MainCliTests) ... ok
+test_output_flag_writes_file_and_stdout_empty (test_preflight.MainCliTests) ... ok
+test_output_to_unwritable_directory_exits_2 (test_preflight.MainCliTests) ... ok
+test_ready_input_exits_0_and_prints_json (test_preflight.MainCliTests) ... ok
+test_single_object_input_files_work (test_preflight.MainCliTests) ... ok
+test_two_runs_produce_byte_identical_output_file (test_preflight.MainCliTests) ... ok
+test_unknown_flag_exits_2 (test_preflight.MainCliTests) ... ok
+test_issues_list_is_sorted_in_output (test_preflight.SortKeyTests) ... ok
+test_sort_key_orders_by_code_alphabetically (test_preflight.SortKeyTests) ... ok
+test_sort_key_stable_for_identical_issue (test_preflight.SortKeyTests) ... ok
+test_mixed_carriage_return_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_em_quad_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_em_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_en_quad_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_en_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_figure_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_form_feed_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_four_per_em_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_hair_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_ideographic_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_line_feed_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_line_separator_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_medium_mathematical_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_narrow_no_break_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_no_break_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_ogham_space_mark_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_paragraph_separator_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_punctuation_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_six_per_em_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_tab_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_thin_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_three_per_em_space_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_mixed_vertical_tab_is_not_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_carriage_return_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_em_quad_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_em_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_en_quad_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_en_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_figure_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_form_feed_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_four_per_em_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_hair_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_ideographic_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_line_feed_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_line_separator_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_medium_mathematical_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_narrow_no_break_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_no_break_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_ogham_space_mark_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_paragraph_separator_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_punctuation_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_six_per_em_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_tab_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_thin_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_three_per_em_space_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_pure_vertical_tab_is_empty (test_preflight.UnicodeWhitespaceGeneratedTests) ... ok
+test_ascii_whitespace_string_is_empty (test_preflight.ValueEmptinessTests) ... ok
+test_empty_dict_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_empty_list_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_empty_string_is_empty (test_preflight.ValueEmptinessTests) ... ok
+test_false_boolean_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_float_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_integer_nonzero_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_integer_zero_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_none_is_empty (test_preflight.ValueEmptinessTests) ... ok
+test_nonempty_dict_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_nonempty_list_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_nonempty_string_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_string_with_leading_trailing_space_and_content_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_true_boolean_is_not_empty (test_preflight.ValueEmptinessTests) ... ok
+test_ascii_space_only_is_whitespace (test_preflight.WhitespaceDetectionTests) ... ok
+test_empty_string_is_not_whitespace_only (test_preflight.WhitespaceDetectionTests) ... ok
+test_mixed_whitespace_and_text_is_false (test_preflight.WhitespaceDetectionTests) ... ok
+test_non_whitespace_string_is_false (test_preflight.WhitespaceDetectionTests) ... ok
+test_tab_newline_cr_combo_is_whitespace (test_preflight.WhitespaceDetectionTests) ... ok
+
+----------------------------------------------------------------------
+Ran 183 tests in 0.010s
+
+OK
+exit=0
+
+$ python3 preflight.py tasks_ready.json evidence_ready.json ; echo "exit=$?"
+{"issues":[],"ready":true,"summary":{"evidence_count":3,"issue_count":0,"issue_counts_by_code":{"DUPLICATE_SUBMISSION_ID":0,"EMPTY_EVIDENCE_VALUE":0,"EVIDENCE_TYPE_MISMATCH":0,"MALFORMED_RECORD":0,"ORPHAN_EVIDENCE":0,"TASK_MISSING_EVIDENCE":0,"UNSUBMITTABLE_STATUS":0},"task_count":3}}
+exit=0
+
+$ python3 -m preflight tasks_ready.json evidence_ready.json ; echo "exit=$?"
+{"issues":[],"ready":true,"summary":{"evidence_count":3,"issue_count":0,"issue_counts_by_code":{"DUPLICATE_SUBMISSION_ID":0,"EMPTY_EVIDENCE_VALUE":0,"EVIDENCE_TYPE_MISMATCH":0,"MALFORMED_RECORD":0,"ORPHAN_EVIDENCE":0,"TASK_MISSING_EVIDENCE":0,"UNSUBMITTABLE_STATUS":0},"task_count":3}}
+exit=0
+
+$ python3 preflight.py tasks_issues.json evidence_issues.json -o report_run1.json ; echo "exit=$?"
+exit=1
+
+$ python3 preflight.py tasks_issues.json evidence_issues.json -o report_run2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum report_run1.json report_run2.json
+dcec3443f4a10d90f6c970de0cd21d45382b863df7c1dd102bcf3fb7e99e1953  report_run1.json
+dcec3443f4a10d90f6c970de0cd21d45382b863df7c1dd102bcf3fb7e99e1953  report_run2.json
+
+$ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 preflight.py /nonexistent.json evidence_ready.json ; echo "exit=$?"
+preflight: error: file not found: /nonexistent.json
+exit=2
+
+$ python3 preflight.py tasks_ready.json ; echo "exit=$?"
+usage: preflight [-h] [-o FILE] tasks_file evidence_file
+preflight: error: the following arguments are required: evidence_file
+exit=2
