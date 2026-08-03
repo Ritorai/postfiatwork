@@ -90,7 +90,19 @@ class Finding:
         }
 
     def sort_key(self):
-        return (self.rule_id, self.path, self.line, self.col, self.detail)
+        # The trailing canonical_json(self.to_dict()) is a total-order tiebreak.
+        # severity is RULE_SEVERITY[rule_id], a pure function of rule_id, so two
+        # findings agreeing on the five leading fields always produce the same
+        # dump -- this therefore does NOT change the de-duplication behaviour
+        # that also keys on sort_key(); it only makes the ordering total.
+        return (
+            self.rule_id,
+            self.path,
+            self.line,
+            self.col,
+            self.detail,
+            canonical_json(self.to_dict()),
+        )
 
 
 # ---------------------------------------------------------------------------
