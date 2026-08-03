@@ -1,0 +1,14 @@
+{
+  "opening_balance": "10",
+  "closing_balance": "0",
+  "events": [
+    {"event_id": "e1", "type": "reward", "amount": "5", "at": "2026-01-01T00:00:00Z"},
+    {"event_id": "e2", "type": "chat_spend", "amount": "50", "at": "2026-01-02T00:00:00Z"},
+    {"event_id": "e2", "type": "grant", "amount": "1", "at": "2026-01-03T00:00:00Z"},
+    {"event_id": "e3", "type": "teleport", "amount": "10", "at": "2026-01-04T00:00:00Z"},
+    {"event_id": "e4", "type": "reward", "amount": "-5", "at": "2026-01-05T00:00:00Z"},
+    {"event_id": "e5", "type": "reward", "amount": NaN, "at": "2026-01-06T00:00:00Z"},
+    {"event_id": "e6", "type": "reward", "amount": "5", "at": "not-a-timestamp"},
+    {"event_id": "e7", "type": "reward", "amount": "5", "at": "2026-01-01T00:00:00Z"}
+  ]
+}

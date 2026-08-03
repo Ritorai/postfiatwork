@@ -1,0 +1,13 @@
+{
+  "opening_balance": "100.500000",
+  "closing_balance": "5.123456789",
+  "events": [
+    {"event_id": "e1", "type": "reward", "amount": "50", "at": "2026-01-01T00:00:00Z"},
+    {"event_id": "e2", "type": "grant", "amount": "25.25", "at": "2026-01-02T00:00:00Z"},
+    {"event_id": "e3", "type": "chat_spend", "amount": "75.75", "at": "2026-01-03T00:00:00Z"},
+    {"event_id": "e4", "type": "airdrop", "amount": "10", "at": "2026-01-04T00:00:00Z"},
+    {"event_id": "e5", "type": "chat_spend", "amount": "110", "at": "2026-01-05T00:00:00Z"},
+    {"event_id": "e6", "type": "reward", "amount": "0", "at": "2026-01-06T00:00:00Z"},
+    {"event_id": "e7", "type": "grant", "amount": "5.123456789", "at": "2026-01-07T00:00:00Z"}
+  ]
+}

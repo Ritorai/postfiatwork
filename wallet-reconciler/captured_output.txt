@@ -1,0 +1,180 @@
+=== $ python3 -m unittest test_wallet_reconcile -v ===
+test_bool_false_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_bool_true_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_decimal_string (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_dict_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_empty_string_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_float_would_have_corrupted_this_value (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_garbage_string_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_high_precision_string_exact (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_high_precision_via_json_number_exact (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_infinity_sentinel_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_infinity_string_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_json_decimal_number (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_json_int_number (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_list_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_nan_sentinel_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_nan_string_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_negative_infinity_sentinel_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_negative_int_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_negative_string_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_none_rejected (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_plain_integer_string (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_zero_accepted (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_zero_int_accepted (test_wallet_reconcile.TestAmountCoercion) ... ok
+test_normalizes_negative_zero (test_wallet_reconcile.TestAmtStr) ... ok
+test_normalizes_negative_zero_with_scale (test_wallet_reconcile.TestAmtStr) ... ok
+test_preserves_nonzero (test_wallet_reconcile.TestAmtStr) ... ok
+test_preserves_positive_zero (test_wallet_reconcile.TestAmtStr) ... ok
+test_ascii_only (test_wallet_reconcile.TestCanonicalJson) ... ok
+test_byte_identical_repeated_serialization (test_wallet_reconcile.TestCanonicalJson) ... ok
+test_compact_separators (test_wallet_reconcile.TestCanonicalJson) ... ok
+test_finding_order_deterministic_across_runs (test_wallet_reconcile.TestCanonicalJson) ... ok
+test_sorted_keys (test_wallet_reconcile.TestCanonicalJson) ... ok
+test_trailing_newline (test_wallet_reconcile.TestCanonicalJson) ... ok
+test_exit_one_on_ledger_bad_fixture (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_exit_two_on_malformed_json (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_exit_two_on_missing_file (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_exit_zero_on_ledger_ok_fixture (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_help_flag_exits_zero (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_ledger_bad_triggers_all_seven_codes (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_output_flag_writes_file (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_output_long_flag_writes_file (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_precision_demo_no_float_corruption (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_repeat_runs_byte_identical (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_stdin_dash_reads_stdin (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_stdin_nan_amount_yields_finding_not_crash (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_usage_error_missing_positional_exits_two (test_wallet_reconcile.TestCliExitCodes) ... ok
+test_empty_events_opening_eq_closing_clean (test_wallet_reconcile.TestClosingBalanceMismatch) ... ok
+test_empty_events_opening_ne_closing_flagged (test_wallet_reconcile.TestClosingBalanceMismatch) ... ok
+test_exact_match_no_finding (test_wallet_reconcile.TestClosingBalanceMismatch) ... ok
+test_mismatch_sorts_after_all_event_findings (test_wallet_reconcile.TestClosingBalanceMismatch) ... ok
+test_positive_delta_when_computed_exceeds_stated (test_wallet_reconcile.TestClosingBalanceMismatch) ... ok
+test_tiny_delta_flagged (test_wallet_reconcile.TestClosingBalanceMismatch) ... ok
+test_duplicate_event_still_applied_to_balance (test_wallet_reconcile.TestDuplicateEventId) ... ok
+test_duplicate_flagged_on_second_occurrence (test_wallet_reconcile.TestDuplicateEventId) ... ok
+test_no_duplicates_clean (test_wallet_reconcile.TestDuplicateEventId) ... ok
+test_triple_duplicate_flags_each_repeat (test_wallet_reconcile.TestDuplicateEventId) ... ok
+test_closing_mismatch_always_last (test_wallet_reconcile.TestFindingSortOrder) ... ok
+test_multiple_codes_same_index_sorted_alphabetically (test_wallet_reconcile.TestFindingSortOrder) ... ok
+test_opening_balance_finding_sorts_first (test_wallet_reconcile.TestFindingSortOrder) ... ok
+test_amount_as_json_number_accepted (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_amount_as_json_string_accepted (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_bool_amount_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_infinity_amount_via_bare_token_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_invalid_amount_event_not_applied (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_nan_amount_via_bare_token_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_negative_amount_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_negative_infinity_amount_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_non_numeric_string_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_null_amount_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_number_and_string_amount_give_identical_balance (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_zero_amount_not_flagged (test_wallet_reconcile.TestInvalidAmountFinding) ... ok
+test_garbage_at_flagged (test_wallet_reconcile.TestInvalidTimestampFinding) ... ok
+test_invalid_timestamp_event_still_applied (test_wallet_reconcile.TestInvalidTimestampFinding) ... ok
+test_non_string_at_flagged (test_wallet_reconcile.TestInvalidTimestampFinding) ... ok
+test_offset_timezone_flagged_invalid (test_wallet_reconcile.TestInvalidTimestampFinding) ... ok
+test_multi_event_clean_ledger_with_high_precision (test_wallet_reconcile.TestMixedRealisticLedger) ... ok
+test_exact_zero_not_flagged (test_wallet_reconcile.TestNegativeRunningBalance) ... ok
+test_going_negative_flagged (test_wallet_reconcile.TestNegativeRunningBalance) ... ok
+test_negative_opening_balance_flagged_as_virtual_checkpoint (test_wallet_reconcile.TestNegativeRunningBalance) ... ok
+test_recovers_after_going_negative_only_flags_negative_events (test_wallet_reconcile.TestNegativeRunningBalance) ... ok
+test_unapplied_event_does_not_change_balance_or_trigger_negative (test_wallet_reconcile.TestNegativeRunningBalance) ... ok
+test_zero_amount_chat_spend_from_zero_balance_prints_positive_zero (test_wallet_reconcile.TestNegativeRunningBalance) ... ok
+test_equality (test_wallet_reconcile.TestNonFiniteSentinel) ... ok
+test_inequality_different_token (test_wallet_reconcile.TestNonFiniteSentinel) ... ok
+test_not_equal_to_plain_string (test_wallet_reconcile.TestNonFiniteSentinel) ... ok
+test_repr (test_wallet_reconcile.TestNonFiniteSentinel) ... ok
+test_ascending_order_clean (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_earlier_timestamp_flagged (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_exact_tie_is_not_out_of_order (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_first_event_has_nothing_to_compare_against (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_invalid_timestamp_does_not_disturb_cursor (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_invalid_timestamp_event_itself_not_flagged_out_of_order (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_multiple_independent_out_of_order_events_each_flagged (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_out_of_order_compares_only_to_immediately_preceding_event (test_wallet_reconcile.TestOutOfOrderTimestamp) ... ok
+test_any_finding_flips_status (test_wallet_reconcile.TestReconciledStatus) ... ok
+test_clean_ledger_status_reconciled (test_wallet_reconcile.TestReconciledStatus) ... ok
+test_sign_convention_field_present (test_wallet_reconcile.TestReconciledStatus) ... ok
+test_bool_passthrough (test_wallet_reconcile.TestSafeRepr) ... ok
+test_decimal_becomes_string (test_wallet_reconcile.TestSafeRepr) ... ok
+test_int_passthrough (test_wallet_reconcile.TestSafeRepr) ... ok
+test_list_becomes_repr_string (test_wallet_reconcile.TestSafeRepr) ... ok
+test_none_passthrough (test_wallet_reconcile.TestSafeRepr) ... ok
+test_nonfinite_becomes_token (test_wallet_reconcile.TestSafeRepr) ... ok
+test_string_passthrough (test_wallet_reconcile.TestSafeRepr) ... ok
+test_closing_balance_infinity_is_structural (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_closing_balance_non_numeric (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_empty_event_id_rejected (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_event_missing_amount (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_event_missing_at (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_event_missing_event_id (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_event_missing_type (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_event_not_an_object (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_events_not_a_list (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_file_not_found (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_malformed_json_syntax (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_missing_closing_balance (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_missing_events (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_missing_opening_balance (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_non_string_event_id_rejected (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_opening_balance_nan_is_structural (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_opening_balance_non_numeric (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_top_level_not_object (test_wallet_reconcile.TestStructuralInputErrors) ... ok
+test_empty_string_rejected (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_explicit_utc_offset (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_garbage_string_rejected (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_lowercase_z_accepted (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_microseconds_accepted (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_naive_timestamp_rejected (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_negative_zero_utc_offset (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_non_string_rejected (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_non_utc_offset_rejected (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_z_suffix (test_wallet_reconcile.TestTimestampCoercion) ... ok
+test_finding_counts_matches_findings (test_wallet_reconcile.TestTraceCompleteness) ... ok
+test_trace_entry_keys (test_wallet_reconcile.TestTraceCompleteness) ... ok
+test_trace_length_matches_event_count (test_wallet_reconcile.TestTraceCompleteness) ... ok
+test_trace_running_balance_progression (test_wallet_reconcile.TestTraceCompleteness) ... ok
+test_all_four_known_types_accepted (test_wallet_reconcile.TestUnknownEventType) ... ok
+test_case_sensitive (test_wallet_reconcile.TestUnknownEventType) ... ok
+test_numeric_type_flagged (test_wallet_reconcile.TestUnknownEventType) ... ok
+test_unknown_string_type (test_wallet_reconcile.TestUnknownEventType) ... ok
+test_unknown_type_event_not_applied (test_wallet_reconcile.TestUnknownEventType) ... ok
+
+----------------------------------------------------------------------
+Ran 141 tests in 0.232s
+
+OK
+exit=0
+
+=== $ python3 wallet_reconcile.py ledger_ok.json ; echo "exit=$?" ===
+{"closing_delta":"0","computed_closing_balance":"5.123456789","event_count":7,"finding_counts":{},"findings":[],"ledger_version":"1.0","opening_balance":"100.500000","sign_convention":{"airdrop":"+","chat_spend":"-","grant":"+","reward":"+"},"stated_closing_balance":"5.123456789","status":"reconciled","trace":[{"amount":"50","applied":true,"at":"2026-01-01T00:00:00Z","codes":[],"event_id":"e1","index":0,"running_balance":"150.500000","signed_amount":"50","type":"reward"},{"amount":"25.25","applied":true,"at":"2026-01-02T00:00:00Z","codes":[],"event_id":"e2","index":1,"running_balance":"175.750000","signed_amount":"25.25","type":"grant"},{"amount":"75.75","applied":true,"at":"2026-01-03T00:00:00Z","codes":[],"event_id":"e3","index":2,"running_balance":"100.000000","signed_amount":"-75.75","type":"chat_spend"},{"amount":"10","applied":true,"at":"2026-01-04T00:00:00Z","codes":[],"event_id":"e4","index":3,"running_balance":"110.000000","signed_amount":"10","type":"airdrop"},{"amount":"110","applied":true,"at":"2026-01-05T00:00:00Z","codes":[],"event_id":"e5","index":4,"running_balance":"0","signed_amount":"-110","type":"chat_spend"},{"amount":"0","applied":true,"at":"2026-01-06T00:00:00Z","codes":[],"event_id":"e6","index":5,"running_balance":"0","signed_amount":"0","type":"reward"},{"amount":"5.123456789","applied":true,"at":"2026-01-07T00:00:00Z","codes":[],"event_id":"e7","index":6,"running_balance":"5.123456789","signed_amount":"5.123456789","type":"grant"}]}
+exit=0
+
+=== $ python3 wallet_reconcile.py ledger_bad.json -o report_run1.json ; echo "exit=$?" ===
+exit=1
+
+=== $ python3 wallet_reconcile.py ledger_bad.json -o report_run2.json ; echo "exit=$?" ===
+exit=1
+
+=== $ sha256sum report_run1.json report_run2.json ===
+76b74d9a61902ede1b54de72539eb1aed7146a371774ee45aaf61d9c7ea74aee  report_run1.json
+76b74d9a61902ede1b54de72539eb1aed7146a371774ee45aaf61d9c7ea74aee  report_run2.json
+
+=== $ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+
+=== $ python3 wallet_reconcile.py /nonexistent.json ; echo "exit=$?" ===
+{"detail":"file not found: /nonexistent.json","error":"INVALID_INPUT"}
+exit=2
+
+=== $ echo '{"opening_balance":"0","closing_balance":"0","events":[{"event_id":"e1","type":"reward","amount":NaN,"at":"2026-01-01T00:00:00Z"}]}' | python3 wallet_reconcile.py - ; echo "exit=$?" ===
+{"closing_delta":"0","computed_closing_balance":"0","event_count":1,"finding_counts":{"INVALID_AMOUNT":1},"findings":[{"amount":"NaN","code":"INVALID_AMOUNT","detail":"amount is NaN (NaN/Infinity is not permitted)","event_id":"e1","index":0}],"ledger_version":"1.0","opening_balance":"0","sign_convention":{"airdrop":"+","chat_spend":"-","grant":"+","reward":"+"},"stated_closing_balance":"0","status":"findings","trace":[{"amount":null,"applied":false,"at":"2026-01-01T00:00:00Z","codes":["INVALID_AMOUNT"],"event_id":"e1","index":0,"running_balance":"0","signed_amount":null,"type":"reward"}]}
+exit=1
+
+=== Precision demonstration: amounts requiring more than 17 significant digits ===
+opening=0, reward amount=123456789012345678.123456789 (JSON number literal, not string), closing_balance=123456789012345678.123456789
+{"opening_balance":0,"closing_balance":123456789012345678.123456789,"events":[{"event_id":"e1","type":"reward","amount":123456789012345678.123456789,"at":"2026-01-01T00:00:00Z"}]}
+--- running ---
+{"closing_delta":"0","computed_closing_balance":"123456789012345678.123456789","event_count":1,"finding_counts":{},"findings":[],"ledger_version":"1.0","opening_balance":"0","sign_convention":{"airdrop":"+","chat_spend":"-","grant":"+","reward":"+"},"stated_closing_balance":"123456789012345678.123456789","status":"reconciled","trace":[{"amount":"123456789012345678.123456789","applied":true,"at":"2026-01-01T00:00:00Z","codes":[],"event_id":"e1","index":0,"running_balance":"123456789012345678.123456789","signed_amount":"123456789012345678.123456789","type":"reward"}]}
+exit=0
