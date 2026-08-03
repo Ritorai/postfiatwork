@@ -1,0 +1,30 @@
+$ python3 -m unittest test_reconcile -v
+test_cli_output_byte_identical_twice (test_reconcile.TestCliExitCodes) ... ok
+test_exit_one_mismatched (test_reconcile.TestCliExitCodes) ... ok
+test_exit_two_invalid_json (test_reconcile.TestCliExitCodes) ... ok
+test_exit_two_not_array (test_reconcile.TestCliExitCodes) ... ok
+test_exit_zero_balanced (test_reconcile.TestCliExitCodes) ... ok
+test_float_amount_rejected (test_reconcile.TestDecimalPrecision) ... ok
+test_integer_amount_accepted (test_reconcile.TestDecimalPrecision) ... ok
+test_no_float_drift (test_reconcile.TestDecimalPrecision) ... ok
+test_sub_micro_difference_detected (test_reconcile.TestDecimalPrecision) ... ok
+test_bad_amount_string (test_reconcile.TestMalformedInput) ... ok
+test_duplicate_expected_task_rejected (test_reconcile.TestMalformedInput) ... ok
+test_empty_wallet (test_reconcile.TestMalformedInput) ... ok
+test_missing_field (test_reconcile.TestMalformedInput) ... ok
+test_amount_mismatch_with_delta (test_reconcile.TestMismatchTypes) ... ok
+test_balanced (test_reconcile.TestMismatchTypes) ... ok
+test_duplicate_payout (test_reconcile.TestMismatchTypes) ... ok
+test_missing_payout (test_reconcile.TestMismatchTypes) ... ok
+test_unexpected_payout (test_reconcile.TestMismatchTypes) ... ok
+test_wallet_and_amount_mismatch_both_reported (test_reconcile.TestMismatchTypes) ... ok
+test_wallet_mismatch (test_reconcile.TestMismatchTypes) ... ok
+test_canonical_json_is_byte_identical_across_runs (test_reconcile.TestOrderingAndCanonical) ... ok
+test_canonical_json_sorted_keys_and_newline (test_reconcile.TestOrderingAndCanonical) ... ok
+test_findings_sorted_regardless_of_input_order (test_reconcile.TestOrderingAndCanonical) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.338s
+
+OK
+exit=0
