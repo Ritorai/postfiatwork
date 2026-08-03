@@ -1,0 +1,1 @@
+{"findings":[],"tools":[{"claimed_test_count":1,"description":"a single healthy tool","dir":"only_tool","entrypoints":["only_tool.py"],"has_captured_output":true,"has_readme":true,"test_modules":["test_only_tool.py"]}],"totals":{"test_count_known_tools":1,"test_count_sum":1,"test_count_unknown_tools":0,"tool_count":1}}

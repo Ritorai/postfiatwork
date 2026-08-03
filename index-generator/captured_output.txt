@@ -1,0 +1,424 @@
+
+############################################################
+# 1. Verbose test run
+############################################################
+
+=== $ python3 -m unittest test_indexgen -v ===
+test_ends_with_single_newline (test_indexgen.CanonicalJsonTests.test_ends_with_single_newline) ... ok
+test_ensure_ascii (test_indexgen.CanonicalJsonTests.test_ensure_ascii) ... ok
+test_format_exact (test_indexgen.CanonicalJsonTests.test_format_exact) ... ok
+test_no_spaces_in_separators (test_indexgen.CanonicalJsonTests.test_no_spaces_in_separators) ... ok
+test_case_insensitive (test_indexgen.ClaimedTestCountTests.test_case_insensitive) ... ok
+test_first_occurrence_wins (test_indexgen.ClaimedTestCountTests.test_first_occurrence_wins) ... ok
+test_fraction_form (test_indexgen.ClaimedTestCountTests.test_fraction_form) ... ok
+test_multiline_search (test_indexgen.ClaimedTestCountTests.test_multiline_search) ... ok
+test_no_count_present (test_indexgen.ClaimedTestCountTests.test_no_count_present) ... ok
+test_number_without_tests_word_not_matched (test_indexgen.ClaimedTestCountTests.test_number_without_tests_word_not_matched) ... ok
+test_ran_n_tests (test_indexgen.ClaimedTestCountTests.test_ran_n_tests) ... ok
+test_simple_n_tests (test_indexgen.ClaimedTestCountTests.test_simple_n_tests) ... ok
+test_singular_test_word (test_indexgen.ClaimedTestCountTests.test_singular_test_word) ... ok
+test_tests_colon (test_indexgen.ClaimedTestCountTests.test_tests_colon) ... ok
+test_tests_equals (test_indexgen.ClaimedTestCountTests.test_tests_equals) ... ok
+test_case_insensitive_tools (test_indexgen.ClaimedToolCountTests.test_case_insensitive_tools) ... ok
+test_no_tool_count (test_indexgen.ClaimedToolCountTests.test_no_tool_count) ... ok
+test_simple_n_tools (test_indexgen.ClaimedToolCountTests.test_simple_n_tools) ... ok
+test_singular_tool (test_indexgen.ClaimedToolCountTests.test_singular_tool) ... ok
+test_tools_colon (test_indexgen.ClaimedToolCountTests.test_tools_colon) ... ok
+test_exit_0_clean (test_indexgen.CliSubprocessTests.test_exit_0_clean) ... ok
+test_exit_1_findings (test_indexgen.CliSubprocessTests.test_exit_1_findings) ... ok
+test_exit_2_bad_root (test_indexgen.CliSubprocessTests.test_exit_2_bad_root) ... ok
+test_exit_2_missing_required_arg (test_indexgen.CliSubprocessTests.test_exit_2_missing_required_arg) ... ok
+test_exit_2_unknown_arg (test_indexgen.CliSubprocessTests.test_exit_2_unknown_arg) ... ok
+test_stderr_nonempty_on_bad_root (test_indexgen.CliSubprocessTests.test_stderr_nonempty_on_bad_root) ... ok
+test_badge_html_img_skipped (test_indexgen.DescriptionExtractionTests.test_badge_html_img_skipped) ... ok
+test_badge_linked_image_skipped (test_indexgen.DescriptionExtractionTests.test_badge_linked_image_skipped) ... ok
+test_badge_markdown_image_skipped (test_indexgen.DescriptionExtractionTests.test_badge_markdown_image_skipped) ... ok
+test_badge_shields_io_skipped (test_indexgen.DescriptionExtractionTests.test_badge_shields_io_skipped) ... ok
+test_crlf_line_endings (test_indexgen.DescriptionExtractionTests.test_crlf_line_endings) ... ok
+test_empty_readme_returns_none (test_indexgen.DescriptionExtractionTests.test_empty_readme_returns_none) ... ok
+test_h1_no_subtitle_falls_through_to_next_line (test_indexgen.DescriptionExtractionTests.test_h1_no_subtitle_falls_through_to_next_line) ... ok
+test_h1_subtitle_colon (test_indexgen.DescriptionExtractionTests.test_h1_subtitle_colon) ... ok
+test_h1_subtitle_dash (test_indexgen.DescriptionExtractionTests.test_h1_subtitle_dash) ... ok
+test_h1_subtitle_emdash (test_indexgen.DescriptionExtractionTests.test_h1_subtitle_emdash) ... ok
+test_h1_subtitle_empty_after_separator_falls_through (test_indexgen.DescriptionExtractionTests.test_h1_subtitle_empty_after_separator_falls_through) ... ok
+test_h1_subtitle_prefers_dash_over_colon_when_both_absent_defaults (test_indexgen.DescriptionExtractionTests.test_h1_subtitle_prefers_dash_over_colon_when_both_absent_defaults) ... ok
+test_h2_heading_skipped (test_indexgen.DescriptionExtractionTests.test_h2_heading_skipped) ... ok
+test_leading_whitespace_on_line_is_stripped (test_indexgen.DescriptionExtractionTests.test_leading_whitespace_on_line_is_stripped) ... ok
+test_multiple_badges_then_heading_then_text (test_indexgen.DescriptionExtractionTests.test_multiple_badges_then_heading_then_text) ... ok
+test_only_badges_returns_none (test_indexgen.DescriptionExtractionTests.test_only_badges_returns_none) ... ok
+test_only_headings_returns_none (test_indexgen.DescriptionExtractionTests.test_only_headings_returns_none) ... ok
+test_plain_first_line (test_indexgen.DescriptionExtractionTests.test_plain_first_line) ... ok
+test_skips_heading_no_subtitle (test_indexgen.DescriptionExtractionTests.test_skips_heading_no_subtitle) ... ok
+test_skips_leading_blank_lines (test_indexgen.DescriptionExtractionTests.test_skips_leading_blank_lines) ... ok
+test_unicode_description (test_indexgen.DescriptionExtractionTests.test_unicode_description) ... ok
+test_whitespace_only_readme_returns_none (test_indexgen.DescriptionExtractionTests.test_whitespace_only_readme_returns_none) ... ok
+test_index_byte_stable_across_two_runs (test_indexgen.DeterminismTests.test_index_byte_stable_across_two_runs) ... ok
+test_json_byte_stable_across_two_runs (test_indexgen.DeterminismTests.test_json_byte_stable_across_two_runs) ... ok
+test_no_absolute_root_path_leaks_into_index (test_indexgen.DeterminismTests.test_no_absolute_root_path_leaks_into_index) ... ok
+test_no_absolute_root_path_leaks_into_report (test_indexgen.DeterminismTests.test_no_absolute_root_path_leaks_into_report) ... ok
+test_bad_root_raises_value_error (test_indexgen.DiscoveryTests.test_bad_root_raises_value_error) ... ok
+test_basic_tool_discovered (test_indexgen.DiscoveryTests.test_basic_tool_discovered) ... ok
+test_dir_with_only_non_py_files_is_not_a_tool (test_indexgen.DiscoveryTests.test_dir_with_only_non_py_files_is_not_a_tool) ... ok
+test_dir_with_only_test_file_is_not_a_tool (test_indexgen.DiscoveryTests.test_dir_with_only_test_file_is_not_a_tool) ... ok
+test_directory_named_readme_does_not_crash_discovery (test_indexgen.DiscoveryTests.test_directory_named_readme_does_not_crash_discovery) ... ok
+test_empty_root_yields_no_tools (test_indexgen.DiscoveryTests.test_empty_root_yields_no_tools) ... ok
+test_files_at_root_level_ignored_only_dirs_scanned (test_indexgen.DiscoveryTests.test_files_at_root_level_ignored_only_dirs_scanned) ... ok
+test_invalid_utf8_readme_reported_and_skipped (test_indexgen.DiscoveryTests.test_invalid_utf8_readme_reported_and_skipped) ... ok
+test_multiple_entrypoints_recorded (test_indexgen.DiscoveryTests.test_multiple_entrypoints_recorded) ... ok
+test_nested_dirs_two_levels_deep_ignored (test_indexgen.DiscoveryTests.test_nested_dirs_two_levels_deep_ignored) ... ok
+test_no_captured_output_flag_false (test_indexgen.DiscoveryTests.test_no_captured_output_flag_false) ... ok
+test_no_readme_description_and_count_are_none (test_indexgen.DiscoveryTests.test_no_readme_description_and_count_are_none) ... ok
+test_readme_as_directory_is_not_treated_as_a_readme_file (test_indexgen.DiscoveryTests.test_readme_as_directory_is_not_treated_as_a_readme_file) ... ok
+test_symlink_like_subdirectory_of_tool_ignored_for_entrypoint_detection (test_indexgen.DiscoveryTests.test_symlink_like_subdirectory_of_tool_ignored_for_entrypoint_detection) ... ok
+test_test_prefixed_file_not_counted_as_entrypoint (test_indexgen.DiscoveryTests.test_test_prefixed_file_not_counted_as_entrypoint) ... ok
+test_tools_sorted_by_dir_name (test_indexgen.DiscoveryTests.test_tools_sorted_by_dir_name) ... ok
+test_none_tool_sorts_before_named_tool (test_indexgen.FindingOrderTests.test_none_tool_sorts_before_named_tool) ... ok
+test_sort_by_code_first (test_indexgen.FindingOrderTests.test_sort_by_code_first) ... ok
+test_sort_by_tool_second (test_indexgen.FindingOrderTests.test_sort_by_tool_second) ... ok
+test_sort_is_total_order_for_many_items (test_indexgen.FindingOrderTests.test_sort_is_total_order_for_many_items) ... ok
+test_tiebreak_actually_distinguishes_extra_field (test_indexgen.FindingOrderTests.test_tiebreak_actually_distinguishes_extra_field) ... ok
+test_tiebreak_by_canonical_json_breaks_true_tie (test_indexgen.FindingOrderTests.test_tiebreak_by_canonical_json_breaks_true_tie) ... ok
+test_added_row (test_indexgen.IndexDiffTests.test_added_row) ... ok
+test_changed_row (test_indexgen.IndexDiffTests.test_changed_row) ... ok
+test_identical_no_findings (test_indexgen.IndexDiffTests.test_identical_no_findings) ... ok
+test_multiple_changes_all_reported_sorted (test_indexgen.IndexDiffTests.test_multiple_changes_all_reported_sorted) ... ok
+test_removed_row (test_indexgen.IndexDiffTests.test_removed_row) ... ok
+test_description_literally_equal_to_none_marker_round_trips (test_indexgen.IndexRenderParseTests.test_description_literally_equal_to_none_marker_round_trips) ... ok
+test_genuine_none_description_still_parses_as_none (test_indexgen.IndexRenderParseTests.test_genuine_none_description_still_parses_as_none) ... ok
+test_multiple_entrypoints_sorted_in_row (test_indexgen.IndexRenderParseTests.test_multiple_entrypoints_sorted_in_row) ... ok
+test_none_marker_collision_causes_no_false_index_drift_end_to_end (test_indexgen.IndexRenderParseTests.test_none_marker_collision_causes_no_false_index_drift_end_to_end) ... ok
+test_parse_empty_text (test_indexgen.IndexRenderParseTests.test_parse_empty_text) ... ok
+test_parse_ignores_header_row (test_indexgen.IndexRenderParseTests.test_parse_ignores_header_row) ... ok
+test_parse_ignores_non_table_lines (test_indexgen.IndexRenderParseTests.test_parse_ignores_non_table_lines) ... ok
+test_parse_ignores_separator_row (test_indexgen.IndexRenderParseTests.test_parse_ignores_separator_row) ... ok
+test_render_contains_header (test_indexgen.IndexRenderParseTests.test_render_contains_header) ... ok
+test_render_ends_with_single_trailing_newline (test_indexgen.IndexRenderParseTests.test_render_ends_with_single_trailing_newline) ... ok
+test_render_escapes_pipe_in_description (test_indexgen.IndexRenderParseTests.test_render_escapes_pipe_in_description) ... ok
+test_render_none_count_placeholder (test_indexgen.IndexRenderParseTests.test_render_none_count_placeholder) ... ok
+test_render_none_description_placeholder (test_indexgen.IndexRenderParseTests.test_render_none_description_placeholder) ... ok
+test_render_row_basic (test_indexgen.IndexRenderParseTests.test_render_row_basic) ... ok
+test_render_totals_line (test_indexgen.IndexRenderParseTests.test_render_totals_line) ... ok
+test_roundtrip_preserves_escaped_pipe (test_indexgen.IndexRenderParseTests.test_roundtrip_preserves_escaped_pipe) ... ok
+test_roundtrip_render_then_parse (test_indexgen.IndexRenderParseTests.test_roundtrip_render_then_parse) ... ok
+test_make_finding_none_tool (test_indexgen.MakeFindingTests.test_make_finding_none_tool) ... ok
+test_make_finding_shape (test_indexgen.MakeFindingTests.test_make_finding_shape) ... ok
+test_relocated_tree_produces_identical_bytes (test_indexgen.RelocationTests.test_relocated_tree_produces_identical_bytes) ... ok
+test_drift_does_not_fire_when_counts_agree (test_indexgen.RootReadmeDriftTests.test_drift_does_not_fire_when_counts_agree) ... ok
+test_drift_fires_on_mismatched_tool_count (test_indexgen.RootReadmeDriftTests.test_drift_fires_on_mismatched_tool_count) ... ok
+test_drift_fires_on_test_total_mismatch_only (test_indexgen.RootReadmeDriftTests.test_drift_fires_on_test_total_mismatch_only) ... ok
+test_drift_no_claims_no_findings (test_indexgen.RootReadmeDriftTests.test_drift_no_claims_no_findings) ... ok
+test_drift_the_13_vs_33_example (test_indexgen.RootReadmeDriftTests.test_drift_the_13_vs_33_example) ... ok
+test_drift_tool_count_only_claim (test_indexgen.RootReadmeDriftTests.test_drift_tool_count_only_claim) ... ok
+test_bad_root_exit_2 (test_indexgen.RunEndToEndTests.test_bad_root_exit_2) ... indexgen.py: error: --root '/no/such/dir/at/all' is not a directory
+ok
+test_broken_repo_nonzero_findings_exit_1 (test_indexgen.RunEndToEndTests.test_broken_repo_nonzero_findings_exit_1) ... ok
+test_check_index_drift_detected (test_indexgen.RunEndToEndTests.test_check_index_drift_detected) ... ok
+test_check_index_no_drift_when_unchanged (test_indexgen.RunEndToEndTests.test_check_index_no_drift_when_unchanged) ... ok
+test_clean_repo_zero_findings_exit_0 (test_indexgen.RunEndToEndTests.test_clean_repo_zero_findings_exit_0) ... ok
+test_missing_check_index_file_reported_not_fatal (test_indexgen.RunEndToEndTests.test_missing_check_index_file_reported_not_fatal) ... ok
+test_missing_root_readme_file_reported_not_fatal (test_indexgen.RunEndToEndTests.test_missing_root_readme_file_reported_not_fatal) ... ok
+test_report_has_tools_and_totals_keys (test_indexgen.RunEndToEndTests.test_report_has_tools_and_totals_keys) ... ok
+test_root_readme_drift_end_to_end (test_indexgen.RunEndToEndTests.test_root_readme_drift_end_to_end) ... ok
+test_root_readme_no_drift_when_correct (test_indexgen.RunEndToEndTests.test_root_readme_no_drift_when_correct) ... ok
+test_stdout_output_when_no_o_flag (test_indexgen.RunEndToEndTests.test_stdout_output_when_no_o_flag) ... ok
+test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_gkpschwm/no_such_subdir/report.json'
+ok
+test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_li_p1sqv/no_such_subdir/INDEX.md'
+ok
+test_write_index_creates_file (test_indexgen.RunEndToEndTests.test_write_index_creates_file) ... ok
+test_split_row_basic (test_indexgen.SplitRowTests.test_split_row_basic) ... ok
+test_split_row_empty_cell (test_indexgen.SplitRowTests.test_split_row_empty_cell) ... ok
+test_split_row_escaped_pipe (test_indexgen.SplitRowTests.test_split_row_escaped_pipe) ... ok
+test_all_finding_codes_reachable_simultaneously (test_indexgen.ToolFindingTests.test_all_finding_codes_reachable_simultaneously) ... ok
+test_entrypoint_test_mismatch_finding (test_indexgen.ToolFindingTests.test_entrypoint_test_mismatch_finding) ... ok
+test_missing_captured_output_finding (test_indexgen.ToolFindingTests.test_missing_captured_output_finding) ... ok
+test_missing_readme_finding (test_indexgen.ToolFindingTests.test_missing_readme_finding) ... ok
+test_missing_test_module_finding (test_indexgen.ToolFindingTests.test_missing_test_module_finding) ... ok
+test_multiple_entrypoints_all_matched_no_mismatch (test_indexgen.ToolFindingTests.test_multiple_entrypoints_all_matched_no_mismatch) ... ok
+test_no_claimed_test_count_finding (test_indexgen.ToolFindingTests.test_no_claimed_test_count_finding) ... ok
+test_no_description_finding (test_indexgen.ToolFindingTests.test_no_description_finding) ... ok
+test_no_findings_for_complete_tool (test_indexgen.ToolFindingTests.test_no_findings_for_complete_tool) ... ok
+test_tool_to_row_sorts_lists (test_indexgen.ToolToRowTests.test_tool_to_row_sorts_lists) ... ok
+test_totals_all_unknown (test_indexgen.TotalsTests.test_totals_all_unknown) ... ok
+test_totals_empty (test_indexgen.TotalsTests.test_totals_empty) ... ok
+test_totals_mixed_known_unknown (test_indexgen.TotalsTests.test_totals_mixed_known_unknown) ... ok
+test_crlf_readme_end_to_end (test_indexgen.UnicodeCrlfTests.test_crlf_readme_end_to_end) ... ok
+test_index_with_unicode_roundtrips (test_indexgen.UnicodeCrlfTests.test_index_with_unicode_roundtrips) ... ok
+test_unicode_description_end_to_end (test_indexgen.UnicodeCrlfTests.test_unicode_description_end_to_end) ... ok
+
+----------------------------------------------------------------------
+Ran 138 tests in 0.266s
+
+OK
+exit=0
+
+############################################################
+# 2. CLI invocations -- clean repo (expect exit 0)
+############################################################
+
+=== $ python3 indexgen.py --root clean_repo -o clean_report.json ===
+exit=0
+
+=== $ cat clean_report.json ===
+{"findings":[],"tools":[{"claimed_test_count":1,"description":"a single healthy tool","dir":"only_tool","entrypoints":["only_tool.py"],"has_captured_output":true,"has_readme":true,"test_modules":["test_only_tool.py"]}],"totals":{"test_count_known_tools":1,"test_count_sum":1,"test_count_unknown_tools":0,"tool_count":1}}
+exit=0
+
+############################################################
+# 3. CLI invocations -- fixture repo with root-readme cross-check (expect exit 1)
+############################################################
+
+=== $ python3 indexgen.py --root fixture_repo --root-readme root_readme_sample.md --write-index fixture_INDEX.md -o fixture_report.json ===
+exit=1
+
+=== $ cat fixture_INDEX.md ===
+# Repository Index
+
+| Tool | Description | Entrypoint(s) | Test Module(s) | Claimed Tests |
+| --- | --- | --- | --- | --- |
+| alpha | prints a friendly greeting | alpha.py | test_alpha.py | 4 |
+| beta | computes the answer to everything | beta.py | test_beta.py | ? |
+| delta | _(none)_ | delta.py | _(none)_ | ? |
+| epsilon | _(none)_ | epsilon.py | test_epsilon.py | ? |
+| gamma | Gamma bundles a helper module alongside its entrypoint. Tests: 6 | gamma.py, helper.py | test_gamma.py | 6 |
+| zeta | 日本語ツール | zeta.py | test_zeta.py | 3 |
+
+**Totals:** 6 tools; test count: 13 (from 3 tools; 3 unknown)
+exit=0
+
+=== $ cat fixture_report.json ===
+{"findings":[{"code":"ENTRYPOINT_TEST_MISMATCH","location":"delta/delta.py","message":"delta.py present but no test_delta.py","tool":"delta"},{"code":"ENTRYPOINT_TEST_MISMATCH","location":"gamma/helper.py","message":"helper.py present but no test_helper.py","tool":"gamma"},{"code":"MISSING_CAPTURED_OUTPUT","location":"beta/captured_output.txt","message":"tool 'beta' has no captured_output.txt","tool":"beta"},{"code":"MISSING_README","location":"delta/README.md","message":"tool 'delta' has no README.md","tool":"delta"},{"code":"MISSING_TEST_MODULE","location":"delta","message":"tool 'delta' has no test_*.py modules","tool":"delta"},{"code":"NO_CLAIMED_TEST_COUNT","location":"beta/README.md","message":"tool 'beta' README.md states no claimed test count","tool":"beta"},{"code":"NO_CLAIMED_TEST_COUNT","location":"epsilon/README.md","message":"tool 'epsilon' README.md states no claimed test count","tool":"epsilon"},{"code":"NO_DESCRIPTION","location":"epsilon/README.md","message":"tool 'epsilon' README.md has no extractable description","tool":"epsilon"},{"code":"ROOT_README_COUNT_DRIFT","location":"root_readme:tool_count","message":"root README claims 5 tool(s) but 6 were discovered","tool":null}],"tools":[{"claimed_test_count":4,"description":"prints a friendly greeting","dir":"alpha","entrypoints":["alpha.py"],"has_captured_output":true,"has_readme":true,"test_modules":["test_alpha.py"]},{"claimed_test_count":null,"description":"computes the answer to everything","dir":"beta","entrypoints":["beta.py"],"has_captured_output":false,"has_readme":true,"test_modules":["test_beta.py"]},{"claimed_test_count":null,"description":null,"dir":"delta","entrypoints":["delta.py"],"has_captured_output":true,"has_readme":false,"test_modules":[]},{"claimed_test_count":null,"description":null,"dir":"epsilon","entrypoints":["epsilon.py"],"has_captured_output":true,"has_readme":true,"test_modules":["test_epsilon.py"]},{"claimed_test_count":6,"description":"Gamma bundles a helper module alongside its entrypoint. Tests: 6","dir":"gamma","entrypoints":["gamma.py","helper.py"],"has_captured_output":true,"has_readme":true,"test_modules":["test_gamma.py"]},{"claimed_test_count":3,"description":"\u65e5\u672c\u8a9e\u30c4\u30fc\u30eb","dir":"zeta","entrypoints":["zeta.py"],"has_captured_output":true,"has_readme":true,"test_modules":["test_zeta.py"]}],"totals":{"test_count_known_tools":3,"test_count_sum":13,"test_count_unknown_tools":3,"tool_count":6}}
+exit=0
+
+############################################################
+# 4. --check-index: no drift against the index just written (expect: no INDEX_DRIFT findings)
+############################################################
+
+=== $ python3 indexgen.py --root fixture_repo --check-index fixture_INDEX.md -o fixture_report_check1.json ===
+exit=1
+
+=== $ python3 -c "import json; d=json.load(open('fixture_report_check1.json')); print([f for f in d['findings'] if f['code']=='INDEX_DRIFT'])" ===
+[]
+exit=0
+
+############################################################
+# 5. --check-index: introduce real drift (add a 7th tool), re-check (expect INDEX_DRIFT)
+############################################################
+
+=== $ mkdir -p fixture_repo/eta ===
+exit=0
+
+=== $ printf 'def main():\n    pass\n' > fixture_repo/eta/eta.py ===
+exit=0
+
+=== $ printf 'def test_x():\n    assert True\n' > fixture_repo/eta/test_eta.py ===
+exit=0
+
+=== $ printf '# eta - a newly added tool\n\n2 tests.\n' > fixture_repo/eta/README.md ===
+exit=0
+
+=== $ printf 'ok\n' > fixture_repo/eta/captured_output.txt ===
+exit=0
+
+=== $ python3 indexgen.py --root fixture_repo --check-index fixture_INDEX.md -o fixture_report_check2.json ===
+exit=1
+
+=== $ python3 -c "import json; d=json.load(open('fixture_report_check2.json')); print([f for f in d['findings'] if f['code']=='INDEX_DRIFT'])" ===
+[{'code': 'INDEX_DRIFT', 'location': 'row:eta', 'message': "tool 'eta' is present in the freshly computed index but missing from the checked index (added)", 'tool': 'eta'}]
+exit=0
+
+=== $ rm -rf fixture_repo/eta ===
+exit=0
+
+############################################################
+# 6. Error path -- bad --root (expect exit 2)
+############################################################
+
+=== $ python3 indexgen.py --root does_not_exist_at_all ===
+indexgen.py: error: --root 'does_not_exist_at_all' is not a directory
+exit=2
+
+############################################################
+# 7. Error path -- missing required --root argument (expect exit 2)
+############################################################
+
+=== $ python3 indexgen.py ===
+usage: indexgen.py [-h] --root ROOT [--write-index PATH] [--check-index PATH]
+                   [--root-readme PATH] [-o PATH]
+indexgen.py: error: the following arguments are required: --root
+exit=2
+
+############################################################
+# 8. Error path -- unknown CLI flag (expect exit 2)
+############################################################
+
+=== $ python3 indexgen.py --root fixture_repo --not-a-real-flag ===
+usage: indexgen.py [-h] --root ROOT [--write-index PATH] [--check-index PATH]
+                   [--root-readme PATH] [-o PATH]
+indexgen.py: error: unrecognized arguments: --not-a-real-flag
+exit=2
+
+############################################################
+# 9. Error path -- unwritable --write-index target directory (expect exit 2)
+############################################################
+
+=== $ python3 indexgen.py --root fixture_repo --write-index no_such_dir/INDEX.md ===
+indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: 'no_such_dir/INDEX.md'
+exit=2
+
+############################################################
+# 10. Non-fatal error path -- missing --check-index file (reported as UNREADABLE_FILE, not fatal)
+############################################################
+
+=== $ python3 indexgen.py --root clean_repo --check-index does_not_exist_index.md -o missing_check_report.json ===
+exit=1
+
+=== $ python3 -c "import json; d=json.load(open('missing_check_report.json')); print(d['findings'])" ===
+[{'code': 'UNREADABLE_FILE', 'location': '--check-index', 'message': 'could not read --check-index path: not a file', 'tool': None}]
+exit=0
+
+############################################################
+# 11. Non-fatal error path -- missing --root-readme file (reported as UNREADABLE_FILE, not fatal)
+############################################################
+
+=== $ python3 indexgen.py --root clean_repo --root-readme does_not_exist_readme.md -o missing_readme_report.json ===
+exit=1
+
+=== $ python3 -c "import json; d=json.load(open('missing_readme_report.json')); print(d['findings'])" ===
+[{'code': 'UNREADABLE_FILE', 'location': '--root-readme', 'message': 'could not read --root-readme path: not a file', 'tool': None}]
+exit=0
+
+############################################################
+# 12. Non-fatal error path -- malformed (invalid utf-8) README skipped, not fatal
+############################################################
+
+=== $ mkdir -p badenc_repo/weird ===
+exit=0
+
+=== $ printf 'def main():\n    pass\n' > badenc_repo/weird/weird.py ===
+exit=0
+
+=== $ printf 'def test_x():\n    assert True\n' > badenc_repo/weird/test_weird.py ===
+exit=0
+
+=== $ printf 'ok\n' > badenc_repo/weird/captured_output.txt ===
+exit=0
+
+=== $ python3 -c "open('badenc_repo/weird/README.md','wb').write(b'\xff\xfe not valid utf8 \x80\x81')" ===
+exit=0
+
+=== $ python3 indexgen.py --root badenc_repo -o badenc_report.json ===
+exit=1
+
+=== $ python3 -c "import json; d=json.load(open('badenc_report.json')); print([f for f in d['findings'] if f['code']=='UNREADABLE_FILE'])" ===
+[{'code': 'UNREADABLE_FILE', 'location': 'weird/README.md', 'message': 'could not read README.md: UnicodeDecodeError', 'tool': 'weird'}]
+exit=0
+
+=== $ rm -rf badenc_repo ===
+exit=0
+
+############################################################
+# 13. DETERMINISM PROOF -- same dir, two independent runs
+############################################################
+
+=== $ python3 indexgen.py --root fixture_repo --root-readme root_readme_sample.md --write-index det_run1_INDEX.md -o det_run1_report.json ===
+exit=1
+
+=== $ python3 indexgen.py --root fixture_repo --root-readme root_readme_sample.md --write-index det_run2_INDEX.md -o det_run2_report.json ===
+exit=1
+
+=== $ sha256sum det_run1_report.json det_run2_report.json det_run1_INDEX.md det_run2_INDEX.md ===
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  det_run1_report.json
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  det_run2_report.json
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  det_run1_INDEX.md
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  det_run2_INDEX.md
+exit=0
+
+############################################################
+# 14. RELOCATION PROOF -- copy fixture to a different absolute path with a different name, run again
+############################################################
+
+=== $ rm -rf p_a p_zzzzzzzzzz ===
+exit=0
+
+=== $ mkdir -p p_a p_zzzzzzzzzz ===
+exit=0
+
+=== $ cp -r fixture_repo p_a/fx ===
+exit=0
+
+=== $ cp -r fixture_repo p_zzzzzzzzzz/fx_totally_different_name ===
+exit=0
+
+=== $ python3 indexgen.py --root p_a/fx --root-readme root_readme_sample.md --write-index p_a/INDEX.md -o p_a/report.json ===
+exit=1
+
+=== $ python3 indexgen.py --root p_zzzzzzzzzz/fx_totally_different_name --root-readme root_readme_sample.md --write-index p_zzzzzzzzzz/INDEX.md -o p_zzzzzzzzzz/report.json ===
+exit=1
+
+=== $ sha256sum p_a/report.json p_zzzzzzzzzz/report.json p_a/INDEX.md p_zzzzzzzzzz/INDEX.md ===
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  p_a/report.json
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  p_zzzzzzzzzz/report.json
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  p_a/INDEX.md
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  p_zzzzzzzzzz/INDEX.md
+exit=0
+
+=== $ sha256sum det_run1_report.json det_run2_report.json p_a/report.json p_zzzzzzzzzz/report.json det_run1_INDEX.md det_run2_INDEX.md p_a/INDEX.md p_zzzzzzzzzz/INDEX.md ===
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  det_run1_report.json
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  det_run2_report.json
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  p_a/report.json
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  p_zzzzzzzzzz/report.json
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  det_run1_INDEX.md
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  det_run2_INDEX.md
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  p_a/INDEX.md
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  p_zzzzzzzzzz/INDEX.md
+exit=0
+
+############################################################
+# 15. Sanity check -- no forbidden wall-clock substrings, no absolute paths leaked
+############################################################
+
+=== $ grep -n 'time\.time\|utcnow\|now()' indexgen.py; echo grep_exit=$? ===
+grep_exit=1
+exit=0
+
+=== $ grep -c '/tmp/build_indexgen' det_run1_report.json det_run1_INDEX.md; echo grep_exit=$? ===
+det_run1_report.json:0
+det_run1_INDEX.md:0
+grep_exit=1
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################
+
+--- fixture regeneration round trip ---
+fixture_repo/ is not committed as loose files; it is generated by make_fixture_repo.py,
+which stores contents base64-encoded and writes them in binary mode so the deliberate
+CRLF fixture survives. The round trip below is the proof that the generated tree is the
+same tree the committed sample hashes were produced from.
+
+=== $ python3 make_fixture_repo.py fixture_repo ===
+wrote 23 files to /tmp/rt3_fixture_repo
+exit=0
+
+=== $ diff -r fixture_repo <regenerated> ===
+(no output - trees are byte-for-byte identical)
+exit=0
+
+=== $ python3 indexgen.py --root fixture_repo --write-index INDEX.md --root-readme root_readme_sample.md -o report.json ===
+exit=1
+
+=== $ sha256sum report.json sample_report.json INDEX.md sample_INDEX.md ===
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  report.json (regenerated fixture)
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  sample_report.json
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  INDEX.md (regenerated fixture)
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  sample_INDEX.md
+exit=0
+
+A note on a bug in this generator, caught and fixed before commit: the first version
+stored the fixture as TEXT. That silently converted zeta/README.md from CRLF to LF,
+destroying the line-ending test case - while STILL producing matching report and index
+hashes, because indexgen normalises line endings when it extracts a description. The
+hashes agreeing is exactly why it was nearly missed; only diff -r on the trees caught
+it. The generator now stores base64 and writes binary, and make_fixture_repo.py carries
+a comment saying not to simplify it back.
