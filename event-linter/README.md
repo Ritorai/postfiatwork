@@ -69,6 +69,13 @@ are sorted by `(violation, index)`; `json.dumps` uses `sort_keys=True`,
 - A malformed or unknown-state element never aborts the run; it is recorded with
   its 0-based array `index` and processing continues.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `events` (positional) | Path to a JSON array of task lifecycle events. Required. |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> violations=<count>`. |
+
 ## Exit codes
 
 0 = clean · 1 = violations · 2 = unreadable input
