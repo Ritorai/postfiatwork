@@ -1,0 +1,72 @@
+=== $ python3 -m unittest test_sybil_detect -v ===
+test_clean_exit_zero (test_sybil_detect.TestCli) ... ok
+test_missing_file_exit_two (test_sybil_detect.TestCli) ... ok
+test_raising_alert_threshold_clears (test_sybil_detect.TestCli) ... ok
+test_repeated_runs_identical (test_sybil_detect.TestCli) ... ok
+test_strict_config_still_alerts_on_shared_cid (test_sybil_detect.TestCli) ... ok
+test_sybil_exit_one (test_sybil_detect.TestCli) ... ok
+test_clean_fixture_has_no_alert (test_sybil_detect.TestClustering) ... ok
+test_cluster_score_is_max_pair_score (test_sybil_detect.TestClustering) ... ok
+test_link_threshold_controls_clustering (test_sybil_detect.TestClustering) ... ok
+test_loner_not_clustered (test_sybil_detect.TestClustering) ... ok
+test_three_wallets_one_cluster (test_sybil_detect.TestClustering) ... ok
+test_alert_threshold_changes_status (test_sybil_detect.TestConfigurability) ... ok
+test_cli_overrides_beat_file (test_sybil_detect.TestConfigurability) ... ok
+test_config_file_overrides (test_sybil_detect.TestConfigurability) ... ok
+test_defaults_applied (test_sybil_detect.TestConfigurability) ... ok
+test_unknown_config_key_rejected (test_sybil_detect.TestConfigurability) ... ok
+test_unknown_signal_weight_rejected (test_sybil_detect.TestConfigurability) ... ok
+test_bad_evidence_length_type (test_sybil_detect.TestMalformed) ... ok
+test_bad_timestamp (test_sybil_detect.TestMalformed) ... ok
+test_missing_field (test_sybil_detect.TestMalformed) ... ok
+test_negative_evidence_length (test_sybil_detect.TestMalformed) ... ok
+test_non_array (test_sybil_detect.TestMalformed) ... ok
+test_burst_timing_outside_window (test_sybil_detect.TestSignals) ... ok
+test_burst_timing_within_window (test_sybil_detect.TestSignals) ... ok
+test_length_match_outside_tolerance (test_sybil_detect.TestSignals) ... ok
+test_length_match_within_tolerance (test_sybil_detect.TestSignals) ... ok
+test_same_wallet_pairs_skipped (test_sybil_detect.TestSignals) ... ok
+test_shared_cid_fires (test_sybil_detect.TestSignals) ... ok
+test_zero_lengths_match (test_sybil_detect.TestSignals) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.247s
+
+OK
+
+=== $ python3 sybil_detect.py submissions_clean.json -o report_clean.json ===
+status=clear clusters=0 alerting=0
+exit=0
+
+=== $ python3 sybil_detect.py submissions_sybil.json -o report_sybil_run1.json ===
+status=alert clusters=1 alerting=1
+exit=1
+=== $ python3 sybil_detect.py submissions_sybil.json -o report_sybil_run2.json ===
+status=alert clusters=1 alerting=1
+exit=1
+
+=== $ sha256sum report_sybil_run1.json report_sybil_run2.json ===
+5dac57123e9f654668115f7da7299c1afdf2176c472710069984b0b047fa1a51  report_sybil_run1.json
+5dac57123e9f654668115f7da7299c1afdf2176c472710069984b0b047fa1a51  report_sybil_run2.json
+=== $ cmp ... && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+
+=== $ python3 sybil_detect.py submissions_sybil.json -c config_strict.json -o report_strict.json ===
+status=alert clusters=1 alerting=1
+exit=1
+=== $ python3 sybil_detect.py submissions_sybil.json --alert-threshold 1.5 ===
+exit=0
+=== $ python3 sybil_detect.py /nonexistent.json ===
+INVALID_INPUT: file not found: /nonexistent.json
+exit=2
+
+=== clusters detected (default config) ===
+{
+  "alerting_clusters": 1,
+  "clusters": 1,
+  "linked_pairs": 3,
+  "records": 6,
+  "scored_pairs": 4,
+  "wallets": 6
+}
+ cluster ['rSyb1', 'rSyb2', 'rSyb3'] score 1.0 signals ['burst_timing', 'length_match', 'shared_cid'] alert True

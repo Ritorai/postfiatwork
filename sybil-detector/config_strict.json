@@ -1,0 +1,7 @@
+{
+  "weights": {"shared_cid": 0.7, "length_match": 0.15, "burst_timing": 0.15},
+  "length_tolerance": 0.02,
+  "burst_window": 120,
+  "link_threshold": 0.6,
+  "alert_threshold": 0.9
+}
