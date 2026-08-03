@@ -1,0 +1,51 @@
+Verifier notes for the claimcheck fixture bundle "bundle_false".
+
+This bundle is deliberately mixed: some claims below are MISMATCHED,
+some are UNSUBSTANTIATED, and some are UNVERIFIABLE_COMMAND. A few are
+true and should still be reported MATCHED, to show the report does not
+just flag everything.
+
+--- SHA256 claims ---
+
+1. Wrong hash for a real file (should be MISMATCHED):
+sha256(checker.py) = 6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62
+
+2. Hash claimed for a file that does not exist in the bundle (should be UNSUBSTANTIATED):
+sha256(missing.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61
+
+3. A bare hash with no filename that matches nothing in the bundle (should be MISMATCHED):
+Reference digest 8cb602f9158f8d450987ac8fd9723f12683abde387888a175a79dc48b220f8ef was not found anywhere.
+
+4. The real hash of test_checker.py, but attached to the WRONG filename
+   checker.py -- the hash exists in the bundle, just under a different
+   name than claimed (should be MISMATCHED, and evidence_source should
+   point at test_checker.py as where that hash actually lives):
+sha256(checker.py) = 6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61
+
+5. Two claims on one line, one correct and one wrong, using sha256sum-style
+   output (should produce two separate claims, MATCHED and MISMATCHED):
+6d846e99c18b31880ea939f3779af9ec72fcc76f59348d0821072afd662bcc61  test_checker.py    6aa3e823afec09c777ce75a8f9e3881e3ffe9c7729314f97dce1a883b925bf62  checker.py
+
+6. Correct hash, uppercase hex, for a real file (should still be MATCHED --
+   hex case must not matter):
+sha256(test_checker.py) = 6D846E99C18B31880EA939F3779AF9EC72FCC76F59348D0821072AFD662BCC61
+
+--- Test count claim ---
+
+7. Wrong test count (real count is 2) (should be MISMATCHED):
+Ran 10 tests, all passing.
+
+--- Exit code claims ---
+
+8. Wrong exit code for a real, safe command (real exit code is 0) (should be MISMATCHED):
+Ran `python3 checker.py` and observed exit code 1.
+
+9. Command is not a python3 invocation (should be UNVERIFIABLE_COMMAND -- refused):
+Ran `bash checker.py` and observed exit=0.
+
+10. Command contains a shell metacharacter (should be UNVERIFIABLE_COMMAND -- refused,
+    never executed, because this tool never uses shell=True):
+Ran `python3 checker.py; echo pwned` and observed exit=0.
+
+11. Command targets a file that is not inside the bundle (should be UNVERIFIABLE_COMMAND):
+Ran `python3 /etc/hostname` and observed exit=0.
