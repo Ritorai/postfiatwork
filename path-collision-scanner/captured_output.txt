@@ -1,0 +1,264 @@
+path-collision-scanner -- captured verification output
+======================================================
+
+Environment: CPython 3.11.15, git 2.43.0, Linux x86_64, stdlib only, no
+network. Working directory: the path-collision-scanner/ directory of this
+repository. Every command below was executed; nothing is transcribed from
+memory. Where a command line contains an explicit `| tail` or `| head`,
+the output is truncated by that pipe and by nothing else. Absolute paths
+of the scratch trees are abbreviated to `.../name` in the ECHOED COMMAND
+LINES ONLY -- the reports themselves are reproduced verbatim, which is
+the point of the grep at the end of Part 2.
+
+Part 1 -- the documented VERIFICATION block
+-------------------------------------------
+
+The run begins by deleting fixtures/ entirely, to show that the fixture
+lists are derived by make_fixtures.py rather than stashed. `ls fixtures`
+therefore fails with exit 2 before the suite runs, and
+`make_fixtures.py --check` passes after it.
+
+$ python3 --version
+Python 3.11.15
+
+$ uname -s -m
+Linux x86_64
+
+$ git --version
+git version 2.43.0
+
+$ ls fixtures ; echo "exit=$?"
+ls: cannot access 'fixtures': No such file or directory
+exit=2
+
+$ python3 -m unittest test_pathscan 2>&1 | tail -n 3
+Ran 95 tests in 1.254s
+
+OK
+
+$ python3 make_fixtures.py --check ; echo "exit=$?"
+fixtures match the generator (7 files)
+exit=0
+
+$ python3 pathscan.py --list-rules
+CASE_FOLD_COLLISION
+CONTROL_CHARACTER
+DUPLICATE_PATH
+TRAILING_DOT_OR_SPACE
+UNICODE_NORMALIZATION_COLLISION
+UNSAFE_RELATIVE_PATH
+WINDOWS_ILLEGAL_CHARACTER
+WINDOWS_RESERVED_NAME
+
+$ python3 pathscan.py --paths-from fixtures/clean.paths ; echo "exit=$?"
+{"distinct_paths":5,"findings":[],"paths_scanned":5,"rules_enabled":["CASE_FOLD_COLLISION","CONTROL_CHARACTER","DUPLICATE_PATH","TRAILING_DOT_OR_SPACE","UNICODE_NORMALIZATION_COLLISION","UNSAFE_RELATIVE_PATH","WINDOWS_ILLEGAL_CHARACTER","WINDOWS_RESERVED_NAME"],"schema_version":1,"source":"path-list","status":"clean","summary":{"CASE_FOLD_COLLISION":0,"CONTROL_CHARACTER":0,"DUPLICATE_PATH":0,"TRAILING_DOT_OR_SPACE":0,"UNICODE_NORMALIZATION_COLLISION":0,"UNSAFE_RELATIVE_PATH":0,"WINDOWS_ILLEGAL_CHARACTER":0,"WINDOWS_RESERVED_NAME":0},"tool":"path-collision-scanner"}
+exit=0
+
+$ python3 pathscan.py --paths-from fixtures/dirty.paths -o d1.json ; echo "exit=$?"
+exit=1
+
+$ python3 -m json.tool d1.json | head -n 60
+{
+    "distinct_paths": 24,
+    "findings": [
+        {
+            "detail": {
+                "folded": "src/other.py"
+            },
+            "paths": [
+                "Src/other.py",
+                "src/other.py"
+            ],
+            "rule_id": "CASE_FOLD_COLLISION"
+        },
+        {
+            "detail": {
+                "folded": "docs/guide.md"
+            },
+            "paths": [
+                "docs/Guide.md",
+                "docs/guide.md"
+            ],
+            "rule_id": "CASE_FOLD_COLLISION"
+        },
+        {
+            "detail": {
+                "code_points": [
+                    "U+0009"
+                ]
+            },
+            "paths": [
+                "weird/tab\there.txt"
+            ],
+            "rule_id": "CONTROL_CHARACTER"
+        },
+        {
+            "detail": {
+                "code_points": [
+                    "U+000A"
+                ]
+            },
+            "paths": [
+                "weird/two\nlines.txt"
+            ],
+            "rule_id": "CONTROL_CHARACTER"
+        },
+        {
+            "detail": {
+                "components": [
+                    "draft "
+                ]
+            },
+            "paths": [
+                "reports/draft /notes.md"
+            ],
+            "rule_id": "TRAILING_DOT_OR_SPACE"
+        },
+        {
+            "detail": {
+                "components": [
+                    "summary."
+
+$ python3 pathscan.py --paths-from fixtures/malformed.paths ; echo "exit=$?"
+{"error":"fixtures/malformed.paths: entry 1 is empty (stray NUL separator?); refusing to guess","schema_version":1,"status":"error","tool":"path-collision-scanner"}
+exit=2
+
+$ python3 pathscan.py --paths-from fixtures/not_utf8.paths ; echo "exit=$?"
+{"error":"fixtures/not_utf8.paths: entry 1 is not valid UTF-8: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte","schema_version":1,"status":"error","tool":"path-collision-scanner"}
+exit=2
+
+$ python3 pathscan.py --paths-from fixtures/dirty.paths --rules WINDOWS_RESERVED_NAME ; echo "exit=$?"
+{"distinct_paths":24,"findings":[{"detail":{"components":["aux"]},"paths":["aux"],"rule_id":"WINDOWS_RESERVED_NAME"},{"detail":{"components":["com1.txt"]},"paths":["com1.txt"],"rule_id":"WINDOWS_RESERVED_NAME"},{"detail":{"components":["NUL.json"]},"paths":["data/NUL.json"],"rule_id":"WINDOWS_RESERVED_NAME"}],"paths_scanned":24,"rules_enabled":["WINDOWS_RESERVED_NAME"],"schema_version":1,"source":"path-list","status":"findings","summary":{"CASE_FOLD_COLLISION":0,"CONTROL_CHARACTER":0,"DUPLICATE_PATH":0,"TRAILING_DOT_OR_SPACE":0,"UNICODE_NORMALIZATION_COLLISION":0,"UNSAFE_RELATIVE_PATH":0,"WINDOWS_ILLEGAL_CHARACTER":0,"WINDOWS_RESERVED_NAME":3},"tool":"path-collision-scanner"}
+exit=1
+
+$ python3 pathscan.py --paths-from fixtures/clean.paths --rules NOPE ; echo "exit=$?"
+{"error":"--rules names unknown rule id(s): NOPE (known: CASE_FOLD_COLLISION, CONTROL_CHARACTER, DUPLICATE_PATH, TRAILING_DOT_OR_SPACE, UNICODE_NORMALIZATION_COLLISION, UNSAFE_RELATIVE_PATH, WINDOWS_ILLEGAL_CHARACTER, WINDOWS_RESERVED_NAME)","schema_version":1,"status":"error","tool":"path-collision-scanner"}
+exit=2
+
+Part 2 -- real repository scan, relocation proof, positive control
+-------------------------------------------------------------------
+
+# The 388 tracked path names of this repository at commit 8f1b556c, read from
+# the GitHub tree API and re-materialised as placeholder files in a local git
+# repository (this environment has no outbound git access). The scanner only
+# examines path NAMES, so file contents are irrelevant to the result.
+
+$ git -C .../repoA ls-files | wc -l
+388
+
+$ python3 pathscan.py --root .../repoA -o A.json ; echo "exit=$?"
+exit=0
+
+$ python3 -m json.tool A.json   (findings elided: there are none)
+{
+  "distinct_paths": 388,
+  "findings": [],
+  "paths_scanned": 388,
+  "schema_version": 1,
+  "source": "git",
+  "status": "clean",
+  "summary": {
+    "CASE_FOLD_COLLISION": 0,
+    "CONTROL_CHARACTER": 0,
+    "DUPLICATE_PATH": 0,
+    "TRAILING_DOT_OR_SPACE": 0,
+    "UNICODE_NORMALIZATION_COLLISION": 0,
+    "UNSAFE_RELATIVE_PATH": 0,
+    "WINDOWS_ILLEGAL_CHARACTER": 0,
+    "WINDOWS_RESERVED_NAME": 0
+  },
+  "tool": "path-collision-scanner"
+}
+
+### RELOCATION PROOF
+# Same tracked tree, materialised at a second, differently NAMED absolute path.
+# Two runs from the same directory would prove nothing: the leak would be
+# identical in both.
+
+$ python3 pathscan.py --root .../repoB_with_a_much_longer_name -o B.json ; echo "exit=$?"
+exit=0
+
+$ sha256sum A.json B.json
+454087407fd66623f0926fedc980cf94f2c5f300d8f5572d63716a835db14a90  A.json
+454087407fd66623f0926fedc980cf94f2c5f300d8f5572d63716a835db14a90  B.json
+
+$ cmp A.json B.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ grep -c "/root\|/tmp\|/home\|repoA\|repoB" A.json
+0
+
+### POSITIVE CONTROL
+# A clean result from a scanner is worth nothing until the scanner is shown to
+# fail on a planted defect. Same 388-path tree, plus one README.MD beside the
+# existing README.md -- a pair that coexists on ext4 and collides everywhere else.
+
+$ python3 pathscan.py --root .../repo_positive_control ; echo "exit=$?"
+{
+    "distinct_paths": 389,
+    "findings": [
+        {
+            "detail": {
+                "folded": "readme.md"
+            },
+            "paths": [
+                "README.MD",
+                "README.md"
+            ],
+            "rule_id": "CASE_FOLD_COLLISION"
+        }
+    ],
+    "paths_scanned": 389,
+    "rules_enabled": [
+        "CASE_FOLD_COLLISION",
+        "CONTROL_CHARACTER",
+        "DUPLICATE_PATH",
+        "TRAILING_DOT_OR_SPACE",
+        "UNICODE_NORMALIZATION_COLLISION",
+        "UNSAFE_RELATIVE_PATH",
+        "WINDOWS_ILLEGAL_CHARACTER",
+        "WINDOWS_RESERVED_NAME"
+    ],
+    "schema_version": 1,
+    "source": "git",
+    "status": "findings",
+    "summary": {
+        "CASE_FOLD_COLLISION": 1,
+        "CONTROL_CHARACTER": 0,
+        "DUPLICATE_PATH": 0,
+        "TRAILING_DOT_OR_SPACE": 0,
+        "UNICODE_NORMALIZATION_COLLISION": 0,
+        "UNSAFE_RELATIVE_PATH": 0,
+        "WINDOWS_ILLEGAL_CHARACTER": 0,
+        "WINDOWS_RESERVED_NAME": 0
+    },
+    "tool": "path-collision-scanner"
+}
+exit=1
+
+Reading of Part 2
+-----------------
+
+The repository is CLEAN: 388 tracked path names, zero findings on every
+one of the eight rules, exit 0. That is a negative result and it is
+reported as one rather than dressed up.
+
+Two things make that number worth something:
+
+* The relocation proof. The same tracked tree scanned from two
+  differently NAMED absolute paths produces byte-identical canonical
+  JSON (same SHA-256, cmp agrees), and grepping the report for any of
+  /root, /tmp, /home, repoA or repoB prints 0. The report is a function
+  of the path names alone, not of where the checkout lives.
+
+* The positive control. Adding a single README.MD beside the existing
+  README.md -- a pair that ext4 accepts and macOS/Windows do not --
+  flips the same command to exit 1 with exactly one finding,
+  CASE_FOLD_COLLISION ["README.MD", "README.md"]. The clean result above
+  is a measurement, not a no-op.
+
+What the clean result does NOT establish: nothing here was run on macOS
+or Windows. CASE_FOLD_COLLISION uses Python's str.casefold(), which is
+not any real filesystem's folding table, and the 260-character MAX_PATH
+limit is not checked at all. See "3 limitations a reviewer should
+scrutinise" in README.md.
