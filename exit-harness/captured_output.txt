@@ -1,0 +1,261 @@
+exit-harness -- captured_output.txt
+====================================
+
+This is a real transcript. Every command below was actually executed
+from inside the exit-harness project directory (the directory
+containing exitharness.py, manifest_example.json, fixture_tools/, etc).
+All paths shown are relative to that directory; none of the commands
+or their output below contain an absolute path.
+
+--------------------------------------------------------------------
+1. Verbose test run
+--------------------------------------------------------------------
+
+=== $ python3 -m unittest -v test_exitharness ===
+test_absolute_cwd_does_not_escape_root_via_cli (test_exitharness.TestBugHuntPathEscape.test_absolute_cwd_does_not_escape_root_via_cli) ... ok
+test_dotdot_cwd_does_not_escape_root_via_cli (test_exitharness.TestBugHuntPathEscape.test_dotdot_cwd_does_not_escape_root_via_cli) ... ok
+test_os_path_join_absolute_discard_demonstrated (test_exitharness.TestBugHuntPathEscape.test_os_path_join_absolute_discard_demonstrated) ... ok
+test_all_match_gives_exit_0 (test_exitharness.TestBuildReport.test_all_match_gives_exit_0) ... ok
+test_empty_case_list_gives_exit_0 (test_exitharness.TestBuildReport.test_empty_case_list_gives_exit_0) ... ok
+test_mixed_failure_and_malformed_counts (test_exitharness.TestBuildReport.test_mixed_failure_and_malformed_counts) ... ok
+test_one_failure_gives_exit_1 (test_exitharness.TestBuildReport.test_one_failure_gives_exit_1) ... ok
+test_one_malformed_gives_exit_1 (test_exitharness.TestBuildReport.test_one_malformed_gives_exit_1) ... ok
+test_report_results_are_sorted (test_exitharness.TestBuildReport.test_report_results_are_sorted) ... ok
+test_bad_root_is_a_file_exit_2 (test_exitharness.TestCLIBasicRuns.test_bad_root_is_a_file_exit_2) ... ok
+test_bad_root_nonexistent_exit_2 (test_exitharness.TestCLIBasicRuns.test_bad_root_nonexistent_exit_2) ... ok
+test_empty_case_list_exit_0 (test_exitharness.TestCLIBasicRuns.test_empty_case_list_exit_0) ... ok
+test_help_flag_exits_zero (test_exitharness.TestCLIBasicRuns.test_help_flag_exits_zero) ... ok
+test_invalid_timeout_flag_exit_2 (test_exitharness.TestCLIBasicRuns.test_invalid_timeout_flag_exit_2) ... ok
+test_malformed_manifest_json_exit_2 (test_exitharness.TestCLIBasicRuns.test_malformed_manifest_json_exit_2) ... ok
+test_manifest_missing_file_exit_2 (test_exitharness.TestCLIBasicRuns.test_manifest_missing_file_exit_2) ... ok
+test_manifest_not_a_list_exit_2 (test_exitharness.TestCLIBasicRuns.test_manifest_not_a_list_exit_2) ... ok
+test_missing_required_cli_arg_exit_2 (test_exitharness.TestCLIBasicRuns.test_missing_required_cli_arg_exit_2) ... ok
+test_single_failing_case_exit_1 (test_exitharness.TestCLIBasicRuns.test_single_failing_case_exit_1) ... ok
+test_single_passing_case_exit_0 (test_exitharness.TestCLIBasicRuns.test_single_passing_case_exit_0) ... ok
+test_unwritable_output_path_exit_2 (test_exitharness.TestCLIBasicRuns.test_unwritable_output_path_exit_2) ... ok
+test_all_malformed_cases_exit_1_not_2 (test_exitharness.TestCLIMalformedCases.test_all_malformed_cases_exit_1_not_2) ... ok
+test_malformed_case_detail_lists_errors (test_exitharness.TestCLIMalformedCases.test_malformed_case_detail_lists_errors) ... ok
+test_one_malformed_case_among_good_ones_continues_and_exit_1 (test_exitharness.TestCLIMalformedCases.test_one_malformed_case_among_good_ones_continues_and_exit_1) ... ok
+test_case_error_bad_cwd (test_exitharness.TestCLIResultCodes.test_case_error_bad_cwd) ... ok
+test_case_error_missing_executable (test_exitharness.TestCLIResultCodes.test_case_error_missing_executable) ... ok
+test_exit_mismatch (test_exitharness.TestCLIResultCodes.test_exit_mismatch) ... ok
+test_match (test_exitharness.TestCLIResultCodes.test_match) ... ok
+test_stderr_missing_substring (test_exitharness.TestCLIResultCodes.test_stderr_missing_substring) ... ok
+test_stdout_missing_substring (test_exitharness.TestCLIResultCodes.test_stdout_missing_substring) ... ok
+test_stdout_not_canonical_spaces (test_exitharness.TestCLIResultCodes.test_stdout_not_canonical_spaces) ... ok
+test_stdout_not_canonical_unsorted (test_exitharness.TestCLIResultCodes.test_stdout_not_canonical_unsorted) ... ok
+test_stdout_not_json (test_exitharness.TestCLIResultCodes.test_stdout_not_json) ... ok
+test_timeout (test_exitharness.TestCLIResultCodes.test_timeout) ... ok
+test_exit_0_all_match (test_exitharness.TestCLIThreeExitCodesDemo.test_exit_0_all_match) ... ok
+test_exit_1_some_fail (test_exitharness.TestCLIThreeExitCodesDemo.test_exit_1_some_fail) ... ok
+test_exit_2_harness_error (test_exitharness.TestCLIThreeExitCodesDemo.test_exit_2_harness_error) ... ok
+test_bool_and_null_render_correctly (test_exitharness.TestCanonicalJsonDumps.test_bool_and_null_render_correctly) ... ok
+test_ensure_ascii_escapes_unicode (test_exitharness.TestCanonicalJsonDumps.test_ensure_ascii_escapes_unicode) ... ok
+test_nested_list_sorted_keys_inside (test_exitharness.TestCanonicalJsonDumps.test_nested_list_sorted_keys_inside) ... ok
+test_no_spaces_after_separators (test_exitharness.TestCanonicalJsonDumps.test_no_spaces_after_separators) ... ok
+test_sorts_keys (test_exitharness.TestCanonicalJsonDumps.test_sorts_keys) ... ok
+test_permuted_manifest_order_yields_identical_report (test_exitharness.TestDeterminism.test_permuted_manifest_order_yields_identical_report) ... ok
+test_report_byte_stable_across_two_runs (test_exitharness.TestDeterminism.test_report_byte_stable_across_two_runs) ... ok
+test_empty_list_is_valid (test_exitharness.TestLoadManifest.test_empty_list_is_valid) ... ok
+test_invalid_json_raises (test_exitharness.TestLoadManifest.test_invalid_json_raises) ... ok
+test_load_cases_key_wrapper (test_exitharness.TestLoadManifest.test_load_cases_key_wrapper) ... ok
+test_load_top_level_list (test_exitharness.TestLoadManifest.test_load_top_level_list) ... ok
+test_missing_file_raises (test_exitharness.TestLoadManifest.test_missing_file_raises) ... ok
+test_top_level_dict_without_cases_key_raises (test_exitharness.TestLoadManifest.test_top_level_dict_without_cases_key_raises) ... ok
+test_top_level_number_raises (test_exitharness.TestLoadManifest.test_top_level_number_raises) ... ok
+test_top_level_string_raises (test_exitharness.TestLoadManifest.test_top_level_string_raises) ... ok
+test_relocated_tree_produces_identical_report (test_exitharness.TestRelocation.test_relocated_tree_produces_identical_report) ... ok
+test_actual_exit_none_on_case_error (test_exitharness.TestRunCase.test_actual_exit_none_on_case_error) ... ok
+test_case_error_cwd_absolute_path_rejected (test_exitharness.TestRunCase.test_case_error_cwd_absolute_path_rejected) ... ok
+test_case_error_cwd_escapes_root_via_dotdot (test_exitharness.TestRunCase.test_case_error_cwd_escapes_root_via_dotdot) ... ok
+test_case_error_executable_missing (test_exitharness.TestRunCase.test_case_error_executable_missing) ... ok
+test_case_error_missing_cwd_dir (test_exitharness.TestRunCase.test_case_error_missing_cwd_dir) ... ok
+test_case_timeout_overrides_default (test_exitharness.TestRunCase.test_case_timeout_overrides_default) ... ok
+test_cwd_dot_resolves_to_root_itself (test_exitharness.TestRunCase.test_cwd_dot_resolves_to_root_itself) ... ok
+test_cwd_subdirectory_used_as_actual_cwd (test_exitharness.TestRunCase.test_cwd_subdirectory_used_as_actual_cwd) ... ok
+test_default_timeout_used_when_case_timeout_absent (test_exitharness.TestRunCase.test_default_timeout_used_when_case_timeout_absent) ... ok
+test_exit_mismatch (test_exitharness.TestRunCase.test_exit_mismatch) ... ok
+test_expect_exit_recorded_in_result (test_exitharness.TestRunCase.test_expect_exit_recorded_in_result) ... ok
+test_match_exit_zero (test_exitharness.TestRunCase.test_match_exit_zero) ... ok
+test_result_keeps_manifest_relative_cwd_verbatim (test_exitharness.TestRunCase.test_result_keeps_manifest_relative_cwd_verbatim) ... ok
+test_stderr_contains_substring_matches (test_exitharness.TestRunCase.test_stderr_contains_substring_matches) ... ok
+test_stderr_missing_substring (test_exitharness.TestRunCase.test_stderr_missing_substring) ... ok
+test_stdout_canonical_matches (test_exitharness.TestRunCase.test_stdout_canonical_matches) ... ok
+test_stdout_contains_substring_matches (test_exitharness.TestRunCase.test_stdout_contains_substring_matches) ... ok
+test_stdout_missing_substring (test_exitharness.TestRunCase.test_stdout_missing_substring) ... ok
+test_stdout_not_canonical_extra_space (test_exitharness.TestRunCase.test_stdout_not_canonical_extra_space) ... ok
+test_stdout_not_canonical_unsorted_keys (test_exitharness.TestRunCase.test_stdout_not_canonical_unsorted_keys) ... ok
+test_stdout_not_json (test_exitharness.TestRunCase.test_stdout_not_json) ... ok
+test_timeout (test_exitharness.TestRunCase.test_timeout) ... ok
+test_scrub_empty_root_noop (test_exitharness.TestScrub.test_scrub_empty_root_noop) ... ok
+test_scrub_no_match_unchanged (test_exitharness.TestScrub.test_scrub_no_match_unchanged) ... ok
+test_scrub_none_passthrough (test_exitharness.TestScrub.test_scrub_none_passthrough) ... ok
+test_scrub_removes_root_path (test_exitharness.TestScrub.test_scrub_removes_root_path) ... ok
+test_none_id_sorts_first (test_exitharness.TestSorting.test_none_id_sorts_first) ... ok
+test_permutation_invariance (test_exitharness.TestSorting.test_permutation_invariance) ... ok
+test_sort_is_idempotent (test_exitharness.TestSorting.test_sort_is_idempotent) ... ok
+test_sort_result_list_length_preserved (test_exitharness.TestSorting.test_sort_result_list_length_preserved) ... ok
+test_sorted_by_id (test_exitharness.TestSorting.test_sorted_by_id) ... ok
+test_sorted_by_result_when_id_equal (test_exitharness.TestSorting.test_sorted_by_result_when_id_equal) ... ok
+test_tiebreak_breaks_identical_id_and_result (test_exitharness.TestSorting.test_tiebreak_breaks_identical_id_and_result) ... ok
+test_tiebreak_with_fully_identical_items_except_detail (test_exitharness.TestSorting.test_tiebreak_with_fully_identical_items_except_detail) ... ok
+test_manifest_with_crlf_line_endings_parses (test_exitharness.TestUnicodeAndCRLF.test_manifest_with_crlf_line_endings_parses) ... ok
+test_report_file_is_ascii_only_bytes (test_exitharness.TestUnicodeAndCRLF.test_report_file_is_ascii_only_bytes) ... ok
+test_report_never_contains_cr_bytes (test_exitharness.TestUnicodeAndCRLF.test_report_never_contains_cr_bytes) ... ok
+test_stdout_contains_match_across_crlf_output (test_exitharness.TestUnicodeAndCRLF.test_stdout_contains_match_across_crlf_output) ... ok
+test_unicode_canonical_json_stdout (test_exitharness.TestUnicodeAndCRLF.test_unicode_canonical_json_stdout) ... ok
+test_unicode_id_in_manifest_roundtrips_in_report (test_exitharness.TestUnicodeAndCRLF.test_unicode_id_in_manifest_roundtrips_in_report) ... ok
+test_unicode_stdout_substring_match (test_exitharness.TestUnicodeAndCRLF.test_unicode_stdout_substring_match) ... ok
+test_missing_all_required_keys (test_exitharness.TestValidateCaseMissingKeys.test_missing_all_required_keys) ... ok
+test_missing_argv (test_exitharness.TestValidateCaseMissingKeys.test_missing_argv) ... ok
+test_missing_cwd (test_exitharness.TestValidateCaseMissingKeys.test_missing_cwd) ... ok
+test_missing_expect_exit (test_exitharness.TestValidateCaseMissingKeys.test_missing_expect_exit) ... ok
+test_missing_id (test_exitharness.TestValidateCaseMissingKeys.test_missing_id) ... ok
+test_all_optional_fields_valid (test_exitharness.TestValidateCaseWellFormed.test_all_optional_fields_valid) ... ok
+test_int_timeout_seconds_is_valid (test_exitharness.TestValidateCaseWellFormed.test_int_timeout_seconds_is_valid) ... ok
+test_minimal_valid_case (test_exitharness.TestValidateCaseWellFormed.test_minimal_valid_case) ... ok
+test_negative_expect_exit_is_valid (test_exitharness.TestValidateCaseWellFormed.test_negative_expect_exit_is_valid) ... ok
+test_argv_empty_list (test_exitharness.TestValidateCaseWrongTypes.test_argv_empty_list) ... ok
+test_argv_list_with_non_string_element (test_exitharness.TestValidateCaseWrongTypes.test_argv_list_with_non_string_element) ... ok
+test_argv_wrong_type_string (test_exitharness.TestValidateCaseWrongTypes.test_argv_wrong_type_string) ... ok
+test_case_not_a_dict_list (test_exitharness.TestValidateCaseWrongTypes.test_case_not_a_dict_list) ... ok
+test_case_not_a_dict_number (test_exitharness.TestValidateCaseWrongTypes.test_case_not_a_dict_number) ... ok
+test_case_not_a_dict_string (test_exitharness.TestValidateCaseWrongTypes.test_case_not_a_dict_string) ... ok
+test_cwd_wrong_type (test_exitharness.TestValidateCaseWrongTypes.test_cwd_wrong_type) ... ok
+test_expect_exit_bool_rejected (test_exitharness.TestValidateCaseWrongTypes.test_expect_exit_bool_rejected) ... ok
+test_expect_exit_wrong_type_string (test_exitharness.TestValidateCaseWrongTypes.test_expect_exit_wrong_type_string) ... ok
+test_expect_stderr_contains_wrong_type (test_exitharness.TestValidateCaseWrongTypes.test_expect_stderr_contains_wrong_type) ... ok
+test_expect_stdout_canonical_json_wrong_type (test_exitharness.TestValidateCaseWrongTypes.test_expect_stdout_canonical_json_wrong_type) ... ok
+test_expect_stdout_contains_wrong_type (test_exitharness.TestValidateCaseWrongTypes.test_expect_stdout_contains_wrong_type) ... ok
+test_id_empty_string (test_exitharness.TestValidateCaseWrongTypes.test_id_empty_string) ... ok
+test_id_wrong_type_int (test_exitharness.TestValidateCaseWrongTypes.test_id_wrong_type_int) ... ok
+test_multiple_errors_all_reported (test_exitharness.TestValidateCaseWrongTypes.test_multiple_errors_all_reported) ... ok
+test_timeout_seconds_bool_invalid (test_exitharness.TestValidateCaseWrongTypes.test_timeout_seconds_bool_invalid) ... ok
+test_timeout_seconds_negative_invalid (test_exitharness.TestValidateCaseWrongTypes.test_timeout_seconds_negative_invalid) ... ok
+test_timeout_seconds_wrong_type (test_exitharness.TestValidateCaseWrongTypes.test_timeout_seconds_wrong_type) ... ok
+test_timeout_seconds_zero_invalid (test_exitharness.TestValidateCaseWrongTypes.test_timeout_seconds_zero_invalid) ... ok
+test_unknown_key_reported (test_exitharness.TestValidateCaseWrongTypes.test_unknown_key_reported) ... ok
+test_write_report_matches_canonical_dumps (test_exitharness.TestWriteReport.test_write_report_matches_canonical_dumps) ... ok
+test_write_report_unwritable_path_raises_harness_error (test_exitharness.TestWriteReport.test_write_report_unwritable_path_raises_harness_error) ... ok
+test_write_report_uses_lf_only (test_exitharness.TestWriteReport.test_write_report_uses_lf_only) ... ok
+
+----------------------------------------------------------------------
+Ran 126 tests in 5.012s
+
+OK
+exit=0
+
+--------------------------------------------------------------------
+2. Harness exit code 0 -- every case matches (manifest_example.json)
+--------------------------------------------------------------------
+
+=== $ python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_match.json ===
+exit=0
+
+=== $ python3 -c "import json; r=json.load(open('out_match.json')); print(r['summary']); print(r['harness_exit_code'])" ===
+{'failed': 0, 'malformed': 0, 'matched': 10, 'total': 10}
+0
+exit=0
+
+--------------------------------------------------------------------
+3. Harness exit code 1 -- some cases fail (manifest_sample_failures.json)
+--------------------------------------------------------------------
+
+=== $ python3 exitharness.py --manifest manifest_sample_failures.json --root fixture_tools -o out_failures.json ===
+exit=1
+
+=== $ python3 -c "import json; r=json.load(open('out_failures.json')); print(r['summary']); print(r['harness_exit_code']); print(sorted(x['result'] for x in r['results']))" ===
+{'failed': 3, 'malformed': 1, 'matched': 1, 'total': 5}
+1
+['CASE_MALFORMED', 'EXIT_MISMATCH', 'MATCH', 'STDOUT_MISSING_SUBSTRING', 'TIMEOUT']
+exit=0
+
+--------------------------------------------------------------------
+4. Harness exit code 2 -- harness cannot run at all (malformed manifest JSON)
+--------------------------------------------------------------------
+
+=== $ printf '{ not valid json ]' > bad_manifest.json ===
+exit=0
+
+=== $ python3 exitharness.py --manifest bad_manifest.json --root fixture_tools -o out_bad.json ===
+exitharness: error: manifest 'bad_manifest.json' is not valid JSON: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+exit=2
+
+=== $ test -f out_bad.json && echo EXISTS || echo NOT_CREATED ===
+NOT_CREATED
+exit=0
+
+--------------------------------------------------------------------
+5. Determinism: two runs from the same directory
+--------------------------------------------------------------------
+
+=== $ python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_run1.json ===
+exit=0
+
+=== $ python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_run2.json ===
+exit=0
+
+=== $ sha256sum out_run1.json out_run2.json ===
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91  out_run1.json
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91  out_run2.json
+exit=0
+
+--------------------------------------------------------------------
+6. Relocation: copy the whole tree to a different absolute path with a
+   different directory name, run the identical manifest there, compare
+   sha256 of all three reports
+--------------------------------------------------------------------
+
+=== $ cp -r . ../exitharness_relocated_9f3a2b7c ===
+exit=0
+
+=== $ cd ../exitharness_relocated_9f3a2b7c && python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_reloc.json ===
+exit=0
+
+=== $ cd - && sha256sum out_run1.json out_run2.json ../exitharness_relocated_9f3a2b7c/out_reloc.json ===
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91  out_run1.json
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91  out_run2.json
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91  ../exitharness_relocated_9f3a2b7c/out_reloc.json
+exit=0
+
+All three sha256 sums above are identical:
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91
+
+This proves the report is byte-stable across repeated runs in the same
+directory AND across relocation of the entire project tree to a
+different absolute path under a different directory name -- no
+absolute path, timestamp, or hostname leaked into the report.
+
+--------------------------------------------------------------------
+7. All three harness exit codes, side by side
+--------------------------------------------------------------------
+
+=== $ python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_match.json; echo "exit(all-match)=$?" ===
+exit(all-match)=0
+
+=== $ python3 exitharness.py --manifest manifest_sample_failures.json --root fixture_tools -o out_failures.json; echo "exit(some-fail)=$?" ===
+exit(some-fail)=1
+
+=== $ python3 exitharness.py --manifest bad_manifest.json --root fixture_tools -o out_bad.json; echo "exit(harness-error)=$?" ===
+exitharness: error: manifest 'bad_manifest.json' is not valid JSON: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+exit(harness-error)=2
+
+--- fixture regeneration round trip ---
+fixture_tools/ is generated by make_fixtures.py rather than committed as loose
+files. It stores contents base64 and writes binary, and it also recreates four
+deliberately EMPTY case directories -- an earlier version of the generator
+dropped those (os.walk yields no files for an empty dir) and the regenerated
+tree produced a different report hash. Caught by diff -r, fixed, pinned here.
+
+=== $ python3 make_fixtures.py . ===
+wrote 8 files and 4 empty dirs to .
+exit=0
+
+=== $ diff -r fixture_tools <regenerated> ===
+(no output - byte-for-byte identical)
+exit=0
+
+=== $ sha256sum report.json sample_report_all_match.json ===
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91  report.json (regenerated fixtures)
+a97bc56759ac3784904b96726bb927907ff7b6ac2479b4b1de9f382981cb7e91  exit-harness/sample_report_all_match.json
+exit=0

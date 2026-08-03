@@ -1,0 +1,75 @@
+[
+  {
+    "id": "validator-ok",
+    "cwd": "cases/validate_ok",
+    "argv": ["python3", "../../validator.py", "good.json"],
+    "expect_exit": 0,
+    "expect_stdout_canonical_json": true
+  },
+  {
+    "id": "validator-findings",
+    "cwd": "cases/validate_findings",
+    "argv": ["python3", "../../validator.py", "bad.json"],
+    "expect_exit": 1,
+    "expect_stdout_contains": "FINDING: field 'name'",
+    "expect_stderr_contains": "validation failed with 2 finding(s)"
+  },
+  {
+    "id": "validator-misuse-bad-json",
+    "cwd": "cases/validate_misuse",
+    "argv": ["python3", "../../validator.py", "not_json.txt"],
+    "expect_exit": 2,
+    "expect_stderr_contains": "not valid JSON"
+  },
+  {
+    "id": "validator-misuse-bad-args",
+    "cwd": "cases/validate_misuse",
+    "argv": ["python3", "../../validator.py"],
+    "expect_exit": 2,
+    "expect_stderr_contains": "usage: validator.py"
+  },
+  {
+    "id": "linecount-ok",
+    "cwd": "cases/linecount_ok",
+    "argv": ["python3", "../../linecount.py", "notes.txt"],
+    "expect_exit": 0,
+    "expect_stdout_canonical_json": true
+  },
+  {
+    "id": "linecount-empty-finding",
+    "cwd": "cases/linecount_empty",
+    "argv": ["python3", "../../linecount.py", "blank.txt"],
+    "expect_exit": 1,
+    "expect_stdout_contains": "empty: no non-blank lines found"
+  },
+  {
+    "id": "linecount-misuse",
+    "cwd": "cases/linecount_misuse",
+    "argv": ["python3", "../../linecount.py", "missing.txt"],
+    "expect_exit": 2,
+    "expect_stderr_contains": "cannot read file"
+  },
+  {
+    "id": "sleeper-ok",
+    "cwd": "cases/sleeper_ok",
+    "argv": ["python3", "../../sleeper.py", "0.05"],
+    "expect_exit": 0,
+    "expect_stdout_canonical_json": true,
+    "timeout_seconds": 5
+  },
+  {
+    "id": "sleeper-finding",
+    "cwd": "cases/sleeper_findings",
+    "argv": ["python3", "../../sleeper.py", "0.05", "1"],
+    "expect_exit": 1,
+    "expect_stdout_contains": "FINDING: slept longer than expected",
+    "timeout_seconds": 5
+  },
+  {
+    "id": "sleeper-misuse",
+    "cwd": "cases/sleeper_misuse",
+    "argv": ["python3", "../../sleeper.py", "abc"],
+    "expect_exit": 2,
+    "expect_stderr_contains": "must be a non-negative number"
+  }
+]
