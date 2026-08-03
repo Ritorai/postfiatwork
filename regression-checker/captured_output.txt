@@ -1,0 +1,205 @@
+$ python3 -m unittest test_regress -v
+test_all_clean_status_clean (test_regress.TestBuildReport) ... ok
+test_drift_counts_keys_cover_all_codes (test_regress.TestBuildReport) ... ok
+test_empty_root_empty_baselines (test_regress.TestBuildReport) ... ok
+test_no_absolute_root_path_in_report (test_regress.TestBuildReport) ... ok
+test_no_duration_or_timestamp_keys_anywhere (test_regress.TestBuildReport) ... ok
+test_report_has_schema_version_and_tool_name (test_regress.TestBuildReport) ... ok
+test_report_is_json_serializable (test_regress.TestBuildReport) ... ok
+test_results_sorted_by_tool_name (test_regress.TestBuildReport) ... ok
+test_summary_counts (test_regress.TestBuildReport) ... ok
+test_tools_checked_is_union_of_baseline_and_present (test_regress.TestBuildReport) ... ok
+test_custom_root_and_baselines (test_regress.TestCLIArgParsing) ... ok
+test_default_baselines_is_baselines_json (test_regress.TestCLIArgParsing) ... ok
+test_default_output_is_none (test_regress.TestCLIArgParsing) ... ok
+test_default_root_is_dot (test_regress.TestCLIArgParsing) ... ok
+test_update_baselines_default_false (test_regress.TestCLIArgParsing) ... ok
+test_update_baselines_flag_true_when_passed (test_regress.TestCLIArgParsing) ... ok
+test_clean_tools_still_reported_clean (test_regress.TestCLIFixturesDrift) ... ok
+test_drift_exit_one (test_regress.TestCLIFixturesDrift) ... ok
+test_drift_identifies_execution_error_tool (test_regress.TestCLIFixturesDrift) ... ok
+test_drift_identifies_exit_code_drift_tool (test_regress.TestCLIFixturesDrift) ... ok
+test_drift_identifies_hash_drift_tool (test_regress.TestCLIFixturesDrift) ... ok
+test_drift_identifies_null_hash_tool (test_regress.TestCLIFixturesDrift) ... ok
+test_drift_identifies_tool_missing (test_regress.TestCLIFixturesDrift) ... ok
+test_drift_status_drift (test_regress.TestCLIFixturesDrift) ... ok
+test_output_file_ends_with_single_trailing_newline (test_regress.TestCLIFixturesDrift) ... ok
+test_output_report_has_no_absolute_paths (test_regress.TestCLIFixturesDrift) ... ok
+test_repeated_runs_byte_identical_via_output_file (test_regress.TestCLIFixturesDrift) ... ok
+test_ok_baselines_exit_zero (test_regress.TestCLIFixturesOk) ... ok
+test_ok_baselines_reports_skipped_unbaselineable (test_regress.TestCLIFixturesOk) ... ok
+test_ok_baselines_status_clean (test_regress.TestCLIFixturesOk) ... ok
+test_default_writes_to_stdout_when_no_output_flag (test_regress.TestCLIOutputHandling) ... ok
+test_output_file_living_inside_root_not_picked_up_next_run (test_regress.TestCLIOutputHandling) ... ok
+test_output_flag_long_form (test_regress.TestCLIOutputHandling) ... ok
+test_output_flag_short_form (test_regress.TestCLIOutputHandling) ... ok
+test_baselines_is_a_directory_not_file_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_baselines_missing_tools_key_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_entry_with_bad_report_mode_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_malformed_baselines_json_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_nonexistent_baselines_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_nonexistent_root_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_output_directory_does_not_exist_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_root_is_a_file_not_dir_exit_two (test_regress.TestCLISetupErrors) ... ok
+test_setup_error_report_is_canonical_json (test_regress.TestCLISetupErrors) ... ok
+test_default_timeout_is_120 (test_regress.TestCLITimeout) ... ok
+test_timeout_flag_triggers_execution_error (test_regress.TestCLITimeout) ... ok
+test_ascii_only_escapes_unicode (test_regress.TestCanonicalJson) ... ok
+test_bool_and_null_preserved (test_regress.TestCanonicalJson) ... ok
+test_deterministic_across_calls (test_regress.TestCanonicalJson) ... ok
+test_empty_dict (test_regress.TestCanonicalJson) ... ok
+test_ends_with_single_newline (test_regress.TestCanonicalJson) ... ok
+test_integer_not_rendered_as_float (test_regress.TestCanonicalJson) ... ok
+test_list_order_preserved_not_sorted (test_regress.TestCanonicalJson) ... ok
+test_nested_dict_keys_sorted_at_every_level (test_regress.TestCanonicalJson) ... ok
+test_returns_str_type (test_regress.TestCanonicalJson) ... ok
+test_sorted_keys (test_regress.TestCanonicalJson) ... ok
+test_string_with_quotes_escaped (test_regress.TestCanonicalJson) ... ok
+test_tight_separators_no_spaces (test_regress.TestCanonicalJson) ... ok
+test_empty_root_returns_empty_list (test_regress.TestDiscoverToolDirs) ... ok
+test_excludes_plain_files (test_regress.TestDiscoverToolDirs) ... ok
+test_nested_subdirectories_not_recursed (test_regress.TestDiscoverToolDirs) ... ok
+test_output_file_living_in_root_is_not_a_tool (test_regress.TestDiscoverToolDirs) ... ok
+test_root_missing_raises (test_regress.TestDiscoverToolDirs) ... ok
+test_root_not_a_directory_raises (test_regress.TestDiscoverToolDirs) ... ok
+test_skips_dotdirs (test_regress.TestDiscoverToolDirs) ... ok
+test_skips_pycache (test_regress.TestDiscoverToolDirs) ... ok
+test_sorted_order (test_regress.TestDiscoverToolDirs) ... ok
+test_both_exit_and_hash_drift (test_regress.TestEvaluateTool) ... ok
+test_clean (test_regress.TestEvaluateTool) ... ok
+test_execution_error_command_not_found (test_regress.TestEvaluateTool) ... ok
+test_execution_error_report_missing_also_flags_exit_drift_if_differs (test_regress.TestEvaluateTool) ... ok
+test_exit_code_drift_only (test_regress.TestEvaluateTool) ... ok
+test_hash_drift_only (test_regress.TestEvaluateTool) ... ok
+test_null_hash_always_drifts (test_regress.TestEvaluateTool) ... ok
+test_result_has_no_absolute_path_fields (test_regress.TestEvaluateTool) ... ok
+test_stdout_mode_clean (test_regress.TestEvaluateTool) ... ok
+test_tool_missing (test_regress.TestEvaluateTool) ... ok
+test_unbaselineable_missing_dir_is_tool_missing (test_regress.TestEvaluateTool) ... ok
+test_unbaselineable_present_is_skipped_not_drift (test_regress.TestEvaluateTool) ... ok
+test_unbaselined_tool (test_regress.TestEvaluateTool) ... ok
+test_command_not_list_raises (test_regress.TestLoadBaselines) ... ok
+test_command_with_non_string_element_raises (test_regress.TestLoadBaselines) ... ok
+test_entry_not_object_raises (test_regress.TestLoadBaselines) ... ok
+test_expected_exit_code_bool_is_still_int_subtype_accepted (test_regress.TestLoadBaselines) ... ok
+test_expected_exit_code_not_int_raises (test_regress.TestLoadBaselines) ... ok
+test_invalid_json_raises (test_regress.TestLoadBaselines) ... ok
+test_invalid_report_mode_raises (test_regress.TestLoadBaselines) ... ok
+test_missing_command_field_raises (test_regress.TestLoadBaselines) ... ok
+test_missing_expected_exit_code_field_raises (test_regress.TestLoadBaselines) ... ok
+test_missing_file_raises (test_regress.TestLoadBaselines) ... ok
+test_missing_report_mode_field_raises (test_regress.TestLoadBaselines) ... ok
+test_missing_tools_key_raises (test_regress.TestLoadBaselines) ... ok
+test_multiple_mixed_entries (test_regress.TestLoadBaselines) ... ok
+test_non_string_hash_rejected (test_regress.TestLoadBaselines) ... ok
+test_null_hash_accepted (test_regress.TestLoadBaselines) ... ok
+test_short_hash_rejected (test_regress.TestLoadBaselines) ... ok
+test_tools_not_object_raises (test_regress.TestLoadBaselines) ... ok
+test_top_level_not_object_raises (test_regress.TestLoadBaselines) ... ok
+test_unbaselineable_missing_reason_raises (test_regress.TestLoadBaselines) ... ok
+test_unbaselineable_reason_not_string_raises (test_regress.TestLoadBaselines) ... ok
+test_unbaselineable_valid (test_regress.TestLoadBaselines) ... ok
+test_unknown_status_raises (test_regress.TestLoadBaselines) ... ok
+test_valid_64_char_hash_accepted (test_regress.TestLoadBaselines) ... ok
+test_valid_minimal (test_regress.TestLoadBaselines) ... ok
+test_main_returns_int (test_regress.TestMainFunctionDirectly) ... ok
+test_main_zero_on_ok_fixture (test_regress.TestMainFunctionDirectly) ... ok
+test_command_not_found (test_regress.TestRunTool) ... ok
+test_file_mode_report_not_created (test_regress.TestRunTool) ... ok
+test_file_mode_success (test_regress.TestRunTool) ... ok
+test_nonzero_exit_still_captured_ok (test_regress.TestRunTool) ... ok
+test_placeholder_substitution_only_replaces_report_token (test_regress.TestRunTool) ... ok
+test_report_bytes_length_recorded (test_regress.TestRunTool) ... ok
+test_stdin_not_required_argv_passed_literally (test_regress.TestRunTool) ... ok
+test_stdout_mode_success (test_regress.TestRunTool) ... ok
+test_temp_report_file_cleaned_up (test_regress.TestRunTool) ... ok
+test_timeout (test_regress.TestRunTool) ... ok
+test_different_input_different_hash (test_regress.TestSha256Hex) ... ok
+test_empty_bytes (test_regress.TestSha256Hex) ... ok
+test_known_vector_abc (test_regress.TestSha256Hex) ... ok
+test_length_is_64 (test_regress.TestSha256Hex) ... ok
+test_lowercase_hex (test_regress.TestSha256Hex) ... ok
+test_matches_hashlib_directly (test_regress.TestSha256Hex) ... ok
+test_results_order_matches_sorted_tool_names_regardless_of_fs_order (test_regress.TestSortedDiscoveryEndToEnd) ... ok
+test_no_third_party_imports_in_regress_module (test_regress.TestStdlibOnlyImports) ... ok
+test_update_baselines_missing_tool_dir_reports_failure_exit_two (test_regress.TestUpdateBaselines) ... ok
+test_update_baselines_never_runs_without_the_flag (test_regress.TestUpdateBaselines) ... ok
+test_update_baselines_output_is_pretty_printed_and_sorted (test_regress.TestUpdateBaselines) ... ok
+test_update_baselines_prints_loud_warning_to_stderr (test_regress.TestUpdateBaselines) ... ok
+test_update_baselines_rewrites_hash_and_exit_code (test_regress.TestUpdateBaselines) ... ok
+test_update_baselines_skips_unbaselineable_entries (test_regress.TestUpdateBaselines) ... ok
+test_update_baselines_then_regression_check_is_clean (test_regress.TestUpdateBaselines) ... ok
+
+----------------------------------------------------------------------
+Ran 130 tests in 4.824s
+
+OK
+{"drift_counts":{"EXECUTION_ERROR":0,"EXIT_CODE_DRIFT":0,"REPORT_HASH_DRIFT":0,"TOOL_MISSING":0,"UNBASELINED_TOOL":0},"results":[{"drift_codes":[],"reason":"tool.py is deliberately absent from this fixture; it is only wired up as a real (failing) baseline entry in baselines_drift.json to exercise EXECUTION_ERROR. Marking it unbaselineable here keeps the clean baseline clean.","status":"skipped_unbaselineable","tool":"tool_error"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"f602f42181b0767d5a591eaaee6dfda69e90647abf14d0f2079dbaf857692465","expected_exit_code":0,"expected_report_sha256":"f602f42181b0767d5a591eaaee6dfda69e90647abf14d0f2079dbaf857692465","report_bytes_length":57},"drift_codes":[],"status":"clean","tool":"tool_exit_drift"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"628dc23c215f2f3da743451215d6fdeb05f22b7213221a19d12ba14b20c95e0c","expected_exit_code":0,"expected_report_sha256":"628dc23c215f2f3da743451215d6fdeb05f22b7213221a19d12ba14b20c95e0c","report_bytes_length":54},"drift_codes":[],"status":"clean","tool":"tool_hash_drift"},{"drift_codes":[],"reason":"used only under baselines_drift.json to demonstrate that a null expected_report_sha256 always counts as REPORT_HASH_DRIFT, never as a clean match.","status":"skipped_unbaselineable","tool":"tool_null_hash_demo"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"5bd158d06ad7778df8a9d4ecf89aa4c7a0e6f27489417ffdec8e51f692877892","expected_exit_code":0,"expected_report_sha256":"5bd158d06ad7778df8a9d4ecf89aa4c7a0e6f27489417ffdec8e51f692877892","report_bytes_length":49},"drift_codes":[],"status":"clean","tool":"tool_ok"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"2f2510fb860d6256545ec70364255269b4187fcf359b2b270c2f8fa33817fb9a","expected_exit_code":0,"expected_report_sha256":"2f2510fb860d6256545ec70364255269b4187fcf359b2b270c2f8fa33817fb9a","report_bytes_length":118},"drift_codes":[],"status":"clean","tool":"tool_shell_meta"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"b411ad2fc67c2a2960ab9fc17ec1f920c59ccf533fe3976671387c8365016245","expected_exit_code":0,"expected_report_sha256":"b411ad2fc67c2a2960ab9fc17ec1f920c59ccf533fe3976671387c8365016245","report_bytes_length":55},"drift_codes":[],"status":"clean","tool":"tool_stdout"}],"schema_version":1,"status":"clean","summary":{"clean":5,"drift":0,"skipped_unbaselineable":2},"tool":"regression-checker","tools_checked":7}
+{"drift_counts":{"EXECUTION_ERROR":0,"EXIT_CODE_DRIFT":0,"REPORT_HASH_DRIFT":0,"TOOL_MISSING":0,"UNBASELINED_TOOL":0},"results":[{"drift_codes":[],"reason":"tool.py is deliberately absent from this fixture; it is only wired up as a real (failing) baseline entry in baselines_drift.json to exercise EXECUTION_ERROR. Marking it unbaselineable here keeps the clean baseline clean.","status":"skipped_unbaselineable","tool":"tool_error"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"f602f42181b0767d5a591eaaee6dfda69e90647abf14d0f2079dbaf857692465","expected_exit_code":0,"expected_report_sha256":"f602f42181b0767d5a591eaaee6dfda69e90647abf14d0f2079dbaf857692465","report_bytes_length":57},"drift_codes":[],"status":"clean","tool":"tool_exit_drift"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"628dc23c215f2f3da743451215d6fdeb05f22b7213221a19d12ba14b20c95e0c","expected_exit_code":0,"expected_report_sha256":"628dc23c215f2f3da743451215d6fdeb05f22b7213221a19d12ba14b20c95e0c","report_bytes_length":54},"drift_codes":[],"status":"clean","tool":"tool_hash_drift"},{"drift_codes":[],"reason":"used only under baselines_drift.json to demonstrate that a null expected_report_sha256 always counts as REPORT_HASH_DRIFT, never as a clean match.","status":"skipped_unbaselineable","tool":"tool_null_hash_demo"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"5bd158d06ad7778df8a9d4ecf89aa4c7a0e6f27489417ffdec8e51f692877892","expected_exit_code":0,"expected_report_sha256":"5bd158d06ad7778df8a9d4ecf89aa4c7a0e6f27489417ffdec8e51f692877892","report_bytes_length":49},"drift_codes":[],"status":"clean","tool":"tool_ok"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"2f2510fb860d6256545ec70364255269b4187fcf359b2b270c2f8fa33817fb9a","expected_exit_code":0,"expected_report_sha256":"2f2510fb860d6256545ec70364255269b4187fcf359b2b270c2f8fa33817fb9a","report_bytes_length":118},"drift_codes":[],"status":"clean","tool":"tool_shell_meta"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"b411ad2fc67c2a2960ab9fc17ec1f920c59ccf533fe3976671387c8365016245","expected_exit_code":0,"expected_report_sha256":"b411ad2fc67c2a2960ab9fc17ec1f920c59ccf533fe3976671387c8365016245","report_bytes_length":55},"drift_codes":[],"status":"clean","tool":"tool_stdout"}],"schema_version":1,"status":"clean","summary":{"clean":5,"drift":0,"skipped_unbaselineable":2},"tool":"regression-checker","tools_checked":7}
+exit=0
+
+$ python3 regress.py --root fixtures --baselines fixtures/baselines_ok.json ; echo "exit=$?"
+{"drift_counts":{"EXECUTION_ERROR":0,"EXIT_CODE_DRIFT":0,"REPORT_HASH_DRIFT":0,"TOOL_MISSING":0,"UNBASELINED_TOOL":0},"results":[{"drift_codes":[],"reason":"tool.py is deliberately absent from this fixture; it is only wired up as a real (failing) baseline entry in baselines_drift.json to exercise EXECUTION_ERROR. Marking it unbaselineable here keeps the clean baseline clean.","status":"skipped_unbaselineable","tool":"tool_error"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"f602f42181b0767d5a591eaaee6dfda69e90647abf14d0f2079dbaf857692465","expected_exit_code":0,"expected_report_sha256":"f602f42181b0767d5a591eaaee6dfda69e90647abf14d0f2079dbaf857692465","report_bytes_length":57},"drift_codes":[],"status":"clean","tool":"tool_exit_drift"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"628dc23c215f2f3da743451215d6fdeb05f22b7213221a19d12ba14b20c95e0c","expected_exit_code":0,"expected_report_sha256":"628dc23c215f2f3da743451215d6fdeb05f22b7213221a19d12ba14b20c95e0c","report_bytes_length":54},"drift_codes":[],"status":"clean","tool":"tool_hash_drift"},{"drift_codes":[],"reason":"used only under baselines_drift.json to demonstrate that a null expected_report_sha256 always counts as REPORT_HASH_DRIFT, never as a clean match.","status":"skipped_unbaselineable","tool":"tool_null_hash_demo"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"5bd158d06ad7778df8a9d4ecf89aa4c7a0e6f27489417ffdec8e51f692877892","expected_exit_code":0,"expected_report_sha256":"5bd158d06ad7778df8a9d4ecf89aa4c7a0e6f27489417ffdec8e51f692877892","report_bytes_length":49},"drift_codes":[],"status":"clean","tool":"tool_ok"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"2f2510fb860d6256545ec70364255269b4187fcf359b2b270c2f8fa33817fb9a","expected_exit_code":0,"expected_report_sha256":"2f2510fb860d6256545ec70364255269b4187fcf359b2b270c2f8fa33817fb9a","report_bytes_length":118},"drift_codes":[],"status":"clean","tool":"tool_shell_meta"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"b411ad2fc67c2a2960ab9fc17ec1f920c59ccf533fe3976671387c8365016245","expected_exit_code":0,"expected_report_sha256":"b411ad2fc67c2a2960ab9fc17ec1f920c59ccf533fe3976671387c8365016245","report_bytes_length":55},"drift_codes":[],"status":"clean","tool":"tool_stdout"}],"schema_version":1,"status":"clean","summary":{"clean":5,"drift":0,"skipped_unbaselineable":2},"tool":"regression-checker","tools_checked":7}
+exit=0
+
+$ python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+bb4ade38e36d14fcfc23df4174a934b9469a5509f98d90453754909f1873f518  r1.json
+bb4ade38e36d14fcfc23df4174a934b9469a5509f98d90453754909f1873f518  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 regress.py --root fixtures --baselines /nonexistent.json ; echo "exit=$?"
+{"error":"baselines file not found: /nonexistent.json","schema_version":1,"status":"error","tool":"regression-checker"}
+exit=2
+
+$ grep -c "/sessions\|/tmp\|/home" r1.json
+0
+
+==============================================================================
+BONUS (not part of the required VERIFICATION list above): running regress.py
+against the REAL sibling tool directories under
+/sessions/sharp-stoic-knuth/mnt/outputs/ using the committed baselines.json.
+This is included for transparency; it is NOT required for the fixtures/
+deliverable and the fixtures test suite does not depend on it.
+==============================================================================
+
+$ python3 regress.py --root /sessions/sharp-stoic-knuth/mnt/outputs --baselines baselines.json -o /tmp/real_run1.json ; echo "exit=$?"
+exit=1
+
+$ python3 regress.py --root /sessions/sharp-stoic-knuth/mnt/outputs --baselines baselines.json -o /tmp/real_run2.json ; echo "exit=$?"
+exit=1
+
+$ cmp /tmp/real_run1.json /tmp/real_run2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 -c "import json; d=json.load(open(\"/tmp/real_run1.json\")); print(json.dumps({\"status\":d[\"status\"],\"tools_checked\":d[\"tools_checked\"],\"summary\":d[\"summary\"],\"drift_counts\":d[\"drift_counts\"]}, indent=2))"
+{
+  "status": "drift",
+  "tools_checked": 25,
+  "summary": {
+    "clean": 23,
+    "drift": 2,
+    "skipped_unbaselineable": 0
+  },
+  "drift_counts": {
+    "EXECUTION_ERROR": 0,
+    "EXIT_CODE_DRIFT": 0,
+    "REPORT_HASH_DRIFT": 0,
+    "TOOL_MISSING": 0,
+    "UNBASELINED_TOOL": 2
+  }
+}
+
+Non-clean results:
+ - evidence-validator drift ['UNBASELINED_TOOL']
+ - repo-root drift ['UNBASELINED_TOOL']
+
+$ grep -c "/sessions\|/tmp\|/home" /tmp/real_run1.json
+0
