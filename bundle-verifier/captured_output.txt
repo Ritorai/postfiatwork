@@ -1,0 +1,200 @@
+=== $ python3 -m unittest test_bundleverify -v ===
+test_clean_binary_non_utf8_contents (test_bundleverify.CleanBundleTests.test_clean_binary_non_utf8_contents) ... ok
+test_clean_empty_file (test_bundleverify.CleanBundleTests.test_clean_empty_file) ... ok
+test_clean_large_ish_file_chunked_hash (test_bundleverify.CleanBundleTests.test_clean_large_ish_file_chunked_hash) ... ok
+test_clean_multiple_files (test_bundleverify.CleanBundleTests.test_clean_multiple_files) ... ok
+test_clean_nested_subdirectories (test_bundleverify.CleanBundleTests.test_clean_nested_subdirectories) ... ok
+test_clean_single_file_exit_0 (test_bundleverify.CleanBundleTests.test_clean_single_file_exit_0) ... ok
+test_clean_unicode_filename (test_bundleverify.CleanBundleTests.test_clean_unicode_filename) ... ok
+test_report_schema_version_present (test_bundleverify.CleanBundleTests.test_report_schema_version_present) ... ok
+test_self_listed_manifest_is_verified_not_flagged_unlisted (test_bundleverify.CleanBundleTests.test_self_listed_manifest_is_verified_not_flagged_unlisted) ... ok
+test_byte_stable_across_two_runs (test_bundleverify.DeterminismTests.test_byte_stable_across_two_runs) ... ok
+test_report_contains_no_absolute_paths (test_bundleverify.DeterminismTests.test_report_contains_no_absolute_paths) ... ok
+test_report_has_no_extra_whitespace (test_bundleverify.DeterminismTests.test_report_has_no_extra_whitespace) ... ok
+test_report_is_single_line_plus_trailing_newline (test_bundleverify.DeterminismTests.test_report_is_single_line_plus_trailing_newline) ... ok
+test_report_keys_are_sorted (test_bundleverify.DeterminismTests.test_report_keys_are_sorted) ... ok
+test_digest_mismatch_after_content_change_same_length (test_bundleverify.DigestMismatchTests.test_digest_mismatch_after_content_change_same_length) ... ok
+test_digest_mismatch_size_matches_subtle_tamper (test_bundleverify.DigestMismatchTests.test_digest_mismatch_size_matches_subtle_tamper) ... ok
+test_duplicate_path_detected (test_bundleverify.DuplicatePathTests.test_duplicate_path_detected) ... ok
+test_duplicate_path_three_times (test_bundleverify.DuplicatePathTests.test_duplicate_path_three_times) ... ok
+test_duplicate_path_with_conflicting_data_uses_first_occurrence (test_bundleverify.DuplicatePathTests.test_duplicate_path_with_conflicting_data_uses_first_occurrence) ... ok
+test_empty_bundle_finding (test_bundleverify.EmptyBundleTests.test_empty_bundle_finding) ... ok
+test_empty_bundle_with_unlisted_files_on_disk (test_bundleverify.EmptyBundleTests.test_empty_bundle_with_unlisted_files_on_disk) ... ok
+test_custom_manifest_name (test_bundleverify.ExitCodeSubprocessTests.test_custom_manifest_name) ... ok
+test_custom_manifest_name_rejects_dotdot (test_bundleverify.ExitCodeSubprocessTests.test_custom_manifest_name_rejects_dotdot) ... ok
+test_custom_manifest_name_rejects_slash (test_bundleverify.ExitCodeSubprocessTests.test_custom_manifest_name_rejects_slash) ... ok
+test_exit_0_clean (test_bundleverify.ExitCodeSubprocessTests.test_exit_0_clean) ... ok
+test_exit_1_findings (test_bundleverify.ExitCodeSubprocessTests.test_exit_1_findings) ... ok
+test_exit_2_bad_args_missing_bundle_flag (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_bad_args_missing_bundle_flag) ... ok
+test_exit_2_bad_args_unknown_flag (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_bad_args_unknown_flag) ... ok
+test_exit_2_bad_json (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_bad_json) ... ok
+test_exit_2_manifest_files_not_a_list (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_manifest_files_not_a_list) ... ok
+test_exit_2_manifest_missing_files_key (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_manifest_missing_files_key) ... ok
+test_exit_2_manifest_missing_schema_version (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_manifest_missing_schema_version) ... ok
+test_exit_2_manifest_not_a_json_object (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_manifest_not_a_json_object) ... ok
+test_exit_2_manifest_unsupported_schema_version (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_manifest_unsupported_schema_version) ... ok
+test_exit_2_missing_bundle_dir (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_missing_bundle_dir) ... ok
+test_exit_2_missing_manifest (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_missing_manifest) ... ok
+test_exit_2_never_conflated_with_exit_1 (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_never_conflated_with_exit_1) ... ok
+test_exit_2_unwritable_output (test_bundleverify.ExitCodeSubprocessTests.test_exit_2_unwritable_output) ... ok
+test_output_omitted_prints_to_stdout (test_bundleverify.ExitCodeSubprocessTests.test_output_omitted_prints_to_stdout) ... ok
+test_output_written_to_file (test_bundleverify.ExitCodeSubprocessTests.test_output_written_to_file) ... ok
+test_stderr_used_for_harness_errors (test_bundleverify.ExitCodeSubprocessTests.test_stderr_used_for_harness_errors) ... ok
+test_bug_manifest_json_itself_a_symlink_escaping_bundle_is_refused (test_bundleverify.ExtraMalformedAndEscapeTests.test_bug_manifest_json_itself_a_symlink_escaping_bundle_is_refused) ... ok
+test_duplicate_path_and_escape_path_do_not_interact (test_bundleverify.ExtraMalformedAndEscapeTests.test_duplicate_path_and_escape_path_do_not_interact) ... ok
+test_malformed_entry_path_with_only_whitespace_is_allowed_as_path (test_bundleverify.ExtraMalformedAndEscapeTests.test_malformed_entry_path_with_only_whitespace_is_allowed_as_path) ... ok
+test_malformed_entry_sha256_with_whitespace (test_bundleverify.ExtraMalformedAndEscapeTests.test_malformed_entry_sha256_with_whitespace) ... ok
+test_manifest_json_symlink_pointing_inside_bundle_is_allowed (test_bundleverify.ExtraMalformedAndEscapeTests.test_manifest_json_symlink_pointing_inside_bundle_is_allowed) ... ok
+test_path_component_dotdot_in_middle (test_bundleverify.ExtraMalformedAndEscapeTests.test_path_component_dotdot_in_middle) ... ok
+test_symlink_escape_detail_mentions_symlink (test_bundleverify.ExtraMalformedAndEscapeTests.test_symlink_escape_detail_mentions_symlink) ... ok
+test_malformed_entry_bad_sha256_format_too_short (test_bundleverify.MalformedEntryTests.test_malformed_entry_bad_sha256_format_too_short) ... ok
+test_malformed_entry_bad_sha256_uppercase (test_bundleverify.MalformedEntryTests.test_malformed_entry_bad_sha256_uppercase) ... ok
+test_malformed_entry_extra_unknown_keys_allowed (test_bundleverify.MalformedEntryTests.test_malformed_entry_extra_unknown_keys_allowed) ... ok
+test_malformed_entry_is_a_list (test_bundleverify.MalformedEntryTests.test_malformed_entry_is_a_list) ... ok
+test_malformed_entry_is_a_string_not_object (test_bundleverify.MalformedEntryTests.test_malformed_entry_is_a_string_not_object) ... ok
+test_malformed_entry_is_null (test_bundleverify.MalformedEntryTests.test_malformed_entry_is_null) ... ok
+test_malformed_entry_mid_manifest_does_not_hide_others (test_bundleverify.MalformedEntryTests.test_malformed_entry_mid_manifest_does_not_hide_others) ... ok
+test_malformed_entry_missing_path (test_bundleverify.MalformedEntryTests.test_malformed_entry_missing_path) ... ok
+test_malformed_entry_missing_sha256 (test_bundleverify.MalformedEntryTests.test_malformed_entry_missing_sha256) ... ok
+test_malformed_entry_missing_size_bytes (test_bundleverify.MalformedEntryTests.test_malformed_entry_missing_size_bytes) ... ok
+test_malformed_entry_path_is_empty_string (test_bundleverify.MalformedEntryTests.test_malformed_entry_path_is_empty_string) ... ok
+test_malformed_entry_path_is_not_string (test_bundleverify.MalformedEntryTests.test_malformed_entry_path_is_not_string) ... ok
+test_malformed_entry_run_continues_reporting_other_bad_files (test_bundleverify.MalformedEntryTests.test_malformed_entry_run_continues_reporting_other_bad_files) ... ok
+test_malformed_entry_size_bytes_is_bool (test_bundleverify.MalformedEntryTests.test_malformed_entry_size_bytes_is_bool) ... ok
+test_malformed_entry_size_bytes_is_float (test_bundleverify.MalformedEntryTests.test_malformed_entry_size_bytes_is_float) ... ok
+test_malformed_entry_size_bytes_is_string (test_bundleverify.MalformedEntryTests.test_malformed_entry_size_bytes_is_string) ... ok
+test_malformed_entry_size_bytes_negative (test_bundleverify.MalformedEntryTests.test_malformed_entry_size_bytes_negative) ... ok
+test_two_malformed_entries_no_path_tiebreak_by_manifest_index (test_bundleverify.MalformedEntryTests.test_two_malformed_entries_no_path_tiebreak_by_manifest_index) ... ok
+test_build_report_exit_code_one (test_bundleverify.MiscTests.test_build_report_exit_code_one) ... ok
+test_build_report_exit_code_zero (test_bundleverify.MiscTests.test_build_report_exit_code_zero) ... ok
+test_compute_sha256_matches_hashlib (test_bundleverify.MiscTests.test_compute_sha256_matches_hashlib) ... ok
+test_deeply_nested_clean_bundle (test_bundleverify.MiscTests.test_deeply_nested_clean_bundle) ... ok
+test_exit_code_matches_finding_count_nonzero (test_bundleverify.MiscTests.test_exit_code_matches_finding_count_nonzero) ... ok
+test_exit_code_matches_finding_count_zero (test_bundleverify.MiscTests.test_exit_code_matches_finding_count_zero) ... ok
+test_file_with_special_characters_in_name (test_bundleverify.MiscTests.test_file_with_special_characters_in_name) ... ok
+test_manifest_path_field_in_report (test_bundleverify.MiscTests.test_manifest_path_field_in_report) ... ok
+test_many_files_all_clean (test_bundleverify.MiscTests.test_many_files_all_clean) ... ok
+test_num_findings_matches_findings_length (test_bundleverify.MiscTests.test_num_findings_matches_findings_length) ... ok
+test_report_findings_only_have_bundle_relative_paths (test_bundleverify.MiscTests.test_report_findings_only_have_bundle_relative_paths) ... ok
+test_sha256_uppercase_manifest_value_is_malformed_not_silently_lowered (test_bundleverify.MiscTests.test_sha256_uppercase_manifest_value_is_malformed_not_silently_lowered) ... ok
+test_size_bytes_zero_is_valid (test_bundleverify.MiscTests.test_size_bytes_zero_is_valid) ... ok
+test_string_path_problem_accepts_normal_relative_path (test_bundleverify.MiscTests.test_string_path_problem_accepts_normal_relative_path) ... ok
+test_string_path_problem_rejects_null_byte (test_bundleverify.MiscTests.test_string_path_problem_rejects_null_byte) ... ok
+test_validate_entry_structure_well_formed (test_bundleverify.MiscTests.test_validate_entry_structure_well_formed) ... ok
+test_manifest_path_points_at_directory_is_missing_file (test_bundleverify.MissingFileTests.test_manifest_path_points_at_directory_is_missing_file) ... ok
+test_missing_file (test_bundleverify.MissingFileTests.test_missing_file) ... ok
+test_missing_file_in_subdirectory (test_bundleverify.MissingFileTests.test_missing_file_in_subdirectory) ... ok
+test_bundle_argument_points_to_a_file_not_a_directory (test_bundleverify.MoreCliTests.test_bundle_argument_points_to_a_file_not_a_directory) ... ok
+test_bundle_path_with_trailing_slash (test_bundleverify.MoreCliTests.test_bundle_path_with_trailing_slash) ... ok
+test_clean_status_string_exact (test_bundleverify.MoreCliTests.test_clean_status_string_exact) ... ok
+test_ensure_ascii_escapes_non_ascii_path_in_report (test_bundleverify.MoreCliTests.test_ensure_ascii_escapes_non_ascii_path_in_report) ... ok
+test_findings_present_status_string_exact (test_bundleverify.MoreCliTests.test_findings_present_status_string_exact) ... ok
+test_help_flag_does_not_crash (test_bundleverify.MoreCliTests.test_help_flag_does_not_crash) ... ok
+test_manifest_name_argument_defaults_to_manifest_json (test_bundleverify.MoreCliTests.test_manifest_name_argument_defaults_to_manifest_json) ... ok
+test_output_and_stdout_identical_content (test_bundleverify.MoreCliTests.test_output_and_stdout_identical_content) ... ok
+test_output_path_that_is_an_existing_directory_is_unwritable (test_bundleverify.MoreCliTests.test_output_path_that_is_an_existing_directory_is_unwritable) ... ok
+test_relative_bundle_path_via_cwd (test_bundleverify.MoreCliTests.test_relative_bundle_path_via_cwd) ... ok
+test_two_separate_runs_from_same_dir_are_byte_identical (test_bundleverify.MoreCliTests.test_two_separate_runs_from_same_dir_are_byte_identical) ... ok
+test_all_finding_codes_can_coexist_in_one_report (test_bundleverify.MoreFindingCombinationTests.test_all_finding_codes_can_coexist_in_one_report) ... ok
+test_finding_order_stable_across_many_permutations (test_bundleverify.MoreFindingCombinationTests.test_finding_order_stable_across_many_permutations) ... ok
+test_missing_and_unlisted_together (test_bundleverify.MoreFindingCombinationTests.test_missing_and_unlisted_together) ... ok
+test_absolute_path_escape (test_bundleverify.PathEscapesBundleTests.test_absolute_path_escape) ... ok
+test_dot_component_escape (test_bundleverify.PathEscapesBundleTests.test_dot_component_escape) ... ok
+test_dotdot_escape (test_bundleverify.PathEscapesBundleTests.test_dotdot_escape) ... ok
+test_dotdot_nested_escape (test_bundleverify.PathEscapesBundleTests.test_dotdot_nested_escape) ... ok
+test_empty_component_escape (test_bundleverify.PathEscapesBundleTests.test_empty_component_escape) ... ok
+test_multiple_escaping_entries_all_reported (test_bundleverify.PathEscapesBundleTests.test_multiple_escaping_entries_all_reported) ... ok
+test_symlink_dir_pointing_outside_bundle_not_traversed (test_bundleverify.PathEscapesBundleTests.test_symlink_dir_pointing_outside_bundle_not_traversed) ... ok
+test_symlink_file_pointing_outside_bundle_not_followed (test_bundleverify.PathEscapesBundleTests.test_symlink_file_pointing_outside_bundle_not_followed) ... ok
+test_symlink_file_unlisted_pointing_outside_bundle (test_bundleverify.PathEscapesBundleTests.test_symlink_file_unlisted_pointing_outside_bundle) ... ok
+test_symlink_pointing_inside_bundle_is_not_an_escape (test_bundleverify.PathEscapesBundleTests.test_symlink_pointing_inside_bundle_is_not_an_escape) ... ok
+test_symlink_via_ancestor_directory_manifest_reference_escapes (test_bundleverify.PathEscapesBundleTests.test_symlink_via_ancestor_directory_manifest_reference_escapes) ... ok
+test_unc_style_path_escape (test_bundleverify.PathEscapesBundleTests.test_unc_style_path_escape) ... ok
+test_windows_style_absolute_path_escape (test_bundleverify.PathEscapesBundleTests.test_windows_style_absolute_path_escape) ... ok
+test_relocating_bundle_produces_identical_report (test_bundleverify.RelocationTests.test_relocating_bundle_produces_identical_report) ... ok
+test_both_size_and_digest_mismatch_reported_independently (test_bundleverify.SizeMismatchTests.test_both_size_and_digest_mismatch_reported_independently) ... ok
+test_size_mismatch_digest_matches_bad_size_field (test_bundleverify.SizeMismatchTests.test_size_mismatch_digest_matches_bad_size_field) ... ok
+test_findings_sorted_by_code_then_path (test_bundleverify.SortingTests.test_findings_sorted_by_code_then_path) ... ok
+test_permuted_manifest_order_same_report (test_bundleverify.SortingTests.test_permuted_manifest_order_same_report) ... ok
+test_permuted_manifest_order_with_findings_same_report (test_bundleverify.SortingTests.test_permuted_manifest_order_with_findings_same_report) ... ok
+test_tiebreak_breaks_tie_between_identical_code_and_path (test_bundleverify.SortingTests.test_tiebreak_breaks_tie_between_identical_code_and_path) ... ok
+test_tiebreak_is_the_only_thing_that_differs (test_bundleverify.SortingTests.test_tiebreak_is_the_only_thing_that_differs) ... ok
+test_no_import_of_time_module_used_for_timestamps (test_bundleverify.SourceHygieneTests.test_no_import_of_time_module_used_for_timestamps) ... ok
+test_no_time_functions_referenced_in_source (test_bundleverify.SourceHygieneTests.test_no_time_functions_referenced_in_source) ... ok
+test_manifest_json_itself_not_flagged_unlisted (test_bundleverify.UnlistedFileTests.test_manifest_json_itself_not_flagged_unlisted) ... ok
+test_multiple_unlisted_files_all_reported (test_bundleverify.UnlistedFileTests.test_multiple_unlisted_files_all_reported) ... ok
+test_unlisted_file_detected (test_bundleverify.UnlistedFileTests.test_unlisted_file_detected) ... ok
+test_unlisted_file_in_nested_subdir (test_bundleverify.UnlistedFileTests.test_unlisted_file_in_nested_subdir) ... ok
+
+----------------------------------------------------------------------
+Ran 126 tests in 1.340s
+
+OK
+exit=0
+=== $ python3 bundleverify.py --bundle fixtures/clean_bundle -o sample_report_clean.json ===
+exit=0
+=== $ cat sample_report_clean.json ===
+{"exit_code":0,"findings":[],"manifest_path":"manifest.json","num_files_listed":4,"num_findings":0,"report_schema_version":1,"status":"clean"}
+
+=== $ python3 bundleverify.py --bundle fixtures/tampered_bundle -o sample_report_tampered.json ===
+exit=1
+=== $ cat sample_report_tampered.json ===
+{"exit_code":1,"findings":[{"actual_sha256":"ecf7f5fbe1df7f9080d08b7ed77ef5f7ff17236bac2ca70a59b17d37e5a392e1","code":"DIGEST_MISMATCH","detail":"manifest sha256 does not match the file on disk","expected_sha256":"0cd346b12660fd1e2049ae48b8795e8af20aafd610842fb9f191de6b844ab0be","path":"statement.txt"},{"code":"DUPLICATE_PATH","detail":"path appears 2 times in the manifest","manifest_indices":[3,4],"path":"ledger.csv"},{"code":"MALFORMED_ENTRY","detail":"missing 'sha256'; missing 'size_bytes'","manifest_index":5,"path":"broken_entry.txt"},{"code":"MISSING_FILE","detail":"file listed in manifest is not present on disk","path":"deleted_invoice.pdf"},{"code":"PATH_ESCAPES_BUNDLE","detail":"path contains a '..' component","path":"../outside_the_bundle.txt"},{"actual_size_bytes":1024,"code":"SIZE_MISMATCH","detail":"manifest size_bytes does not match the file on disk","expected_size_bytes":1524,"path":"photo.bin"},{"code":"UNLISTED_FILE","detail":"file is present in the bundle but not listed in the manifest","path":"unlisted_backup_copy.txt"}],"manifest_path":"manifest.json","num_files_listed":7,"num_findings":7,"report_schema_version":1,"status":"findings_present"}
+
+=== $ python3 bundleverify.py --bundle no_such_bundle_dir ===
+bundleverify.py: error: bundle directory not found: no_such_bundle_dir
+exit=2
+=== $ python3 bundleverify.py --bundle fixtures/tampered_bundle -o ../det_run1.json ===
+exit=1
+=== $ python3 bundleverify.py --bundle fixtures/tampered_bundle -o ../det_run2.json ===
+exit=1
+=== $ sha256sum ../det_run1.json ../det_run2.json ===
+bbcfa7691549f015558d477bb7279b0bfd85d075c815ced3b61c2a1d8b93fb3b  ../det_run1.json
+bbcfa7691549f015558d477bb7279b0bfd85d075c815ced3b61c2a1d8b93fb3b  ../det_run2.json
+=== $ cp -r fixtures/tampered_bundle ../renamed_bundle_completely_different_xyz ===
+exit=0
+=== $ python3 bundleverify.py --bundle ../renamed_bundle_completely_different_xyz -o ../det_run3.json ===
+exit=1
+=== $ sha256sum ../det_run1.json ../det_run2.json ../det_run3.json ===
+bbcfa7691549f015558d477bb7279b0bfd85d075c815ced3b61c2a1d8b93fb3b  ../det_run1.json
+bbcfa7691549f015558d477bb7279b0bfd85d075c815ced3b61c2a1d8b93fb3b  ../det_run2.json
+bbcfa7691549f015558d477bb7279b0bfd85d075c815ced3b61c2a1d8b93fb3b  ../det_run3.json
+=== $ mkdir -p ../outside_area && printf secretbytes > ../outside_area/secret.txt ===
+exit=0
+=== $ mkdir -p ../symlink_demo_bundle && ln -s ../outside_area/secret.txt ../symlink_demo_bundle/link.txt ===
+exit=0
+=== $ python3 -c "import json; json.dump({'schema_version':1,'files':[{'path':'link.txt','sha256':'a'*64,'size_bytes':1}]}, open('../symlink_demo_bundle/manifest.json','w'))" ===
+exit=0
+=== $ python3 bundleverify.py --bundle ../symlink_demo_bundle ===
+{"exit_code":1,"findings":[{"code":"PATH_ESCAPES_BUNDLE","detail":"symlink target resolves outside the bundle root","path":"link.txt"}],"manifest_path":"manifest.json","num_files_listed":1,"num_findings":1,"report_schema_version":1,"status":"findings_present"}
+exit=1
+=== $ mkdir -p ../bugdemo_outside && python3 -c "import json; json.dump({'schema_version':1,'files':[]}, open('../bugdemo_outside/evil_manifest.json','w'))" ===
+exit=0
+=== $ mkdir -p ../bugdemo_bundle && printf 'untracked real content' > ../bugdemo_bundle/realfile.txt ===
+exit=0
+=== $ ln -s ../bugdemo_outside/evil_manifest.json ../bugdemo_bundle/manifest.json ===
+exit=0
+=== $ python3 bundleverify.py --bundle ../bugdemo_bundle ===
+bundleverify.py: error: refusing to follow manifest file: ../bugdemo_bundle/manifest.json is a symlink that resolves outside the bundle root
+exit=2
+
+--- fixture regeneration round trip ---
+fixtures/ is generated by make_fixtures.py rather than committed as loose files,
+stored base64 and written in binary mode. The bundles contain non-UTF-8 binary
+files and deliberate byte-level tamper cases, so a text-mode round trip would
+silently rewrite them and invalidate the committed sample report hashes.
+
+=== $ python3 make_fixtures.py . ===
+wrote 10 files to .
+exit=0
+
+=== $ diff -r fixtures <regenerated> ===
+(no output - byte-for-byte identical)
+exit=0
+
+=== $ sha256sum clean.json sample_report_clean.json tampered.json sample_report_tampered.json ===
+a47568b9ac1b277cc69687d4bd224a7995f80f2da24056143e47a7d5e8ca4aa0  clean.json (regenerated)
+a47568b9ac1b277cc69687d4bd224a7995f80f2da24056143e47a7d5e8ca4aa0  bundle-verifier/sample_report_clean.json
+bbcfa7691549f015558d477bb7279b0bfd85d075c815ced3b61c2a1d8b93fb3b  tampered.json (regenerated)
+bbcfa7691549f015558d477bb7279b0bfd85d075c815ced3b61c2a1d8b93fb3b  bundle-verifier/sample_report_tampered.json
+exit=0
