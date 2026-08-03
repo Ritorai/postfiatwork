@@ -1,0 +1,44 @@
+test_breach_detected (test_forecast.TestBudgetCap) ... ok
+test_exactly_at_cap_is_not_a_breach (test_forecast.TestBudgetCap)
+Spending the whole budget is not overspending it. ... ok
+test_no_cap_never_breaches (test_forecast.TestBudgetCap) ... ok
+test_within_budget (test_forecast.TestBudgetCap) ... ok
+test_burn_over_known_span (test_forecast.TestBurnRate)
+20 over 14 days = 2 weeks -> 10/week. ... ok
+test_projection_scales_with_horizon (test_forecast.TestBurnRate) ... ok
+test_span_days_computed (test_forecast.TestBurnRate) ... ok
+test_zero_horizon_projects_only_committed (test_forecast.TestBurnRate) ... ok
+test_bad_cap_exit_two (test_forecast.TestCli) ... ok
+test_empty_history_exit_zero (test_forecast.TestCli) ... ok
+test_missing_file_exit_two (test_forecast.TestCli) ... ok
+test_over_budget_exit_one (test_forecast.TestCli) ... ok
+test_repeated_runs_identical (test_forecast.TestCli) ... ok
+test_single_history_exit_zero (test_forecast.TestCli) ... ok
+test_within_budget_exit_zero (test_forecast.TestCli) ... ok
+test_committed_is_exact (test_forecast.TestDecimalSafety) ... ok
+test_float_reward_rejected (test_forecast.TestDecimalSafety) ... ok
+test_integer_reward_accepted (test_forecast.TestDecimalSafety) ... ok
+test_negative_reward_rejected (test_forecast.TestDecimalSafety) ... ok
+test_no_float_drift (test_forecast.TestDecimalSafety) ... ok
+test_empty_everything_totals_zero (test_forecast.TestEmptyHistory) ... ok
+test_empty_history_burn_is_null (test_forecast.TestEmptyHistory) ... ok
+test_empty_history_no_crash (test_forecast.TestEmptyHistory) ... ok
+test_empty_history_with_open_tasks_still_commits (test_forecast.TestEmptyHistory) ... ok
+test_bad_reward_string (test_forecast.TestMalformed) ... ok
+test_bad_timestamp (test_forecast.TestMalformed) ... ok
+test_missing_field (test_forecast.TestMalformed) ... ok
+test_non_array (test_forecast.TestMalformed) ... ok
+test_single_record_burn_is_null (test_forecast.TestSingleRecord)
+One point in time cannot establish a rate. ... ok
+test_single_record_mean_is_the_value (test_forecast.TestSingleRecord) ... ok
+test_single_record_no_variance_band (test_forecast.TestSingleRecord) ... ok
+test_single_record_stdev_zero (test_forecast.TestSingleRecord) ... ok
+test_band_brackets_projection (test_forecast.TestVarianceBand) ... ok
+test_low_never_negative (test_forecast.TestVarianceBand) ... ok
+test_spread_history_has_band (test_forecast.TestVarianceBand) ... ok
+test_uniform_history_has_no_band (test_forecast.TestVarianceBand) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 0.548s
+
+OK

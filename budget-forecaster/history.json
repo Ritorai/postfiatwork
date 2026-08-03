@@ -1,0 +1,8 @@
+[
+  {"task_id":"task_a","reward":"3.500000","rewarded_at":"2026-07-03T09:00:00Z"},
+  {"task_id":"task_b","reward":"3.000000","rewarded_at":"2026-07-07T09:00:00Z"},
+  {"task_id":"task_c","reward":"4.000000","rewarded_at":"2026-07-14T09:00:00Z"},
+  {"task_id":"task_d","reward":"3.500000","rewarded_at":"2026-07-21T09:00:00Z"},
+  {"task_id":"task_e","reward":"12.000000","rewarded_at":"2026-07-28T09:00:00Z"},
+  {"task_id":"task_f","reward":"4.000000","rewarded_at":"2026-07-31T09:00:00Z"}
+]
