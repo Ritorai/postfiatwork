@@ -79,6 +79,19 @@ a triage filter for spotting low-effort and copy-pasted submissions, not a
 correctness check, and a low score should prompt a human look rather than an
 automatic rejection. Conversely a genuinely good short answer can score low.
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `records` (positional) | Path to a JSON array of evidence records (`submission_id`, `text`). Required. |
+| `-c`, `--config PATH` | Path to a JSON config file overriding any of `weights` (object keyed by signal name), `target_length`, `artifact_target`, `threshold`. Unknown top-level keys, and unknown signal names inside `weights`, are rejected (`INVALID_INPUT`, exit 2). Optional; built-in defaults apply if omitted. |
+| `-o`, `--out PATH` | Write the canonical JSON report to this file instead of stdout. When set, stdout instead gets a one-line summary: `status=<status> passed=<n> failed=<n>`. |
+| `--threshold N` | Overrides `threshold` (default `0.5`). Records scoring below it fail. Parsed as `float`. |
+| `--target-length N` | Overrides `target_length` (default `800` characters), the length at which the `length` signal saturates. Parsed as `float`. |
+| `--artifact-target N` | Overrides `artifact_target` (default `6`), the artifact-density count considered full credit for the `artifacts` signal. Parsed as `float`. |
+
+Precedence: CLI flag > `--config` file value > built-in default.
+
 ## Exit codes
 
 0 = all records at/above threshold · 1 = one or more below · 2 = invalid input
