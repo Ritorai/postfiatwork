@@ -1,0 +1,264 @@
+$ python3 -m unittest test_ndscan -v
+test_dotted_import_binds_top_name (test_ndscan.TestBuildAliases) ... ok
+test_from_import (test_ndscan.TestBuildAliases) ... ok
+test_from_import_as (test_ndscan.TestBuildAliases) ... ok
+test_import_as (test_ndscan.TestBuildAliases) ... ok
+test_import_inside_function_still_captured_file_wide (test_ndscan.TestBuildAliases) ... ok
+test_multiple_imports_all_captured (test_ndscan.TestBuildAliases) ... ok
+test_plain_import (test_ndscan.TestBuildAliases) ... ok
+test_relative_import_skipped (test_ndscan.TestBuildAliases) ... ok
+test_star_import_skipped (test_ndscan.TestBuildAliases) ... ok
+test_by_rule_counts_zero_for_rules_with_no_findings (test_ndscan.TestBuildReport) ... ok
+test_by_severity_counts (test_ndscan.TestBuildReport) ... ok
+test_report_contains_no_wall_clock_or_duration_fields (test_ndscan.TestBuildReport) ... ok
+test_report_has_expected_top_level_keys (test_ndscan.TestBuildReport) ... ok
+test_ascii_only (test_ndscan.TestCanonicalJson) ... ok
+test_compact_separators (test_ndscan.TestCanonicalJson) ... ok
+test_deterministic_for_same_input (test_ndscan.TestCanonicalJson) ... ok
+test_sorted_keys (test_ndscan.TestCanonicalJson) ... ok
+test_trailing_newline (test_ndscan.TestCanonicalJson) ... ok
+test_exit_one_on_findings (test_ndscan.TestCli) ... ok
+test_exit_one_on_scan_error_with_no_findings (test_ndscan.TestCli) ... ok
+test_exit_two_on_invalid_min_severity (test_ndscan.TestCli) ... ok
+test_exit_two_on_invalid_rule_id (test_ndscan.TestCli) ... ok
+test_exit_two_on_missing_required_arg (test_ndscan.TestCli) ... ok
+test_exit_two_on_missing_root (test_ndscan.TestCli) ... ok
+test_exit_two_root_is_a_file_not_a_directory (test_ndscan.TestCli) ... ok
+test_exit_zero_on_clean_root (test_ndscan.TestCli) ... ok
+test_files_scanned_count_in_summary (test_ndscan.TestCli) ... ok
+test_findings_sorted_in_json_output (test_ndscan.TestCli) ... ok
+test_help_flag_exits_zero (test_ndscan.TestCli) ... ok
+test_min_severity_flag_via_cli (test_ndscan.TestCli) ... ok
+test_multiple_distinct_rule_flags (test_ndscan.TestCli) ... ok
+test_no_absolute_paths_in_report (test_ndscan.TestCli) ... ok
+test_no_root_value_embedded_in_report (test_ndscan.TestCli) ... ok
+test_non_utf8_file_reported_as_error_exit_one (test_ndscan.TestCli) ... ok
+test_output_file_ends_with_single_newline (test_ndscan.TestCli) ... ok
+test_output_flag_long (test_ndscan.TestCli) ... ok
+test_output_flag_short (test_ndscan.TestCli) ... ok
+test_output_write_failure_exits_two (test_ndscan.TestCli) ... ok
+test_relocation_produces_identical_report (test_ndscan.TestCli) ... ok
+test_repeat_runs_byte_identical (test_ndscan.TestCli) ... ok
+test_repeated_rule_flag_is_union_deduped (test_ndscan.TestCli) ... ok
+test_rule_filter_can_change_verdict_to_clean (test_ndscan.TestCli) ... ok
+test_rule_filter_changes_finding_count (test_ndscan.TestCli) ... ok
+test_scan_directory_with_only_subdirs_is_clean (test_ndscan.TestCli) ... ok
+test_stderr_empty_on_clean_run (test_ndscan.TestCli) ... ok
+test_stderr_empty_on_findings_run (test_ndscan.TestCli) ... ok
+test_stdout_used_when_no_output_flag (test_ndscan.TestCli) ... ok
+test_scan_root_dedups_identical_findings (test_ndscan.TestFindingOrdering) ... ok
+test_scan_root_output_is_sorted (test_ndscan.TestFindingOrdering) ... ok
+test_sort_key_order (test_ndscan.TestFindingOrdering) ... ok
+test_min_severity_high_excludes_medium_and_low (test_ndscan.TestMinSeverityFilter) ... ok
+test_min_severity_high_includes_high (test_ndscan.TestMinSeverityFilter) ... ok
+test_min_severity_low_includes_all (test_ndscan.TestMinSeverityFilter) ... ok
+test_min_severity_medium_excludes_low (test_ndscan.TestMinSeverityFilter) ... ok
+test_call_result_attr_not_a_chain_not_flagged (test_ndscan.TestND001WallClock) ... ok
+test_datetime_date_today (test_ndscan.TestND001WallClock) ... ok
+test_datetime_datetime_now_plain_import (test_ndscan.TestND001WallClock) ... ok
+test_datetime_datetime_utcnow (test_ndscan.TestND001WallClock) ... ok
+test_datetime_now_without_call_not_flagged (test_ndscan.TestND001WallClock) ... ok
+test_datetime_strptime_not_flagged (test_ndscan.TestND001WallClock) ... ok
+test_from_datetime_import_date_bare_today (test_ndscan.TestND001WallClock) ... ok
+test_from_datetime_import_datetime_as_alias (test_ndscan.TestND001WallClock) ... ok
+test_from_datetime_import_datetime_bare_now (test_ndscan.TestND001WallClock) ... ok
+test_from_time_import_time_as_alias_bare_call (test_ndscan.TestND001WallClock) ... ok
+test_from_time_import_time_bare_call (test_ndscan.TestND001WallClock) ... ok
+test_import_datetime_module_then_class_attr_chain (test_ndscan.TestND001WallClock) ... ok
+test_import_time_as_alias (test_ndscan.TestND001WallClock) ... ok
+test_line_col_reported (test_ndscan.TestND001WallClock) ... ok
+test_multiple_calls_all_flagged (test_ndscan.TestND001WallClock) ... ok
+test_os_path_join_not_flagged (test_ndscan.TestND001WallClock) ... ok
+test_pattern_inside_comment_not_flagged (test_ndscan.TestND001WallClock) ... ok
+test_pattern_inside_string_not_flagged (test_ndscan.TestND001WallClock) ... ok
+test_shadowed_name_is_a_documented_false_positive (test_ndscan.TestND001WallClock) ... ok
+test_time_monotonic (test_ndscan.TestND001WallClock) ... ok
+test_time_perf_counter_not_a_target (test_ndscan.TestND001WallClock) ... ok
+test_time_time_plain_import (test_ndscan.TestND001WallClock) ... ok
+test_unresolved_base_not_imported_not_flagged (test_ndscan.TestND001WallClock) ... ok
+test_aliased_from_import_listdir_sorted_not_flagged (test_ndscan.TestND002UnsortedListdir) ... ok
+test_aliased_from_import_listdir_unwrapped_flags (test_ndscan.TestND002UnsortedListdir) ... ok
+test_aliased_glob_as_alias_unwrapped_flags (test_ndscan.TestND002UnsortedListdir) ... ok
+test_false_positive_sorted_applied_later (test_ndscan.TestND002UnsortedListdir) ... ok
+test_false_positive_sorted_wraps_list_not_listdir (test_ndscan.TestND002UnsortedListdir) ... ok
+test_for_loop_over_sorted_listdir_not_flagged (test_ndscan.TestND002UnsortedListdir) ... ok
+test_glob_glob_unwrapped_flags (test_ndscan.TestND002UnsortedListdir) ... ok
+test_line_col_reported (test_ndscan.TestND002UnsortedListdir) ... ok
+test_list_call_wrapping_walk_flags (test_ndscan.TestND002UnsortedListdir) ... ok
+test_multiple_targets_in_one_function_all_flagged (test_ndscan.TestND002UnsortedListdir) ... ok
+test_os_listdir_unwrapped_flags (test_ndscan.TestND002UnsortedListdir) ... ok
+test_os_mkdir_not_a_target (test_ndscan.TestND002UnsortedListdir) ... ok
+test_os_path_isdir_not_a_target (test_ndscan.TestND002UnsortedListdir) ... ok
+test_os_scandir_unwrapped_flags (test_ndscan.TestND002UnsortedListdir) ... ok
+test_os_walk_unwrapped_flags (test_ndscan.TestND002UnsortedListdir) ... ok
+test_pattern_inside_string_not_flagged (test_ndscan.TestND002UnsortedListdir) ... ok
+test_sorted_glob_glob_not_flagged (test_ndscan.TestND002UnsortedListdir) ... ok
+test_sorted_os_listdir_not_flagged (test_ndscan.TestND002UnsortedListdir) ... ok
+test_sorted_os_scandir_not_flagged (test_ndscan.TestND002UnsortedListdir) ... ok
+test_sorted_second_positional_arg_not_recognized_as_wrap (test_ndscan.TestND002UnsortedListdir) ... ok
+test_sorted_with_reversed_first_arg_still_ok (test_ndscan.TestND002UnsortedListdir) ... ok
+test_dict_item_assignment_accum_is_documented_false_negative (test_ndscan.TestND003UnorderedIteration) ... ok
+test_dict_items_call_with_extend_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_dict_items_with_update_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_dict_keys_call_with_append_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_dict_literal_with_append_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_dict_values_call_with_append_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_frozenset_call_with_append_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_helper_function_accum_is_documented_false_negative (test_ndscan.TestND003UnorderedIteration) ... ok
+test_if_inside_loop_body_still_detected (test_ndscan.TestND003UnorderedIteration) ... ok
+test_line_col_reported (test_ndscan.TestND003UnorderedIteration) ... ok
+test_list_literal_iteration_never_flagged (test_ndscan.TestND003UnorderedIteration) ... ok
+test_nested_function_def_inside_body_not_counted (test_ndscan.TestND003UnorderedIteration) ... ok
+test_pattern_inside_string_not_flagged (test_ndscan.TestND003UnorderedIteration) ... ok
+test_plain_name_dict_reference_is_documented_false_negative (test_ndscan.TestND003UnorderedIteration) ... ok
+test_scalar_augassign_not_counted_even_with_other_append (test_ndscan.TestND003UnorderedIteration) ... ok
+test_set_call_with_append_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_set_iterated_no_accum_not_flagged (test_ndscan.TestND003UnorderedIteration) ... ok
+test_set_iterated_only_print_not_flagged (test_ndscan.TestND003UnorderedIteration) ... ok
+test_set_literal_with_append_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_set_with_add_to_other_set_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_set_with_list_augassign_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_set_with_tuple_augassign_flags (test_ndscan.TestND003UnorderedIteration) ... ok
+test_sorted_wrapped_dict_items_not_flagged (test_ndscan.TestND003UnorderedIteration) ... ok
+test_sorted_wrapped_set_not_flagged (test_ndscan.TestND003UnorderedIteration) ... ok
+test_tuple_literal_iteration_never_flagged (test_ndscan.TestND003UnorderedIteration) ... ok
+test_fstring_bang_r_of_literal_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_fstring_bang_r_of_name_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_fstring_bang_s_conversion_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_fstring_no_conversion_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_line_col_reported (test_ndscan.TestND004UnsafeRepr) ... ok
+test_pattern_inside_string_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_percent_r_literal_string_not_flagged_operand_ignored (test_ndscan.TestND004UnsafeRepr) ... ok
+test_percent_r_of_name_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_percent_s_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_builtin_shadowed_by_user_def_is_documented_false_negative (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_attribute_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_binop_over_literals_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_binop_over_name_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_boolop_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_comparison_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_dict_of_literals_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_int_call_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_int_literal_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_list_containing_name_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_list_of_literals_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_name_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_none_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_str_call_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_string_literal_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_subscript_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_unaryop_over_literal_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_of_user_function_call_flags (test_ndscan.TestND004UnsafeRepr) ... ok
+test_repr_with_no_args_not_flagged (test_ndscan.TestND004UnsafeRepr) ... ok
+test_aliased_import_random_as (test_ndscan.TestND005UnseededRandom) ... ok
+test_aliased_import_random_as_with_seed (test_ndscan.TestND005UnseededRandom) ... ok
+test_from_random_import_randint_as_alias (test_ndscan.TestND005UnseededRandom) ... ok
+test_from_random_import_random_bare_call (test_ndscan.TestND005UnseededRandom) ... ok
+test_from_random_import_seed_and_random_bare_calls (test_ndscan.TestND005UnseededRandom) ... ok
+test_line_col_reported (test_ndscan.TestND005UnseededRandom) ... ok
+test_multiple_random_calls_all_flagged_without_seed (test_ndscan.TestND005UnseededRandom) ... ok
+test_no_random_or_secrets_usage_clean (test_ndscan.TestND005UnseededRandom) ... ok
+test_pattern_inside_string_not_flagged (test_ndscan.TestND005UnseededRandom) ... ok
+test_random_choice_no_seed_flags (test_ndscan.TestND005UnseededRandom) ... ok
+test_random_randint_no_seed_flags (test_ndscan.TestND005UnseededRandom) ... ok
+test_random_random_no_seed_flags (test_ndscan.TestND005UnseededRandom) ... ok
+test_random_seed_call_itself_not_flagged (test_ndscan.TestND005UnseededRandom) ... ok
+test_random_seed_with_different_alias_still_recognized (test_ndscan.TestND005UnseededRandom) ... ok
+test_random_with_seed_anywhere_in_module_not_flagged (test_ndscan.TestND005UnseededRandom) ... ok
+test_secrets_choice_always_flagged (test_ndscan.TestND005UnseededRandom) ... ok
+test_secrets_flagged_even_with_random_seed_present (test_ndscan.TestND005UnseededRandom) ... ok
+test_secrets_token_hex_always_flagged (test_ndscan.TestND005UnseededRandom) ... ok
+test_seed_after_usage_still_suppresses_documented_false_negative (test_ndscan.TestND005UnseededRandom) ... ok
+test_seed_in_unreachable_branch_still_suppresses_documented_false_negative (test_ndscan.TestND005UnseededRandom) ... ok
+test_annassign_float_literal_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_attribute_target_matching_money_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_augassign_float_literal_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_division_producing_float_is_documented_false_negative (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_arg_to_unrelated_call_not_flagged (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_call_arg_and_target_both_match_two_findings (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_call_assigned_to_amount_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_call_on_amount_arg_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_call_on_unrelated_arg_not_flagged (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_amount_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_balance_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_drops_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_fee_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_payout_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_price_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_reward_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_total_flags (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_assigned_to_unrelated_name_not_flagged (test_ndscan.TestND006FloatInMoney) ... ok
+test_float_literal_case_insensitive (test_ndscan.TestND006FloatInMoney) ... ok
+test_int_literal_assigned_to_amount_not_flagged (test_ndscan.TestND006FloatInMoney) ... ok
+test_line_col_reported (test_ndscan.TestND006FloatInMoney) ... ok
+test_non_money_float_literal_not_flagged (test_ndscan.TestND006FloatInMoney) ... ok
+test_pattern_inside_string_not_flagged (test_ndscan.TestND006FloatInMoney) ... ok
+test_string_literal_assigned_to_amount_not_flagged (test_ndscan.TestND006FloatInMoney) ... ok
+test_subscript_target_is_documented_false_negative (test_ndscan.TestND006FloatInMoney) ... ok
+test_substring_match_false_positive_coffee_price (test_ndscan.TestND006FloatInMoney) ... ok
+test_substring_match_false_positive_toffee (test_ndscan.TestND006FloatInMoney) ... ok
+test_bare_name_call (test_ndscan.TestResolveCallTarget) ... ok
+test_deep_attribute_chain (test_ndscan.TestResolveCallTarget) ... ok
+test_simple_attribute_chain (test_ndscan.TestResolveCallTarget) ... ok
+test_unaliased_head_falls_back_to_literal (test_ndscan.TestResolveCallTarget) ... ok
+test_unresolvable_call_target (test_ndscan.TestResolveCallTarget) ... ok
+test_samples_clean_exits_zero (test_ndscan.TestSamplesDirectories) ... ok
+test_samples_clean_has_zero_findings_for_every_rule (test_ndscan.TestSamplesDirectories) ... ok
+test_samples_risky_exits_one (test_ndscan.TestSamplesDirectories) ... ok
+test_samples_risky_restricted_to_nd001_only_still_exit_one (test_ndscan.TestSamplesDirectories) ... ok
+test_samples_risky_trips_all_six_rules (test_ndscan.TestSamplesDirectories) ... ok
+test_empty_file_clean (test_ndscan.TestScanFile) ... ok
+test_error_message_never_contains_absolute_path (test_ndscan.TestScanFile) ... ok
+test_non_utf8_file_becomes_error_entry (test_ndscan.TestScanFile) ... ok
+test_syntax_error_becomes_error_entry (test_ndscan.TestScanFile) ... ok
+test_ignores_non_py_files (test_ndscan.TestScanRootWalking) ... ok
+test_ignores_pycache_directory (test_ndscan.TestScanRootWalking) ... ok
+test_multiple_files_error_and_findings_coexist (test_ndscan.TestScanRootWalking) ... ok
+test_paths_are_relative_not_absolute (test_ndscan.TestScanRootWalking) ... ok
+test_recurses_into_subdirectories (test_ndscan.TestScanRootWalking) ... ok
+test_relative_paths_use_forward_slash (test_ndscan.TestScanRootWalking) ... ok
+test_empty_source_no_findings (test_ndscan.TestScanSource) ... ok
+test_restricting_rules_limits_findings (test_ndscan.TestScanSource) ... ok
+test_syntax_error_raises (test_ndscan.TestScanSource) ... ok
+
+----------------------------------------------------------------------
+Ran 221 tests in 0.796s
+
+OK
+
+$ python3 ndscan.py --root samples_clean ; echo "exit=$?"
+{"errors":[],"findings":[],"min_severity":"low","rules_run":["ND001_WALL_CLOCK","ND002_UNSORTED_LISTDIR","ND003_UNORDERED_ITERATION","ND004_UNSAFE_REPR","ND005_UNSEEDED_RANDOM","ND006_FLOAT_IN_MONEY"],"schema_version":1,"summary":{"by_rule":{"ND001_WALL_CLOCK":0,"ND002_UNSORTED_LISTDIR":0,"ND003_UNORDERED_ITERATION":0,"ND004_UNSAFE_REPR":0,"ND005_UNSEEDED_RANDOM":0,"ND006_FLOAT_IN_MONEY":0},"by_severity":{"high":0,"low":0,"medium":0},"files_errored":0,"files_scanned":6,"findings_count":0},"tool":"ndscan"}
+exit=0
+
+$ python3 ndscan.py --root samples_risky -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 ndscan.py --root samples_risky -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+f6ab980d2e3e6e02974624b25f3221a0e6179bd8d4d7ab182e22ac2652ba5de5  r1.json
+f6ab980d2e3e6e02974624b25f3221a0e6179bd8d4d7ab182e22ac2652ba5de5  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 ndscan.py --root samples_risky --rule ND001_WALL_CLOCK ; echo "exit=$?"
+{"errors":[],"findings":[{"col":12,"detail":"call to datetime.datetime.now() reads the wall clock","line":14,"path":"risky_all_in_one.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.datetime.now() reads the wall clock","line":8,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.datetime.utcnow() reads the wall clock","line":9,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.date.today() reads the wall clock","line":10,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to time.time() reads the wall clock","line":11,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to time.monotonic() reads the wall clock","line":12,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.datetime.now() reads the wall clock","line":13,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"}],"min_severity":"low","rules_run":["ND001_WALL_CLOCK"],"schema_version":1,"summary":{"by_rule":{"ND001_WALL_CLOCK":7},"by_severity":{"high":7,"low":0,"medium":0},"files_errored":0,"files_scanned":7,"findings_count":7},"tool":"ndscan"}
+exit=1
+
+$ python3 ndscan.py --root /nonexistent_dir ; echo "exit=$?"
+ndscan: error: --root path does not exist or is not a directory: /nonexistent_dir
+exit=2
+
+$ grep -c "/sessions\|/tmp\|/home" r1.json
+0
+
+=== RELOCATION TEST ===
+$ mkdir -p /tmp/relocated_samples_risky && cp -r samples_risky/* /tmp/relocated_samples_risky/
+$ python3 ndscan.py --root samples_risky -o /tmp/orig_relocation_check.json ; sha256sum /tmp/orig_relocation_check.json
+f6ab980d2e3e6e02974624b25f3221a0e6179bd8d4d7ab182e22ac2652ba5de5  /tmp/orig_relocation_check.json
+$ python3 ndscan.py --root /tmp/relocated_samples_risky -o /tmp/relocated_relocation_check.json ; sha256sum /tmp/relocated_relocation_check.json
+f6ab980d2e3e6e02974624b25f3221a0e6179bd8d4d7ab182e22ac2652ba5de5  /tmp/relocated_relocation_check.json
+$ cmp /tmp/orig_relocation_check.json /tmp/relocated_relocation_check.json && echo RELOCATION-BYTE-IDENTICAL
+RELOCATION-BYTE-IDENTICAL
