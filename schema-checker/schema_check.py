@@ -138,8 +138,17 @@ def make_entry(code: str, pointer: str, message: str) -> dict:
 
 
 def sort_entries(entries: list) -> list:
-    """Deterministic ordering: (pointer, code, message)."""
-    return sorted(entries, key=lambda e: (e["pointer"], e["code"], e["message"]))
+    """Deterministic ordering: (pointer, code, message, canonical(entry)).
+
+    The trailing canonical(e) is a total-order tiebreak. Two entries agreeing
+    on pointer, code and message would otherwise compare equal and fall back to
+    input order, which is not guaranteed stable. It cannot reorder entries that
+    already differ on an earlier field.
+    """
+    return sorted(
+        entries,
+        key=lambda e: (e["pointer"], e["code"], e["message"], canonical(e)),
+    )
 
 
 def tally(entries: list) -> dict:
