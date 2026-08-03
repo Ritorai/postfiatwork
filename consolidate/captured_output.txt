@@ -1,0 +1,199 @@
+$ python3 -m unittest test_consolidate -v
+test_does_not_match_throughput_shape (test_consolidate.TestBudgetForecasterAdapter) ... ok
+test_matches_even_without_config (test_consolidate.TestBudgetForecasterAdapter) ... ok
+test_matches_over_budget (test_consolidate.TestBudgetForecasterAdapter) ... ok
+test_within_budget_yields_no_findings (test_consolidate.TestBudgetForecasterAdapter) ... ok
+test_cross_tool_merge_same_task_id (test_consolidate.TestBuildReportPipeline) ... ok
+test_directory_with_only_non_json_files (test_consolidate.TestBuildReportPipeline) ... ok
+test_empty_array_file_becomes_unrecognised_finding (test_consolidate.TestBuildReportPipeline) ... ok
+test_empty_directory_zero_findings (test_consolidate.TestBuildReportPipeline) ... ok
+test_findings_by_task_sorted_by_task_id (test_consolidate.TestBuildReportPipeline) ... ok
+test_invalid_json_file_becomes_unrecognised_finding (test_consolidate.TestBuildReportPipeline) ... ok
+test_nested_subdirectories_are_scanned (test_consolidate.TestBuildReportPipeline) ... ok
+test_no_absolute_paths_anywhere_in_output (test_consolidate.TestBuildReportPipeline) ... ok
+test_null_task_id_goes_to_ungrouped (test_consolidate.TestBuildReportPipeline) ... ok
+test_reports_list_always_includes_all_scanned_files_regardless_of_threshold (test_consolidate.TestBuildReportPipeline) ... ok
+test_severity_rollup_counts (test_consolidate.TestBuildReportPipeline) ... ok
+test_severity_threshold_can_zero_out_findings_and_exit_zero (test_consolidate.TestBuildReportPipeline) ... ok
+test_severity_threshold_filters_lower_severities (test_consolidate.TestBuildReportPipeline) ... ok
+test_severity_threshold_none_keeps_everything (test_consolidate.TestBuildReportPipeline) ... ok
+test_single_clean_report_exit_zero (test_consolidate.TestBuildReportPipeline) ... ok
+test_single_dirty_report_exit_one (test_consolidate.TestBuildReportPipeline) ... ok
+test_two_identical_content_files_both_counted_as_separate_sources (test_consolidate.TestBuildReportPipeline) ... ok
+test_unicode_in_detail_survives_round_trip (test_consolidate.TestBuildReportPipeline) ... ok
+test_unreadable_file_permission_error_becomes_finding (test_consolidate.TestBuildReportPipeline) ... ok
+test_unrecognised_report_shape_never_silently_dropped (test_consolidate.TestBuildReportPipeline) ... ok
+test_unrecognised_report_survives_critical_threshold (test_consolidate.TestBuildReportPipeline) ... ok
+test_clean_directory_exit_0 (test_consolidate.TestCLI) ... ok
+test_dirty_directory_exit_1 (test_consolidate.TestCLI) ... ok
+test_help_flag_exits_zero (test_consolidate.TestCLI) ... ok
+test_missing_required_root_arg_exit_2 (test_consolidate.TestCLI) ... ok
+test_no_absolute_path_leakage_via_cli (test_consolidate.TestCLI) ... ok
+test_nonexistent_root_exit_2 (test_consolidate.TestCLI) ... ok
+test_output_file_written_inside_scanned_root_excludes_itself_on_rerun (test_consolidate.TestCLI) ... ok
+test_output_flag_writes_file_not_stdout (test_consolidate.TestCLI) ... ok
+test_output_long_flag_equivalent (test_consolidate.TestCLI) ... ok
+test_output_written_file_ends_with_single_newline (test_consolidate.TestCLI) ... ok
+test_root_is_a_file_not_directory_exit_2 (test_consolidate.TestCLI) ... ok
+test_severity_threshold_flag_accepted (test_consolidate.TestCLI) ... ok
+test_severity_threshold_invalid_choice_exit_2 (test_consolidate.TestCLI) ... ok
+test_stdout_contains_valid_json_with_trailing_newline (test_consolidate.TestCLI) ... ok
+test_two_cli_runs_produce_byte_identical_output_files (test_consolidate.TestCLI) ... ok
+test_unwritable_output_path_exit_2 (test_consolidate.TestCLI) ... ok
+test_compact_separators (test_consolidate.TestCanonicalDumps) ... ok
+test_deterministic_across_calls (test_consolidate.TestCanonicalDumps) ... ok
+test_ends_with_single_newline (test_consolidate.TestCanonicalDumps) ... ok
+test_ensure_ascii (test_consolidate.TestCanonicalDumps) ... ok
+test_sorted_keys (test_consolidate.TestCanonicalDumps) ... ok
+test_output_independent_of_filesystem_walk_order (test_consolidate.TestDeterminism) ... ok
+test_relocated_directory_produces_identical_output (test_consolidate.TestDeterminism) ... ok
+test_two_runs_byte_identical (test_consolidate.TestDeterminism) ... ok
+test_case_insensitive_extension (test_consolidate.TestDiscovery) ... ok
+test_empty_directory (test_consolidate.TestDiscovery) ... ok
+test_finds_json_only (test_consolidate.TestDiscovery) ... ok
+test_ignores_pycache (test_consolidate.TestDiscovery) ... ok
+test_paths_are_relative_not_absolute (test_consolidate.TestDiscovery) ... ok
+test_recurses_into_subdirectories (test_consolidate.TestDiscovery) ... ok
+test_relative_paths_use_forward_slash (test_consolidate.TestDiscovery) ... ok
+test_sorted_output (test_consolidate.TestDiscovery) ... ok
+test_does_not_match_sybil_shape (test_consolidate.TestDupDetectorAdapter) ... ok
+test_empty_pairs_yields_no_findings (test_consolidate.TestDupDetectorAdapter) ... ok
+test_matches_dirty (test_consolidate.TestDupDetectorAdapter) ... ok
+test_does_not_match_lifecycle_shape (test_consolidate.TestEventLinterAdapter) ... ok
+test_does_not_match_staleness_shape (test_consolidate.TestEventLinterAdapter) ... ok
+test_falls_back_to_outer_task_id_when_inner_null (test_consolidate.TestEventLinterAdapter) ... ok
+test_matches_dirty (test_consolidate.TestEventLinterAdapter) ... ok
+test_does_not_match_evidence_scorer_shape (test_consolidate.TestEvidenceHarnessAdapter) ... ok
+test_matches_dirty (test_consolidate.TestEvidenceHarnessAdapter) ... ok
+test_passing_checks_excluded (test_consolidate.TestEvidenceHarnessAdapter) ... ok
+test_task_id_none (test_consolidate.TestEvidenceHarnessAdapter) ... ok
+test_does_not_match_dup_detector_shape (test_consolidate.TestEvidenceScorerAdapter) ... ok
+test_matches_dirty (test_consolidate.TestEvidenceScorerAdapter) ... ok
+test_passed_records_excluded (test_consolidate.TestEvidenceScorerAdapter) ... ok
+test_directory_containing_non_json_files_only (test_consolidate.TestExplicitEdgeCases) ... ok
+test_empty_directory (test_consolidate.TestExplicitEdgeCases) ... ok
+test_finding_with_null_task_id (test_consolidate.TestExplicitEdgeCases) ... ok
+test_json_valid_but_not_a_report (test_consolidate.TestExplicitEdgeCases) ... ok
+test_nested_subdirectories_multiple_levels (test_consolidate.TestExplicitEdgeCases) ... ok
+test_report_file_that_is_empty_array (test_consolidate.TestExplicitEdgeCases) ... ok
+test_two_identical_reports_in_different_files_not_collapsed (test_consolidate.TestExplicitEdgeCases) ... ok
+test_unicode_in_detail_field (test_consolidate.TestExplicitEdgeCases) ... ok
+test_detail_from_empty_after_exclude (test_consolidate.TestHelpers) ... ok
+test_detail_from_sorted_and_deterministic (test_consolidate.TestHelpers) ... ok
+test_make_finding_invalid_severity_falls_back_to_error (test_consolidate.TestHelpers) ... ok
+test_make_finding_shape (test_consolidate.TestHelpers) ... ok
+test_severity_rank_order (test_consolidate.TestHelpers) ... ok
+test_worst_severity_all_unknown (test_consolidate.TestHelpers) ... ok
+test_worst_severity_empty (test_consolidate.TestHelpers) ... ok
+test_worst_severity_ignores_unknown (test_consolidate.TestHelpers) ... ok
+test_worst_severity_picks_highest_rank (test_consolidate.TestHelpers) ... ok
+test_does_not_match_unrelated (test_consolidate.TestLifecycleLinterAdapter) ... ok
+test_does_not_match_xrpl_auditor_shape (test_consolidate.TestLifecycleLinterAdapter) ... ok
+test_matches_clean_zero_findings (test_consolidate.TestLifecycleLinterAdapter) ... ok
+test_matches_dirty (test_consolidate.TestLifecycleLinterAdapter) ... ok
+test_source_report_propagated (test_consolidate.TestLifecycleLinterAdapter) ... ok
+test_does_not_match_preflight_shape (test_consolidate.TestLinkIntegrityAdapter) ... ok
+test_does_not_match_schema_checker_shape (test_consolidate.TestLinkIntegrityAdapter) ... ok
+test_matches_dirty (test_consolidate.TestLinkIntegrityAdapter) ... ok
+test_multi_task_violation_has_null_task_id (test_consolidate.TestLinkIntegrityAdapter) ... ok
+test_does_not_match_link_integrity_shape (test_consolidate.TestPreflightAdapter) ... ok
+test_matches_dirty (test_consolidate.TestPreflightAdapter) ... ok
+test_missing_task_id_is_none (test_consolidate.TestPreflightAdapter) ... ok
+test_does_not_match_lifecycle_shape (test_consolidate.TestQueueAuditorAdapter) ... ok
+test_matches_dirty (test_consolidate.TestQueueAuditorAdapter) ... ok
+test_placeholder_task_id_preserved (test_consolidate.TestQueueAuditorAdapter) ... ok
+test_does_not_match_queue_auditor_shape (test_consolidate.TestRewardReconcilerAdapter) ... ok
+test_does_not_match_xrpl_auditor_shape (test_consolidate.TestRewardReconcilerAdapter) ... ok
+test_matches_dirty (test_consolidate.TestRewardReconcilerAdapter) ... ok
+test_synthesizes_detail_when_absent (test_consolidate.TestRewardReconcilerAdapter) ... ok
+test_does_not_match_link_integrity_shape (test_consolidate.TestSchemaCheckerAdapter) ... ok
+test_matches_dirty (test_consolidate.TestSchemaCheckerAdapter) ... ok
+test_pointer_folded_into_detail (test_consolidate.TestSchemaCheckerAdapter) ... ok
+test_reports_clean_consolidates_to_exit_zero (test_consolidate.TestShippedFixtures) ... ok
+test_reports_clean_directory_exists (test_consolidate.TestShippedFixtures) ... ok
+test_reports_clean_no_absolute_paths (test_consolidate.TestShippedFixtures) ... ok
+test_reports_mixed_consolidates_to_exit_one (test_consolidate.TestShippedFixtures) ... ok
+test_reports_mixed_contains_several_distinct_source_tools (test_consolidate.TestShippedFixtures) ... ok
+test_reports_mixed_directory_exists (test_consolidate.TestShippedFixtures) ... ok
+test_reports_mixed_has_a_cross_tool_task_merge (test_consolidate.TestShippedFixtures) ... ok
+test_reports_mixed_includes_at_least_one_unrecognised_report (test_consolidate.TestShippedFixtures) ... ok
+test_all_three_buckets_flattened (test_consolidate.TestStalenessMonitorAdapter) ... ok
+test_bucket_used_as_severity (test_consolidate.TestStalenessMonitorAdapter) ... ok
+test_findings_must_be_dict_not_list (test_consolidate.TestStalenessMonitorAdapter) ... ok
+test_matches_dirty (test_consolidate.TestStalenessMonitorAdapter) ... ok
+test_does_not_match_dup_detector_shape (test_consolidate.TestSybilDetectorAdapter) ... ok
+test_matches_alerting_cluster (test_consolidate.TestSybilDetectorAdapter) ... ok
+test_non_alerting_cluster_yields_no_findings (test_consolidate.TestSybilDetectorAdapter) ... ok
+test_wallets_sorted_in_detail (test_consolidate.TestSybilDetectorAdapter) ... ok
+test_does_not_match_budget_forecaster_shape (test_consolidate.TestThroughputReporterAdapter) ... ok
+test_matches_dirty (test_consolidate.TestThroughputReporterAdapter) ... ok
+test_under_ceiling_excluded (test_consolidate.TestThroughputReporterAdapter) ... ok
+test_every_known_adapter_matches_exactly_one_of_the_registry (test_consolidate.TestUnrecognisedShapes) ... ok
+test_evidence_manifest_shape_is_unrecognised (test_consolidate.TestUnrecognisedShapes) ... ok
+test_plain_dict_not_a_report (test_consolidate.TestUnrecognisedShapes) ... ok
+test_top_level_list_is_unrecognised (test_consolidate.TestUnrecognisedShapes) ... ok
+test_top_level_null_is_unrecognised (test_consolidate.TestUnrecognisedShapes) ... ok
+test_top_level_number_is_unrecognised (test_consolidate.TestUnrecognisedShapes) ... ok
+test_top_level_string_is_unrecognised (test_consolidate.TestUnrecognisedShapes) ... ok
+test_balance_codes_escalated_to_critical (test_consolidate.TestWalletReconcilerAdapter) ... ok
+test_does_not_match_lifecycle_shape (test_consolidate.TestWalletReconcilerAdapter) ... ok
+test_matches_dirty (test_consolidate.TestWalletReconcilerAdapter) ... ok
+test_missing_detail_is_synthesized (test_consolidate.TestWalletReconcilerAdapter) ... ok
+test_other_codes_default_error (test_consolidate.TestWalletReconcilerAdapter) ... ok
+test_task_id_always_none (test_consolidate.TestWalletReconcilerAdapter) ... ok
+test_denylisted_is_critical (test_consolidate.TestXrplAddressAdapter) ... ok
+test_does_not_match_xrpl_auditor_shape (test_consolidate.TestXrplAddressAdapter) ... ok
+test_matches_dirty (test_consolidate.TestXrplAddressAdapter) ... ok
+test_task_id_always_none (test_consolidate.TestXrplAddressAdapter) ... ok
+test_valid_address_with_no_issues_yields_nothing (test_consolidate.TestXrplAddressAdapter) ... ok
+test_does_not_match_lifecycle_shape (test_consolidate.TestXrplAuditorAdapter) ... ok
+test_does_not_match_reward_reconciler_shape (test_consolidate.TestXrplAuditorAdapter) ... ok
+test_handles_null_task_id_item (test_consolidate.TestXrplAuditorAdapter) ... ok
+test_matches_dirty (test_consolidate.TestXrplAuditorAdapter) ... ok
+test_uses_issue_field_as_code_not_code_field (test_consolidate.TestXrplAuditorAdapter) ... ok
+
+----------------------------------------------------------------------
+Ran 152 tests in 0.019s
+
+OK
+
+$ python3 consolidate.py reports_clean ; echo "exit=$?"
+{"consolidated_version":"1.0","exit_code":0,"findings_by_task":[],"params":{"severity_threshold":null},"reports":[{"finding_count":0,"recognised":true,"source_report":"budget-forecaster_report.json","source_tool":"budget-forecaster"},{"finding_count":0,"recognised":true,"source_report":"dup-detector_report.json","source_tool":"dup-detector"},{"finding_count":0,"recognised":true,"source_report":"event-linter_report.json","source_tool":"event-linter"},{"finding_count":0,"recognised":true,"source_report":"evidence-harness_report.json","source_tool":"evidence-harness"},{"finding_count":0,"recognised":true,"source_report":"evidence-scorer_report.json","source_tool":"evidence-scorer"},{"finding_count":0,"recognised":true,"source_report":"lifecycle-linter_report.json","source_tool":"lifecycle-linter"},{"finding_count":0,"recognised":true,"source_report":"link-integrity_report.json","source_tool":"link-integrity"},{"finding_count":0,"recognised":true,"source_report":"preflight_report.json","source_tool":"preflight"},{"finding_count":0,"recognised":true,"source_report":"queue-auditor_report.json","source_tool":"queue-auditor"},{"finding_count":0,"recognised":true,"source_report":"reward-reconciler_report.json","source_tool":"reward-reconciler"},{"finding_count":0,"recognised":true,"source_report":"schema-checker_report.json","source_tool":"schema-checker"},{"finding_count":0,"recognised":true,"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"},{"finding_count":0,"recognised":true,"source_report":"sybil-detector_report.json","source_tool":"sybil-detector"},{"finding_count":0,"recognised":true,"source_report":"throughput-reporter_report.json","source_tool":"throughput-reporter"},{"finding_count":0,"recognised":true,"source_report":"wallet-reconciler_report.json","source_tool":"wallet-reconciler"},{"finding_count":0,"recognised":true,"source_report":"xrpl-address_report.json","source_tool":"xrpl-address"},{"finding_count":0,"recognised":true,"source_report":"xrpl-auditor_report.json","source_tool":"xrpl-auditor"}],"severity_rollup":{"counts":{"critical":0,"error":0,"info":0,"warning":0},"worst_severity":null},"totals":{"findings_total":0,"reports_recognised":17,"reports_scanned":17,"reports_unrecognised":0,"tasks_with_findings":0},"ungrouped_findings":[]}
+exit=0
+
+$ python3 consolidate.py reports_mixed -o report_run1.json ; echo "exit=$?"
+exit=1
+
+$ python3 consolidate.py reports_mixed -o report_run2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum report_run1.json report_run2.json
+e17d99004dac99e5c9e1f658777a452d843f7f0298bf587d365f9c8f09bd2abe  report_run1.json
+e17d99004dac99e5c9e1f658777a452d843f7f0298bf587d365f9c8f09bd2abe  report_run2.json
+
+$ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 consolidate.py reports_mixed --severity-threshold critical ; echo "exit=$?"
+{"consolidated_version":"1.0","exit_code":1,"findings_by_task":[{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"OVERDUE_PROPOSED","detail":"proposed task's deadline has passed","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-1"}],"task_id":"S-1","worst_severity":"critical"},{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"MALFORMED_DEADLINE","detail":"timestamp is not expressed in UTC (non-zero offset): '2026-08-05T00:00:00+05:30'","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-10"}],"task_id":"S-10","worst_severity":"critical"},{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"MALFORMED_DEADLINE","detail":"unparseable ISO-8601 timestamp: 'not-a-real-date'","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-11"}],"task_id":"S-11","worst_severity":"critical"},{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"MALFORMED_CREATED_AT","detail":"unparseable ISO-8601 timestamp: 'not-a-real-date'","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-12"}],"task_id":"S-12","worst_severity":"critical"},{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"MALFORMED_CREATED_AT","detail":"timestamp is not expressed in UTC (non-zero offset): '2026-08-01T00:00:00+05:30'","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-13"}],"task_id":"S-13","worst_severity":"critical"},{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"DEADLINE_BEFORE_CREATED","detail":"deadline is earlier than created_at (deadline was already past when the task was created)","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-14"},{"code":"OVERDUE_PROPOSED","detail":"proposed task's deadline has passed","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-14"}],"task_id":"S-14","worst_severity":"critical"},{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"STALE_ACCEPTED","detail":"accepted task has exceeded the accepted-stale window","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-4"}],"task_id":"S-4","worst_severity":"critical"},{"contributing_sources":[{"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"}],"findings":[{"code":"STALE_SUBMITTED","detail":"submitted task has exceeded the submitted-stale window","severity":"critical","source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor","task_id":"S-7"}],"task_id":"S-7","worst_severity":"critical"}],"params":{"severity_threshold":"critical"},"reports":[{"finding_count":2,"recognised":true,"source_report":"dup-detector_report.json","source_tool":"dup-detector"},{"finding_count":13,"recognised":true,"source_report":"lifecycle-linter_report.json","source_tool":"lifecycle-linter"},{"finding_count":19,"recognised":true,"source_report":"queue-auditor_report.json","source_tool":"queue-auditor"},{"finding_count":5,"recognised":true,"source_report":"reward-reconciler_report.json","source_tool":"reward-reconciler"},{"finding_count":15,"recognised":true,"source_report":"staleness-monitor_report.json","source_tool":"staleness-monitor"},{"finding_count":1,"recognised":false,"source_report":"subdir/evidence-manifest_report.json","source_tool":"unknown"},{"finding_count":1,"recognised":true,"source_report":"subdir/nested/budget-forecaster_report.json","source_tool":"budget-forecaster"},{"finding_count":1,"recognised":true,"source_report":"subdir/nested/lifecycle-linter_shared_report.json","source_tool":"lifecycle-linter"},{"finding_count":0,"recognised":true,"source_report":"subdir/staleness-monitor_clean_report.json","source_tool":"staleness-monitor"},{"finding_count":1,"recognised":true,"source_report":"subdir/sybil-detector_report.json","source_tool":"sybil-detector"},{"finding_count":7,"recognised":true,"source_report":"xrpl-address_report.json","source_tool":"xrpl-address"},{"finding_count":9,"recognised":true,"source_report":"xrpl-auditor_report.json","source_tool":"xrpl-auditor"},{"finding_count":1,"recognised":true,"source_report":"xrpl-auditor_shared_report.json","source_tool":"xrpl-auditor"}],"severity_rollup":{"counts":{"critical":13,"error":0,"info":0,"warning":0},"worst_severity":"critical"},"totals":{"findings_total":13,"reports_recognised":12,"reports_scanned":13,"reports_unrecognised":1,"tasks_with_findings":8},"ungrouped_findings":[{"code":"BUDGET_OVER_PROJECTION","detail":"projected_total=\"41.500000\" budget_cap=\"20.000000\" status=\"over_budget\"","severity":"critical","source_report":"subdir/nested/budget-forecaster_report.json","source_tool":"budget-forecaster","task_id":null},{"code":"SYBIL_CLUSTER_ALERT","detail":"wallets=[\"rSyb1\", \"rSyb2\", \"rSyb3\"] score=1.0 signals=[\"burst_timing\", \"length_match\", \"shared_cid\"] size=3","severity":"critical","source_report":"subdir/sybil-detector_report.json","source_tool":"sybil-detector","task_id":null},{"code":"UNRECOGNISED_REPORT_SHAPE","detail":"no adapter matched this report shape (top-level JSON type: dict)","severity":"critical","source_report":"subdir/evidence-manifest_report.json","source_tool":"unknown","task_id":null},{"code":"DENYLISTED","detail":"address=\"rBdxvGfS2mmavJVTtxgJ3eKah2nguQ1nZ\" kind=\"classic\" index=7 valid=false","severity":"critical","source_report":"xrpl-address_report.json","source_tool":"xrpl-address","task_id":null}]}
+exit=1
+
+$ python3 consolidate.py /nonexistent_dir ; echo "exit=$?"
+consolidate: error: path does not exist: /nonexistent_dir
+exit=2
+
+$ grep -c "/sessions\|/tmp\|/home" report_run1.json ; echo "abs-path-grep-exit=$?"
+0
+abs-path-grep-exit=1
+
+=== RELOCATION TEST ===
+$ mkdir -p /tmp/relocated && cp -r reports_mixed /tmp/relocated/reports_mixed
+$ cd /tmp/relocated && python3 /tmp/build_consolidate/consolidate.py reports_mixed -o relocated_report.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum /tmp/relocated/relocated_report.json /tmp/build_consolidate/report_run1.json
+e17d99004dac99e5c9e1f658777a452d843f7f0298bf587d365f9c8f09bd2abe  /tmp/relocated/relocated_report.json
+e17d99004dac99e5c9e1f658777a452d843f7f0298bf587d365f9c8f09bd2abe  /tmp/build_consolidate/report_run1.json
+
+$ cmp /tmp/relocated/relocated_report.json /tmp/build_consolidate/report_run1.json && echo RELOCATION-HASH-MATCH
+RELOCATION-HASH-MATCH
