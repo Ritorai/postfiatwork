@@ -13,6 +13,15 @@ Exit codes: `0` clean, `1` findings (or per-file scan errors — see
 (missing `--root`, `--root` not a directory, unwritable `-o` path, unknown
 `--rule`/`--min-severity` value).
 
+## Flags
+
+| flag | description |
+|------|-------------|
+| `--root DIR` | Required. Root directory to scan for `.py` files. |
+| `-o`, `--output PATH` | Write the canonical JSON report to this file instead of stdout. Optional; without it, the report goes to stdout. |
+| `--rule RULE_ID` | Repeatable (`--rule ND001_WALL_CLOCK --rule ND005_UNSEEDED_RANDOM ...`). Restricts the scan to the given rule id(s), one of the six `ND0xx` codes below. Default: run all six rules. |
+| `--min-severity {low,medium,high}` | Only include findings at or above this severity. Default `low` (include everything). |
+
 ## Why AST, not regex
 
 The spec for this tool requires scanning for patterns like `os.listdir(`,
