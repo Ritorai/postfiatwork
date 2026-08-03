@@ -876,6 +876,76 @@ class RunEndToEndTests(unittest.TestCase):
             self.assertNotIn("ROOT_README_COUNT_DRIFT", codes)
             self.assertEqual(rc, 0)
 
+    def test_stale_catalogued_test_count_alone_exits_1_end_to_end(self):
+        """A catalogued TEST COUNT going stale must exit 1, tool count held correct.
+
+        This isolates the test-count half of ROOT_README_COUNT_DRIFT end to end.
+        test_root_readme_drift_end_to_end also exits 1, but its drift is on the
+        TOOL count; test_drift_fires_on_test_total_mismatch_only isolates the
+        test total but calls check_root_readme_drift() directly and never
+        exercises an exit code. Neither covers "a catalogued test count was
+        deliberately made stale, therefore exit 1", so this test does.
+        """
+        with TempRepo() as root:
+            # Two tools, 3 + 4 = 7 tests actually catalogued.
+            make_tool_dir(root, "a1", readme="d1\n3 tests\n")
+            make_tool_dir(root, "a2", readme="d2\n4 tests\n")
+            rr = os.path.join(root, "ROOT_README.md")
+
+            # Baseline: tool count AND test total both correct -> exit 0.
+            write(rr, "This repo has 2 tools and 7 tests.\n")
+            out_ok = os.path.join(root, "ok.json")
+            rc_ok = indexgen.run(["--root", root, "--root-readme", rr, "-o", out_ok])
+            with open(out_ok, encoding="utf-8") as _fh:
+                codes_ok = [f["code"] for f in json.load(_fh)["findings"]]
+            self.assertNotIn("ROOT_README_COUNT_DRIFT", codes_ok)
+            self.assertEqual(rc_ok, 0)
+
+            # Now make ONLY the catalogued test count stale (7 -> 6). The tool
+            # count stays correct, so any drift found must be the test total.
+            write(rr, "This repo has 2 tools and 6 tests.\n")
+            out = os.path.join(root, "stale.json")
+            rc = indexgen.run(["--root", root, "--root-readme", rr, "-o", out])
+
+            self.assertEqual(rc, 1, "a stale catalogued test count must exit 1")
+
+            with open(out, encoding="utf-8") as _fh:
+                data = json.load(_fh)
+            drift = [f for f in data["findings"] if f["code"] == "ROOT_README_COUNT_DRIFT"]
+            self.assertTrue(drift, "expected ROOT_README_COUNT_DRIFT")
+            locations = sorted(f["location"] for f in drift)
+            self.assertEqual(
+                locations,
+                ["root_readme:test_total"],
+                "only the test-total half should fire; the tool count is correct",
+            )
+
+    def test_stale_catalogued_test_count_exits_1_via_subprocess(self):
+        """Same case, but through the real CLI so the exit code is the process's
+        own status rather than run()'s return value."""
+        with TempRepo() as root:
+            make_tool_dir(root, "a1", readme="d1\n3 tests\n")
+            make_tool_dir(root, "a2", readme="d2\n4 tests\n")
+            rr = os.path.join(root, "ROOT_README.md")
+            write(rr, "This repo has 2 tools and 6 tests.\n")
+            out = os.path.join(root, "r.json")
+            proc = subprocess.run(
+                [sys.executable, INDEXGEN_PATH,
+                 "--root", root, "--root-readme", rr, "-o", out],
+                capture_output=True, text=True,
+            )
+            self.assertEqual(proc.returncode, 1)
+            with open(out, encoding="utf-8") as _fh:
+                data = json.load(_fh)
+            self.assertIn(
+                "root_readme:test_total",
+                [
+                    f["location"]
+                    for f in data["findings"]
+                    if f["code"] == "ROOT_README_COUNT_DRIFT"
+                ],
+            )
+
     def test_missing_check_index_file_reported_not_fatal(self):
         with TempRepo() as root:
             make_tool_dir(root, "a1", readme="d1\n1 tests\n")

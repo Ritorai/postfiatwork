@@ -422,3 +422,15 @@ hashes, because indexgen normalises line endings when it extracts a description.
 hashes agreeing is exactly why it was nearly missed; only diff -r on the trees caught
 it. The generator now stores base64 and writes binary, and make_fixture_repo.py carries
 a comment saying not to simplify it back.
+
+--- stale catalogued test count -> exit 1 (added after a verifier flagged the gap) ---
+=== $ python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued ===
+test_stale_catalogued_test_count_alone_exits_1_end_to_end (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_alone_exits_1_end_to_end)
+test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess)
+exit=0
+
+=== $ python3 -m unittest test_indexgen 2>&1 | tail -3 ===
+Ran 140 tests in 0.280s
+
+OK
+exit=0
