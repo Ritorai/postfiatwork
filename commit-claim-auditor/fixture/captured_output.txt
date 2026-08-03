@@ -1,0 +1,14 @@
+$ sha256sum test_example.py
+f83f4602bb9e5533e70ea4b9b9468d2548ad5cd6a45961cee103768bbd9ef66b  test_example.py
+
+$ python3 -m unittest test_example -v
+test_addition (test_example.ExampleTests.test_addition) ... ok
+test_string_upper (test_example.ExampleTests.test_string_upper) ... ok
+test_subtraction (test_example.ExampleTests.test_subtraction) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+OK
+
+Summary: **3 tests across 1 tools**
