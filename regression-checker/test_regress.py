@@ -689,7 +689,12 @@ class TestBuildReport(TempRootMixin, unittest.TestCase):
     def test_report_is_json_serializable(self):
         root = self.make_root()
         report, _ = regress.build_report(root, {}, timeout=10)
-        json.dumps(report)  # must not raise
+        dumped = json.dumps(report)
+        round_tripped = json.loads(dumped)
+        self.assertEqual(round_tripped, report)
+        self.assertEqual(round_tripped["status"], "clean")
+        self.assertEqual(round_tripped["tools_checked"], 0)
+        self.assertEqual(round_tripped["results"], [])
 
     def test_report_has_schema_version_and_tool_name(self):
         root = self.make_root()
@@ -906,8 +911,11 @@ class TestCLIOutputHandling(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             out1 = os.path.join(td, "r.json")
             code, out, err = run_cli(["--root", "fixtures", "--baselines", "fixtures/baselines_ok.json", "--output", out1], cwd=HERE)
+            self.assertEqual(out.strip(), "")
             with open(out1) as fh:
-                json.load(fh)
+                report = json.load(fh)
+            self.assertEqual(report["status"], "clean")
+            self.assertEqual(code, 0)
 
     def test_output_file_living_inside_root_not_picked_up_next_run(self):
         # Edge case: -o writes its report file *inside* --root. Verify that
