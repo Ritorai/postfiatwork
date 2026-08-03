@@ -1,0 +1,128 @@
+[
+  {
+    "contributor": "alice",
+    "task_id": "T-100",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-20T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-21T15:00:00Z"},
+      {"state": "verification_requested", "at": "2026-07-22T08:00:00Z"},
+      {"state": "awaiting_review", "at": "2026-07-22T09:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-24T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "screenshot"}, {"evidence_type": "log"}]
+  },
+  {
+    "contributor": "alice",
+    "task_id": "T-101",
+    "events": [
+      {"state": "proposed", "at": "2026-07-15T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-15T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-16T15:00:00Z"},
+      {"state": "verification_requested", "at": "2026-07-17T08:00:00Z"},
+      {"state": "refused", "at": "2026-07-17T18:00:00Z", "refusal_reason": "missing_attachment"},
+      {"state": "submitted", "at": "2026-07-18T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "log"}]
+  },
+  {
+    "contributor": "alice",
+    "task_id": "T-102",
+    "events": [
+      {"state": "proposed", "at": "2026-07-10T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-10T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-11T15:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-12T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "screenshot"}]
+  },
+  {
+    "contributor": "alice",
+    "task_id": "T-103",
+    "events": [
+      {"state": "proposed", "at": "2026-07-05T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-05T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-06T15:00:00Z"},
+      {"state": "verification_requested", "at": "2026-07-07T08:00:00Z"},
+      {"state": "submitted", "at": "2026-07-07T20:00:00Z"},
+      {"state": "verification_requested", "at": "2026-07-08T08:00:00Z"},
+      {"state": "submitted", "at": "2026-07-08T20:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-09T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "log"}, {"evidence_type": "log"}, {"evidence_type": "diff"}]
+  },
+  {
+    "contributor": "alice",
+    "task_id": "T-104",
+    "events": [
+      {"state": "proposed", "at": "2026-08-01T09:00:00Z"},
+      {"state": "accepted", "at": "2026-08-01T10:00:00Z"},
+      {"state": "submitted", "at": "2026-08-02T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "screenshot"}]
+  },
+  {
+    "contributor": "bob",
+    "task_id": "T-200",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-20T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-21T15:00:00Z"},
+      {"state": "refused", "at": "2026-07-22T09:00:00Z", "refusal_reason": "quality_below_threshold"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "bob",
+    "task_id": "T-201",
+    "events": [
+      {"state": "proposed", "at": "2026-07-15T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-15T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-16T15:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-17T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "diff"}]
+  },
+  {
+    "contributor": "bob",
+    "task_id": "T-202",
+    "events": [
+      {"state": "proposed", "at": "2026-07-10T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-10T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-11T15:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-12T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "diff"}, {"evidence_type": "screenshot"}]
+  },
+  {
+    "contributor": "bob",
+    "task_id": "T-203",
+    "events": [
+      {"state": "proposed", "at": "2026-07-05T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-05T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-06T15:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-07T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "log"}]
+  },
+  {
+    "contributor": "bob",
+    "task_id": "T-204",
+    "events": [
+      {"state": "proposed", "at": "2026-07-01T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-01T10:00:00Z"},
+      {"state": "submitted", "at": "2026-07-02T15:00:00Z"},
+      {"state": "refused", "at": "2026-07-03T09:00:00Z", "refusal_reason": "incomplete_deliverable"}
+    ],
+    "evidence": [{"evidence_type": "screenshot"}]
+  },
+  {
+    "contributor": "carla",
+    "task_id": "T-300",
+    "events": [
+      {"state": "proposed", "at": "2026-07-25T09:00:00Z"},
+      {"state": "accepted", "at": "2026-07-25T10:00:00Z"}
+    ],
+    "evidence": []
+  }
+]

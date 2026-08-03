@@ -1,0 +1,228 @@
+$ python3 -m unittest test_scorecard -v
+test_counts_by_code_has_all_six_codes (test_scorecard.TestBuildReportShape) ... ok
+test_duplicate_task_id_across_two_contributors_both_counted (test_scorecard.TestBuildReportShape) ... ok
+test_empty_list_zero_records_zero_contributors (test_scorecard.TestBuildReportShape) ... ok
+test_findings_deterministic_field_presence (test_scorecard.TestBuildReportShape) ... ok
+test_generated_at_echoes_now (test_scorecard.TestBuildReportShape) ... ok
+test_non_list_root_raises (test_scorecard.TestBuildReportShape) ... ok
+test_number_root_raises (test_scorecard.TestBuildReportShape) ... ok
+test_options_echoes_min_tasks (test_scorecard.TestBuildReportShape) ... ok
+test_scorecards_sorted_by_contributor_only (test_scorecard.TestBuildReportShape) ... ok
+test_string_root_raises (test_scorecard.TestBuildReportShape) ... ok
+test_top_level_keys (test_scorecard.TestBuildReportShape) ... ok
+test_total_records_counts_unattributed_too (test_scorecard.TestBuildReportShape) ... ok
+test_unicode_contributor_name_round_trips (test_scorecard.TestBuildReportShape) ... ok
+test_clean_data_only_insufficient_data_still_exit_0 (test_scorecard.TestCLI) ... ok
+test_empty_array_input_exits_0 (test_scorecard.TestCLI) ... ok
+test_help_flag_exits_0 (test_scorecard.TestCLI) ... ok
+test_invalid_now_value_exits_2 (test_scorecard.TestCLI) ... ok
+test_malformed_record_exits_1 (test_scorecard.TestCLI) ... ok
+test_min_tasks_accepts_only_integers (test_scorecard.TestCLI) ... ok
+test_min_tasks_flag_takes_effect_end_to_end (test_scorecard.TestCLI) ... ok
+test_missing_contributor_exits_1 (test_scorecard.TestCLI) ... ok
+test_missing_input_file_arg_exits_2 (test_scorecard.TestCLI) ... ok
+test_missing_now_exits_2 (test_scorecard.TestCLI) ... ok
+test_negative_min_tasks_exits_2 (test_scorecard.TestCLI) ... ok
+test_no_args_exits_2 (test_scorecard.TestCLI) ... ok
+test_non_utc_now_value_exits_2 (test_scorecard.TestCLI) ... ok
+test_nonexistent_input_file_exits_2 (test_scorecard.TestCLI) ... ok
+test_not_json_input_exits_2 (test_scorecard.TestCLI) ... ok
+test_object_root_exits_2 (test_scorecard.TestCLI) ... ok
+test_output_flag_writes_file_not_stdout (test_scorecard.TestCLI) ... ok
+test_output_long_flag_equivalent (test_scorecard.TestCLI) ... ok
+test_repeated_runs_byte_identical_output_files (test_scorecard.TestCLI) ... ok
+test_stderr_message_on_bad_input_file (test_scorecard.TestCLI) ... ok
+test_stderr_message_on_missing_now (test_scorecard.TestCLI) ... ok
+test_ends_with_single_trailing_newline (test_scorecard.TestCanonicalJson) ... ok
+test_ensure_ascii_escapes_unicode (test_scorecard.TestCanonicalJson) ... ok
+test_is_valid_single_line_json (test_scorecard.TestCanonicalJson) ... ok
+test_keys_sorted (test_scorecard.TestCanonicalJson) ... ok
+test_no_spaces_after_separators (test_scorecard.TestCanonicalJson) ... ok
+test_roundtrips_through_json_loads (test_scorecard.TestCanonicalJson) ... ok
+test_findings_order_independent_of_dict_key_insertion_order (test_scorecard.TestDeterminism) ... ok
+test_output_independent_of_input_record_order (test_scorecard.TestDeterminism) ... ok
+test_repeated_calls_identical_canonical_json (test_scorecard.TestDeterminism) ... ok
+test_disclaimer_field_present_and_machine_readable (test_scorecard.TestEthicalRequirement) ... ok
+test_no_forbidden_keys_anywhere_in_output (test_scorecard.TestEthicalRequirement) ... ok
+test_no_top_level_single_score_field (test_scorecard.TestEthicalRequirement) ... ok
+test_scorecards_ordered_by_contributor_id_not_by_any_metric (test_scorecard.TestEthicalRequirement) ... ok
+test_contributor_with_no_evidence_at_all (test_scorecard.TestEvidenceTypeMix) ... ok
+test_denominator_is_total_evidence_items (test_scorecard.TestEvidenceTypeMix) ... ok
+test_evidence_mix_aggregates_across_multiple_tasks (test_scorecard.TestEvidenceTypeMix) ... ok
+test_evidence_mix_by_type_sorted_by_type_name (test_scorecard.TestEvidenceTypeMix) ... ok
+test_evidence_mix_not_gated_by_min_tasks (test_scorecard.TestEvidenceTypeMix) ... ok
+test_evidence_type_empty_string_gets_its_own_bucket (test_scorecard.TestEvidenceTypeMix) ... ok
+test_clean_fixture_cli_exits_0 (test_scorecard.TestFixtures) ... ok
+test_clean_fixture_is_valid_json_array (test_scorecard.TestFixtures) ... ok
+test_clean_fixture_produces_zero_non_informational_findings (test_scorecard.TestFixtures) ... ok
+test_flagged_fixture_also_triggers_insufficient_data (test_scorecard.TestFixtures) ... ok
+test_flagged_fixture_cli_exits_1 (test_scorecard.TestFixtures) ... ok
+test_flagged_fixture_is_valid_json_array (test_scorecard.TestFixtures) ... ok
+test_flagged_fixture_triggers_all_five_non_informational_codes (test_scorecard.TestFixtures) ... ok
+test_evidence_numerator_denominator_still_visible_when_insufficient (test_scorecard.TestInsufficientData) ... ok
+test_exactly_at_min_tasks_is_sufficient (test_scorecard.TestInsufficientData) ... ok
+test_insufficient_data_alone_does_not_set_exit_relevant_count (test_scorecard.TestInsufficientData) ... ok
+test_insufficient_data_combined_with_other_finding_still_counts_other (test_scorecard.TestInsufficientData) ... ok
+test_insufficient_data_produces_finding (test_scorecard.TestInsufficientData) ... ok
+test_min_tasks_zero_always_sufficient (test_scorecard.TestInsufficientData) ... ok
+test_one_above_min_tasks_is_sufficient (test_scorecard.TestInsufficientData) ... ok
+test_one_below_min_tasks_is_insufficient (test_scorecard.TestInsufficientData) ... ok
+test_ends_with_z_not_offset (test_scorecard.TestIsoZ) ... ok
+test_preserves_microseconds (test_scorecard.TestIsoZ) ... ok
+test_replaces_plus_zero_offset_with_z (test_scorecard.TestIsoZ) ... ok
+test_roundtrips_through_parse (test_scorecard.TestIsoZ) ... ok
+test_banker_rounding_half_even_example (test_scorecard.TestMakeRate) ... ok
+test_exact_third_rounded (test_scorecard.TestMakeRate) ... ok
+test_explicit_note_overrides_and_skips_division (test_scorecard.TestMakeRate) ... ok
+test_full_ratio_is_one (test_scorecard.TestMakeRate) ... ok
+test_large_numbers (test_scorecard.TestMakeRate) ... ok
+test_simple_half (test_scorecard.TestMakeRate) ... ok
+test_two_thirds_rounded (test_scorecard.TestMakeRate) ... ok
+test_value_is_a_string_not_a_float (test_scorecard.TestMakeRate) ... ok
+test_zero_denominator_nonzero_numerator_still_null (test_scorecard.TestMakeRate) ... ok
+test_zero_denominator_value_is_null (test_scorecard.TestMakeRate) ... ok
+test_zero_numerator (test_scorecard.TestMakeRate) ... ok
+test_average_verification_rounds_denominator_is_terminal_tasks (test_scorecard.TestMetricDenominators) ... ok
+test_average_verification_rounds_mean_across_multiple_terminal_tasks (test_scorecard.TestMetricDenominators) ... ok
+test_completion_plus_refusal_numerators_sum_to_terminal (test_scorecard.TestMetricDenominators) ... ok
+test_completion_rate_excludes_in_flight_tasks (test_scorecard.TestMetricDenominators) ... ok
+test_empty_history_task_not_terminal_zero_rounds (test_scorecard.TestMetricDenominators) ... ok
+test_refusal_rate_same_denominator_as_completion (test_scorecard.TestMetricDenominators) ... ok
+test_build_report_requires_now_argument (test_scorecard.TestNoWallClockRead) ... ok
+test_now_is_only_ever_the_injected_value (test_scorecard.TestNoWallClockRead) ... ok
+test_source_has_no_forbidden_wall_clock_calls (test_scorecard.TestNoWallClockRead) ... ok
+test_invalid_bad_day (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_hour (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_bad_month (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_date_only_no_z (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_empty_string (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_garbage_text (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_negative_offset (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_positive_offset (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_slash_date (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_timezone_naive (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_trailing_garbage (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_type_boolean_value (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_type_dict_value (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_type_float_value (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_type_integer_value (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_type_list_value (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_type_none_value (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_whitespace_only (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_invalid_z_with_embedded_offset (test_scorecard.TestParseUtcTimestampInvalid) ... ok
+test_valid_end_of_year (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_leading_trailing_whitespace (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_leap_day (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_lowercase_z (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_offset (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_microseconds_with_z (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_minus_zero_offset (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_plus_zero_offset (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_space_separator_with_offset (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_valid_uppercase_z (test_scorecard.TestParseUtcTimestampValid) ... ok
+test_case_variants_treated_as_distinct_contributors (test_scorecard.TestProcessRecordContributor) ... ok
+test_contributor_empty_string (test_scorecard.TestProcessRecordContributor) ... ok
+test_contributor_integer (test_scorecard.TestProcessRecordContributor) ... ok
+test_contributor_list (test_scorecard.TestProcessRecordContributor) ... ok
+test_contributor_none (test_scorecard.TestProcessRecordContributor) ... ok
+test_contributor_trailing_whitespace_preserved_not_stripped (test_scorecard.TestProcessRecordContributor) ... ok
+test_contributor_unicode_accepted (test_scorecard.TestProcessRecordContributor) ... ok
+test_contributor_whitespace_only (test_scorecard.TestProcessRecordContributor) ... ok
+test_missing_contributor_finding_uses_task_id (test_scorecard.TestProcessRecordContributor) ... ok
+test_missing_contributor_key (test_scorecard.TestProcessRecordContributor) ... ok
+test_missing_contributor_key_message_has_no_memory_address (test_scorecard.TestProcessRecordContributor) ... ok
+test_repeated_process_record_calls_produce_identical_messages (test_scorecard.TestProcessRecordContributor) ... ok
+test_trailing_whitespace_variants_treated_as_distinct_contributors (test_scorecard.TestProcessRecordContributor) ... ok
+test_all_seven_known_states_not_unknown (test_scorecard.TestProcessRecordEvents) ... ok
+test_empty_events_list_is_empty_history (test_scorecard.TestProcessRecordEvents) ... ok
+test_empty_history_still_attributed (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_at_non_utc_offset (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_at_not_a_string (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_at_unparseable (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_missing_at (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_missing_state (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_not_a_dict (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_state_empty_string (test_scorecard.TestProcessRecordEvents) ... ok
+test_event_state_not_a_string (test_scorecard.TestProcessRecordEvents) ... ok
+test_invalid_timestamp_excludes_event_from_terminal_determination (test_scorecard.TestProcessRecordEvents) ... ok
+test_one_bad_one_good_event_only_bad_flagged (test_scorecard.TestProcessRecordEvents) ... ok
+test_refusal_reason_non_string_flagged (test_scorecard.TestProcessRecordEvents) ... ok
+test_refusal_reason_null_ok (test_scorecard.TestProcessRecordEvents) ... ok
+test_refusal_reason_string_ok (test_scorecard.TestProcessRecordEvents) ... ok
+test_unknown_state_case_sensitive (test_scorecard.TestProcessRecordEvents) ... ok
+test_unknown_state_flagged (test_scorecard.TestProcessRecordEvents) ... ok
+test_evidence_item_missing_evidence_type (test_scorecard.TestProcessRecordEvidence) ... ok
+test_evidence_item_not_a_dict (test_scorecard.TestProcessRecordEvidence) ... ok
+test_evidence_type_empty_string_is_counted (test_scorecard.TestProcessRecordEvidence) ... ok
+test_evidence_type_not_a_string (test_scorecard.TestProcessRecordEvidence) ... ok
+test_evidence_type_unicode_counted (test_scorecard.TestProcessRecordEvidence) ... ok
+test_multiple_evidence_items_all_counted (test_scorecard.TestProcessRecordEvidence) ... ok
+test_no_evidence_at_all (test_scorecard.TestProcessRecordEvidence) ... ok
+test_partial_bad_evidence_good_still_counted (test_scorecard.TestProcessRecordEvidence) ... ok
+test_events_is_none (test_scorecard.TestProcessRecordShape) ... ok
+test_events_not_a_list (test_scorecard.TestProcessRecordShape) ... ok
+test_evidence_absent_is_ok_zero_items (test_scorecard.TestProcessRecordShape) ... ok
+test_evidence_not_a_list (test_scorecard.TestProcessRecordShape) ... ok
+test_missing_events_key (test_scorecard.TestProcessRecordShape) ... ok
+test_missing_task_id (test_scorecard.TestProcessRecordShape) ... ok
+test_record_is_a_string (test_scorecard.TestProcessRecordShape) ... ok
+test_record_none (test_scorecard.TestProcessRecordShape) ... ok
+test_record_not_a_dict (test_scorecard.TestProcessRecordShape) ... ok
+test_task_id_empty_string (test_scorecard.TestProcessRecordShape) ... ok
+test_task_id_integer (test_scorecard.TestProcessRecordShape) ... ok
+test_task_id_none (test_scorecard.TestProcessRecordShape) ... ok
+test_task_id_unicode_accepted (test_scorecard.TestProcessRecordShape) ... ok
+test_valid_minimal_record_no_findings (test_scorecard.TestProcessRecordShape) ... ok
+test_latest_in_flight_state_not_terminal (test_scorecard.TestTerminalStateDetermination) ... ok
+test_latest_refused_is_terminal (test_scorecard.TestTerminalStateDetermination) ... ok
+test_latest_rewarded_is_terminal (test_scorecard.TestTerminalStateDetermination) ... ok
+test_no_events_no_terminal_state (test_scorecard.TestTerminalStateDetermination) ... ok
+test_out_of_chronological_input_order_still_resolved_correctly (test_scorecard.TestTerminalStateDetermination) ... ok
+test_rewarded_then_later_non_terminal_event_not_terminal (test_scorecard.TestTerminalStateDetermination) ... ok
+test_zero_terminal_tasks_completion_rate_is_null_not_crash (test_scorecard.TestTerminalStateDetermination) ... ok
+test_identical_timestamps_tiebreak_by_input_order (test_scorecard.TestVerificationRounds) ... ok
+test_non_chronological_input_order_still_sorted (test_scorecard.TestVerificationRounds) ... ok
+test_refused_breaks_adjacency (test_scorecard.TestVerificationRounds) ... ok
+test_reverse_order_not_counted (test_scorecard.TestVerificationRounds) ... ok
+test_single_pair_one_round (test_scorecard.TestVerificationRounds) ... ok
+test_two_rounds (test_scorecard.TestVerificationRounds) ... ok
+test_zero_events_zero_rounds (test_scorecard.TestVerificationRounds) ... ok
+
+----------------------------------------------------------------------
+Ran 188 tests in 0.411s
+
+OK
+
+$ python3 scorecard.py histories_clean.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+{"disclaimer":{"not_a_basis_for_penalization":true,"not_a_ranking":true,"text":"These figures are descriptive context about throughput and review friction, computed under the fixed definitions in README.md. They are not rankings, percentiles, letter grades, or a composite score, and scorecards below are ordered only by contributor id -- never by any metric. They must not be used to penalize, discipline, or rank a contributor. They do not measure code quality, task difficulty, or effort: a contributor who takes on harder or more ambiguous tasks will tend to look worse on these numbers than one who takes on easier ones, even if their work is better."},"findings":[{"code":"INSUFFICIENT_DATA","contributor":"carla","message":"contributor 'carla' has 1 task(s), below --min-tasks=5; rate metrics reported as null (informational only, does not affect exit code)","min_tasks":5,"task_id":null,"total_tasks":1}],"generated_at":"2026-08-03T00:00:00Z","options":{"min_tasks":5},"scorecards":[{"average_verification_rounds":{"denominator":3,"note":null,"numerator":2,"value":"0.666667"},"completion_rate":{"denominator":3,"note":null,"numerator":3,"value":"1.000000"},"contributor":"alice","evidence_type_mix":{"by_type":[{"count":1,"evidence_type":"diff","share":{"denominator":8,"note":null,"numerator":1,"value":"0.125000"}},{"count":4,"evidence_type":"log","share":{"denominator":8,"note":null,"numerator":4,"value":"0.500000"}},{"count":3,"evidence_type":"screenshot","share":{"denominator":8,"note":null,"numerator":3,"value":"0.375000"}}],"total_evidence_items":8},"min_tasks_met":true,"refusal_rate":{"denominator":3,"note":null,"numerator":0,"value":"0.000000"},"refused_tasks":0,"rewarded_tasks":3,"terminal_tasks":3,"total_tasks":5},{"average_verification_rounds":{"denominator":5,"note":null,"numerator":0,"value":"0.000000"},"completion_rate":{"denominator":5,"note":null,"numerator":3,"value":"0.600000"},"contributor":"bob","evidence_type_mix":{"by_type":[{"count":2,"evidence_type":"diff","share":{"denominator":5,"note":null,"numerator":2,"value":"0.400000"}},{"count":1,"evidence_type":"log","share":{"denominator":5,"note":null,"numerator":1,"value":"0.200000"}},{"count":2,"evidence_type":"screenshot","share":{"denominator":5,"note":null,"numerator":2,"value":"0.400000"}}],"total_evidence_items":5},"min_tasks_met":true,"refusal_rate":{"denominator":5,"note":null,"numerator":2,"value":"0.400000"},"refused_tasks":2,"rewarded_tasks":3,"terminal_tasks":5,"total_tasks":5},{"average_verification_rounds":{"denominator":0,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"completion_rate":{"denominator":0,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"contributor":"carla","evidence_type_mix":{"by_type":[],"total_evidence_items":0},"min_tasks_met":false,"refusal_rate":{"denominator":0,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"refused_tasks":0,"rewarded_tasks":0,"terminal_tasks":0,"total_tasks":1}],"summary":{"counts_by_code":{"EMPTY_HISTORY":0,"INSUFFICIENT_DATA":1,"INVALID_TIMESTAMP":0,"MALFORMED_RECORD":0,"MISSING_CONTRIBUTOR":0,"UNKNOWN_STATE":0},"total_contributors":3,"total_findings":1,"total_records":11}}
+exit=0
+
+$ python3 scorecard.py histories_flagged.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?"
+exit=1
+
+$ python3 scorecard.py histories_flagged.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?"
+exit=1
+
+$ sha256sum r1.json r2.json
+7ca51da4f898c97fece5d3bcd3d31b5570dfb7aa1d361340338fe604c3b14eff  r1.json
+7ca51da4f898c97fece5d3bcd3d31b5570dfb7aa1d361340338fe604c3b14eff  r2.json
+
+$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+$ python3 scorecard.py histories_clean.json --now 2026-08-03T00:00:00Z --min-tasks 100 ; echo "exit=$?"
+{"disclaimer":{"not_a_basis_for_penalization":true,"not_a_ranking":true,"text":"These figures are descriptive context about throughput and review friction, computed under the fixed definitions in README.md. They are not rankings, percentiles, letter grades, or a composite score, and scorecards below are ordered only by contributor id -- never by any metric. They must not be used to penalize, discipline, or rank a contributor. They do not measure code quality, task difficulty, or effort: a contributor who takes on harder or more ambiguous tasks will tend to look worse on these numbers than one who takes on easier ones, even if their work is better."},"findings":[{"code":"INSUFFICIENT_DATA","contributor":"alice","message":"contributor 'alice' has 5 task(s), below --min-tasks=100; rate metrics reported as null (informational only, does not affect exit code)","min_tasks":100,"task_id":null,"total_tasks":5},{"code":"INSUFFICIENT_DATA","contributor":"bob","message":"contributor 'bob' has 5 task(s), below --min-tasks=100; rate metrics reported as null (informational only, does not affect exit code)","min_tasks":100,"task_id":null,"total_tasks":5},{"code":"INSUFFICIENT_DATA","contributor":"carla","message":"contributor 'carla' has 1 task(s), below --min-tasks=100; rate metrics reported as null (informational only, does not affect exit code)","min_tasks":100,"task_id":null,"total_tasks":1}],"generated_at":"2026-08-03T00:00:00Z","options":{"min_tasks":100},"scorecards":[{"average_verification_rounds":{"denominator":3,"note":"INSUFFICIENT_DATA","numerator":2,"value":null},"completion_rate":{"denominator":3,"note":"INSUFFICIENT_DATA","numerator":3,"value":null},"contributor":"alice","evidence_type_mix":{"by_type":[{"count":1,"evidence_type":"diff","share":{"denominator":8,"note":null,"numerator":1,"value":"0.125000"}},{"count":4,"evidence_type":"log","share":{"denominator":8,"note":null,"numerator":4,"value":"0.500000"}},{"count":3,"evidence_type":"screenshot","share":{"denominator":8,"note":null,"numerator":3,"value":"0.375000"}}],"total_evidence_items":8},"min_tasks_met":false,"refusal_rate":{"denominator":3,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"refused_tasks":0,"rewarded_tasks":3,"terminal_tasks":3,"total_tasks":5},{"average_verification_rounds":{"denominator":5,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"completion_rate":{"denominator":5,"note":"INSUFFICIENT_DATA","numerator":3,"value":null},"contributor":"bob","evidence_type_mix":{"by_type":[{"count":2,"evidence_type":"diff","share":{"denominator":5,"note":null,"numerator":2,"value":"0.400000"}},{"count":1,"evidence_type":"log","share":{"denominator":5,"note":null,"numerator":1,"value":"0.200000"}},{"count":2,"evidence_type":"screenshot","share":{"denominator":5,"note":null,"numerator":2,"value":"0.400000"}}],"total_evidence_items":5},"min_tasks_met":false,"refusal_rate":{"denominator":5,"note":"INSUFFICIENT_DATA","numerator":2,"value":null},"refused_tasks":2,"rewarded_tasks":3,"terminal_tasks":5,"total_tasks":5},{"average_verification_rounds":{"denominator":0,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"completion_rate":{"denominator":0,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"contributor":"carla","evidence_type_mix":{"by_type":[],"total_evidence_items":0},"min_tasks_met":false,"refusal_rate":{"denominator":0,"note":"INSUFFICIENT_DATA","numerator":0,"value":null},"refused_tasks":0,"rewarded_tasks":0,"terminal_tasks":0,"total_tasks":1}],"summary":{"counts_by_code":{"EMPTY_HISTORY":0,"INSUFFICIENT_DATA":3,"INVALID_TIMESTAMP":0,"MALFORMED_RECORD":0,"MISSING_CONTRIBUTOR":0,"UNKNOWN_STATE":0},"total_contributors":3,"total_findings":3,"total_records":11}}
+exit=0
+
+$ python3 scorecard.py histories_clean.json ; echo "exit=$?"
+usage: scorecard.py [-h] --now NOW [--min-tasks MIN_TASKS] [-o OUTPUT]
+                    input_file
+scorecard.py: error: the following arguments are required: --now
+exit=2
+
+$ python3 scorecard.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+scorecard.py: error: input file not found: /nonexistent.json
+exit=2
+
+$ grep -n "now()\|utcnow\|time.time" scorecard.py
+(grep exit code: 1)

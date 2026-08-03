@@ -1,0 +1,129 @@
+[
+  {
+    "contributor": "dana",
+    "task_id": "T-MALFORMED-RECORD",
+    "events": "not-a-list",
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-BAD-EVENT-ITEM",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      "not-a-dict-event"
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-MISSING-STATE",
+    "events": [
+      {"at": "2026-07-20T09:00:00Z"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-MISSING-AT",
+    "events": [
+      {"state": "proposed"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-BAD-TIMESTAMP",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "submitted", "at": "not-a-timestamp"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-NON-UTC-TIMESTAMP",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "submitted", "at": "2026-07-21T00:00:00+05:30"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-UNKNOWN-STATE",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "archived", "at": "2026-07-21T09:00:00Z"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-EMPTY-HISTORY",
+    "events": [],
+    "evidence": []
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-EVIDENCE-BAD-TYPE",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-21T09:00:00Z"}
+    ],
+    "evidence": [
+      {"evidence_type": 42},
+      {"not_evidence_type": "oops"},
+      {"evidence_type": "log"}
+    ]
+  },
+  {
+    "contributor": "dana",
+    "task_id": "T-REFUSAL-NONSTRING",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "refused", "at": "2026-07-21T09:00:00Z", "refusal_reason": 12345}
+    ],
+    "evidence": []
+  },
+  {
+    "task_id": "T-MISSING-CONTRIBUTOR-KEY",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "",
+    "task_id": "T-EMPTY-CONTRIBUTOR",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": "   ",
+    "task_id": "T-WHITESPACE-CONTRIBUTOR",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"}
+    ],
+    "evidence": []
+  },
+  {
+    "contributor": null,
+    "task_id": "T-NULL-CONTRIBUTOR",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"}
+    ],
+    "evidence": []
+  },
+  ["not", "a", "record", "object"],
+  {
+    "contributor": "erin",
+    "task_id": "T-ERIN-1",
+    "events": [
+      {"state": "proposed", "at": "2026-07-20T09:00:00Z"},
+      {"state": "rewarded", "at": "2026-07-21T09:00:00Z"}
+    ],
+    "evidence": [{"evidence_type": "log"}]
+  }
+]
