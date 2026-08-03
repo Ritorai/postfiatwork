@@ -1,0 +1,7 @@
+{
+  "required_files": ["*.py", "README.md"],
+  "required_commands": ["python3 -m unittest", "python3 -m json.tool"],
+  "require_exit_codes": true,
+  "require_hashes": true,
+  "min_test_count": 10
+}
