@@ -1,0 +1,136 @@
+captured_output.txt - commit-claim-auditor
+Real transcript. Every command below was executed; every hash was produced by the run shown.
+Paths are relative so this transcript is reproducible from a fresh clone.
+
+=== $ python3 -m unittest test_claimhist -v 2>&1 | tail -25 ===
+test_hash_inside_backticks_matches (test_claimhist.TestShaTokenRe.test_hash_inside_backticks_matches) ... ok
+test_matches_standalone_64_hex (test_claimhist.TestShaTokenRe.test_matches_standalone_64_hex) ... ok
+test_multiple_tokens_per_line (test_claimhist.TestShaTokenRe.test_multiple_tokens_per_line) ... ok
+test_underscore_adjacent_hash_still_matches (test_claimhist.TestShaTokenRe.test_underscore_adjacent_hash_still_matches) ... ok
+test_associated_target_only_populated_when_run_tests_and_found (test_claimhist.TestTestcountClaimRecompute.test_associated_target_only_populated_when_run_tests_and_found) ... ok
+test_claim_shape_recorded (test_claimhist.TestTestcountClaimRecompute.test_claim_shape_recorded) ... ok
+test_current_with_run_tests (test_claimhist.TestTestcountClaimRecompute.test_current_with_run_tests) ... ok
+test_malformed_ambiguous_number_regardless_of_run_tests (test_claimhist.TestTestcountClaimRecompute.test_malformed_ambiguous_number_regardless_of_run_tests) ... ok
+test_malformed_ambiguous_test_module (test_claimhist.TestTestcountClaimRecompute.test_malformed_ambiguous_test_module) ... ok
+test_missing_source_no_test_module (test_claimhist.TestTestcountClaimRecompute.test_missing_source_no_test_module) ... ok
+test_no_claim_on_unrelated_line (test_claimhist.TestTestcountClaimRecompute.test_no_claim_on_unrelated_line) ... ok
+test_not_recomputed_by_default (test_claimhist.TestTestcountClaimRecompute.test_not_recomputed_by_default) ... ok
+test_stale_with_run_tests (test_claimhist.TestTestcountClaimRecompute.test_stale_with_run_tests) ... ok
+test_unittest_execution_failed_with_run_tests (test_claimhist.TestTestcountClaimRecompute.test_unittest_execution_failed_with_run_tests) ... ok
+test_bare_cr_line_endings (test_claimhist.TestUnicodeAndCrlf.test_bare_cr_line_endings) ... ok
+test_crlf_preserves_line_numbers (test_claimhist.TestUnicodeAndCrlf.test_crlf_preserves_line_numbers) ... ok
+test_invalid_utf8_does_not_crash_and_other_claims_found (test_claimhist.TestUnicodeAndCrlf.test_invalid_utf8_does_not_crash_and_other_claims_found) ... ok
+test_mixed_lf_and_crlf (test_claimhist.TestUnicodeAndCrlf.test_mixed_lf_and_crlf) ... ok
+test_unicode_filename_current (test_claimhist.TestUnicodeAndCrlf.test_unicode_filename_current) ... ok
+test_unicode_prose_parsed (test_claimhist.TestUnicodeAndCrlf.test_unicode_prose_parsed) ... ok
+
+----------------------------------------------------------------------
+Ran 154 tests in 4.149s
+
+OK
+exit=0
+
+=== $ python3 claimhist.py --root fixture -o sample_report_run1.json ===
+exit=1
+
+=== $ python3 claimhist.py --root fixture -o sample_report_run2.json ===
+exit=1
+
+=== $ sha256sum sample_report_run1.json sample_report_run2.json ===
+5127c78a77c1ac3caebb227243535f05fcd9203a3dc0325c225c7e817d9e544c  sample_report_run1.json
+5127c78a77c1ac3caebb227243535f05fcd9203a3dc0325c225c7e817d9e544c  sample_report_run2.json
+exit=0
+
+=== $ cmp sample_report_run1.json sample_report_run2.json && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+exit=0
+
+--- relocation test: same tree, two different absolute paths with different names ---
+(the two roots are created by: cp -r fixture <pathA>/fx ; cp -r fixture <pathB>/fx)
+
+=== $ python3 claimhist.py --root /tmp/rel_a/fx -o /tmp/rel_a_report.json ===
+exit=1
+
+=== $ python3 claimhist.py --root /tmp/rel_zzzzzzzzzzzzzz/fx -o /tmp/rel_z_report.json ===
+exit=1
+
+=== $ sha256sum sample_report_run1.json /tmp/rel_a_report.json /tmp/rel_z_report.json ===
+5127c78a77c1ac3caebb227243535f05fcd9203a3dc0325c225c7e817d9e544c  sample_report_run1.json
+5127c78a77c1ac3caebb227243535f05fcd9203a3dc0325c225c7e817d9e544c  /tmp/rel_a_report.json
+5127c78a77c1ac3caebb227243535f05fcd9203a3dc0325c225c7e817d9e544c  /tmp/rel_z_report.json
+exit=0
+
+All four hashes above are identical: two same-directory runs plus two runs from
+differently-named absolute paths. A leaked absolute path would be identical in the
+first two but would differ in the last two, so this is a genuine location test.
+
+=== $ grep -c '/tmp' sample_report_run1.json ===
+0
+exit=1
+
+(0 = no absolute path leaked into the report)
+
+=== $ grep -cE 'time\.time|utcnow|now\(\)' claimhist.py ===
+0
+exit=1
+
+(0 = no wall-clock substring anywhere in the source, including comments)
+
+--- exit codes ---
+=== $ python3 claimhist.py --root fixture -o /dev/null ===
+exit=1
+
+(exit 1 = claims found that are STALE / MISSING_SOURCE / MALFORMED)
+
+=== $ python3 claimhist.py --root fixture_clean_nonexistent ===
+claimhist: --root is not a directory: fixture_clean_nonexistent
+exit=2
+
+(exit 2 = invalid input)
+
+=== $ python3 claimhist.py --root fixture -o /nonexistent-dir/out.json ===
+claimhist: cannot write output '/nonexistent-dir/out.json': [Errno 2] No such file or directory: '/nonexistent-dir/out.json'
+exit=2
+
+(exit 2 = unwritable output)
+
+--- git provenance path ---
+The shipped fixture/ has no .git, so provenance degrades to GIT_UNAVAILABLE and the
+report stays byte-reproducible. To exercise the git-blame path, build a throwaway repo:
+
+=== $ sh make_git_fixture.sh /tmp/gitfx ===
+exit=0
+
+=== $ python3 claimhist.py --root /tmp/gitfx -o /tmp/gitfx_report.json ===
+exit=1
+
+=== $ python3 -c "import json,re;s=json.dumps(json.load(open('/tmp/gitfx_report.json')));print('GIT_UNAVAILABLE present:','GIT_UNAVAILABLE' in s);print('distinct 40-hex commit ids in report:',len(set(re.findall(r'[0-9a-f]{40}',s))))" ===
+GIT_UNAVAILABLE present: False
+distinct 40-hex commit ids in report: 4
+exit=0
+
+Commit SHAs and author dates depend on when and where make_git_fixture.sh is run, so
+this report is deliberately NOT committed as a determinism baseline. It is evidence
+that the blame path executes and returns real commit ids, not a reproducible hash.
+
+--- self-audit: running the tool against its own directory ---
+=== $ python3 claimhist.py --root . -o self_audit_report.json ===
+exit=1
+
+=== $ python3 - (status breakdown of self_audit_report.json) ===
+CURRENT 6
+MALFORMED 3
+NOT_RECOMPUTED 8
+STALE 1
+exit=0
+
+Reading of the self-audit, stated honestly:
+  STALE x1  - fixture/README.md line 7. This is the deliberately stale hash baked into
+              the fixture so the tool has a true positive to find. Working as intended.
+  MALFORMED x3 - all three are in this tool's OWN README.md (lines 92, 192, 215). They are
+              the README's illustrative examples of formats the tool REFUSES to parse
+              (e.g. the '1,234 tests' comma-grouped example) plus one bare example hash
+              with no filename beside it. The tool cannot tell documentation-about-claims
+              from claims. This is a real false positive and is recorded as limitation 5.
+  NOT_RECOMPUTED x8 - test-count claims, not recomputed because --run-tests was not passed.
+  CURRENT x6 - hash claims that still match their target files.
