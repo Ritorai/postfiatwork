@@ -863,7 +863,7 @@ class TestVerifyExitCodeClaim(TempBundleMixin, unittest.TestCase):
 
 
 # ==========================================================================
-# build_report (full pipeline, no subprocess-to-claimcheck.py)
+# build_report
 # ==========================================================================
 
 class TestBuildReport(TempBundleMixin, unittest.TestCase):
@@ -1003,11 +1003,18 @@ class TestBuildReport(TempBundleMixin, unittest.TestCase):
         self.assertEqual(total, report["claim_count"])
 
     def test_report_has_expected_top_level_keys(self):
+        # NOTE: this assertion was extended (schema_version 1 -> 2) to add
+        # "checklist" and "human_review_notice" -- the new claim-to-artifact
+        # linking / missing-limitations / unsupported-assertion checklist
+        # and its mandatory human-review notice. Every field this test
+        # already checked for is still present and unchanged; nothing was
+        # removed, only added.
         root = self.make_bundle({"a.py": "x\n"})
         notes = self.write_notes(root, "notes.txt", "no claims here\n")
         report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes))
         expected = {"tool", "tool_version", "schema_version", "bundle_dir", "notes_file",
-                    "claim_count", "claims", "status", "exit_code", "summary"}
+                    "claim_count", "claims", "checklist", "human_review_notice",
+                    "status", "exit_code", "summary"}
         self.assertEqual(set(report.keys()), expected)
 
     def test_bundle_dir_and_notes_file_echo_cli_args_verbatim(self):
@@ -1096,7 +1103,7 @@ class TestCanonicalJsonBytes(unittest.TestCase):
 
 
 # ==========================================================================
-# CLI, subprocess-level (exercises argparse + main() end to end)
+# CLI / subprocess level
 # ==========================================================================
 
 class TestCLI(TempBundleMixin, unittest.TestCase):
@@ -1204,7 +1211,7 @@ class TestCLI(TempBundleMixin, unittest.TestCase):
 
 
 # ==========================================================================
-# Determinism, list ordering, and no-absolute-path contract
+# Determinism / no-absolute-path contract
 # ==========================================================================
 
 class TestDeterminismAndNoAbsolutePath(TempBundleMixin, unittest.TestCase):
@@ -1303,9 +1310,9 @@ class TestDeterminismAndNoAbsolutePath(TempBundleMixin, unittest.TestCase):
 class TestFixtureBundles(unittest.TestCase):
     """Regression tests pinning the exact behaviour of the shipped fixtures."""
 
-    def run_tool(self, bundle, notes):
+    def run_tool(self, bundle, notes, *extra_args):
         proc = subprocess.run(
-            [sys.executable, TOOL_PATH, bundle, notes],
+            [sys.executable, TOOL_PATH, bundle, notes] + list(extra_args),
             cwd=THIS_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60,
         )
         return proc
@@ -1337,6 +1344,467 @@ class TestFixtureBundles(unittest.TestCase):
         p1 = self.run_tool("bundle_false", "bundle_false/notes_false.txt")
         p2 = self.run_tool("bundle_false", "bundle_false/notes_false.txt")
         self.assertEqual(p1.stdout, p2.stdout)
+
+    def test_bundle_truthful_no_checklist_regressions_assumed(self):
+        # bundle_truthful/notes_truthful.txt predates the checklist feature
+        # and was never edited to add one -- it may or may not trigger
+        # NO_DISCLOSED_LIMITATIONS/UNSUPPORTED_ASSERTION, but either way
+        # checklist must never affect this fixture's exit code.
+        proc = self.run_tool("bundle_truthful", "bundle_truthful/notes_truthful.txt")
+        self.assertEqual(proc.returncode, 0)
+
+    def test_bundle_repro_exit_1_without_run_repro(self):
+        proc = self.run_tool("bundle_repro", "bundle_repro/notes_repro.txt")
+        self.assertEqual(proc.returncode, 1)
+        report = json.loads(proc.stdout.decode("ascii"))
+        self.assertEqual(report["claims"][1]["repro_result"], "NOT_RUN")
+        self.assertEqual(report["claims"][1]["result"], "MISMATCHED")
+
+    def test_bundle_repro_exit_1_with_run_repro_and_mismatched_repro_result(self):
+        proc = self.run_tool("bundle_repro", "bundle_repro/notes_repro.txt", "--run-repro")
+        self.assertEqual(proc.returncode, 1)
+        report = json.loads(proc.stdout.decode("ascii"))
+        self.assertEqual(report["claims"][1]["repro_result"], "MISMATCHED")
+        self.assertIn("observed real exit code 3", report["claims"][1]["repro_evidence_source"])
+
+    def test_bundle_repro_checklist_has_both_new_kinds(self):
+        proc = self.run_tool("bundle_repro", "bundle_repro/notes_repro.txt")
+        report = json.loads(proc.stdout.decode("ascii"))
+        kinds = {c["kind"] for c in report["checklist"]}
+        self.assertIn("NO_DISCLOSED_LIMITATIONS", kinds)
+        self.assertIn("UNSUPPORTED_ASSERTION", kinds)
+        self.assertNotIn("UNLINKED_CLAIM", kinds)  # both claims resolve to real bundle content
+
+    def test_bundle_repro_two_runs_identical_with_run_repro(self):
+        p1 = self.run_tool("bundle_repro", "bundle_repro/notes_repro.txt", "--run-repro")
+        p2 = self.run_tool("bundle_repro", "bundle_repro/notes_repro.txt", "--run-repro")
+        self.assertEqual(p1.returncode, p2.returncode)
+        self.assertEqual(p1.stdout, p2.stdout)
+
+
+# ==========================================================================
+# NEW: claim-to-artifact linking
+# ==========================================================================
+
+class TestClaimArtifactLinking(TempBundleMixin, unittest.TestCase):
+    def test_claim_with_backing_artifact_not_flagged(self):
+        root = self.make_bundle({"a.py": "hello\n"})
+        h = sha(b"hello\n")
+        notes = self.write_notes(root, "notes.txt", "sha256(a.py) = %s\n" % h)
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        kinds = {c["kind"] for c in report["checklist"]}
+        self.assertNotIn(claimcheck.CHECKLIST_UNLINKED_CLAIM, kinds)
+
+    def test_sha256_claim_without_backing_artifact_flagged(self):
+        root = self.make_bundle({"a.py": "hello\n"})
+        h = sha(b"hello\n")
+        notes = self.write_notes(root, "notes.txt", "sha256(missing.py) = %s\n" % h)
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        unlinked = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNLINKED_CLAIM]
+        self.assertEqual(len(unlinked), 1)
+        self.assertEqual(unlinked[0]["notes_line_number"], 1)
+        self.assertEqual(unlinked[0]["claim_text"], "sha256(missing.py) = %s" % h)
+
+    def test_exit_code_claim_with_missing_target_flagged_unlinked(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 missing.py` and observed exit=0\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        unlinked = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNLINKED_CLAIM]
+        self.assertEqual(len(unlinked), 1)
+
+    def test_exit_code_claim_with_no_command_flagged_unlinked(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "we observed exit=0 with no command quoted\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        unlinked = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNLINKED_CLAIM]
+        self.assertEqual(len(unlinked), 1)
+
+    def test_bare_hash_with_no_match_flagged_unlinked(self):
+        root = self.make_bundle({"a.py": "hello\n"})
+        fake = sha(b"nothing-in-this-bundle-matches")
+        notes = self.write_notes(root, "notes.txt", "Reference digest %s was noted.\n" % fake)
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        unlinked = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNLINKED_CLAIM]
+        self.assertEqual(len(unlinked), 1)
+
+    def test_unlinked_claim_checklist_entry_does_not_add_a_second_exit_path(self):
+        # The claim is already UNSUBSTANTIATED (drives exit 1 on its own);
+        # the checklist entry must not somehow ALSO independently matter.
+        root = self.make_bundle({"a.py": "hello\n"})
+        h = sha(b"hello\n")
+        notes = self.write_notes(root, "notes.txt", "sha256(missing.py) = %s\n" % h)
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes))
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(report["claims"][0]["result"], claimcheck.RESULT_UNSUBSTANTIATED)
+
+
+# ==========================================================================
+# NEW: reproduction-command results (--run-repro)
+# ==========================================================================
+
+class TestRunRepro(TempBundleMixin, unittest.TestCase):
+    def test_default_is_not_run(self):
+        root = self.make_bundle({"ok.py": "import sys\nsys.exit(0)\n"})
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 ok.py` and observed exit=0\n")
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes))
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_NOT_RUN)
+        self.assertIn("--run-repro", report["claims"][0]["repro_evidence_source"])
+        self.assertEqual(exit_code, 0)
+
+    def test_run_repro_matched(self):
+        root = self.make_bundle({"ok.py": "import sys\nsys.exit(0)\n"})
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 ok.py` and observed exit=0\n")
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_MATCHED)
+        self.assertEqual(exit_code, 0)
+
+    def test_run_repro_command_exits_nonzero_is_mismatched(self):
+        root = self.make_bundle({"bad.py": "import sys\nsys.exit(5)\n"})
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 bad.py` and observed exit=0\n")
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_MISMATCHED)
+        self.assertIn("observed real exit code 5", report["claims"][0]["repro_evidence_source"])
+        self.assertEqual(exit_code, 1)
+
+    def test_run_repro_uses_disposable_copy_not_original_bundle(self):
+        # writer.py exits with the CURRENT value of a persistent counter,
+        # then increments it. The direct (non-repro) check always runs
+        # first, against bundle_dir itself, and writes counter.txt=1
+        # there. If --run-repro's "disposable copy" were a bug and it
+        # actually reused bundle_dir instead of a fresh copy, the repro
+        # run would see that just-written counter.txt=1, exit(1), and
+        # MISMATCH the claimed exit code of 0. Because the workspace is
+        # copied from bundle_dir BEFORE the direct check ever runs, the
+        # repro run instead sees a bundle with no counter.txt at all and
+        # also exits 0 -- proving it really executed in an independent copy.
+        root = self.make_bundle({"writer.py": (
+            "import pathlib, sys\n"
+            "p = pathlib.Path('counter.txt')\n"
+            "n = int(p.read_text()) if p.exists() else 0\n"
+            "p.write_text(str(n + 1))\n"
+            "sys.exit(n)\n"
+        )})
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 writer.py` and observed exit=0\n")
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["result"], claimcheck.RESULT_MATCHED)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_MATCHED)
+        self.assertEqual((root / "counter.txt").read_text(), "1")
+
+    def test_run_repro_workspace_tolerates_broken_symlink_in_bundle(self):
+        # A real bug found while bug-hunting this extension: copytree's
+        # default (symlinks=False) DEREFERENCES symlinks, so a broken
+        # symlink anywhere in the bundle used to make --run-repro raise
+        # an unconditional InputError (exit 2) even though the same
+        # broken symlink is tolerated everywhere else in this tool
+        # (hash_bundle_files just records it as unreadable). Fixed by
+        # passing symlinks=True to shutil.copytree.
+        root = self.make_bundle({"ok.py": "import sys\nsys.exit(0)\n"})
+        os.symlink(root / "does_not_exist_target_xyz", root / "broken_link")
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 ok.py` and observed exit=0\n")
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_MATCHED)
+        self.assertEqual(exit_code, 0)
+
+    def test_run_repro_extra_argument_absolute_path_refused(self):
+        root = self.make_bundle({
+            "reader.py": "import sys\nwith open(sys.argv[1]) as f:\n    f.read()\nprint('ok')\n",
+        })
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 reader.py /etc/hostname` and observed exit=0\n")
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_UNVERIFIABLE_COMMAND)
+        self.assertIn("absolute", report["claims"][0]["repro_evidence_source"])
+        self.assertEqual(exit_code, 1)
+
+    def test_run_repro_extra_argument_dotdot_escape_refused(self):
+        root = self.make_bundle({"reader.py": "print(1)\n"})
+        notes = self.write_notes(
+            root, "notes.txt",
+            "Ran `python3 reader.py ../../../../../../etc/hostname` and observed exit=0\n",
+        )
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_UNVERIFIABLE_COMMAND)
+        self.assertIn("outside", report["claims"][0]["repro_evidence_source"])
+        self.assertEqual(exit_code, 1)
+
+    def test_run_repro_can_flip_exit_code_independently_of_the_direct_check(self):
+        # The ORIGINAL, direct EXIT_CODE_CLAIM check has no reason to fail
+        # here (the script really does exit 0 when given an absolute path
+        # that happens to be readable) -- only --run-repro's extra,
+        # stricter argument-containment guard catches the absolute path
+        # and turns it into an issue, proving the flag genuinely adds a
+        # new, independent check rather than just repeating the old one.
+        root = self.make_bundle({
+            "reader.py": "import sys\nwith open(sys.argv[1]) as f:\n    f.read()\nprint('ok')\n",
+        })
+        notes = self.write_notes(root, "notes.txt", "Ran `python3 reader.py /etc/hostname` and observed exit=0\n")
+
+        report_default, exit_default = claimcheck.build_report(root, notes, str(root), str(notes))
+        self.assertEqual(report_default["claims"][0]["result"], claimcheck.RESULT_MATCHED)
+        self.assertEqual(exit_default, 0)
+
+        report_repro, exit_repro = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report_repro["claims"][0]["repro_result"], claimcheck.RESULT_UNVERIFIABLE_COMMAND)
+        self.assertEqual(exit_repro, 1)
+
+    def test_no_command_repro_result_is_unverifiable_when_run_repro(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "we observed exit=0 with no command quoted\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_UNVERIFIABLE_COMMAND)
+
+    def test_refused_command_repro_result_is_unverifiable_when_run_repro(self):
+        root = self.make_bundle({"ok.py": "print(1)\n"})
+        notes = self.write_notes(root, "notes.txt", "Ran `bash ok.py` and observed exit=0\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes), run_repro=True)
+        self.assertEqual(report["claims"][0]["repro_result"], claimcheck.RESULT_UNVERIFIABLE_COMMAND)
+
+    def test_vet_repro_arguments_rejects_absolute(self):
+        with tempfile.TemporaryDirectory() as d:
+            ok, reason = claimcheck.vet_repro_arguments(["python3", "ok.py", "/etc/hostname"], Path(d))
+            self.assertFalse(ok)
+            self.assertIn("absolute", reason)
+
+    def test_vet_repro_arguments_rejects_dotdot_escape(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "workspace"
+            root.mkdir()
+            ok, reason = claimcheck.vet_repro_arguments(["python3", "ok.py", "../escape.txt"], root)
+            self.assertFalse(ok)
+            self.assertIn("outside", reason)
+
+    def test_vet_repro_arguments_allows_relative_inside(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "workspace"
+            (root / "data").mkdir(parents=True)
+            ok, reason = claimcheck.vet_repro_arguments(["python3", "ok.py", "data/file.txt"], root)
+            self.assertTrue(ok)
+
+    def test_resolve_within_workspace_absolute_returns_none(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.assertIsNone(claimcheck.resolve_within_workspace(Path(d), "/etc/hostname"))
+
+    def test_resolve_within_workspace_dotdot_returns_none(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "workspace"
+            root.mkdir()
+            self.assertIsNone(claimcheck.resolve_within_workspace(root, "../../outside"))
+
+    def test_resolve_within_workspace_relative_inside_resolves(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "workspace"
+            root.mkdir()
+            resolved = claimcheck.resolve_within_workspace(root, "sub/file.txt")
+            self.assertIsNotNone(resolved)
+            self.assertTrue(resolved.startswith(os.path.realpath(str(root))))
+
+
+# ==========================================================================
+# NEW: missing disclosed limitations
+# ==========================================================================
+
+class TestLimitationsDisclosure(TempBundleMixin, unittest.TestCase):
+    def test_no_limitations_section_flagged(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "Everything works great, nothing to report.\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        kinds = {c["kind"] for c in report["checklist"]}
+        self.assertIn(claimcheck.CHECKLIST_NO_DISCLOSED_LIMITATIONS, kinds)
+
+    def test_limitations_word_present_not_flagged(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "Limitations: the parser is slow on huge files.\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        kinds = {c["kind"] for c in report["checklist"]}
+        self.assertNotIn(claimcheck.CHECKLIST_NO_DISCLOSED_LIMITATIONS, kinds)
+
+    def test_known_issue_phrasing_not_flagged(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "Known issue: does not support Windows paths.\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        kinds = {c["kind"] for c in report["checklist"]}
+        self.assertNotIn(claimcheck.CHECKLIST_NO_DISCLOSED_LIMITATIONS, kinds)
+
+    def test_missing_limitations_appears_at_most_once(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "no limitations mentioned here.\nor here.\nor here.\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        # (deliberately the WORD "limitations" appears, so this is NOT flagged --
+        # a companion test below checks the true-absence case only once.)
+        kinds = [c["kind"] for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_NO_DISCLOSED_LIMITATIONS]
+        self.assertEqual(len(kinds), 0)
+
+    def test_missing_limitations_flagged_exactly_once_across_many_lines(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "line one\nline two\nline three\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        kinds = [c["kind"] for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_NO_DISCLOSED_LIMITATIONS]
+        self.assertEqual(len(kinds), 1)
+
+    def test_missing_limitations_does_not_flip_exit_code(self):
+        root = self.make_bundle({"a.py": "hello\n"})
+        h = sha(b"hello\n")
+        notes = self.write_notes(root, "notes.txt", "sha256(a.py) = %s\n" % h)
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes))
+        self.assertEqual(exit_code, 0)
+        kinds = {c["kind"] for c in report["checklist"]}
+        self.assertIn(claimcheck.CHECKLIST_NO_DISCLOSED_LIMITATIONS, kinds)
+
+
+# ==========================================================================
+# NEW: unsupported assertions
+# ==========================================================================
+
+class TestUnsupportedAssertions(TempBundleMixin, unittest.TestCase):
+    def test_unsupported_confident_line_flagged(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "This implementation is fully tested and guaranteed correct.\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        items = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNSUPPORTED_ASSERTION]
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["notes_line_number"], 1)
+
+    def test_supported_confident_line_with_hash_claim_not_flagged(self):
+        root = self.make_bundle({"a.py": "hello\n"})
+        h = sha(b"hello\n")
+        notes = self.write_notes(root, "notes.txt", "This is fully verified: sha256(a.py) = %s\n" % h)
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        items = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNSUPPORTED_ASSERTION]
+        self.assertEqual(items, [])
+
+    def test_supported_confident_line_with_command_not_flagged(self):
+        root = self.make_bundle({"ok.py": "import sys\nsys.exit(0)\n"})
+        notes = self.write_notes(root, "notes.txt", "This always works: `python3 ok.py` exit=0\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        items = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNSUPPORTED_ASSERTION]
+        self.assertEqual(items, [])
+
+    def test_confidence_phrase_with_percent_and_no_claim_still_flagged(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "This works 100% of the time.\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        items = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNSUPPORTED_ASSERTION]
+        self.assertEqual(len(items), 1)
+
+    def test_plain_line_no_confidence_phrase_not_flagged(self):
+        root = self.make_bundle({"a.py": "x\n"})
+        notes = self.write_notes(root, "notes.txt", "This mostly works, some edge cases remain.\n")
+        report, _ = claimcheck.build_report(root, notes, str(root), str(notes))
+        items = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNSUPPORTED_ASSERTION]
+        self.assertEqual(items, [])
+
+    def test_unsupported_assertion_does_not_flip_exit_code(self):
+        root = self.make_bundle({"a.py": "hello\n"})
+        h = sha(b"hello\n")
+        notes = self.write_notes(
+            root, "notes.txt",
+            "This is fully tested and always works.\nsha256(a.py) = %s\n" % h,
+        )
+        report, exit_code = claimcheck.build_report(root, notes, str(root), str(notes))
+        self.assertEqual(exit_code, 0)
+        items = [c for c in report["checklist"] if c["kind"] == claimcheck.CHECKLIST_UNSUPPORTED_ASSERTION]
+        self.assertEqual(len(items), 1)
+
+
+# ==========================================================================
+# NEW: total-order tiebreak (canonical-JSON-dump as final sort key)
+# ==========================================================================
+
+class TestTiebreakTotalOrder(unittest.TestCase):
+    def test_claims_tiebreak_orders_identical_line_offset_type_by_canonical_json(self):
+        # Two claims sharing (line_no, offset, claim_type) -- impossible
+        # from real extraction (two occurrences never share a start
+        # offset), constructed here purely to pin down that the sort's
+        # FINAL key really is the canonical JSON dump of the claim itself,
+        # giving a genuine, reproducible total order rather than relying
+        # on whatever order the claims happened to be built in.
+        occ1 = claimcheck.ClaimOccurrence(claimcheck.CLAIM_SHA256, 1, 0, "bbb line",
+                                           {"asserted_hash": "a" * 64, "filename": None})
+        occ2 = claimcheck.ClaimOccurrence(claimcheck.CLAIM_SHA256, 1, 0, "aaa line",
+                                           {"asserted_hash": "a" * 64, "filename": None})
+        claim1 = claimcheck._claim_dict(occ1, {"x": 1}, None, claimcheck.RESULT_MATCHED, "e")
+        claim2 = claimcheck._claim_dict(occ2, {"x": 1}, None, claimcheck.RESULT_MATCHED, "e")
+        pairs = [(occ1, claim1), (occ2, claim2)]
+        pairs.sort(key=lambda pair: (
+            pair[0].line_no, pair[0].offset, claimcheck._TYPE_RANK[pair[0].claim_type],
+            claimcheck.canonical_json_bytes(pair[1]),
+        ))
+        self.assertEqual([c["claim_text"] for _o, c in pairs], ["aaa line", "bbb line"])
+
+    def test_checklist_tiebreak_orders_identical_kind_and_line_by_canonical_json(self):
+        item1 = claimcheck._checklist_item(claimcheck.CHECKLIST_UNLINKED_CLAIM, 3, "zzz", "detail")
+        item2 = claimcheck._checklist_item(claimcheck.CHECKLIST_UNLINKED_CLAIM, 3, "aaa", "detail")
+        items = [item1, item2]
+        items.sort(key=lambda it: (
+            claimcheck._CHECKLIST_KIND_RANK[it["kind"]],
+            -1 if it["notes_line_number"] is None else it["notes_line_number"],
+            claimcheck.canonical_json_bytes(it),
+        ))
+        self.assertEqual([it["claim_text"] for it in items], ["aaa", "zzz"])
+
+
+# ==========================================================================
+# NEW: exit codes via subprocess, determinism/relocation with new fields
+# ==========================================================================
+
+class TestExitCodesViaSubprocessExtended(TempBundleMixin, unittest.TestCase):
+    def run_cli(self, args, cwd=None):
+        proc = subprocess.run(
+            [sys.executable, TOOL_PATH] + args,
+            cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60,
+        )
+        return proc.returncode, proc.stdout, proc.stderr
+
+    def test_exit_0_1_2_all_distinct_via_subprocess(self):
+        root0 = self.make_bundle({"a.py": "hello\n"})
+        h = sha(b"hello\n")
+        self.write_notes(root0, "notes.txt", "sha256(a.py) = %s\n" % h)
+        rc0, out0, _ = self.run_cli([str(root0), str(root0 / "notes.txt")])
+        self.assertEqual(rc0, 0)
+
+        root1 = self.make_bundle({"a.py": "hello\n"})
+        wrong = sha(b"nope")
+        self.write_notes(root1, "notes.txt", "sha256(a.py) = %s\n" % wrong)
+        rc1, out1, _ = self.run_cli([str(root1), str(root1 / "notes.txt")])
+        self.assertEqual(rc1, 1)
+
+        rc2, out2, err2 = self.run_cli(["/nonexistent_dir_for_exit_2_xyz", str(root1 / "notes.txt")])
+        self.assertEqual(rc2, 2)
+
+        self.assertEqual({rc0, rc1, rc2}, {0, 1, 2})
+
+    def test_run_repro_flag_via_subprocess(self):
+        root = self.make_bundle({"ok.py": "import sys\nsys.exit(9)\n"})
+        self.write_notes(root, "notes.txt", "Ran `python3 ok.py` and observed exit=9\n")
+
+        rc_default, out_default, _ = self.run_cli([str(root), str(root / "notes.txt")])
+        self.assertEqual(rc_default, 0)
+        report_default = json.loads(out_default.decode("ascii"))
+        self.assertEqual(report_default["claims"][0]["repro_result"], "NOT_RUN")
+
+        rc_repro, out_repro, _ = self.run_cli([str(root), str(root / "notes.txt"), "--run-repro"])
+        self.assertEqual(rc_repro, 0)
+        report_repro = json.loads(out_repro.decode("ascii"))
+        self.assertEqual(report_repro["claims"][0]["repro_result"], "MATCHED")
+
+    def test_two_runs_byte_identical_with_checklist_and_repro(self):
+        root = self.make_bundle({
+            "ok.py": "import sys\nsys.exit(0)\n",
+            "test_ok.py": (
+                "import unittest\nclass T(unittest.TestCase):\n"
+                "    def test_a(self):\n        self.assertTrue(True)\n"
+            ),
+        })
+        notes_text = (
+            "This module works 100% of the time.\n"
+            "Ran `python3 ok.py` and observed exit=0\n"
+            "Ran 1 test\n"
+        )
+        self.write_notes(root, "notes.txt", notes_text)
+        rc1, out1, _ = self.run_cli([str(root), str(root / "notes.txt"), "--run-repro"])
+        rc2, out2, _ = self.run_cli([str(root), str(root / "notes.txt"), "--run-repro"])
+        self.assertEqual(rc1, rc2)
+        self.assertEqual(out1, out2)
+        self.assertEqual(sha(out1), sha(out2))
 
 
 if __name__ == "__main__":
