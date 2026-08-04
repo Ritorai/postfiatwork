@@ -333,3 +333,43 @@ trailing `\n`):
 9. **Payload shape is whatever `root` says.** The tool does not assume a `records` array;
    the fixtures use `{"batch_id", "records": [...]}` purely because it produces the
    `/records/2/cid` style pointers in the brief.
+
+
+## 3 limitations a reviewer should scrutinise
+
+Found by **running this tool against adversarial inputs**, not by reading it.
+Every claim is reproduced by
+[`limitations-probe/probe.py`](../limitations-probe/probe.py), which exits
+non-zero if any of them stops reproducing.
+
+1. **`pattern` is a SEARCH, not a full match (SC-1).** A schema declaring
+   `"pattern": "[0-9]{4}"` accepts the value `"XX1234XX"` as **conform**.
+   Every unanchored pattern in every schema is therefore far more permissive
+   than it reads, and the failure is silent — you get `conform`, not a
+   warning. This repository's own fixture schema anchors all of its patterns
+   with `^...$`, which is exactly why its own test suite never surfaces it.
+   Anchor every pattern you write, or treat this checker's `pattern` as
+   "contains a match for".
+
+2. **`max_length` counts code points, not bytes (SC-2).** Under
+   `"max_length": 4`, all three of `"abcd"` (4 UTF-8 bytes), four `U+00E9`
+   (8 bytes) and four `U+1F600` (**16 bytes**) are `conform`. A field sized
+   against a byte budget — a `VARCHAR`, an on-chain memo, a fixed record — can
+   be overrun **4x** by a payload this checker approves. Grapheme clusters are
+   a third unit again: a flag emoji or a combining sequence is one *visible*
+   character and several code points.
+
+3. **A schema-supplied pattern can run forever (SC-3).** The schema is an
+   *input*. `re.compile()` is validated when the schema loads, but nothing
+   bounds match time: `"pattern": "^(a+)+$"` against a 33-character
+   non-matching string does not finish. The probe that demonstrates this has
+   to impose its own 20-second timeout to terminate — **that timeout belongs
+   to the probe, not to this tool.** Any pipeline that accepts a schema from
+   an untrusted or merely careless source can be hung by one line of it.
+   There is no `--timeout` and no regex complexity check.
+
+**Checked and found sound, reported as a negative result (SC-4):** `type:
+"integer"` correctly rejects JSON `true` and the integral float `5.0`, and
+rejects `1e400` as a number rather than overflowing. `bool` subclasses `int`
+in Python and `5.0 == 5`, so both are easy to get wrong; this checker gets
+both right. No limitation is claimed there.
