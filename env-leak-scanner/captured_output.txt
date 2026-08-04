@@ -1,0 +1,145 @@
+env-leak-scanner -- captured verification output
+================================================
+
+Records follow transcript-drift/FORMAT.md: a "=== $ command ===" header,
+the verbatim output, and an exit= line.
+
+SCRATCH PATHS ARE RELATIVE ON PURPOSE. A scanner that hunts absolute paths
+must not write any into its own transcript, so the positive-control tree is
+"_control" relative to this directory and is deleted by the same script.
+
+WHAT THIS TRANSCRIPT NECESSARILY CONTAINS: the repository-wide report quotes
+the leaked strings it found, because a finding you cannot see is not a
+finding. Re-running the scanner after this commit therefore reports
+env-leak-scanner's own files. That is expected and is stated in README.md.
+
+=== $ python3 --version ===
+Python 3.10.12
+exit=0
+
+=== $ uname -sm ===
+Linux x86_64
+exit=0
+
+=== $ python3 -m unittest test_leakscan ===
+.................................................................
+----------------------------------------------------------------------
+Ran 65 tests in 0.247s
+
+OK
+exit=0
+
+=== $ python3 leakscan.py --root _control ===
+{"confirmed_leaks":[],"counts":{"benign":0,"by_category":{"absolute_path":0,"home_directory":0,"hostname":0,"temp_directory":0,"username":0},"confirmed":0},"coverage":{"files":["README.md"],"files_scanned":1,"mode":"full"},"reviewed_benign":[],"schema_version":1,"stale_review_entries":[],"status":"clean","tool":"env-leak-scanner"}
+exit=0
+
+=== $ python3 leakscan.py --root _control ===
+{"confirmed_leaks":[{"category":"absolute_path","column":16,"file":"README.md","harms_reproducibility":"an absolute path assumes a filesystem layout the reader does not have; the same command run elsewhere fails or, worse, silently touches a different file.","line":4,"matched":"/opt/build/out.json","review_key":"README.md:4:/opt/build/out.json","rule":"EL-ABS-POSIX","verdict":"leak"}],"counts":{"benign":0,"by_category":{"absolute_path":1,"home_directory":0,"hostname":0,"temp_directory":0,"username":0},"confirmed":1},"coverage":{"files":["README.md"],"files_scanned":1,"mode":"full"},"reviewed_benign":[],"schema_version":1,"stale_review_entries":[],"status":"leaks","tool":"env-leak-scanner"}
+exit=1
+
+=== $ python3 leakscan.py --root _control ===
+{"confirmed_leaks":[{"category":"absolute_path","column":16,"file":"README.md","harms_reproducibility":"an absolute path assumes a filesystem layout the reader does not have; the same command run elsewhere fails or, worse, silently touches a different file.","line":4,"matched":"/opt/build/out.json","review_key":"README.md:4:/opt/build/out.json","rule":"EL-ABS-POSIX","verdict":"leak"},{"category":"home_directory","column":10,"file":"README.md","harms_reproducibility":"a specific account's home directory; nobody else has it, and it usually carries the author's login name with it.","line":5,"matched":"/home/rito/out.json","review_key":"README.md:5:/home/rito/out.json","rule":"EL-HOME-ABS","verdict":"leak"},{"category":"username","column":16,"file":"README.md","harms_reproducibility":"the author's login name, recoverable from a path in a public document.","line":5,"matched":"rito","review_key":"README.md:5:rito","rule":"EL-USER-PATH","verdict":"leak"}],"counts":{"benign":0,"by_category":{"absolute_path":1,"home_directory":1,"hostname":0,"temp_directory":0,"username":1},"confirmed":3},"coverage":{"files":["README.md"],"files_scanned":1,"mode":"full"},"reviewed_benign":[],"schema_version":1,"stale_review_entries":[],"status":"leaks","tool":"env-leak-scanner"}
+exit=1
+
+=== $ python3 leakscan.py --root _control ===
+{"confirmed_leaks":[{"category":"absolute_path","column":16,"file":"README.md","harms_reproducibility":"an absolute path assumes a filesystem layout the reader does not have; the same command run elsewhere fails or, worse, silently touches a different file.","line":4,"matched":"/opt/build/out.json","review_key":"README.md:4:/opt/build/out.json","rule":"EL-ABS-POSIX","verdict":"leak"},{"category":"home_directory","column":10,"file":"README.md","harms_reproducibility":"a specific account's home directory; nobody else has it, and it usually carries the author's login name with it.","line":5,"matched":"/home/rito/out.json","review_key":"README.md:5:/home/rito/out.json","rule":"EL-HOME-ABS","verdict":"leak"},{"category":"username","column":16,"file":"README.md","harms_reproducibility":"the author's login name, recoverable from a path in a public document.","line":5,"matched":"rito","review_key":"README.md:5:rito","rule":"EL-USER-PATH","verdict":"leak"},{"category":"temp_directory","column":7,"file":"README.md","harms_reproducibility":"temporary directories are cleared between runs and differ per platform; a path there is stale by the time it is read.","line":6,"matched":"/tmp/a.json","review_key":"README.md:6:/tmp/a.json","rule":"EL-TEMP-POSIX","verdict":"leak"}],"counts":{"benign":0,"by_category":{"absolute_path":1,"home_directory":1,"hostname":0,"temp_directory":1,"username":1},"confirmed":4},"coverage":{"files":["README.md"],"files_scanned":1,"mode":"full"},"reviewed_benign":[],"schema_version":1,"stale_review_entries":[],"status":"leaks","tool":"env-leak-scanner"}
+exit=1
+
+=== $ python3 leakscan.py --root _control ===
+{"confirmed_leaks":[{"category":"absolute_path","column":16,"file":"README.md","harms_reproducibility":"an absolute path assumes a filesystem layout the reader does not have; the same command run elsewhere fails or, worse, silently touches a different file.","line":4,"matched":"/opt/build/out.json","review_key":"README.md:4:/opt/build/out.json","rule":"EL-ABS-POSIX","verdict":"leak"},{"category":"home_directory","column":10,"file":"README.md","harms_reproducibility":"a specific account's home directory; nobody else has it, and it usually carries the author's login name with it.","line":5,"matched":"/home/rito/out.json","review_key":"README.md:5:/home/rito/out.json","rule":"EL-HOME-ABS","verdict":"leak"},{"category":"username","column":16,"file":"README.md","harms_reproducibility":"the author's login name, recoverable from a path in a public document.","line":5,"matched":"rito","review_key":"README.md:5:rito","rule":"EL-USER-PATH","verdict":"leak"},{"category":"temp_directory","column":7,"file":"README.md","harms_reproducibility":"temporary directories are cleared between runs and differ per platform; a path there is stale by the time it is read.","line":6,"matched":"/tmp/a.json","review_key":"README.md:6:/tmp/a.json","rule":"EL-TEMP-POSIX","verdict":"leak"},{"category":"hostname","column":13,"file":"README.md","harms_reproducibility":"names a machine only reachable from the author's network namespace; a reader following it reaches nothing, or worse, something else.","line":7,"matched":"localhost:8080","review_key":"README.md:7:localhost:8080","rule":"EL-HOST-LOCAL","verdict":"leak"}],"counts":{"benign":0,"by_category":{"absolute_path":1,"home_directory":1,"hostname":1,"temp_directory":1,"username":1},"confirmed":5},"coverage":{"files":["README.md"],"files_scanned":1,"mode":"full"},"reviewed_benign":[],"schema_version":1,"stale_review_entries":[],"status":"leaks","tool":"env-leak-scanner"}
+exit=1
+
+=== $ python3 leakscan.py --root /nonexistent-directory-xyz ===
+{"error":"--root is not a directory: /nonexistent-directory-xyz","schema_version":1,"status":"error","tool":"env-leak-scanner"}
+exit=2
+
+=== $ python3 -m unittest test_leakscan.TestFullScanEqualsCandidateScan -v ===
+test_candidates_drop_the_clean_lines (test_leakscan.TestFullScanEqualsCandidateScan) ... ok
+test_identical_findings (test_leakscan.TestFullScanEqualsCandidateScan) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+OK
+exit=0
+
+=== $ python3 leakscan.py --scan-candidates candidates_repo.json -o raw_scan.json ===
+exit=1
+
+=== $ python3 leakscan.py --scan-candidates candidates_repo.json --review review.json -o leak_report_2026-08-04.json ===
+exit=1
+
+=== $ python3 -c "import json;r=json.load(open('leak_report_2026-08-04.json'));print('confirmed',r['counts']['confirmed'],'benign',r['counts']['benign']);print(r['counts']['by_category']);print('stale review entries',len(r['stale_review_entries']))" ===
+confirmed 121 benign 100
+{'absolute_path': 0, 'home_directory': 0, 'hostname': 20, 'temp_directory': 101, 'username': 0}
+stale review entries 0
+exit=0
+
+=== $ python3 -c "import json,collections;r=json.load(open('leak_report_2026-08-04.json'));c=collections.Counter((f['file'],f['category']) for f in r['confirmed_leaks']);[print('%-4d %-14s %s'%(v,k[1],k[0])) for k,v in sorted(c.items())]" ===
+1    hostname       LIMITATIONS.md
+1    hostname       REVIEWERS_GUIDE.md
+1    hostname       bundle-index/captured_output.txt
+8    temp_directory bundle-index/captured_output.txt
+1    temp_directory claim-checker/captured_output.txt
+13   temp_directory commit-claim-auditor/captured_output.txt
+10   temp_directory consolidate/captured_output.txt
+11   temp_directory contradiction-detector/captured_output.txt
+1    hostname       doc-validator/captured_output.txt
+4    hostname       doc-validator/repair_captured_output.txt
+5    temp_directory dup-detector/captured_output.txt
+1    temp_directory exit-harness/README.md
+6    temp_directory index-generator/README.md
+4    temp_directory index-generator/captured_output.txt
+6    temp_directory limitations-probe/captured_output.txt
+11   temp_directory nondeterminism-scanner/captured_output.txt
+1    temp_directory path-collision-scanner/captured_output.txt
+2    temp_directory regression-checker/README.md
+1    temp_directory schema-checker/captured_output.txt
+3    temp_directory tamper-runner/captured_output.txt
+1    hostname       weak-assertion-scanner/README.md
+8    temp_directory weak-assertion-scanner/README.md
+1    hostname       weak-assertion-scanner/REPAIR_NOTES.md
+10   temp_directory weak-assertion-scanner/captured_output.txt
+10   hostname       weak-assertion-scanner/repair_captured_output.txt
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('leak_report_2026-08-04.json'));[print(f['file'],f['line'],f['rule'],repr(f['matched'])) for f in r['confirmed_leaks'] if 'weak-assertion-scanner' in f['file']]" ===
+weak-assertion-scanner/README.md 281 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs'
+weak-assertion-scanner/README.md 438 EL-TEMP-POSIX '/tmp/relocated_weak_copy'
+weak-assertion-scanner/README.md 439 EL-TEMP-POSIX '/tmp/a.json'
+weak-assertion-scanner/README.md 440 EL-TEMP-POSIX '/tmp/relocated_weak_copy'
+weak-assertion-scanner/README.md 440 EL-TEMP-POSIX '/tmp/b.json'
+weak-assertion-scanner/README.md 441 EL-TEMP-POSIX '/tmp/a.json'
+weak-assertion-scanner/README.md 441 EL-TEMP-POSIX '/tmp/b.json'
+weak-assertion-scanner/README.md 442 EL-TEMP-POSIX '/tmp/a.json'
+weak-assertion-scanner/README.md 442 EL-TEMP-POSIX '/tmp/b.json'
+weak-assertion-scanner/REPAIR_NOTES.md 5 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs'
+weak-assertion-scanner/captured_output.txt 247 EL-TEMP-POSIX '/tmp/relocated_weak_copy'
+weak-assertion-scanner/captured_output.txt 248 EL-TEMP-POSIX '/tmp/reloc_a.json'
+weak-assertion-scanner/captured_output.txt 249 EL-TEMP-POSIX '/tmp/relocated_weak_copy'
+weak-assertion-scanner/captured_output.txt 249 EL-TEMP-POSIX '/tmp/reloc_b.json'
+weak-assertion-scanner/captured_output.txt 250 EL-TEMP-POSIX '/tmp/reloc_a.json'
+weak-assertion-scanner/captured_output.txt 250 EL-TEMP-POSIX '/tmp/reloc_b.json'
+weak-assertion-scanner/captured_output.txt 251 EL-TEMP-POSIX '/tmp/reloc_a.json'
+weak-assertion-scanner/captured_output.txt 252 EL-TEMP-POSIX '/tmp/reloc_b.json'
+weak-assertion-scanner/captured_output.txt 253 EL-TEMP-POSIX '/tmp/reloc_a.json'
+weak-assertion-scanner/captured_output.txt 253 EL-TEMP-POSIX '/tmp/reloc_b.json'
+weak-assertion-scanner/repair_captured_output.txt 1 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/weak-assertion-scanner'
+weak-assertion-scanner/repair_captured_output.txt 2 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs'
+weak-assertion-scanner/repair_captured_output.txt 35 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/bundle-index'
+weak-assertion-scanner/repair_captured_output.txt 40 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/claim-checker'
+weak-assertion-scanner/repair_captured_output.txt 45 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/dup-detector'
+weak-assertion-scanner/repair_captured_output.txt 50 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/loop-health'
+weak-assertion-scanner/repair_captured_output.txt 55 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/regression-checker'
+weak-assertion-scanner/repair_captured_output.txt 69 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/snapshot-diff'
+weak-assertion-scanner/repair_captured_output.txt 96 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs/thread-check'
+weak-assertion-scanner/repair_captured_output.txt 102 EL-HOST-SESSION '/sessions/sharp-stoic-knuth/mnt/outputs'
+exit=0
+
+=== $ python3 leakscan.py --scan-candidates candidates_repo.json --review review.json -o _d1.json; python3 leakscan.py --scan-candidates candidates_repo.json --review review.json -o _d2.json; cmp _d1.json _d2.json && echo BYTE_IDENTICAL; rm -f _d1.json _d2.json ===
+BYTE_IDENTICAL
+exit=0
+
+=== $ python3 -c "import hashlib;print(hashlib.sha256(open('leak_report_2026-08-04.json','rb').read()).hexdigest(),' leak_report_2026-08-04.json')" ===
+dab40f0b653132521be15efa35ff84bb4d535517f264a529e4821898c013480b  leak_report_2026-08-04.json
+exit=0

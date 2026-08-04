@@ -1,0 +1,346 @@
+{
+ "REVIEWERS_GUIDE.md:314:/sessions/": {
+  "reason": "The bare prefix quoted in prose while explaining the leak class; no session name follows it.",
+  "verdict": "benign"
+ },
+ "bundle-verifier/README.md:74:C:\\...": {
+  "reason": "Explicit documentation placeholder for a Windows or UNC path; the literal text is '...', not a real machine.",
+  "verdict": "benign"
+ },
+ "bundle-verifier/README.md:74:\\\\server\\...": {
+  "reason": "Explicit documentation placeholder for a Windows or UNC path; the literal text is '...', not a real machine.",
+  "verdict": "benign"
+ },
+ "claim-checker/README.md:473:/etc/hostname": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "claim-checker/bundle_false/notes_false.txt:51:/etc/hostname": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "claim-checker/captured_output.txt:260:/etc/hostname": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "claim-checker/captured_output.txt:300:/etc/hostname": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "claim-checker/captured_output.txt:303:/etc/hostname": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "commit-claim-auditor/captured_output.txt:80:/dev/null": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "commit-claim-auditor/captured_output.txt:91:/nonexistent-dir/out.json": {
+  "reason": "A deliberately non-existent path used as a fixture to prove the tool's error path. It is portable precisely because it exists nowhere.",
+  "verdict": "benign"
+ },
+ "commit-claim-auditor/captured_output.txt:92:/nonexistent-dir/out.json": {
+  "reason": "A deliberately non-existent path used as a fixture to prove the tool's error path. It is portable precisely because it exists nowhere.",
+  "verdict": "benign"
+ },
+ "dup-detector/captured_output.txt:53:/dev/null": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "dup-detector/captured_output.txt:54:/dev/null": {
+  "reason": "A path guaranteed identical on every POSIX system. Portable by definition, so it cannot make a document irreproducible.",
+  "verdict": "benign"
+ },
+ "dup-detector/captured_output.txt:55:/nope/nope.json": {
+  "reason": "A deliberately non-existent path used as a fixture to prove the tool's error path. It is portable precisely because it exists nowhere.",
+  "verdict": "benign"
+ },
+ "exit-harness/README.md:187:/path/to/that/repository": {
+  "reason": "Explicit documentation placeholder. It names no real location and is already the fix this scanner would recommend.",
+  "verdict": "benign"
+ },
+ "exit-harness/README.md:33:/path/to/real/tool/repo": {
+  "reason": "Explicit documentation placeholder. It names no real location and is already the fix this scanner would recommend.",
+  "verdict": "benign"
+ },
+ "index-generator/captured_output.txt:112:/no/such/dir/at/all": {
+  "reason": "A deliberately non-existent path used as a fixture to prove the tool's error path. It is portable precisely because it exists nowhere.",
+  "verdict": "benign"
+ },
+ "schema-checker/README.md:223:/records/2/cid": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/README.md:274:/records/2/cid": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/README.md:278:/records/2/tags": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/README.md:295:/records/2/cid": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/README.md:315:/records/10": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/README.md:316:/records/2": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/README.md:335:/records/2/cid": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/0/cid": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/1/kind": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/2/bogus": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/2/confidence": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/2/source/system": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/2/tags": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/3/tags/1": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/3/tags/2": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/4/note": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/4/source/uri": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/4/tags": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/5/confidence": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/5/retries": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/5/source/meta/checksum": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/5/source/meta/region": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/6/reviewed": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/6/source/system": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:129:/records/6/tags": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:164:/records/0/cid": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:169:/records/1/kind": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:174:/records/2/bogus": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:179:/records/2/confidence": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:184:/records/2/source/system": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:189:/records/2/tags": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:194:/records/3/tags/1": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:199:/records/3/tags/2": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:204:/records/4/note": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:209:/records/4/source/uri": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:214:/records/4/tags": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:219:/records/5/confidence": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:224:/records/5/retries": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:229:/records/5/source/meta/checksum": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:234:/records/5/source/meta/region": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:239:/records/6/reviewed": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:244:/records/6/source/system": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:249:/records/6/tags": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/additional_properties": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/id/pattern": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/id/type": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/items_list/items/colour": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/items_list/items/enum": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/items_list/min_items": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/nameless": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/score/maximum": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/properties/score/pattern": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:285:/root/required/1": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:302:/root/additional_properties": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:307:/root/properties/id/pattern": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:312:/root/properties/id/type": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:317:/root/properties/items_list/items/colour": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:322:/root/properties/items_list/items/enum": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:327:/root/properties/items_list/min_items": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:332:/root/properties/nameless": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:337:/root/properties/score/maximum": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:342:/root/properties/score/pattern": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "schema-checker/captured_output.txt:347:/root/required/1": {
+  "reason": "RFC 6901 JSON Pointer rooted at the schema document, not the /root home directory. A false positive of EL-HOME-ABS; see README limitation 2.",
+  "verdict": "benign"
+ },
+ "snapshot-diff/README.md:14:/sessions/.../outputs/queue-auditor/": {
+  "reason": "Already redacted at the point of writing: the session name is literally '...'. Nothing identifying survives.",
+  "verdict": "benign"
+ },
+ "tamper-runner/README.md:81:/usr/local/bin/my-verifier": {
+  "reason": "A documentation example of where a reader might install their own binary, not a location on the author's machine.",
+  "verdict": "benign"
+ },
+ "tamper-runner/README.md:82:/usr/local/bin/my-verifier": {
+  "reason": "A documentation example of where a reader might install their own binary, not a location on the author's machine.",
+  "verdict": "benign"
+ },
+ "tamper-runner/captured_output.txt:227:/no/such/binary_xyz_never_exists": {
+  "reason": "A deliberately non-existent path used as a fixture to prove the tool's error path. It is portable precisely because it exists nowhere.",
+  "verdict": "benign"
+ },
+ "tamper-runner/captured_output.txt:228:/no/such/binary_xyz_never_exists": {
+  "reason": "A deliberately non-existent path used as a fixture to prove the tool's error path. It is portable precisely because it exists nowhere.",
+  "verdict": "benign"
+ },
+ "thread-check/README.md:348:/quotes/backtick": {
+  "reason": "RFC 6901 JSON Pointer printed by the tool as an error location, not a filesystem path. A false positive of EL-ABS-POSIX, which cannot tell a pointer from a path; recorded here rather than fixed by weakening the rule.",
+  "verdict": "benign"
+ }
+}
