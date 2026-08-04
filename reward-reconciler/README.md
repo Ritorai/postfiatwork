@@ -100,3 +100,45 @@ exercises all five issue types plus a correctly balanced record
 
 `RUN_COMMANDS.md` in this directory has the same reproduction commands in
 a shorter, copy-paste-first form.
+
+
+## 4 limitations a reviewer should scrutinise
+
+Found by **running this tool against adversarial inputs**, not by reading it.
+Every claim is reproduced by
+[`limitations-probe/probe.py`](../limitations-probe/probe.py), which exits
+non-zero if any of them stops reproducing.
+
+1. **A split payout to the WRONG wallet is reported without naming that
+   wallet (RR-4).** Expect `3.500000` to `rHONEST`; record two payouts of
+   `1.750000` each to `rATTACKER`. The report contains exactly one finding:
+   `DUPLICATE_PAYOUT`, `"wallet": "rHONEST"` — the *expected* wallet. The
+   string `rATTACKER` **does not appear anywhere in the report.** The wallet
+   comparison lives in the single-payout branch and never runs when payouts
+   are grouped, so `WALLET_MISMATCH` cannot fire for a split payout. A reader
+   triaging a `DUPLICATE_PAYOUT` finding will not learn the money went
+   somewhere else. This is the most serious item here and it is a defect, not
+   a trade-off.
+
+2. **An out-of-range exponent crashes instead of exiting `2` (RR-2).** An
+   amount of `"1E+999999999"` raises an uncaught `decimal.InvalidOperation`
+   and exits **`1`** with a Python traceback and no JSON report.
+   `value.quantize(SCALE)` sits outside the `try/except InvalidOperation` that
+   guards `Decimal(str(raw))`. Exit `1` is the code this tool uses for
+   "mismatches found", so a caller reading exit codes will record a malformed
+   input as a reconciliation result.
+
+3. **Differences below the settlement scale are quantized away, not rejected
+   (RR-1).** Expected `1.0000004` against paid `1.0000001` reports
+   `"status": "balanced"`, zero findings, exit `0`. Both quantize to
+   `1.000000`. That is the documented 6-dp precision doing its job, but the
+   consequence — a real discrepancy silently absorbed rather than flagged as
+   over-precise input — was not stated. Across a large batch these do not
+   cancel; they accumulate in whichever direction the rounding falls.
+
+4. **Amounts have no sign or range check (RR-3).** A negative expected reward
+   reconciles cleanly against a negative payout: `"status": "balanced"`,
+   exit `0`, `expected_total: "-5.000000"`. Scientific notation is likewise
+   accepted, so `"1E+2"` and `"100"` are the same amount. Neither is
+   necessarily wrong, but neither is checked, and a reconciler is the last
+   place a negative reward should pass unremarked.
