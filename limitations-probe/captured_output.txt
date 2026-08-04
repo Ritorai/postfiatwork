@@ -1,0 +1,110 @@
+limitations-probe -- captured output
+====================================
+
+Environment: CPython 3.11.15, Node 22, jq 1.7, Linux x86_64. Stdlib only,
+no network. Working directory: limitations-probe/. Every command below was
+executed; nothing is transcribed from memory.
+
+$ python3 --version ; node --version ; jq --version
+Python 3.11.15
+v22.22.2
+jq-1.7
+
+$ python3 probe.py ; echo "exit=$?"
+limitations-probe -- 12 probes, 12 reproduced
+======================================================================
+
+EM-1  [evidence-manifest]  REPRODUCED
+  Q: Do four evidence strings that differ only in whitespace produce four different batch roots?
+  observed: {"distinct_roots": 1, "roots_by_variant": {"newline": "3a2873b4ab2b7746877b789d3f90697ce539332d947294fe88ad85d28bfd79dc", "one space": "3a2873b4ab2b7746877b789d3f90697ce539332d947294fe88ad85d28bfd79dc", "tab": "3a2873b4ab2b7746877b789d3f90697ce539332d947294fe88ad85d28bfd79dc", "two spaces": "3a2873b4ab2b7746877b789d3f90697ce539332d947294fe88ad85d28bfd79dc"}}
+  means:    Four distinct evidence texts share one batch root, so the tamper check cannot tell them apart.
+
+EM-2  [evidence-manifest]  REPRODUCED
+  Q: Does ' S1 ' hash differently from 'S1' as a submission_id?
+  observed: {"bare_id_root": "a68ec9244103ef501d7ae7a258ebe2ae8ac89ea9de6054570be18cb84c526e57", "equal": true, "padded_id_root": "a68ec9244103ef501d7ae7a258ebe2ae8ac89ea9de6054570be18cb84c526e57"}
+  means:    An identifier carrying stray whitespace is the same submission as far as the manifest is concerned.
+
+EM-3  [evidence-manifest]  REPRODUCED
+  Q: Is a manifest built from a record containing bare NaN still valid RFC 8259 JSON?
+  observed: {"build_exit_code": 0, "manifest_contains_bare_NaN": true, "strict_parser_accepts": false, "strict_parser_error": "bare NaN token"}
+  means:    The build succeeds and emits a manifest containing a bare NaN token. Node 22's JSON.parse and Python's json with a raising parse_constant both reject it; Python's default parser and jq 1.7 both accept it. Measured, not assumed -- jq contradicted the first guess. See captured_output.txt.
+
+EM-4  [evidence-manifest]  REPRODUCED
+  Q: Does a batch containing the same submission_id twice produce a warning or a non-zero exit?
+  observed: {"entries": 2, "exit_code": 0}
+  means:    Duplicate identifiers are baked into the root silently; uniqueness is the caller's problem and is not stated.
+
+RR-1  [reward-reconciler]  REPRODUCED
+  Q: Is an expected 1.0000004 against a paid 1.0000001 reported as a mismatch?
+  observed: {"exit_code": 0, "findings": 0, "status": "balanced"}
+  means:    Both amounts quantize to 1.000000, so a real difference below the settlement scale disappears rather than being rejected or reported.
+
+RR-2  [reward-reconciler]  REPRODUCED
+  Q: Does an amount of '1E+999999999' produce the documented INVALID_INPUT report and exit 2?
+  observed: {"exit_code": 1, "json_report_emitted": false, "last_stderr_line": "decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]", "python_traceback": true}
+  means:    value.quantize(SCALE) sits outside the try/except that catches InvalidOperation, so a malformed amount raises an uncaught exception and exits 1 -- the code a caller reads as 'mismatches found', not 'bad input'.
+
+RR-3  [reward-reconciler]  REPRODUCED
+  Q: Is a negative reward amount rejected?
+  observed: {"exit_code": 0, "expected_total": "-5.000000", "status": "balanced"}
+  means:    There is no sign or range check on amounts. A negative expected reward reconciles cleanly against a negative payout.
+
+RR-4  [reward-reconciler]  REPRODUCED
+  Q: When a task's payout is split across two records that go to a DIFFERENT wallet than expected, does the report name the wallet that was actually paid?
+  observed: {"exit_code": 1, "issues": ["DUPLICATE_PAYOUT"], "paid_wallet_appears_in_report": false, "wallets_named": ["rHONEST"]}
+  means:    In the split-payout branch the wallet check never runs. The finding says DUPLICATE_PAYOUT and prints the EXPECTED wallet, so a reader triaging the report never learns the money went somewhere else. WALLET_MISMATCH does not fire.
+
+SC-1  [schema-checker]  REPRODUCED
+  Q: Does pattern '[0-9]{4}' reject the value 'XX1234XX'?
+  observed: {"status": "conform", "violations": 0}
+  means:    pattern is matched with a SEARCH, so every unanchored pattern in a schema is far more permissive than it reads. The repo's own fixture schema anchors all of its patterns with ^...$, which is exactly why its own tests never surface this.
+
+SC-2  [schema-checker]  REPRODUCED
+  Q: Under max_length 4, how many UTF-8 bytes can a conforming string actually occupy?
+  observed: {"all_conform": true, "cases": [{"case": "4 ASCII", "status": "conform", "utf8_bytes": 4}, {"case": "4 x U+00E9", "status": "conform", "utf8_bytes": 8}, {"case": "4 x U+1F600", "status": "conform", "utf8_bytes": 16}], "max_bytes_accepted": 16}
+  means:    The unit is Python code points. A field sized against a byte budget -- a database column, an on-chain memo -- can be overrun 4x by a payload this checker calls conform.
+
+SC-3  [schema-checker]  REPRODUCED
+  Q: Does the checker terminate on the pattern '^(a+)+$' against a 33-character non-matching string?
+  observed: {"exit_code": null, "timed_out_after_seconds": 20}
+  means:    re.compile() is validated when the schema loads, but there is no bound on match time. A schema is an input; a hostile or merely careless one hangs the checker indefinitely. The timeout in this probe belongs to the HARNESS, not the tool.
+
+SC-4  [schema-checker]  REPRODUCED
+  Q: Does type 'integer' wrongly accept JSON true, or an integral float like 5.0?
+  observed: {"all_rejected": true, "cases": [{"case": "true", "codes": ["TYPE_MISMATCH"], "status": "violations"}, {"case": "5.0", "codes": ["TYPE_MISMATCH"], "status": "violations"}, {"case": "1e400", "codes": ["TYPE_MISMATCH"], "status": "violations"}]}
+  means:    NEGATIVE RESULT, recorded deliberately. bool is a subclass of int in Python and 5.0 == 5, so both are easy to get wrong. This checker gets both right. No limitation is claimed here.
+
+======================================================================
+evidence-manifest    4/4 reproduced
+reward-reconciler    4/4 reproduced
+schema-checker       4/4 reproduced
+exit=0
+
+$ python3 probe.py -o probe_report.json ; echo "exit=$?"
+exit=0
+
+$ python3 probe.py -o /tmp/again.json && cmp probe_report.json /tmp/again.json && echo BYTE-IDENTICAL
+BYTE-IDENTICAL
+
+### EM-3 cross-checked against three JSON parsers, one of which
+### contradicted my first guess. Recorded rather than quietly dropped.
+
+$ python3 ../evidence-manifest/manifest.py build /tmp/nan.json > /tmp/nan_manifest.json
+build exit=0
+$ grep -o "NaN" /tmp/nan_manifest.json | head -1
+NaN
+
+$ node -e "JSON.parse(...)"   # strict RFC 8259
+node JSON.parse REJECTS: Unexpected token 'N', ...":{"score":NaN,"submi"... is not valid JSON
+
+$ python3 -c "json.load(..., parse_constant=raise)"
+python strict REJECTS: bare NaN
+
+$ python3 -c "json.load(...)"   # default, non-standard extension
+python default: ACCEPTED
+
+$ jq -r .batch_root /tmp/nan_manifest.json ; echo "jq exit=$?"
+2758a8d874afc142770b2b183249dd93cba7c1aeb753ec4f01c23f50abd74e15
+jq exit=0
+# jq ACCEPTS it. My first draft said jq rejects it; that was wrong and is
+# corrected in evidence-manifest/README.md rather than left standing.
