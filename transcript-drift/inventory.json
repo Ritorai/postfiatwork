@@ -1,0 +1,166 @@
+{
+ "budget-forecaster": {
+  "readme": true,
+  "transcript": true
+ },
+ "bundle-index": {
+  "readme": true,
+  "transcript": true
+ },
+ "bundle-verifier": {
+  "readme": true,
+  "transcript": true
+ },
+ "claim-checker": {
+  "readme": true,
+  "transcript": true
+ },
+ "commit-claim-auditor": {
+  "readme": true,
+  "transcript": true
+ },
+ "consolidate": {
+  "readme": true,
+  "transcript": true
+ },
+ "contradiction-detector": {
+  "readme": true,
+  "transcript": true
+ },
+ "crosspath-runner": {
+  "readme": true,
+  "transcript": true
+ },
+ "doc-validator": {
+  "readme": true,
+  "transcript": true
+ },
+ "dup-detector": {
+  "readme": true,
+  "transcript": true
+ },
+ "event-linter": {
+  "readme": true,
+  "transcript": true
+ },
+ "evidence-harness": {
+  "readme": true,
+  "transcript": true
+ },
+ "evidence-manifest": {
+  "readme": true,
+  "transcript": true
+ },
+ "evidence-scorer": {
+  "readme": true,
+  "transcript": true
+ },
+ "evidence-validator": {
+  "readme": true,
+  "transcript": false
+ },
+ "exit-harness": {
+  "readme": true,
+  "transcript": true
+ },
+ "index-generator": {
+  "readme": true,
+  "transcript": true
+ },
+ "lifecycle-linter": {
+  "readme": true,
+  "transcript": true
+ },
+ "limitations-probe": {
+  "readme": true,
+  "transcript": true
+ },
+ "link-integrity": {
+  "readme": true,
+  "transcript": true
+ },
+ "loop-health": {
+  "readme": true,
+  "transcript": true
+ },
+ "nondeterminism-scanner": {
+  "readme": true,
+  "transcript": true
+ },
+ "path-collision-scanner": {
+  "readme": true,
+  "transcript": true
+ },
+ "payload-validator": {
+  "readme": true,
+  "transcript": true
+ },
+ "preflight": {
+  "readme": true,
+  "transcript": true
+ },
+ "queue-auditor": {
+  "readme": true,
+  "transcript": true
+ },
+ "regression-checker": {
+  "readme": true,
+  "transcript": true
+ },
+ "reward-anomaly": {
+  "readme": true,
+  "transcript": true
+ },
+ "reward-reconciler": {
+  "readme": true,
+  "transcript": true
+ },
+ "schema-checker": {
+  "readme": true,
+  "transcript": true
+ },
+ "scorecard": {
+  "readme": true,
+  "transcript": true
+ },
+ "snapshot-diff": {
+  "readme": true,
+  "transcript": true
+ },
+ "staleness-monitor": {
+  "readme": true,
+  "transcript": true
+ },
+ "sybil-detector": {
+  "readme": true,
+  "transcript": true
+ },
+ "tamper-runner": {
+  "readme": true,
+  "transcript": true
+ },
+ "thread-check": {
+  "readme": true,
+  "transcript": true
+ },
+ "throughput-reporter": {
+  "readme": true,
+  "transcript": true
+ },
+ "wallet-reconciler": {
+  "readme": true,
+  "transcript": true
+ },
+ "weak-assertion-scanner": {
+  "readme": true,
+  "transcript": true
+ },
+ "xrpl-address": {
+  "readme": true,
+  "transcript": true
+ },
+ "xrpl-auditor": {
+  "readme": true,
+  "transcript": true
+ }
+}
