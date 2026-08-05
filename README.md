@@ -8,7 +8,7 @@ false positive, false negative, scope boundary, and precision gap. Contributor
 workflow is in [CONTRIBUTING.md](CONTRIBUTING.md); the output contract every
 tool follows is in [EVIDENCE_STANDARD.md](EVIDENCE_STANDARD.md).
 
-Thirteen standalone command-line tools. **Standard-library Python 3 only** — no
+Forty-four standalone command-line tools. **Standard-library Python 3 only** — no
 third-party packages, no network calls, no build step. Clone and run.
 
 ```
@@ -17,7 +17,10 @@ cd postfiatwork/schema-checker
 python3 -m unittest test_schema_check -v
 ```
 
-**476 tests across 13 tools, all passing.**
+**4,144 tests claimed across 37 of 44 tools.** That figure is derived from
+each tool's own README by `readme-index/`, which also records the 1 ambiguous
+and 6 unstated cases rather than guessing them. It is a sum of claims, not a
+run: this repository has no single command that executes every suite.
 
 ## Why these exist
 
@@ -44,24 +47,54 @@ Every tool follows the same contract so they compose in a pipeline:
 
 ## The tools
 
-| Tool | Tests | What it checks |
-|------|------:|----------------|
-| [`schema-checker`](schema-checker) | 95 | Validates evidence payloads against a declarative schema. Required keys, types, regex, enums, nested objects and arrays. Every violation gets a JSON Pointer path. |
-| [`evidence-harness`](evidence-harness) | 63 | Pre-flight: run it against your **own** bundle before submitting. Checks the bundle actually contains what the brief demands and names the specific gap. |
-| [`evidence-scorer`](evidence-scorer) | 39 | Scores evidence on computable signals — concrete artifacts, token specificity, length, and verbatim boilerplate shared across submissions. |
-| [`budget-forecaster`](budget-forecaster) | 36 | Projects reward spend from history. Decimal-safe; refuses to invent a burn rate from one data point. |
-| [`xrpl-address`](xrpl-address) | 34 | XRPL classic and X-address validation. Correct XRPL base58 alphabet, prefixes, and double-SHA256 checksum. |
-| [`throughput-reporter`](throughput-reporter) | 32 | Per-contributor throughput, refusal rate, median turnaround, reliability grade. |
-| [`evidence-manifest`](evidence-manifest) | 29 | Deterministic batch manifest — canonicalised records, per-record digests, Merkle root, tamper verification. |
-| [`sybil-detector`](sybil-detector) | 29 | Groups wallets by shared CIDs, near-identical evidence length, and burst timing into scored clusters. |
-| [`xrpl-auditor`](xrpl-auditor) | 27 | Payout transaction references: hash structure, reuse across or within tasks, unknown task IDs. |
-| [`lifecycle-linter`](lifecycle-linter) | 26 | Task lifecycle histories from JSONL. Illegal transitions, skipped states, post-terminal events. |
-| [`event-linter`](event-linter) | 26 | Same lifecycle graph from a JSON array, reported grouped per task. |
-| [`reward-reconciler`](reward-reconciler) | 23 | Expected rewards vs recorded payouts. Missing, duplicate, unexpected, amount- and wallet-mismatched. |
-| [`evidence-validator`](evidence-validator) | 17 | Required fields, CID and XRPL hash formats, duplicate submission IDs. |
+| Tool | Tests | Title |
+|------|------:|-------|
+| [`budget-forecaster`](budget-forecaster) | 36 | Deterministic Task-Reward Budget Forecaster |
+| [`bundle-index`](bundle-index) | 170 | Bundle Index CLI |
+| [`bundle-verifier`](bundle-verifier) | not stated | bundle-verifier |
+| [`claim-checker`](claim-checker) | 224 | claimcheck |
+| [`commit-claim-auditor`](commit-claim-auditor) | ambiguous | commit-claim-auditor (`claimhist.py`) |
+| [`consolidate`](consolidate) | 152 | consolidate.py |
+| [`contradiction-detector`](contradiction-detector) | 168 | contradict.py |
+| [`crosspath-runner`](crosspath-runner) | 72 | crosspath-runner |
+| [`doc-validator`](doc-validator) | not stated | docval.py -- README-vs-argparse documentation validator |
+| [`dup-detector`](dup-detector) | 110 | dupdetect |
+| [`env-leak-scanner`](env-leak-scanner) | 65 | env-leak-scanner |
+| [`event-linter`](event-linter) | 26 | Task Lifecycle Event Linter (JSON array input) |
+| [`evidence-harness`](evidence-harness) | 63 | Evidence Verification Harness |
+| [`evidence-manifest`](evidence-manifest) | 29 | Deterministic Batch Evidence Manifest CLI |
+| [`evidence-scorer`](evidence-scorer) | 39 | Objective Evidence Quality Scorer |
+| [`evidence-validator`](evidence-validator) | 17 | Evidence Integrity Validator |
+| [`exit-harness`](exit-harness) | not stated | exit-harness |
+| [`index-generator`](index-generator) | 138 | index-generator |
+| [`lifecycle-linter`](lifecycle-linter) | 26 | Task Lifecycle Event Linter |
+| [`limitations-probe`](limitations-probe) | not stated | limitations-probe |
+| [`link-integrity`](link-integrity) | not stated | link_integrity.py |
+| [`loop-health`](loop-health) | 202 | loop-health |
+| [`nondeterminism-scanner`](nondeterminism-scanner) | 221 | ndscan |
+| [`path-collision-scanner`](path-collision-scanner) | 95 | path-collision-scanner |
+| [`payload-validator`](payload-validator) | 179 | Post Fiat Payload / Memo Validator |
+| [`preflight`](preflight) | not stated | preflight |
+| [`queue-auditor`](queue-auditor) | 175 | queue_audit.py |
+| [`readme-index`](readme-index) | 41 | readme-index |
+| [`regression-checker`](regression-checker) | 174 | regression-checker |
+| [`reward-anomaly`](reward-anomaly) | 143 | Reward Anomaly Detection CLI |
+| [`reward-reconciler`](reward-reconciler) | 23 | Deterministic Reward Reconciliation CLI |
+| [`schema-checker`](schema-checker) | 95 | schema-checker |
+| [`scorecard`](scorecard) | 188 | scorecard |
+| [`snapshot-diff`](snapshot-diff) | 222 | snapdiff.py |
+| [`staleness-monitor`](staleness-monitor) | 156 | staleness-monitor |
+| [`sybil-detector`](sybil-detector) | 29 | Configurable Sybil Wallet-Cluster Detector |
+| [`tamper-runner`](tamper-runner) | 144 | tamper-runner |
+| [`thread-check`](thread-check) | 229 | thread-check |
+| [`throughput-reporter`](throughput-reporter) | 32 | Contributor Throughput and Reliability Reporter |
+| [`transcript-drift`](transcript-drift) | 57 | transcript-drift |
+| [`wallet-reconciler`](wallet-reconciler) | 141 | Wallet Ledger Reconciliation CLI |
+| [`weak-assertion-scanner`](weak-assertion-scanner) | 202 | weakassert |
+| [`xrpl-address`](xrpl-address) | 34 | XRPL Classic and X-Address Validator |
+| [`xrpl-auditor`](xrpl-auditor) | 27 | XRPL Payout Reference Auditor |
 
-Each directory has its own README with exact rerun commands, an expected-results
-table, and the design judgement calls worth arguing with.
+**Totals:** 44 tools; 4144 tests from 37 tools with a derivable claim (1 ambiguous, 6 not stated).
 
 ## Judgement calls, collected
 
