@@ -1,0 +1,249 @@
+budget-forecaster	1	H	# Deterministic Task-Reward Budget Forecaster
+budget-forecaster	9	T	python3 -m unittest test_forecast -v
+budget-forecaster	24	T	| tests | `Ran 36 tests` / `OK` |
+budget-forecaster	84	N	-
+bundle-index	1	H	# Bundle Index CLI
+bundle-index	121	T	check against a real report (must print `0`), and the relocation test
+bundle-index	357	T	test_bundle_index.py    170 unit tests
+bundle-index	363	N	-
+bundle-verifier	1	H	# bundle-verifier
+bundle-verifier	32	T	python3 -m unittest test_bundleverify -v
+bundle-verifier	266	N	-
+claim-checker	1	H	# claimcheck
+claim-checker	6	T	kinds of CLAIM from it (a SHA-256 digest, a test count, an exit code), and
+claim-checker	150	T	`Ran N tests` / `Ran 1 test` (the exact phrase `unittest` itself prints,
+claim-checker	151	T	case-insensitive), or a bare `N tests` / `1 test` mention anywhere in a
+claim-checker	153	T	running `python3 -m unittest discover -s . -v` inside the bundle
+claim-checker	323	T	no SHA-256, no test count, no command, and no bare number of any kind
+claim-checker	416	T	2. The **relocation test**: `bundle_false` is copied to a second,
+claim-checker	441	T	byte-stability this tool is required to guarantee. `python3 -m unittest
+claim-checker	443	T	(e.g. `Ran 3 tests in 0.000s`) -- that raw text is never copied into the
+claim-checker	469	T	  | 7 | `Ran 10 tests` | `MISMATCHED` | real count is 2 |
+claim-checker	489	T	While writing `TestExtractSha256Occurrences`, a test for a line like
+claim-checker	588	T	`python3 -m unittest discover` exactly once per report even if several
+claim-checker	591	T	result -- including a failed-import placeholder test counting as `1` test
+claim-checker	608	T	   `python3 -m unittest discover -s . -v` run per report, cached and
+claim-checker	639	T	test_claimcheck.py            224 unit tests (180 pre-existing + 44 new)
+claim-checker	661	N	-
+commit-claim-auditor	1	H	# commit-claim-auditor (`claimhist.py`)
+commit-claim-auditor	86	T	1. `Ran N tests in` — literal unittest summary output, e.g.
+commit-claim-auditor	87	T	   `Ran 137 tests in 0.045s`.
+commit-claim-auditor	88	T	2. `**N tests across M tools**` — bold markdown aggregate claim.
+commit-claim-auditor	89	T	3. `N tests` — bare fallback, e.g. `137 tests`.
+commit-claim-auditor	92	T	comma and a digit (e.g. the `234` inside `1,234 tests`), the claim is
+commit-claim-auditor	118	T	  `python3 -m unittest <module> -v` there and parse the **last**
+commit-claim-auditor	154	T	recompute to `CURRENT` (the bundled `test_example.py` really has 3 tests),
+commit-claim-auditor	203	T	dedicated `TestBugRegressionHashAdjacentDot` class (3 tests) in
+commit-claim-auditor	214	T	2. **Comma-grouped test counts and free-form prose counts are refused, not
+commit-claim-auditor	215	T	   parsed.** `1,234 tests` is flagged `MALFORMED`/`ambiguous_number_format`
+commit-claim-auditor	217	T	   137 unit tests" or "test count: 137" (colon-separated, no trailing word
+commit-claim-auditor	220	T	3. **`--run-tests` requires exactly one `test_*.py` file co-located with
+commit-claim-auditor	239	T	   refuses (the comma-grouped `1,234 tests` sample, and a bare example hash with
+commit-claim-auditor	248	T	- `test_claimhist.py` — 154 unit/integration tests (`python3 -m unittest
+commit-claim-auditor	258	N	-
+consolidate	1	H	# consolidate.py
+consolidate	47	T	python3 -m unittest test_consolidate -v
+consolidate	353	T	`python3 -m unittest test_consolidate -v` runs 152 tests covering: canonical
+consolidate	364	N	-
+contradiction-detector	1	H	# contradict.py
+contradiction-detector	223	T	- `python3 -m unittest test_contradict -v` → **168 tests, all passing**
+contradiction-detector	224	T	  (`Ran 168 tests ... OK`).
+contradiction-detector	374	T	- `test_contradict.py` — 168 unittest tests.
+contradiction-detector	385	N	-
+crosspath-runner	1	H	# crosspath-runner
+crosspath-runner	38	T	| `test_crosspath.py` | 72 unit/integration tests (`unittest`, stdlib only) |
+crosspath-runner	161	T	python3 -m unittest test_crosspath
+crosspath-runner	168	T	Actual results: **72 tests, `OK`**; the full run exits `1` with exactly
+crosspath-runner	285	N	-
+doc-validator	1	H	# docval.py -- README-vs-argparse documentation validator
+doc-validator	112	T	this problem (the `python3 -m unittest ... -v` line that opens nearly every
+doc-validator	190	T	almost every README's rerun-commands block (`python3 -m unittest ... -v`),
+doc-validator	301	T	   refuses the opening `python3 -m unittest ... -v` line of nearly every
+doc-validator	334	T	python3 -m unittest test_docval -v
+doc-validator	351	N	-
+dup-detector	1	H	# dupdetect
+dup-detector	47	T	# 1. Test suite (110 tests)
+dup-detector	48	T	python3 -m unittest test_dupdetect -v
+dup-detector	82	T	| `python3 -m unittest test_dupdetect` | – | 110 tests, all pass | **0** |
+dup-detector	357	T	| `test_dupdetect.py` | 110 unittest tests, including CLI exit codes via `subprocess`. |
+dup-detector	362	N	-
+env-leak-scanner	1	H	# env-leak-scanner
+env-leak-scanner	166	T	**65 tests, `OK`, exit 0.** CPython 3.10.12, Linux x86_64.
+env-leak-scanner	169	T	python3 -m unittest test_leakscan
+env-leak-scanner	215	N	-
+event-linter	1	H	# Task Lifecycle Event Linter (JSON array input)
+event-linter	8	T	python3 -m unittest test_event_lint -v
+event-linter	21	T	| tests | `Ran 26 tests` / `OK` |
+event-linter	82	N	-
+evidence-harness	1	H	# Evidence Verification Harness
+evidence-harness	42	T	# 1. the test suite
+evidence-harness	43	T	python3 -m unittest test_harness -v
+evidence-harness	71	T	| `python3 -m unittest test_harness -v` | 0 | `Ran 63 tests` / `OK` |
+evidence-harness	84	T	| `required_commands` | pass | **fail** | `python3 -m unittest` never appears; the suite was run as `python3 test_tool.py` |
+evidence-harness	87	T	| `min_test_count` | pass | **fail** | largest run is `Ran 4 tests`, brief requires 10 |
+evidence-harness	100	T	  "required_commands": ["python3 -m unittest", "python3 -m json.tool"],
+evidence-harness	135	T	* **`min_test_count`** — parses `Ran N tests` and `Ran 1 test` from any
+evidence-harness	211	T	test_harness.py       63 unit tests
+evidence-harness	233	N	-
+evidence-manifest	1	H	# Deterministic Batch Evidence Manifest CLI
+evidence-manifest	8	T	python3 -m unittest test_manifest -v
+evidence-manifest	21	T	| test suite | `Ran 29 tests` / `OK`, exit 0 |
+evidence-manifest	130	N	-
+evidence-scorer	1	H	# Objective Evidence Quality Scorer
+evidence-scorer	10	T	python3 -m unittest test_score_evidence -v
+evidence-scorer	25	T	| tests | `Ran 39 tests` / `OK` |
+evidence-scorer	98	N	-
+evidence-validator	1	H	# Evidence Integrity Validator
+evidence-validator	93	T	python3 -m unittest test_validator -v
+evidence-validator	104	T	| tests | `Ran 17 tests` / `OK`, exit **0** |
+evidence-validator	119	N	-
+exit-harness	1	H	# exit-harness
+exit-harness	12	T	It is a single stdlib-only Python 3 file (`exitharness.py`) plus a test
+exit-harness	43	T	python3 -m unittest -v test_exitharness
+exit-harness	283	T	* `test_exitharness.py` -- 126 unit + CLI-integration tests.
+exit-harness	294	N	-
+index-generator	1	H	# index-generator
+index-generator	7	T	like a root README claiming "13 tools / 476 tests" while 33 tool
+index-generator	27	T	test_indexgen.py      test suite (138 tests)
+index-generator	42	T	python3 -m unittest test_indexgen -v
+index-generator	75	T	Totals line: `**Totals:** 6 tools; test count: 13 (from 3 tools; 3 unknown)`.
+index-generator	77	T	`root_readme_sample.md` claims "5 tools and 13 tests" -- 13 matches the sum
+index-generator	145	T	3 tests.
+index-generator	180	T	1. **Test-count extraction is a small set of regex heuristics, not real
+index-generator	182	T	   `"42 tests"`, `"Tests: 42"`, `"Ran 42 tests"`, and `"42/42 tests"`.  A
+index-generator	188	T	2. **`ROOT_README_COUNT_DRIFT`'s test-total check only sums tools with a
+index-generator	196	T	3. **The Entrypoint(s)/Test Module(s) index columns are comma-joined and
+index-generator	224	N	-
+lifecycle-linter	1	H	# Task Lifecycle Event Linter
+lifecycle-linter	8	T	python3 -m unittest test_lifecycle_lint -v
+lifecycle-linter	21	T	| tests | `Ran 26 tests` / `OK` |
+lifecycle-linter	81	N	-
+limitations-probe	1	H	# limitations-probe
+limitations-probe	104	N	-
+link-integrity	1	H	# link_integrity.py
+link-integrity	178	T	python3 -m unittest test_link_integrity -v
+link-integrity	231	T	`utf-8` when absent. A regression test,
+link-integrity	234	N	-
+loop-health	1	H	# loop-health
+loop-health	78	T	| `--review-overdue-hours` | no | `72` | Hours after a task's latest `awaiting_review`/`submitted` event before `REVIEW_OVERDUE` fires. |
+loop-health	388	T	Testing here means both the 202-test `unittest` suite and an unseeded-off
+loop-health	408	T	  order, and correctly produced 1 round. The test's expectation of `0` was
+loop-health	432	T	- `test_loop_health.py` -- unittest suite (202 tests; run with
+loop-health	433	T	  `python3 -m unittest test_loop_health -v`).
+loop-health	444	T	python3 -m unittest test_loop_health -v
+loop-health	460	N	-
+nondeterminism-scanner	1	H	# ndscan
+nondeterminism-scanner	71	T	the reports (prints `0`) and by the relocation test in
+nondeterminism-scanner	520	T	python3 -m unittest test_ndscan -v
+nondeterminism-scanner	523	T	221 tests. See `captured_output.txt` for the real summary line from this
+nondeterminism-scanner	525	N	-
+path-collision-scanner	1	H	# path-collision-scanner
+path-collision-scanner	29	T	| `test_pathscan.py` | 95 unit/integration tests (`unittest`, stdlib only) |
+path-collision-scanner	155	T	python3 -m unittest test_pathscan
+path-collision-scanner	163	T	Actual results: **95 tests, `OK`**; `make_fixtures.py --check` exit `0`;
+path-collision-scanner	239	N	-
+payload-validator	1	H	# Post Fiat Payload / Memo Validator
+payload-validator	29	T	  `CLASSIC2`, `XMAIN`, `XTEST`, `BADPREF`, `BADLEN`) are the same known-good
+payload-validator	50	T	- the full test suite (179 tests)
+payload-validator	127	T	python3 -m unittest test_payload_validate -v
+payload-validator	146	T	| tests | `Ran 179 tests` / `OK` |
+payload-validator	219	T	`TestUtf8BomHandling` (4 tests, both the file and stdin paths, both with
+payload-validator	255	N	-
+preflight	1	H	# preflight
+preflight	178	T	python3 -m unittest test_preflight -v
+preflight	230	N	-
+queue-auditor	1	H	# queue_audit.py
+queue-auditor	268	T	python3 -m unittest test_queue_audit -v
+queue-auditor	271	T	175 tests covering: constant values, canonical JSON formatting,
+queue-auditor	284	N	-
+regression-checker	1	H	# regression-checker
+regression-checker	26	T	| `test_regress.py` | 131 unit/integration tests (`unittest`, stdlib only) |
+regression-checker	27	T	| `test_regress_newline.py` | 8 tests pinning the `newline="\n"` report-writing fix |
+regression-checker	28	T	| `test_regress_integrity.py` | 35 tests pinning the boolean-exit-code and crashed-run fixes, and the fixture generator |
+regression-checker	259	T	python3 -m unittest test_regress test_regress_newline test_regress_integrity
+regression-checker	272	T	**174 tests, `OK`** (131 + 8 + 35), starting from a deleted `fixtures/`;
+regression-checker	396	N	-
+reward-anomaly	1	H	# Reward Anomaly Detection CLI
+reward-anomaly	272	T	python3 -m unittest test_reconcile_anomaly -v
+reward-anomaly	291	T	`test_reconcile_anomaly.py`: **143 tests**, `Ran 143 tests ... OK`. Covers:
+reward-anomaly	385	N	-
+reward-reconciler	1	H	# Deterministic Reward Reconciliation CLI
+reward-reconciler	71	T	python3 -m unittest test_reconcile -v
+reward-reconciler	82	T	| tests | `Ran 23 tests` / `OK` |
+reward-reconciler	145	N	-
+schema-checker	1	H	# schema-checker
+schema-checker	18	T	| `test_schema_check.py` | unittest suite (95 tests). |
+schema-checker	46	T	# 1. test suite
+schema-checker	47	T	python3 -m unittest test_schema_check -v
+schema-checker	71	T	| 1 | `python3 -m unittest test_schema_check -v` | 0 | `Ran 95 tests ... OK` |
+schema-checker	376	N	-
+scorecard	1	H	# scorecard
+scorecard	552	T	- `test_scorecard.py` -- unittest suite (188 tests; run with
+scorecard	553	T	  `python3 -m unittest test_scorecard -v`).
+scorecard	568	T	python3 -m unittest test_scorecard -v
+scorecard	584	N	-
+snapshot-diff	1	H	# snapdiff.py
+snapshot-diff	306	T	python3 -m unittest test_snapdiff -v
+snapshot-diff	309	T	222 tests: canonical JSON formatting and determinism (11), `jsonify`
+snapshot-diff	334	N	-
+staleness-monitor	1	H	# staleness-monitor
+staleness-monitor	239	T	- `test_staleness.py` -- unittest suite (156 tests; run with
+staleness-monitor	240	T	  `python3 -m unittest test_staleness -v`).
+staleness-monitor	247	N	-
+sybil-detector	1	H	# Configurable Sybil Wallet-Cluster Detector
+sybil-detector	8	T	python3 -m unittest test_sybil_detect -v
+sybil-detector	23	T	| tests | `Ran 29 tests` / `OK` |
+sybil-detector	85	N	-
+tamper-runner	1	H	# tamper-runner
+tamper-runner	68	T	python3 -m unittest -v test_tamperrun
+tamper-runner	213	T	`TestBrokenSymlinkDoesNotPoisonUnrelatedCases` (5 tests): confirms
+tamper-runner	273	T	- `test_tamperrun.py` -- 144 tests, `python3 -m unittest -v test_tamperrun`.
+tamper-runner	278	N	-
+thread-check	1	H	# thread-check
+thread-check	349	T	| `shell_command` | a line starting with `$ ` (prompt style), OR one of `git`/`python3?`/`pip3?`/`npm`/`yarn`/`curl`/`wget`/`make`/`pytest`/`docker`/`kubectl`/`bash`/`sh` followed by an argument | e.g. `$ python3 thread_check.py x.json`, `run pytest test_thread_check.py`. |
+thread-check	553	T	- `test_thread_check.py` -- unittest suite (229 tests; run with
+thread-check	554	T	  `python3 -m unittest test_thread_check -v`).
+thread-check	565	T	python3 -m unittest test_thread_check -v
+thread-check	581	N	-
+throughput-reporter	1	H	# Contributor Throughput and Reliability Reporter
+throughput-reporter	9	T	python3 -m unittest test_throughput -v
+throughput-reporter	23	T	| tests | `Ran 32 tests` / `OK` |
+throughput-reporter	93	N	-
+transcript-drift	1	H	# transcript-drift
+transcript-drift	4	T	checkable claims — *"Ran 26 tests"*, *"exit 1"*, a block of commands a reviewer
+transcript-drift	7	T	claim 174 tests while its transcript recorded 130, and no command in the
+transcript-drift	120	T	| transcript says `Ran 41 tests`, README claims 3 | `TEST_COUNT_MISMATCH` |
+transcript-drift	159	T	**57 tests, `OK`, exit 0.** CPython 3.11.15, Linux x86_64.
+transcript-drift	162	T	cd transcript-drift && python3 -m unittest test_driftcheck
+transcript-drift	166	T	exit codes, `Ran 1 test` singular), command normalisation, README extraction
+transcript-drift	228	T	2. **Test-count matching is set membership, not per-command.** If a README
+transcript-drift	229	T	   claims `Ran 57 tests` and the transcript has two records — one running 57
+transcript-drift	242	T	4. **Command matching is textual after normalisation.** `python3 -m unittest
+transcript-drift	243	T	   test_x` and `python3 -m unittest -v test_x` are different commands to this
+transcript-drift	249	N	-
+wallet-reconciler	1	H	# Wallet Ledger Reconciliation CLI
+wallet-reconciler	229	T	python3 -m unittest test_wallet_reconcile -v
+wallet-reconciler	247	T	`test_wallet_reconcile.py`: **141 tests**, `Ran 141 tests ... OK`. Covers
+wallet-reconciler	327	N	-
+weak-assertion-scanner	1	H	# weakassert
+weak-assertion-scanner	45	T	  `WA002_CALL_ONLY`, `WA003_SELF_DERIVED_EXPECTATION`, `WA004_SKIPPED_TEST`.
+weak-assertion-scanner	65	T	$ python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo $?
+weak-assertion-scanner	66	T	... zero findings, category_filter=["WA004_SKIPPED_TEST"] ...
+weak-assertion-scanner	253	T	### WA004_SKIPPED_TEST
+weak-assertion-scanner	285	T	its own large `unittest` suite (35 test files matched the discovery rule,
+weak-assertion-scanner	296	T	  WA004_SKIPPED_TEST: 13
+weak-assertion-scanner	339	T	45 of 67, by test name: `test_deterministic_*`, `test_repeated_*`,
+weak-assertion-scanner	399	T	fixtures). Given ~3198 tests scanned, finding real (not-accidentally-always-on)
+weak-assertion-scanner	403	T	**Plausibility of the totals, given ~3198 tests scanned:** 8+4 real
+weak-assertion-scanner	420	T	python3 -m unittest test_weakassert -v
+weak-assertion-scanner	426	T	python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo "exit=$?"
+weak-assertion-scanner	512	T	- `test_weakassert.py` - 202 unittest tests (`python3 -m unittest test_weakassert -v`).
+weak-assertion-scanner	521	N	-
+xrpl-address	1	H	# XRPL Classic and X-Address Validator
+xrpl-address	10	T	python3 -m unittest test_address_validate -v
+xrpl-address	23	T	| tests | `Ran 34 tests` / `OK` |
+xrpl-address	98	N	-
+xrpl-auditor	1	H	# XRPL Payout Reference Auditor
+xrpl-auditor	8	T	python3 -m unittest test_payout_audit -v
+xrpl-auditor	21	T	| tests | `Ran 27 tests` / `OK` |
+xrpl-auditor	81	N	-

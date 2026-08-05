@@ -1,0 +1,741 @@
+{
+  "index_differences": [
+    {
+      "kind": "missing_from_index",
+      "tool": "bundle-index"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "bundle-verifier"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "claim-checker"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "commit-claim-auditor"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "consolidate"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "contradiction-detector"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "crosspath-runner"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "doc-validator"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "dup-detector"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "env-leak-scanner"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "exit-harness"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "index-generator"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "limitations-probe"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "link-integrity"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "loop-health"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "nondeterminism-scanner"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "path-collision-scanner"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "payload-validator"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "preflight"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "queue-auditor"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "regression-checker"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "reward-anomaly"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "scorecard"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "snapshot-diff"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "staleness-monitor"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "tamper-runner"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "thread-check"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "transcript-drift"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "wallet-reconciler"
+    },
+    {
+      "kind": "missing_from_index",
+      "tool": "weak-assertion-scanner"
+    },
+    {
+      "derived_tests": 4103,
+      "derived_tools": 43,
+      "index_tests": 476,
+      "index_tools": 13,
+      "kind": "aggregate_differs"
+    }
+  ],
+  "schema_version": 1,
+  "source": "corpus",
+  "tool": "readme-index",
+  "tools": [
+    {
+      "claimed_tests": 36,
+      "evidence": [
+        {
+          "line": 24,
+          "rule": "strong_summary",
+          "value": 36
+        }
+      ],
+      "readme_lines": 84,
+      "status": "claim",
+      "title": "Deterministic Task-Reward Budget Forecaster",
+      "tool": "budget-forecaster"
+    },
+    {
+      "claimed_tests": 170,
+      "evidence": [
+        {
+          "file": "test_bundle_index.py",
+          "line": 357,
+          "rule": "self_report",
+          "value": 170
+        }
+      ],
+      "readme_lines": 363,
+      "status": "claim",
+      "title": "Bundle Index CLI",
+      "tool": "bundle-index"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 266,
+      "status": "missing",
+      "title": "bundle-verifier",
+      "tool": "bundle-verifier"
+    },
+    {
+      "claimed_tests": 224,
+      "evidence": [
+        {
+          "file": "test_claimcheck.py",
+          "line": 639,
+          "rule": "self_report",
+          "value": 224
+        }
+      ],
+      "readme_lines": 661,
+      "status": "claim",
+      "title": "claimcheck",
+      "tool": "claim-checker"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [
+        {
+          "file": "test_example.py",
+          "line": 154,
+          "rule": "self_report",
+          "value": 3
+        },
+        {
+          "file": "test_claimhist.py",
+          "line": 248,
+          "rule": "self_report",
+          "value": 154
+        }
+      ],
+      "readme_lines": 258,
+      "status": "ambiguous",
+      "title": "commit-claim-auditor (`claimhist.py`)",
+      "tool": "commit-claim-auditor"
+    },
+    {
+      "claimed_tests": 152,
+      "evidence": [
+        {
+          "line": 353,
+          "rule": "bare",
+          "value": 152
+        }
+      ],
+      "readme_lines": 364,
+      "status": "claim",
+      "title": "consolidate.py",
+      "tool": "consolidate"
+    },
+    {
+      "claimed_tests": 168,
+      "evidence": [
+        {
+          "line": 223,
+          "rule": "strong_summary",
+          "value": 168
+        },
+        {
+          "line": 224,
+          "rule": "strong_summary",
+          "value": 168
+        }
+      ],
+      "readme_lines": 385,
+      "status": "claim",
+      "title": "contradict.py",
+      "tool": "contradiction-detector"
+    },
+    {
+      "claimed_tests": 72,
+      "evidence": [
+        {
+          "line": 168,
+          "rule": "strong_summary",
+          "value": 72
+        }
+      ],
+      "readme_lines": 285,
+      "status": "claim",
+      "title": "crosspath-runner",
+      "tool": "crosspath-runner"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 351,
+      "status": "missing",
+      "title": "docval.py -- README-vs-argparse documentation validator",
+      "tool": "doc-validator"
+    },
+    {
+      "claimed_tests": 110,
+      "evidence": [
+        {
+          "file": "test_dupdetect.py",
+          "line": 357,
+          "rule": "self_report",
+          "value": 110
+        }
+      ],
+      "readme_lines": 362,
+      "status": "claim",
+      "title": "dupdetect",
+      "tool": "dup-detector"
+    },
+    {
+      "claimed_tests": 65,
+      "evidence": [
+        {
+          "line": 166,
+          "rule": "strong_summary",
+          "value": 65
+        }
+      ],
+      "readme_lines": 215,
+      "status": "claim",
+      "title": "env-leak-scanner",
+      "tool": "env-leak-scanner"
+    },
+    {
+      "claimed_tests": 26,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 26
+        }
+      ],
+      "readme_lines": 82,
+      "status": "claim",
+      "title": "Task Lifecycle Event Linter (JSON array input)",
+      "tool": "event-linter"
+    },
+    {
+      "claimed_tests": 63,
+      "evidence": [
+        {
+          "line": 71,
+          "rule": "strong_summary",
+          "value": 63
+        }
+      ],
+      "readme_lines": 233,
+      "status": "claim",
+      "title": "Evidence Verification Harness",
+      "tool": "evidence-harness"
+    },
+    {
+      "claimed_tests": 29,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 29
+        }
+      ],
+      "readme_lines": 130,
+      "status": "claim",
+      "title": "Deterministic Batch Evidence Manifest CLI",
+      "tool": "evidence-manifest"
+    },
+    {
+      "claimed_tests": 39,
+      "evidence": [
+        {
+          "line": 25,
+          "rule": "strong_summary",
+          "value": 39
+        }
+      ],
+      "readme_lines": 98,
+      "status": "claim",
+      "title": "Objective Evidence Quality Scorer",
+      "tool": "evidence-scorer"
+    },
+    {
+      "claimed_tests": 17,
+      "evidence": [
+        {
+          "line": 104,
+          "rule": "strong_summary",
+          "value": 17
+        }
+      ],
+      "readme_lines": 119,
+      "status": "claim",
+      "title": "Evidence Integrity Validator",
+      "tool": "evidence-validator"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 294,
+      "status": "missing",
+      "title": "exit-harness",
+      "tool": "exit-harness"
+    },
+    {
+      "claimed_tests": 138,
+      "evidence": [
+        {
+          "file": "test_indexgen.py",
+          "line": 27,
+          "rule": "self_report",
+          "value": 138
+        }
+      ],
+      "readme_lines": 224,
+      "status": "claim",
+      "title": "index-generator",
+      "tool": "index-generator"
+    },
+    {
+      "claimed_tests": 26,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 26
+        }
+      ],
+      "readme_lines": 81,
+      "status": "claim",
+      "title": "Task Lifecycle Event Linter",
+      "tool": "lifecycle-linter"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 104,
+      "status": "missing",
+      "title": "limitations-probe",
+      "tool": "limitations-probe"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 234,
+      "status": "missing",
+      "title": "link_integrity.py",
+      "tool": "link-integrity"
+    },
+    {
+      "claimed_tests": 202,
+      "evidence": [
+        {
+          "file": "test_loop_health.py",
+          "line": 432,
+          "rule": "self_report",
+          "value": 202
+        }
+      ],
+      "readme_lines": 460,
+      "status": "claim",
+      "title": "loop-health",
+      "tool": "loop-health"
+    },
+    {
+      "claimed_tests": 221,
+      "evidence": [
+        {
+          "line": 523,
+          "rule": "bare",
+          "value": 221
+        }
+      ],
+      "readme_lines": 525,
+      "status": "claim",
+      "title": "ndscan",
+      "tool": "nondeterminism-scanner"
+    },
+    {
+      "claimed_tests": 95,
+      "evidence": [
+        {
+          "line": 163,
+          "rule": "strong_summary",
+          "value": 95
+        }
+      ],
+      "readme_lines": 239,
+      "status": "claim",
+      "title": "path-collision-scanner",
+      "tool": "path-collision-scanner"
+    },
+    {
+      "claimed_tests": 179,
+      "evidence": [
+        {
+          "line": 146,
+          "rule": "strong_summary",
+          "value": 179
+        }
+      ],
+      "readme_lines": 255,
+      "status": "claim",
+      "title": "Post Fiat Payload / Memo Validator",
+      "tool": "payload-validator"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 230,
+      "status": "missing",
+      "title": "preflight",
+      "tool": "preflight"
+    },
+    {
+      "claimed_tests": 175,
+      "evidence": [
+        {
+          "line": 271,
+          "rule": "bare",
+          "value": 175
+        }
+      ],
+      "readme_lines": 284,
+      "status": "claim",
+      "title": "queue_audit.py",
+      "tool": "queue-auditor"
+    },
+    {
+      "claimed_tests": 174,
+      "evidence": [
+        {
+          "line": 272,
+          "rule": "strong_summary",
+          "value": 174
+        }
+      ],
+      "readme_lines": 396,
+      "status": "claim",
+      "title": "regression-checker",
+      "tool": "regression-checker"
+    },
+    {
+      "claimed_tests": 143,
+      "evidence": [
+        {
+          "line": 291,
+          "rule": "strong_summary",
+          "value": 143
+        },
+        {
+          "line": 291,
+          "rule": "strong_summary",
+          "value": 143
+        }
+      ],
+      "readme_lines": 385,
+      "status": "claim",
+      "title": "Reward Anomaly Detection CLI",
+      "tool": "reward-anomaly"
+    },
+    {
+      "claimed_tests": 23,
+      "evidence": [
+        {
+          "line": 82,
+          "rule": "strong_summary",
+          "value": 23
+        }
+      ],
+      "readme_lines": 145,
+      "status": "claim",
+      "title": "Deterministic Reward Reconciliation CLI",
+      "tool": "reward-reconciler"
+    },
+    {
+      "claimed_tests": 95,
+      "evidence": [
+        {
+          "line": 71,
+          "rule": "strong_summary",
+          "value": 95
+        }
+      ],
+      "readme_lines": 376,
+      "status": "claim",
+      "title": "schema-checker",
+      "tool": "schema-checker"
+    },
+    {
+      "claimed_tests": 188,
+      "evidence": [
+        {
+          "file": "test_scorecard.py",
+          "line": 552,
+          "rule": "self_report",
+          "value": 188
+        }
+      ],
+      "readme_lines": 584,
+      "status": "claim",
+      "title": "scorecard",
+      "tool": "scorecard"
+    },
+    {
+      "claimed_tests": 222,
+      "evidence": [
+        {
+          "line": 309,
+          "rule": "bare",
+          "value": 222
+        }
+      ],
+      "readme_lines": 334,
+      "status": "claim",
+      "title": "snapdiff.py",
+      "tool": "snapshot-diff"
+    },
+    {
+      "claimed_tests": 156,
+      "evidence": [
+        {
+          "file": "test_staleness.py",
+          "line": 239,
+          "rule": "self_report",
+          "value": 156
+        }
+      ],
+      "readme_lines": 247,
+      "status": "claim",
+      "title": "staleness-monitor",
+      "tool": "staleness-monitor"
+    },
+    {
+      "claimed_tests": 29,
+      "evidence": [
+        {
+          "line": 23,
+          "rule": "strong_summary",
+          "value": 29
+        }
+      ],
+      "readme_lines": 85,
+      "status": "claim",
+      "title": "Configurable Sybil Wallet-Cluster Detector",
+      "tool": "sybil-detector"
+    },
+    {
+      "claimed_tests": 144,
+      "evidence": [
+        {
+          "file": "test_tamperrun.py",
+          "line": 273,
+          "rule": "self_report",
+          "value": 144
+        }
+      ],
+      "readme_lines": 278,
+      "status": "claim",
+      "title": "tamper-runner",
+      "tool": "tamper-runner"
+    },
+    {
+      "claimed_tests": 229,
+      "evidence": [
+        {
+          "file": "test_thread_check.py",
+          "line": 553,
+          "rule": "self_report",
+          "value": 229
+        }
+      ],
+      "readme_lines": 581,
+      "status": "claim",
+      "title": "thread-check",
+      "tool": "thread-check"
+    },
+    {
+      "claimed_tests": 32,
+      "evidence": [
+        {
+          "line": 23,
+          "rule": "strong_summary",
+          "value": 32
+        }
+      ],
+      "readme_lines": 93,
+      "status": "claim",
+      "title": "Contributor Throughput and Reliability Reporter",
+      "tool": "throughput-reporter"
+    },
+    {
+      "claimed_tests": 57,
+      "evidence": [
+        {
+          "line": 159,
+          "rule": "strong_summary",
+          "value": 57
+        }
+      ],
+      "readme_lines": 249,
+      "status": "claim",
+      "title": "transcript-drift",
+      "tool": "transcript-drift"
+    },
+    {
+      "claimed_tests": 141,
+      "evidence": [
+        {
+          "line": 247,
+          "rule": "strong_summary",
+          "value": 141
+        },
+        {
+          "line": 247,
+          "rule": "strong_summary",
+          "value": 141
+        }
+      ],
+      "readme_lines": 327,
+      "status": "claim",
+      "title": "Wallet Ledger Reconciliation CLI",
+      "tool": "wallet-reconciler"
+    },
+    {
+      "claimed_tests": 202,
+      "evidence": [
+        {
+          "file": "test_weakassert.py",
+          "line": 512,
+          "rule": "self_report",
+          "value": 202
+        }
+      ],
+      "readme_lines": 521,
+      "status": "claim",
+      "title": "weakassert",
+      "tool": "weak-assertion-scanner"
+    },
+    {
+      "claimed_tests": 34,
+      "evidence": [
+        {
+          "line": 23,
+          "rule": "strong_summary",
+          "value": 34
+        }
+      ],
+      "readme_lines": 98,
+      "status": "claim",
+      "title": "XRPL Classic and X-Address Validator",
+      "tool": "xrpl-address"
+    },
+    {
+      "claimed_tests": 27,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 27
+        }
+      ],
+      "readme_lines": 81,
+      "status": "claim",
+      "title": "XRPL Payout Reference Auditor",
+      "tool": "xrpl-auditor"
+    }
+  ],
+  "totals": {
+    "tests_from_claims": 4103,
+    "tools": 43,
+    "tools_ambiguous": 1,
+    "tools_missing": 6,
+    "tools_with_claim": 36
+  }
+}

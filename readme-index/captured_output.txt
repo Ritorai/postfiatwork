@@ -1,0 +1,86 @@
+readme-index -- captured verification output
+============================================
+
+Records follow transcript-drift/FORMAT.md: a "=== $ command ===" header, the
+verbatim output, and an exit= line. All paths are relative.
+
+The before/after pair is the point of this transcript: the reconciliation run
+against the committed root README exits 1 with differences, and the same
+reconciliation against the regenerated README exits 0.
+
+=== $ python3 --version ===
+Python 3.11.15
+exit=0
+
+=== $ uname -sm ===
+Linux x86_64
+exit=0
+
+=== $ python3 -m unittest test_readmeindex ===
+.........................................
+----------------------------------------------------------------------
+Ran 41 tests in 0.335s
+
+OK
+exit=0
+
+=== $ python3 readmeindex.py --corpus corpus.tsv -o _scratch/discard.json ===
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('index_report.json'));print(json.dumps(r['totals'],sort_keys=True))" ===
+{"tests_from_claims": 4103, "tools": 43, "tools_ambiguous": 1, "tools_missing": 6, "tools_with_claim": 36}
+exit=0
+
+=== $ python3 readmeindex.py --corpus corpus.tsv --root-readme root_readme_before.md -o _scratch/discard.json ===
+exit=1
+
+=== $ python3 -c "import json,collections;r=json.load(open('index_report.json'));c=collections.Counter(d['kind'] for d in r['index_differences']);print(sorted(c.items()));print([d for d in r['index_differences'] if d['kind']=='aggregate_differs'])" ===
+[('aggregate_differs', 1), ('missing_from_index', 30)]
+[{'derived_tests': 4103, 'derived_tools': 43, 'index_tests': 476, 'index_tools': 13, 'kind': 'aggregate_differs'}]
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('index_report.json'));print('count_differs:',sum(1 for d in r['index_differences'] if d['kind']=='count_differs'))" ===
+count_differs: 0
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('index_report.json'));print([(t['tool'],t['status']) for t in r['tools'] if t['status']!='claim'])" ===
+[('bundle-verifier', 'missing'), ('commit-claim-auditor', 'ambiguous'), ('doc-validator', 'missing'), ('exit-harness', 'missing'), ('limitations-probe', 'missing'), ('link-integrity', 'missing'), ('preflight', 'missing')]
+exit=0
+
+=== $ python3 readmeindex.py --corpus corpus.tsv --root-readme root_readme_before.md --rewrite _scratch/after.md -o _scratch/discard.json ===
+exit=1
+
+=== $ python3 readmeindex.py --corpus corpus.tsv --root-readme root_readme_after.md -o _scratch/discard.json ===
+exit=0
+
+=== $ python3 readmeindex.py --corpus corpus.tsv --root-readme root_readme_after.md --rewrite _scratch/after2.md -o _scratch/discard.json ===
+exit=0
+
+=== $ cmp _scratch/after.md root_readme_after.md && echo REWRITE_MATCHES_COMMITTED ===
+REWRITE_MATCHES_COMMITTED
+exit=0
+
+=== $ cmp _scratch/after2.md root_readme_after.md && echo IDEMPOTENT_BYTE_IDENTICAL ===
+IDEMPOTENT_BYTE_IDENTICAL
+exit=0
+
+=== $ python3 readmeindex.py --root does-not-exist ===
+setup error: --root is not a directory: does-not-exist
+exit=2
+
+=== $ python3 readmeindex.py --corpus corpus.tsv --rewrite _scratch/x.md ===
+setup error: --rewrite requires --root-readme
+exit=2
+
+=== $ python3 -c "import hashlib;print(hashlib.sha256(open('index_report.json','rb').read()).hexdigest(),' index_report.json')" ===
+63942328ecc6e3f0a07c2074ece5a0eb10408ada52d9abb11827c64cdd4d96ce  index_report.json
+exit=0
+
+=== $ python3 -c "import hashlib;print(hashlib.sha256(open('corpus.tsv','rb').read()).hexdigest(),' corpus.tsv')" ===
+8576ae76d33f547b1a0f0d8be74598d91da817e0b475748cdb57826cfb1029c1  corpus.tsv
+exit=0
+
+=== $ wc -l corpus.tsv ===
+249 corpus.tsv
+exit=0
+
