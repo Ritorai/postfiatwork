@@ -2,7 +2,7 @@
 
 The root `README.md` of this repository says **13 tools / 476 tests**. It has
 said that since it was written, and it was correct then: 476 is exactly the sum
-of its own 13-row table. The repository now has **43 tool directories**, every
+of its own 13-row table. The repository now has **44 tool directories**, every
 one of them with a `README.md`.
 
 `readmeindex.py` derives the index from the tree instead of from memory. It
@@ -11,8 +11,11 @@ the root README's table, and regenerates that table. Counts come only from
 claims it can actually parse; anything it cannot parse is reported as
 `ambiguous` or `not stated` rather than guessed or zeroed.
 
-**Repository-wide result: 43 tools, 36 with a derivable claim totalling 4,103
-tests, 1 ambiguous, 6 not stated.**
+**Repository-wide result: 44 tools, 37 with a derivable claim totalling 4,144
+tests, 1 ambiguous, 6 not stated.** That count includes this tool, whose own
+README claims 41. The figures are pinned to the tree as committed here; the
+scan the numbers were first derived from saw 43 tools and 4,103 tests, before
+this directory existed.
 
 ## Requirements
 
@@ -55,8 +58,17 @@ distinct values is `ambiguous`. Nothing at all is `missing`.
 The priority order is not cosmetic. `transcript-drift` mentions five different
 numbers — `Ran 26 tests`, `174 tests`, `Ran 41 tests`, `3`, `57` — because it is
 a tool *about* test-count drift and quotes other tools' claims while explaining
-itself. Only one of those lines, `**57 tests, OK, exit 0.**`, is its own. Rule 1
-picks it; a flat "collect every number" rule reports the file as hopeless.
+itself. Only one of those lines — its own bold summary, which also reports a
+passing run — states its suite total. Rule 1 picks it; a flat "collect every
+number" rule reports the file as hopeless.
+
+This bit back while the file you are reading was being written. An earlier draft
+quoted that summary line verbatim, in full, as an example — and the tool then
+classified *this* README as `ambiguous`, because two lines now carried a bold
+count plus a success marker and it could not tell the illustration from the
+claim. Reproducing the exact shape a rule matches, inside prose explaining that
+rule, is the same trap `transcript-drift` falls into. The example above is
+therefore described rather than quoted.
 
 ## Two bugs this tool had, both found by running it
 
@@ -83,7 +95,7 @@ digit and `tests` was too narrow. Sixteen lines repository-wide were being
 dropped.
 
 Honest outcome: after widening the window and regenerating the corpus from 233
-to 249 rows, **no verdict changed and the total is still 4,103**. The old corpus
+to 249 rows, **no verdict changed and the total was still 4,103**. The old corpus
 happened to be sufficient. It was not *provably* sufficient, and "happened to be
 right" is not a property worth shipping.
 
@@ -92,7 +104,7 @@ right" is not a property worth shipping.
 The reconciliation run reports **zero `count_differs`**. All 13 tools already in
 the root README table — 95, 63, 39, 36, 34, 32, 29, 29, 27, 26, 26, 23, 17 —
 were re-derived independently from their own READMEs and every one matched. The
-31 differences are 30 tools absent from the index plus 1 aggregate difference.
+32 differences are 31 tools absent from the index plus 1 aggregate difference.
 
 ## Relationship to `index-generator`
 
@@ -128,12 +140,13 @@ exits `0`. Rewriting the regenerated README again produces a byte-identical
 file (`cmp` clean), so the regeneration is a fixed point rather than a file that
 drifts on every run.
 
-```
-sha256(index_report.json) = 63942328ecc6e3f0a07c2074ece5a0eb10408ada52d9abb11827c64cdd4d96ce
-sha256(corpus.tsv)        = 8576ae76d33f547b1a0f0d8be74598d91da817e0b475748cdb57826cfb1029c1
-```
+Digests for `index_report.json` and `corpus.tsv` are recorded in
+`captured_output.txt` rather than here. They cannot live in this file: the
+corpus is built from every tool README including this one, so writing a corpus
+digest into this README changes the corpus and invalidates the digest in the
+same edit.
 
-## 4 limitations
+## 5 limitations
 
 1. **A `+` between words defeats the count rules, and it costs a real answer.**
    `exit-harness/README.md` line 283 says
@@ -148,10 +161,10 @@ sha256(corpus.tsv)        = 8576ae76d33f547b1a0f0d8be74598d91da817e0b475748cdb57
    does claim 154; a human reads its README and knows which line is the suite
    and which is the fixture. This tool cannot tell those apart without guessing,
    so it reports `[3, 154]` with both line numbers and declines. The aggregate
-   of 4,103 therefore *excludes* a tool that has a stated count, and is a lower
+   of 4,144 therefore *excludes* a tool that has a stated count, and is a lower
    bound rather than a total.
 
-3. **`--corpus` mode classifies 249 extracted lines, not 43 full READMEs.**
+3. **`--corpus` mode classifies extracted candidate lines, not 44 full READMEs.**
    Soundness rests entirely on the prefilter being a superset of the rules,
    which is proven for the *current* rule set by `TestPrefilterIsSuperset` plus
    a companion test that every fixture actually fires a rule so the first cannot
@@ -166,13 +179,24 @@ sha256(corpus.tsv)        = 8576ae76d33f547b1a0f0d8be74598d91da817e0b475748cdb57
    regenerated index is less readable than the hand-written 13-row table it
    replaces. That is a deliberate trade of polish for verifiability.
 
+5. **Only the table is regenerated, and the root README says things outside it.**
+   The committed root README also carried "Thirteen standalone command-line
+   tools" and "476 tests across 13 tools, all passing" as prose, well outside
+   the `## The tools` section this tool rewrites. Regenerating the table alone
+   left the file self-contradictory, so those two sentences were corrected by
+   hand in the same commit. The tool should detect and rewrite prose claims of
+   that shape; it currently does not, and a reviewer should treat those two
+   lines as hand-maintained. ("all passing" was dropped rather than restated:
+   these are claims parsed from documentation, and no run of all 44 suites
+   backs it.)
+
 ## Files
 
 | File | What it is |
 |---|---|
 | `readmeindex.py` | the CLI |
 | `test_readmeindex.py` | 41 tests |
-| `corpus.tsv` | 249 extracted candidate lines, so the run is reproducible without a clone |
+| `corpus.tsv` | extracted candidate lines, so the run is reproducible without a clone |
 | `index_report.json` | the committed report |
 | `root_readme_before.md` | the root README as committed, for the before/after pair |
 | `root_readme_after.md` | the regenerated root README |

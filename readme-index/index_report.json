@@ -82,6 +82,10 @@
     },
     {
       "kind": "missing_from_index",
+      "tool": "readme-index"
+    },
+    {
+      "kind": "missing_from_index",
       "tool": "regression-checker"
     },
     {
@@ -121,8 +125,8 @@
       "tool": "weak-assertion-scanner"
     },
     {
-      "derived_tests": 4103,
-      "derived_tools": 43,
+      "derived_tests": 4144,
+      "derived_tools": 44,
       "index_tests": 476,
       "index_tools": 13,
       "kind": "aggregate_differs"
@@ -492,6 +496,20 @@
       "tool": "queue-auditor"
     },
     {
+      "claimed_tests": 41,
+      "evidence": [
+        {
+          "line": 208,
+          "rule": "strong_summary",
+          "value": 41
+        }
+      ],
+      "readme_lines": 221,
+      "status": "claim",
+      "title": "readme-index",
+      "tool": "readme-index"
+    },
+    {
       "claimed_tests": 174,
       "evidence": [
         {
@@ -732,10 +750,10 @@
     }
   ],
   "totals": {
-    "tests_from_claims": 4103,
-    "tools": 43,
+    "tests_from_claims": 4144,
+    "tools": 44,
     "tools_ambiguous": 1,
     "tools_missing": 6,
-    "tools_with_claim": 36
+    "tools_with_claim": 37
   }
 }
