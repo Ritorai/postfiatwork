@@ -21,7 +21,7 @@ Python 3.11.15
 $ uname -s -m
 Linux x86_64
 
-$ ls fixtures ; echo "exit=$?"
+=== $ ls fixtures ; echo "exit=$?" ===
 ls: cannot access 'fixtures': No such file or directory
 exit=2
 
@@ -30,18 +30,18 @@ Ran 174 tests in 11.992s
 
 OK
 
-$ python3 make_fixtures.py --check ; echo "exit=$?"
+=== $ python3 make_fixtures.py --check ; echo "exit=$?" ===
 fixtures match the generator (10 files)
 exit=0
 
-$ python3 regress.py --root fixtures --baselines fixtures/baselines_ok.json ; echo "exit=$?"
+=== $ python3 regress.py --root fixtures --baselines fixtures/baselines_ok.json ; echo "exit=$?" ===
 {"drift_counts":{"ABNORMAL_TERMINATION":0,"EXECUTION_ERROR":0,"EXIT_CODE_DRIFT":0,"REPORT_HASH_DRIFT":0,"TOOL_MISSING":0,"UNBASELINED_TOOL":0},"results":[{"drift_codes":[],"reason":"no runnable tool.py: exists to exercise EXECUTION_ERROR in the drift baseline","status":"skipped_unbaselineable","tool":"tool_error"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"02f3dc1795f6a034dfed4aaae1ba0be8ab882bbb3a8a094fb23acdc2058cbb94","expected_exit_code":0,"expected_report_sha256":"02f3dc1795f6a034dfed4aaae1ba0be8ab882bbb3a8a094fb23acdc2058cbb94","report_bytes_length":40,"termination":"exited"},"drift_codes":[],"status":"clean","tool":"tool_exit_drift"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"f832bdd88dc8f34ad78b47a42fa3e294c2de9a91b0a441d057e2b60cf275aed9","expected_exit_code":0,"expected_report_sha256":"f832bdd88dc8f34ad78b47a42fa3e294c2de9a91b0a441d057e2b60cf275aed9","report_bytes_length":40,"termination":"exited"},"drift_codes":[],"status":"clean","tool":"tool_hash_drift"},{"drift_codes":[],"reason":"exists to exercise the null-hash always-drift marker in the drift baseline","status":"skipped_unbaselineable","tool":"tool_null_hash_demo"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"ab29601c2e5636408d349c9432eb800396d02b2a43e18970a8606c4a76a2b4b0","expected_exit_code":0,"expected_report_sha256":"ab29601c2e5636408d349c9432eb800396d02b2a43e18970a8606c4a76a2b4b0","report_bytes_length":32,"termination":"exited"},"drift_codes":[],"status":"clean","tool":"tool_ok"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"311728801f116a6510731e7cfed23ac2bc0cb23f34632e30971a1b12e37dc03a","expected_exit_code":0,"expected_report_sha256":"311728801f116a6510731e7cfed23ac2bc0cb23f34632e30971a1b12e37dc03a","report_bytes_length":82,"termination":"exited"},"drift_codes":[],"status":"clean","tool":"tool_shell_meta"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"86048369ee1799f5fa731ee503a51f99a38bac4fae199c6f1f4b05224d3f72e7","expected_exit_code":0,"expected_report_sha256":"86048369ee1799f5fa731ee503a51f99a38bac4fae199c6f1f4b05224d3f72e7","report_bytes_length":36,"termination":"exited"},"drift_codes":[],"status":"clean","tool":"tool_stdout"}],"schema_version":2,"status":"clean","summary":{"clean":5,"drift":0,"skipped_unbaselineable":2},"tool":"regression-checker","tools_checked":7}
 exit=0
 
-$ python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r1.json ; echo "exit=$?"
+=== $ python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r2.json ; echo "exit=$?"
+=== $ python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum r1.json r2.json
@@ -54,7 +54,7 @@ BYTE-IDENTICAL
 $ grep -c "/sessions\|/tmp\|/home" r1.json
 0
 
-$ python3 regress.py --root fixtures --baselines /nonexistent.json ; echo "exit=$?"
+=== $ python3 regress.py --root fixtures --baselines /nonexistent.json ; echo "exit=$?" ===
 {"error":"baselines file not found: /nonexistent.json","schema_version":2,"status":"error","tool":"regression-checker"}
 exit=2
 
@@ -77,28 +77,28 @@ the SHA-256 of the truncated 30-byte report; for okzero, the JSON literal
 
 ### Defect 1: a baseline recording expected_exit_code: false
 
-$ python3 ORIG/regress.py --root . --baselines baselines_bool.json ; echo "exit=$?"
+=== $ python3 ORIG/regress.py --root . --baselines baselines_bool.json ; echo "exit=$?" ===
 {"drift_counts":{"EXECUTION_ERROR":0,"EXIT_CODE_DRIFT":0,"REPORT_HASH_DRIFT":0,"TOOL_MISSING":0,"UNBASELINED_TOOL":1},"results":[{"detail":"tool directory exists under --root but has no entry in the baseline file","drift_codes":["UNBASELINED_TOOL"],"status":"drift","tool":"crasher"},{"detail":{"actual_exit_code":0,"actual_report_sha256":"c48644c91bee973f3bac6038b462b01b357b8e838fdb340da422e8e528747779","expected_exit_code":false,"expected_report_sha256":"c48644c91bee973f3bac6038b462b01b357b8e838fdb340da422e8e528747779","report_bytes_length":18},"drift_codes":[],"status":"clean","tool":"okzero"}],"schema_version":1,"status":"drift","summary":{"clean":1,"drift":1,"skipped_unbaselineable":0},"tool":"regression-checker","tools_checked":2}
 exit=1
 
-$ python3 FIXED/regress.py --root . --baselines baselines_bool.json ; echo "exit=$?"
+=== $ python3 FIXED/regress.py --root . --baselines baselines_bool.json ; echo "exit=$?" ===
 {"error":"baselines file baselines_bool.json: entry for 'okzero' has a JSON boolean false as 'expected_exit_code'. A boolean is not an exit code -- Python would compare it equal to 0 and silently mark a real exit code as matching.","schema_version":2,"status":"error","tool":"regression-checker"}
 exit=2
 
 ### Defect 2: a tool SIGKILLed after writing a truncated report,
 ###           with a baseline that records -9 and the truncated hash
 
-$ python3 ORIG/regress.py --root . --baselines baselines_crash.json ; echo "exit=$?"
+=== $ python3 ORIG/regress.py --root . --baselines baselines_crash.json ; echo "exit=$?" ===
 {"drift_counts":{"EXECUTION_ERROR":0,"EXIT_CODE_DRIFT":0,"REPORT_HASH_DRIFT":0,"TOOL_MISSING":0,"UNBASELINED_TOOL":1},"results":[{"detail":{"actual_exit_code":-9,"actual_report_sha256":"fd62facb3b5f7d3fdf2b00d755758951972f5d308244c37bc1725db30dbf065b","expected_exit_code":-9,"expected_report_sha256":"fd62facb3b5f7d3fdf2b00d755758951972f5d308244c37bc1725db30dbf065b","report_bytes_length":30},"drift_codes":[],"status":"clean","tool":"crasher"},{"detail":"tool directory exists under --root but has no entry in the baseline file","drift_codes":["UNBASELINED_TOOL"],"status":"drift","tool":"okzero"}],"schema_version":1,"status":"drift","summary":{"clean":1,"drift":1,"skipped_unbaselineable":0},"tool":"regression-checker","tools_checked":2}
 exit=1
 
-$ python3 FIXED/regress.py --root . --baselines baselines_crash.json ; echo "exit=$?"
+=== $ python3 FIXED/regress.py --root . --baselines baselines_crash.json ; echo "exit=$?" ===
 {"drift_counts":{"ABNORMAL_TERMINATION":1,"EXECUTION_ERROR":0,"EXIT_CODE_DRIFT":0,"REPORT_HASH_DRIFT":0,"TOOL_MISSING":0,"UNBASELINED_TOOL":1},"results":[{"detail":{"actual_exit_code":-9,"actual_report_sha256":"fd62facb3b5f7d3fdf2b00d755758951972f5d308244c37bc1725db30dbf065b","expected_exit_code":-9,"expected_report_sha256":"fd62facb3b5f7d3fdf2b00d755758951972f5d308244c37bc1725db30dbf065b","report_bytes_length":30,"signal":9,"termination":"signalled"},"drift_codes":["ABNORMAL_TERMINATION"],"status":"drift","tool":"crasher"},{"detail":"tool directory exists under --root but has no entry in the baseline file","drift_codes":["UNBASELINED_TOOL"],"status":"drift","tool":"okzero"}],"schema_version":2,"status":"drift","summary":{"clean":0,"drift":2,"skipped_unbaselineable":0},"tool":"regression-checker","tools_checked":2}
 exit=1
 
 ### --update-baselines refuses to freeze the crash in
 
-$ python3 FIXED/regress.py --update-baselines --root . --baselines baselines_crash.json ; echo "exit=$?"
+=== $ python3 FIXED/regress.py --update-baselines --root . --baselines baselines_crash.json ; echo "exit=$?" ===
 ==============================================================================
 
   FAILED   crasher                        run terminated on signal 9 -- refusing to baseline a crashed run
