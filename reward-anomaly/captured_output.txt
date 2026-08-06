@@ -148,14 +148,14 @@ Ran 143 tests in 0.251s
 
 OK
 
-$ python3 reconcile_anomaly.py tasks_ok.json payouts_ok.json ; echo "exit=$?"
+=== $ python3 reconcile_anomaly.py tasks_ok.json payouts_ok.json ; echo "exit=$?" ===
 {"finding_counts":{},"findings":[],"report_version":"1.0","status":"clean","tolerance":"0","totals":{"findings":0,"payout_records":4,"task_records":8}}
 exit=0
 
-$ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run1.json ; echo "exit=$?"
+=== $ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run2.json ; echo "exit=$?"
+=== $ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum report_run1.json report_run2.json
@@ -165,15 +165,15 @@ baccebdafe6b2d365892554b60f8b3bb6d811e22505976c0ae76679c73da75ff  report_run2.js
 $ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json --tolerance 1000000 ; echo "exit=$?"
+=== $ python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json --tolerance 1000000 ; echo "exit=$?" ===
 {"finding_counts":{"DUPLICATE_PAYOUT":1,"DUPLICATE_PAYOUT_ID":1,"INVALID_AMOUNT":1,"INVALID_PRICE":1,"MALFORMED_RECORD":3,"PAYOUT_FOR_REFUSED_TASK":1,"PAYOUT_WITHOUT_TASK":1},"findings":[{"code":"DUPLICATE_PAYOUT","count":3,"index":null,"payout_id":null,"payout_ids":["payout_dup_a","payout_dup_b","payout_dup_c"],"source":"payouts","task_id":"task_dup_payout"},{"code":"DUPLICATE_PAYOUT_ID","count":2,"index":null,"indices":[7,8],"payout_id":"payout_shared_id","source":"payouts","task_id":null,"task_ids":["task_dupid_a","task_dupid_b"]},{"amount":"NaN","code":"INVALID_AMOUNT","detail":"is NaN (NaN/Infinity is not permitted)","index":9,"payout_id":"payout_bad_amount","source":"payouts","task_id":"task_invalid_amount"},{"code":"INVALID_PRICE","detail":"is not a valid decimal number: 'not-a-price'","index":7,"payout_id":null,"price":"not-a-price","source":"tasks","task_id":"task_invalid_price"},{"code":"MALFORMED_RECORD","detail":"duplicate task_id, first seen at index 9","index":10,"payout_id":null,"source":"tasks","task_id":"task_dup_task_id"},{"code":"MALFORMED_RECORD","detail":"missing required field(s): status","index":8,"payout_id":null,"source":"tasks","task_id":"task_malformed_1"},{"code":"MALFORMED_RECORD","detail":"missing required field(s): at","index":11,"payout_id":"payout_malformed_1","source":"payouts","task_id":"task_refused_1"},{"amount":"100.00","code":"PAYOUT_FOR_REFUSED_TASK","index":0,"payout_id":"payout_refused_1","price":"100.00","source":"payouts","task_id":"task_refused_1"},{"code":"PAYOUT_WITHOUT_TASK","index":6,"payout_id":"payout_no_task","source":"payouts","task_id":"task_ghost"}],"report_version":"1.0","status":"anomalies","tolerance":"1000000","totals":{"findings":9,"payout_records":14,"task_records":12}}
 exit=1
 
-$ python3 reconcile_anomaly.py /nonexistent.json payouts_ok.json ; echo "exit=$?"
+=== $ python3 reconcile_anomaly.py /nonexistent.json payouts_ok.json ; echo "exit=$?" ===
 {"detail":"file not found: /nonexistent.json","error":"INVALID_INPUT"}
 exit=2
 
-$ python3 reconcile_anomaly.py tasks_ok.json ; echo "exit=$?"
+=== $ python3 reconcile_anomaly.py tasks_ok.json ; echo "exit=$?" ===
 usage: reconcile_anomaly.py [-h] [-o OUTPUT] [--tolerance TOLERANCE]
                             tasks payouts
 reconcile_anomaly.py: error: the following arguments are required: payouts
@@ -184,7 +184,7 @@ $ cat tasks.json
 [{"task_id": "precision_task", "status": "rewarded", "price": 123456789012345678.123456789}]
 $ cat payouts.json
 [{"payout_id": "precision_payout", "task_id": "precision_task", "amount": 123456789012345678.123456789, "at": "2026-01-01T00:00:00Z"}]
-$ python3 reconcile_anomaly.py tasks.json payouts.json ; echo "exit=$?"
+=== $ python3 reconcile_anomaly.py tasks.json payouts.json ; echo "exit=$?" ===
 {"finding_counts":{},"findings":[],"report_version":"1.0","status":"clean","tolerance":"0","totals":{"findings":0,"payout_records":1,"task_records":1}}
 exit=0
 
