@@ -207,14 +207,14 @@ Ran 202 tests in 0.429s
 
 OK
 
-$ python3 loop_health.py histories_healthy.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+=== $ python3 loop_health.py histories_healthy.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" ===
 {"findings":[],"generated_at":"2026-08-03T00:00:00Z","options":{"max_rounds":3,"review_overdue_hours":72},"refusal_reason_distribution":[{"count":1,"reason":"missing_attachment"},{"count":1,"reason":"quality_below_threshold"}],"resubmission_rounds":[{"resubmission_rounds":1,"task_id":"T-100"},{"resubmission_rounds":1,"task_id":"T-101"},{"resubmission_rounds":0,"task_id":"T-102"},{"resubmission_rounds":1,"task_id":"T-103"},{"resubmission_rounds":0,"task_id":"T-104"}],"summary":{"counts_by_code":{"EMPTY_HISTORY":0,"EXCESSIVE_RESUBMISSIONS":0,"INVALID_TIMESTAMP":0,"MALFORMED_RECORD":0,"REVIEW_OVERDUE":0,"UNKNOWN_STATE":0},"total_findings":0,"total_tasks":5}}
 exit=0
 
-$ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?"
+=== $ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?"
+=== $ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum r1.json r2.json
@@ -224,11 +224,11 @@ $ sha256sum r1.json r2.json
 $ cmp r1.json r2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z --review-overdue-hours 99999 ; echo "exit=$?"
+=== $ python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z --review-overdue-hours 99999 ; echo "exit=$?" ===
 {"findings":[{"code":"MALFORMED_RECORD","message":"record at index 1 is missing required key: task_id","record_index":1,"task_id":"<index:1>"},{"code":"MALFORMED_RECORD","message":"record at index 2 is not a JSON object","record_index":2,"task_id":"<index:2>"},{"code":"MALFORMED_RECORD","event_index":1,"message":"task 'T-BAD-EVENT-ITEM' event at index 1 is not a JSON object","task_id":"T-BAD-EVENT-ITEM"},{"code":"MALFORMED_RECORD","message":"task 'T-BAD-EVENTS' 'events' must be a JSON array","task_id":"T-BAD-EVENTS"},{"at_raw":"not-a-timestamp","code":"INVALID_TIMESTAMP","event_index":1,"message":"task 'T-BAD-TIMESTAMP' event at index 1: unparseable ISO-8601 timestamp: 'not-a-timestamp'","task_id":"T-BAD-TIMESTAMP"},{"code":"EMPTY_HISTORY","message":"task 'T-EMPTY' has zero events","task_id":"T-EMPTY"},{"code":"MALFORMED_RECORD","event_index":0,"message":"task 'T-EMPTY-STATE' event at index 0 has a missing or invalid 'state' (must be a non-empty string)","task_id":"T-EMPTY-STATE"},{"code":"EXCESSIVE_RESUBMISSIONS","max_rounds":3,"message":"task 'T-EXCESSIVE' has 4 resubmission round(s), exceeding max_rounds=3","rounds":4,"task_id":"T-EXCESSIVE"},{"code":"MALFORMED_RECORD","event_index":0,"message":"task 'T-MISSING-AT' event at index 0 is missing required key: at","task_id":"T-MISSING-AT"},{"code":"MALFORMED_RECORD","event_index":0,"message":"task 'T-MISSING-STATE' event at index 0 has a missing or invalid 'state' (must be a non-empty string)","task_id":"T-MISSING-STATE"},{"at_raw":"2026-07-02T00:00:00+05:30","code":"INVALID_TIMESTAMP","event_index":1,"message":"task 'T-NON-UTC-TIMESTAMP' event at index 1: timestamp is not expressed in UTC (non-zero offset): '2026-07-02T00:00:00+05:30'","task_id":"T-NON-UTC-TIMESTAMP"},{"code":"MALFORMED_RECORD","event_index":3,"message":"task 'T-REFUSAL-NONSTRING' event at index 3 has a non-string refusal_reason","task_id":"T-REFUSAL-NONSTRING"},{"code":"UNKNOWN_STATE","event_index":1,"message":"task 'T-UNKNOWN-STATE' event at index 1 has unknown state 'archived'","state":"archived","task_id":"T-UNKNOWN-STATE"}],"generated_at":"2026-08-03T00:00:00Z","options":{"max_rounds":3,"review_overdue_hours":99999.0},"refusal_reason_distribution":[{"count":2,"reason":"\u62d2\u7edd\uff1a\u6570\u636e\u4e0d\u5b8c\u6574"},{"count":1,"reason":""},{"count":1,"reason":"incomplete_deliverable"}],"resubmission_rounds":[{"resubmission_rounds":0,"task_id":"T-BAD-EVENT-ITEM"},{"resubmission_rounds":0,"task_id":"T-BAD-TIMESTAMP"},{"resubmission_rounds":0,"task_id":"T-EMPTY"},{"resubmission_rounds":0,"task_id":"T-EMPTY-STATE"},{"resubmission_rounds":4,"task_id":"T-EXCESSIVE"},{"resubmission_rounds":0,"task_id":"T-IDENTICAL-TIMESTAMPS"},{"resubmission_rounds":0,"task_id":"T-MISSING-AT"},{"resubmission_rounds":0,"task_id":"T-MISSING-STATE"},{"resubmission_rounds":0,"task_id":"T-NON-UTC-TIMESTAMP"},{"resubmission_rounds":1,"task_id":"T-OUT-OF-ORDER"},{"resubmission_rounds":0,"task_id":"T-OVERDUE-REVIEW"},{"resubmission_rounds":0,"task_id":"T-OVERDUE-SUBMITTED"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-DUPLICATE"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-EMPTY-STRING"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-MISSING-REASON"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-NONSTRING"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-REASON-NONREFUSED"},{"resubmission_rounds":0,"task_id":"T-REFUSAL-UNICODE"},{"resubmission_rounds":0,"task_id":"T-REFUSED-RESUBMITTED"},{"resubmission_rounds":0,"task_id":"T-UNKNOWN-STATE"}],"summary":{"counts_by_code":{"EMPTY_HISTORY":1,"EXCESSIVE_RESUBMISSIONS":1,"INVALID_TIMESTAMP":2,"MALFORMED_RECORD":8,"REVIEW_OVERDUE":0,"UNKNOWN_STATE":1},"total_findings":13,"total_tasks":23}}
 exit=1
 
-$ python3 loop_health.py histories_unhealthy.json ; echo "exit=$?"
+=== $ python3 loop_health.py histories_unhealthy.json ; echo "exit=$?" ===
 usage: loop_health.py [-h] --now NOW [--max-rounds MAX_ROUNDS]
                       [--review-overdue-hours REVIEW_OVERDUE_HOURS]
                       [-o OUTPUT]
@@ -236,7 +236,7 @@ usage: loop_health.py [-h] --now NOW [--max-rounds MAX_ROUNDS]
 loop_health.py: error: the following arguments are required: --now
 exit=2
 
-$ python3 loop_health.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+=== $ python3 loop_health.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" ===
 loop_health.py: error: input file not found: /nonexistent.json
 exit=2
 
