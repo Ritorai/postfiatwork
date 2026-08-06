@@ -1,0 +1,396 @@
+crosspath-runner -- captured verification output
+================================================
+
+Environment: CPython 3.11.15, Linux x86_64, stdlib only, no network.
+Every command below was executed. Absolute paths of the scratch tree are
+abbreviated to <tree> in the ECHOED COMMAND LINES ONLY; the reports
+themselves are reproduced verbatim, which is what the grep at the end
+tests.
+
+IMPORTANT ABOUT COVERAGE, STATED UP FRONT: this is NOT a repo-wide run.
+This environment has no outbound git access (git clone returns 403
+through the proxy), so only the tool directories whose source is present
+here could be executed. That is 2 of the repository's 39 tool
+directories -- path-collision-scanner and regression-checker -- plus two
+synthetic controls. See "Coverage of the real repository" in README.md
+for the command a reviewer with a clone should run instead.
+
+$ python3 --version
+Python 3.11.15
+
+$ uname -s -m
+Linux x86_64
+
+$ python3 -m unittest test_crosspath 2>&1 | tail -n 3
+Ran 72 tests in 3.553s
+
+OK
+
+### REAL CROSS-PATH RUN
+# Tree scanned: the tool directories whose source is present in this
+# environment (path-collision-scanner and regression-checker, both real
+# and both committed to this repository), plus two synthetic controls:
+#   clean_tool  writes a fixed report
+#   leaky_tool  writes os.getcwd() into its report -- the planted defect
+# Manifest is in regression-checker/baselines.json format, unchanged.
+
+$ cat manifest.json
+{
+  "tools": {
+    "clean_tool": {
+      "command": [
+        "python3",
+        "tool.py",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 0,
+      "expected_report_sha256": null,
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "leaky_tool": {
+      "command": [
+        "python3",
+        "tool.py",
+        "-o",
+        "{REPORT}"
+      ],
+      "expected_exit_code": 0,
+      "expected_report_sha256": null,
+      "report_mode": "file",
+      "status": "baselined"
+    },
+    "path-collision-scanner": {
+      "command": [
+        "python3",
+        "pathscan.py",
+        "--paths-from",
+        "fixtures/dirty.paths"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": null,
+      "report_mode": "stdout",
+      "status": "baselined"
+    },
+    "regression-checker": {
+      "command": [
+        "python3",
+        "regress.py",
+        "--root",
+        "fixtures",
+        "--baselines",
+        "fixtures/baselines_drift.json"
+      ],
+      "expected_exit_code": 1,
+      "expected_report_sha256": null,
+      "report_mode": "stdout",
+      "status": "baselined"
+    }
+  }
+}
+=== $ python3 crosspath.py --root <tree> --manifest manifest.json ; echo "exit=$?" ===
+exit=1
+{
+    "code_counts": {
+        "EXECUTION_ERROR": 0,
+        "EXIT_CODE_DIVERGENCE": 0,
+        "NON_CANONICAL_JSON": 0,
+        "PATH_LEAK": 1,
+        "REPORT_HASH_DIVERGENCE": 1
+    },
+    "mode": "copied",
+    "results": [
+        {
+            "codes": [],
+            "detail": {
+                "canonical_sha256_a": "3d8af54cb4ea2d8c8e1eeeee745bd74970cc7ccb79df0878654ddd31501db9d9",
+                "canonical_sha256_b": "3d8af54cb4ea2d8c8e1eeeee745bd74970cc7ccb79df0878654ddd31501db9d9",
+                "exit_code_a": 0,
+                "exit_code_b": 0,
+                "raw_sha256_a": "3d8af54cb4ea2d8c8e1eeeee745bd74970cc7ccb79df0878654ddd31501db9d9",
+                "raw_sha256_b": "3d8af54cb4ea2d8c8e1eeeee745bd74970cc7ccb79df0878654ddd31501db9d9"
+            },
+            "status": "identical",
+            "tool": "clean_tool"
+        },
+        {
+            "codes": [
+                "PATH_LEAK",
+                "REPORT_HASH_DIVERGENCE"
+            ],
+            "detail": {
+                "canonical_sha256_a": "b4bb289a7425f421ab6b3b2d9bf14f975a428212ffc4e979658616152b10636a",
+                "canonical_sha256_b": "844449dced4e4564a8d0eab9cabfdcaefb738a946db4fe8549ca3c501afb214e",
+                "differences": [
+                    {
+                        "a": "<ROOT_A>/leaky_tool",
+                        "b": "<ROOT_B>/leaky_tool",
+                        "pointer": "/cwd"
+                    }
+                ],
+                "differing_count": 1,
+                "exit_code_a": 0,
+                "exit_code_b": 0,
+                "raw_sha256_a": "b4bb289a7425f421ab6b3b2d9bf14f975a428212ffc4e979658616152b10636a",
+                "raw_sha256_b": "844449dced4e4564a8d0eab9cabfdcaefb738a946db4fe8549ca3c501afb214e"
+            },
+            "status": "divergent",
+            "tool": "leaky_tool"
+        },
+        {
+            "codes": [],
+            "detail": {
+                "canonical_sha256_a": "76d406d48f707c61dd1e0b93fd4019b0f6a00d0b190fc77e03ae05302ddb1945",
+                "canonical_sha256_b": "76d406d48f707c61dd1e0b93fd4019b0f6a00d0b190fc77e03ae05302ddb1945",
+                "exit_code_a": 1,
+                "exit_code_b": 1,
+                "raw_sha256_a": "76d406d48f707c61dd1e0b93fd4019b0f6a00d0b190fc77e03ae05302ddb1945",
+                "raw_sha256_b": "76d406d48f707c61dd1e0b93fd4019b0f6a00d0b190fc77e03ae05302ddb1945"
+            },
+            "status": "identical",
+            "tool": "path-collision-scanner"
+        },
+        {
+            "codes": [],
+            "detail": {
+                "canonical_sha256_a": "014935ce5c84c80691f18dfdf400fdb5ab74c6dd5d6fcfef792cb5725a9f8912",
+                "canonical_sha256_b": "014935ce5c84c80691f18dfdf400fdb5ab74c6dd5d6fcfef792cb5725a9f8912",
+                "exit_code_a": 1,
+                "exit_code_b": 1,
+                "raw_sha256_a": "014935ce5c84c80691f18dfdf400fdb5ab74c6dd5d6fcfef792cb5725a9f8912",
+                "raw_sha256_b": "014935ce5c84c80691f18dfdf400fdb5ab74c6dd5d6fcfef792cb5725a9f8912"
+            },
+            "status": "identical",
+            "tool": "regression-checker"
+        }
+    ],
+    "schema_version": 1,
+    "status": "divergent",
+    "summary": {
+        "divergent": 1,
+        "error": 0,
+        "identical": 3,
+        "skipped": 0
+    },
+    "tool": "crosspath-runner",
+    "tools_compared": 4
+}
+
+### CONTROL: the same run with the planted leak removed
+
+=== $ python3 crosspath.py ... --only clean_tool,path-collision-scanner,regression-checker ; echo "exit=$?" ===
+{
+  "status": "identical",
+  "summary": {
+    "divergent": 0,
+    "error": 0,
+    "identical": 3,
+    "skipped": 0
+  },
+  "code_counts": {
+    "EXECUTION_ERROR": 0,
+    "EXIT_CODE_DIVERGENCE": 0,
+    "NON_CANONICAL_JSON": 0,
+    "PATH_LEAK": 0,
+    "REPORT_HASH_DIVERGENCE": 0
+  },
+  "results": [
+    {
+      "tool": "clean_tool",
+      "status": "identical",
+      "codes": []
+    },
+    {
+      "tool": "path-collision-scanner",
+      "status": "identical",
+      "codes": []
+    },
+    {
+      "tool": "regression-checker",
+      "status": "identical",
+      "codes": []
+    }
+  ]
+}
+exit=0
+
+### The report contains no absolute paths
+$ grep -c "/root\|/tmp\|/home\|xp_a\|xp_b" out.json
+0
+
+Reading of the run
+------------------
+
+leaky_tool writes os.getcwd() into its own report. It is the planted
+defect, and it is the only divergent entry: PATH_LEAK plus
+REPORT_HASH_DIVERGENCE, pinpointed at JSON Pointer "/cwd", with the two
+values shown as <ROOT_A>/leaky_tool and <ROOT_B>/leaky_tool -- redacted,
+so the finding names the leak without reproducing the path.
+
+clean_tool, path-collision-scanner and regression-checker are byte-for-byte
+identical from both paths. The second run, with leaky_tool excluded, exits
+0 and reports three identical tools, which is the control that shows exit
+1 above came from the planted defect and not from the harness.
+
+The final grep prints 0: the report contains neither working path nor
+either copy directory name.
+
+WHAT THIS DOES NOT SHOW: 37 of the repository's 39 tool directories were
+not executed. Both tools that were executed are clean. Nothing here says
+anything about the other 37.
+
+A BUG THIS TOOL HAD, FOUND BY RUNNING ITS OWN TESTS
+---------------------------------------------------
+
+The first version copied the tree to names differing by 30 characters.
+Two tests in test_crosspath.py -- a fixture whose JSON formatting is keyed
+on len(cwd) % 3, and one whose exit code is keyed on len(cwd) % 2 --
+PASSED AS "identical", because 2 and 3 both divide 30. The runner was
+silently blind to exactly the class of defect it exists to find.
+
+Any artefact of the form f(len(path)) % N cancels whenever N divides the
+length difference. The difference is now 41, a prime, so every period from
+2 to 40 is exposed. test_crosspath.py::TestCopyNames asserts the
+difference is prime so the property cannot regress quietly. A period of
+exactly 41 or a multiple still cancels; that residual gap is limitation 1
+in README.md.
+
+### COMMITTED COVERAGE ARTIFACT
+# Tree: the repository's 388 tracked path names materialised as placeholder
+# files (no clone available), with the real source of the two tools present in
+# this environment restored on top. Manifest: regression-checker/baselines.json
+# verbatim plus those two entries. This is how crosspath_report.json was made.
+
+=== $ python3 crosspath.py --root <tree> --manifest manifest_local.json -o crosspath_report.json ; echo "exit=$?" ===
+exit=2
+
+$ python3 -c "print the coverage block"
+{
+  "directories_under_root": 40,
+  "directories_with_no_manifest_entry": 15,
+  "executed_both_paths": 2,
+  "executed_tools": [
+    "path-collision-scanner",
+    "regression-checker"
+  ],
+  "manifest_entries": 25,
+  "not_executed": 23,
+  "not_executed_tools": [
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "budget-forecaster"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "bundle-index"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "consolidate"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "dup-detector"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "event-linter"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "evidence-harness"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "evidence-manifest"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "evidence-scorer"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "lifecycle-linter"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "link-integrity"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "loop-health"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "payload-validator"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "preflight"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "queue-auditor"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "reward-anomaly"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "reward-reconciler"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "schema-checker"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "staleness-monitor"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "sybil-detector"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "throughput-reporter"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "wallet-reconciler"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "xrpl-address"
+    },
+    {
+      "reason": "report file was not created (report_mode=file)",
+      "tool": "xrpl-auditor"
+    }
+  ],
+  "tools_with_no_manifest_entry": [
+    "bundle-verifier",
+    "claim-checker",
+    "commit-claim-auditor",
+    "contradiction-detector",
+    "crosspath-runner",
+    "doc-validator",
+    "evidence-validator",
+    "exit-harness",
+    "index-generator",
+    "nondeterminism-scanner",
+    "scorecard",
+    "snapshot-diff",
+    "tamper-runner",
+    "thread-check",
+    "weak-assertion-scanner"
+  ]
+}
+
+$ cmp crosspath_report.json <(rerun) && echo REPRODUCIBLE
+REPRODUCIBLE
+
+$ grep -c "/root\|/tmp\|/home\|xp_a\|xp_b" crosspath_report.json
+0
