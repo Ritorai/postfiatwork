@@ -1,0 +1,66 @@
+adversarial-suite -- captured verification output
+Environment: CPython 3.11.15, Linux x86_64, stdlib only, no network.
+
+Three runs: two in the original checkout (/tmp/build_4/repo), one after
+`cp -r` to a differently-named absolute path (/tmp/build_4/relocated_xyz).
+Each run pairs `python3 -m unittest test_adversarial` (the deliverable's own
+test count/verdict) with `python3 test_adversarial.py --digest`, which runs
+the identical suite in-process and additionally prints a single sha256 over
+every recorded case's normalized argv/exit-code/stdout/stderr. All three
+RESULTS_DIGEST values below are identical -- that is the relocation proof.
+
+=== $ cd /tmp/build_4/repo/adversarial-suite && python3 make_fixtures.py --verify ===
+VERIFY OK: 120 files + 3 empty dirs, byte-identical (tree listing and diff -r both agree)
+exit=0
+
+=== $ python3 -m unittest test_adversarial   # original checkout, run 1 ===
+..........................................................................................................................
+----------------------------------------------------------------------
+Ran 122 tests in 9.488s
+
+OK
+exit=0
+
+=== $ python3 test_adversarial.py --digest   # original checkout, run 1 ===
+----------------------------------------------------------------------
+Ran 122 tests in 9.316s
+
+OK
+RESULTS_DIGEST sha256=6246d36b30c93763f0463633f5352d611d58ef7763bad44803f1174f6aa2cbdf cases=106
+exit=0
+
+=== $ python3 -m unittest test_adversarial   # original checkout, run 2 ===
+..........................................................................................................................
+----------------------------------------------------------------------
+Ran 122 tests in 9.416s
+
+OK
+exit=0
+
+=== $ python3 test_adversarial.py --digest   # original checkout, run 2 ===
+----------------------------------------------------------------------
+Ran 122 tests in 10.284s
+
+OK
+RESULTS_DIGEST sha256=6246d36b30c93763f0463633f5352d611d58ef7763bad44803f1174f6aa2cbdf cases=106
+exit=0
+
+=== $ cp -r /tmp/build_4/repo /tmp/build_4/relocated_xyz && cd /tmp/build_4/relocated_xyz/adversarial-suite && python3 make_fixtures.py --verify ===
+VERIFY OK: 120 files + 3 empty dirs, byte-identical (tree listing and diff -r both agree)
+exit=0
+
+=== $ python3 -m unittest test_adversarial   # relocated checkout, run 3 ===
+..........................................................................................................................
+----------------------------------------------------------------------
+Ran 122 tests in 10.840s
+
+OK
+exit=0
+
+=== $ python3 test_adversarial.py --digest   # relocated checkout, run 3 ===
+----------------------------------------------------------------------
+Ran 122 tests in 9.289s
+
+OK
+RESULTS_DIGEST sha256=6246d36b30c93763f0463633f5352d611d58ef7763bad44803f1174f6aa2cbdf cases=106
+exit=0

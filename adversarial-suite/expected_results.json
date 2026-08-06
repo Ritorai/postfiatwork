@@ -1,0 +1,1051 @@
+{
+  "cases": {
+    "EM-badsubcmd": {
+      "argv": [
+        "frobnicate"
+      ],
+      "exit_code": 2,
+      "output_sha256": "19ed42fa5233c2f0950c16886a01d49afd3dd6519bdf9a6eb38bd70a7c72ac31",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-array_mixed_types.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/array_mixed_types.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "8673926c4689fc6df5b5bd768a60d30fa616388d6f47a93079c527290a1323c3",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-array_of_non_objects.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/array_of_non_objects.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "9a42dfa5e90d0d5ac5b595efe2532830b191bd9459ad592b86f9e0a3a314294b",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-bom.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/bom.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "4cdfe64cf0a7487cbf72a166bb63667767aa2ad15e044604834fab0e9ad5dae7",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-bool_and_int_values.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/bool_and_int_values.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "8269c9b0eb9bf3b712730eb62ba7dbdbe7cc9a91a13d2b2e1252ff9f199be909",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-crlf_file_level.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/crlf_file_level.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "918c89edb1c3a28657a62a6541eabbdbe25f19d3f9224561ba70c724fb4b19fd",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-crlf_in_string.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/crlf_in_string.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "7a339879cff35e575b0cb6cf5f5885b84742f53dc0a9514e26aa9653a2c313cb",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-deep_nesting.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/deep_nesting.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "a8425a56fb9983a7c1d290b2a51a7cf7319cda1a95c09195c5811e33a21631f1",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-dir_as_input": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/dir_as_input"
+      ],
+      "exit_code": 1,
+      "output_sha256": "f2e6b72cb446cc3d48e67653a2c556dede8284728dbc5f824d3be7c3e53e8070",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-dup_keys_in_record.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/dup_keys_in_record.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "b5aee5c35db6a8707f59bdfb02a7fa49a2edd9b00e908f5ef53f325c25b8b110",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-dup_submission_id.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/dup_submission_id.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "2b2bec8ab409df79c263f0d917f9a7cce0581ff442eaa39b1738692d705138db",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-embedded_null_in_id.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/embedded_null_in_id.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "31d06eafbbe9f06f59a9e9a1487aadc43779936ce7ac5a56c59fa16fbfbf65ef",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-empty_array.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/empty_array.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "b12d2fae2c551bc6edeec28183d019461b0efa51e69c5091983adffef870e709",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-empty_file.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/empty_file.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "12bf11cd703e368f428292b79fe0daee9b48b5ee4d4af790fb194340f5b5ba27",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-huge_int.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/huge_int.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "649e17a212d4854849e0d298f17cf22ce286448086d9611612d94810352c9e25",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-id_bare.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/id_bare.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "918c89edb1c3a28657a62a6541eabbdbe25f19d3f9224561ba70c724fb4b19fd",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-id_padded.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/id_padded.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "918c89edb1c3a28657a62a6541eabbdbe25f19d3f9224561ba70c724fb4b19fd",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-infinity_value.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/infinity_value.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "b7c2ad7afbd5d883241a338e2b5a3fd82e2f84912794043c8a1cad6a64b5b34f",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-nan_value.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/nan_value.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "fd76ed687d4d013f62f2961a3d35403b8189d035aebed761f5f3084a2e4bd08b",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-neg_infinity_value.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/neg_infinity_value.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "31056f5807ab8307d936e12b5cd49201fe7578d4980741e198bd484c88b6a198",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-nested_object_unsorted_keys.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/nested_object_unsorted_keys.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "0c385ef904cf0d8e555582e530f4ba31cce2a2c9e46d0421bac53b3049e6b714",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-no_trailing_newline.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/no_trailing_newline.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "918c89edb1c3a28657a62a6541eabbdbe25f19d3f9224561ba70c724fb4b19fd",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-truncated.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/truncated.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "8159c6990c313234fba81be35ac5c59a4d0b897bc6aad6f4124fefcb49b440c0",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-unicode_astral_rtl_nul.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/unicode_astral_rtl_nul.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "5eb32eb31f47f2728fdcd1a8fbf66534c03606c6a9f11a6d88ed8fcc0feaf2d4",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-unicode_nfc.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/unicode_nfc.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "6419897e1a03fa417d205dc0b830237971a3b145afda4fab6d4363c902818690",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-unicode_nfd.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/unicode_nfd.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "ba4f4d492ee9671cea33600cc0aa10bdfa209787b25fe4b3976638d2ada1b6c2",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-valid_basic.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/valid_basic.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "d0d954d2a5473bb578ea1ad6daf22bb88461ae81bfce88f35e2a792dca39dac7",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-wrong_shape_null.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/wrong_shape_null.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "efbb37741230b3d6384f1ec36cd21963d1f9f76df930f175cdca15400e1d0735",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-wrong_shape_object.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/wrong_shape_object.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "bc27109b84524e944f4bfc0b4b4badfdb2f753be0c43a404580ce950cd847fb4",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-wrong_shape_string.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/wrong_shape_string.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "795de0c312aae25abd0ceff2eb02b63e06dc36d30668f00b4e1362678097a9f5",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-ws_newline.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/ws_newline.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "1e6f98d38693710e8cfdfd80c4ea3904ed408583697d9d5fbe613ff4179fb228",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-ws_one_space.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/ws_one_space.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "1e6f98d38693710e8cfdfd80c4ea3904ed408583697d9d5fbe613ff4179fb228",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-ws_tab.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/ws_tab.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "1e6f98d38693710e8cfdfd80c4ea3904ed408583697d9d5fbe613ff4179fb228",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-build-ws_two_spaces.json": {
+      "argv": [
+        "build",
+        "../adversarial-suite/fixtures/evidence-manifest/ws_two_spaces.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "1e6f98d38693710e8cfdfd80c4ea3904ed408583697d9d5fbe613ff4179fb228",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-help": {
+      "argv": [
+        "-h"
+      ],
+      "exit_code": 0,
+      "output_sha256": "d82597522489252e6180c1e9832a485b5fbfa193560aeb050d70029063456512",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-noargs": {
+      "argv": [],
+      "exit_code": 2,
+      "output_sha256": "cc09aa5d8f8d9d62a2c611a5d7212ed919c798d489ad7c6f5e59b9652f46a04f",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-verify-manifest_bad_shape.json": {
+      "argv": [
+        "verify",
+        "../adversarial-suite/fixtures/evidence-manifest/manifest_bad_shape.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "16be9e2b6f8a3e2087f4d26aa9eb5f8041dad6bdfb39492a955f63558864a4db",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-verify-manifest_clean.json": {
+      "argv": [
+        "verify",
+        "../adversarial-suite/fixtures/evidence-manifest/manifest_clean.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "c74efdd1b965fc636924f17e70a3e151ec7396352b7bba39a68885286a32e8a4",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-verify-manifest_missing_fields_entry.json": {
+      "argv": [
+        "verify",
+        "../adversarial-suite/fixtures/evidence-manifest/manifest_missing_fields_entry.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "bbfa4317cae5e5e1a77dbf829ca1704a896a06f26c675365d0bb5bf91098db60",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-verify-manifest_not_object.json": {
+      "argv": [
+        "verify",
+        "../adversarial-suite/fixtures/evidence-manifest/manifest_not_object.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "5e0a1427acc3d6929787de880fbf65fd5b710af9e75412d7cdac20f6bafa1590",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-verify-manifest_tampered.json": {
+      "argv": [
+        "verify",
+        "../adversarial-suite/fixtures/evidence-manifest/manifest_tampered.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "d9cbf9c8ed64e935dae3959460e243ca0e1a53e9818c9f94eccc623f9e049053",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "EM-verify-nonexistent": {
+      "argv": [
+        "verify",
+        "does_not_exist_at_all.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "4b049bf7945a4e9b1b9b9ef4ca120c17245a2f628349921e39be11e3ae921afe",
+      "timed_out": false,
+      "tool": "evidence-manifest"
+    },
+    "RR-amount_as_int_expected.json__amount_as_int_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/amount_as_int_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/amount_as_int_payouts.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "b2bf2495089c7cbb18d908d764a95a998539b893e432d28d1f7daa06d3add3a6",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-amount_mismatch_expected.json__amount_mismatch_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/amount_mismatch_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/amount_mismatch_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "e8da6906658dd52acfcc7218d7f170e4f6e4268d1affb2a03a27df484fdbd86a",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-balanced_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "2dfc3e3a5151bdffcdb5c565ff05ff99cdd033696b3e4659aa738c9596e45e72",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-balanced_expected.json__wrong_shape_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/wrong_shape_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "e60e677134a4fdf141d00e499e8333c7f3aad6e14a262054f95f876fba44af96",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-bool_amount_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/bool_amount_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "6117603a0b011a669c73e8671357fb185d72ab0a6539b029e8bb54c2cc192ebd",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-both_empty_expected.json__both_empty_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/both_empty_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/both_empty_payouts.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "490a1075bfc6acd65930672f9c91534b96eb837a1c87d5e36b0f890b5ff4f5ab",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-deep-nesting": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/deep_nesting_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/both_empty_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "c48d867b8f8b88959c3d359841f35b25fdce799e0faeb016623950554d6193a9",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-dir-as-expected": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/dir_as_expected",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "88f9cb0efe81a91f0e87cb8d57a471c47e96f6949009d6b5c632fe4b6b27ee27",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-dup_expected.json__dup_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/dup_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/dup_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "5b9a5b91c5bf04b4e543f0240736c23da6d2f5f3b96c1db8a863cffe5cac4a15",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-dup_task_id_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/dup_task_id_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "b6bc9f3d3d848f40fabbbe0bf0f1b9d0b71a0a3b43f9f287bfd875b4fa4c833b",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-empty_file_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/empty_file_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "bc165ff2485766e72e00565d55d16158c15c4a8de2c83f6e44908d0e6cb9efe4",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-empty_string_wallet_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/empty_string_wallet_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "c98c142c9318d389c9d5ef6431ff0e706da5cfdcada40663860461e777e80ff3",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-float_amount_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/float_amount_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "19aae690d07fe42cdce4f712804d698db6b589632934975416f116fe823b261c",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-help": {
+      "argv": [
+        "-h"
+      ],
+      "exit_code": 0,
+      "output_sha256": "1d8ee28cab551b29124d54caaa0163804fb0736f58b9ef03ac431176216403f0",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-huge_exponent_expected.json__huge_exponent_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/huge_exponent_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/huge_exponent_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "7a0650b5fdd4ee2b448c8d534dc2f8954c79cab58f54c181a19d33d4d412543d",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-huge_valid_number_expected.json__huge_valid_number_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/huge_valid_number_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/huge_valid_number_payouts.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "5ed61f7fd6038f9a9d1d323893fd0ca9ce5d53fd5e90fad4c073a889da9df7c5",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-missing_expected.json__missing_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/missing_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/missing_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "842dd5f65cc8f9a1da67fae60ed44ec590728853727f0a7965c4c4b5590445ee",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-missing_field_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/missing_field_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "cb4067ac61070bfffaa67fd0b6c61412957b864608c0b753fbd23d0e9cd2c2e0",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-nan_amount_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/nan_amount_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "19aae690d07fe42cdce4f712804d698db6b589632934975416f116fe823b261c",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-negative_expected.json__negative_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/negative_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/negative_payouts.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "20f8546d78c24898de5eb464ed43e1faf7261387e96d4597f2965ce6f0e660a7",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-noargs": {
+      "argv": [],
+      "exit_code": 2,
+      "output_sha256": "cd5f48b1f5843cb0ceae63528e23d64b2bad314db75c60ca053034afad81d80e",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-sci_notation_expected.json__sci_notation_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/sci_notation_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/sci_notation_payouts.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "f1ddbd12c0242863d0bd544d21f947547f39ef132db0ce965db9098c0628bdb5",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-split_wrong_wallet_expected.json__split_wrong_wallet_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/split_wrong_wallet_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/split_wrong_wallet_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "57e61698b42ca13338608495f92b112894f516d59fa9b98cc753f33c7ca67e5c",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-subprecision_expected.json__subprecision_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/subprecision_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/subprecision_payouts.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "f1beaadad03276cc6d43825f9befb65bba7509a82ed297a04ec7f4af73c22d80",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-truncated_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/truncated_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "5e33496d63b0b4d0cc858e3723374e6e9dcf0a2846d1119e99c66481e1d7ba21",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-unexpected_expected.json__unexpected_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/unexpected_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/unexpected_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "fca5dc7c200cfef0ed4fbffe855f9b1195f4790bd395d5d725732b8c5c4546db",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-wallet_mismatch_expected.json__wallet_mismatch_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/wallet_mismatch_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/wallet_mismatch_payouts.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "3d7f40e7820602d79033dfe7468fb4953a265bf54ad1fcba581a2f21274ca4cc",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-whitespace_wallet_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/whitespace_wallet_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "c98c142c9318d389c9d5ef6431ff0e706da5cfdcada40663860461e777e80ff3",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "RR-wrong_shape_expected.json__balanced_payouts.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/reward-reconciler/wrong_shape_expected.json",
+        "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "6f903cabb3e82449c128e56145c7797f12331841dcbfc22490db34cf6f82112e",
+      "timed_out": false,
+      "tool": "reward-reconciler"
+    },
+    "SC-help": {
+      "argv": [
+        "-h"
+      ],
+      "exit_code": 0,
+      "output_sha256": "7ef9d33e1d436f75e88b99fbe61cd61167adac8422fd0f2c9fa4476630f888ca",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-noargs": {
+      "argv": [],
+      "exit_code": 2,
+      "output_sha256": "eedd2aa2a4638ec48e5aff85a5cfa89a577314fb89f111e7107f1ce5785f0455",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-nonexistent-payload": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_any.json",
+        "does_not_exist.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "32d68cdf5b37522890dd7f092bf2f669cef7ff7ecc4810ba3e9325ccf0253d87",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_any.json__dir_as_payload": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_any.json",
+        "../adversarial-suite/fixtures/schema-checker/dir_as_payload"
+      ],
+      "exit_code": 2,
+      "output_sha256": "981df449498f769548a478aae5160d41679ba18d34efeca863ec002832786bde",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_any.json__payload_bom.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_any.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_bom.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "1a99b6f9912ab5ac7371b46f679c36b9021862f5f0794def0617ca67af263733",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_any.json__payload_deep_nesting.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_any.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_deep_nesting.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "18c5b34b9f1ad98c8d969015cd34ea13bb621e9c4cff3ca69f86b0b1520f1f27",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_any.json__payload_empty_file.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_any.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_empty_file.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "810e1b1a3f9181d5c1e6ab0008bd5135d1fc0b02add095a2c67a766f6ffe77b3",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_bad_bounds.json__payload_conform.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_bad_bounds.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_conform.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "c302ccc8116d03a76e7080cc7270acc76dfd058a21ec1c30ecced91664c7bf04",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_bad_regex.json__payload_conform.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_bad_regex.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_conform.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "f08690a72f2f8aa220acb7a6986f793048e528c8583bb263199403cfb5044f02",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_basic.json__payload_conform.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_basic.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_conform.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "643d0ce26e3a1b16d0c4546553c045e15c98cebd2659ed7f8c6b81c4b952717a",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_basic.json__payload_missing_required.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_basic.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_missing_required.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "afffd392ebac886bfde9303ff0b74e062efadc9bb634a3bd4edc4320f6f0c76d",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_basic.json__payload_violations.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_basic.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_violations.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "e351dd35e61547575193d199d0540dc201254b28c9752dbfa482ce1e959c40ec",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_bom.json__payload_conform.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_bom.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_conform.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "19c07af977853bf2c4896ce958e13f14442299fc7d2aba56c9603877de5858a9",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_dup_keys.json__payload_conform.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_dup_keys.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_conform.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "68a8c7c7be6d2302fa421d301d6b67b51db905d9e49b959aaa44455171f24589",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_int_strict.json__payload_bool_as_int.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_int_strict.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_bool_as_int.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "10d4123760948ccb9792388fa6c2adaa325de3bbb221b5446c4ffc449636982c",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_int_strict.json__payload_float_extreme_as_int.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_int_strict.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_float_extreme_as_int.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "034c898e5c6eca5698fdf61945546f7bb898fd295dcaa3fec1001987d78cf2ce",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_int_strict.json__payload_float_integral_as_int.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_int_strict.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_float_integral_as_int.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "a972a8a0b5cb5960c278091dc9a7880a0e4a027d6e1adbab735cc14c568e029d",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_malformed.json__payload_conform.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_malformed.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_conform.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "5bd5d6facdc45868dd78a7b027b956adc027fd1d75adcc7679f1903db5ae6164",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_max_length.json__payload_max_length_multibyte.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_max_length.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_max_length_multibyte.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "9f4e9effe235f3eaa968d052c7e0bc39431a02a2e908e4e6e0d9fab156b61c7f",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_max_length.json__payload_max_length_too_many_codepoints.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_max_length.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_max_length_too_many_codepoints.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "ee4462627761e0041cefef178f1116d264592e8401ffa6121fcc75a36b3f3014",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_no_trailing_newline.json__payload_no_trailing_newline.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_no_trailing_newline.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_no_trailing_newline.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "7542e9f9d5f4068872e23c2b2975a39d7b5a47656cf3d9376b4aff749e7034b4",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_number_field.json__payload_dup_keys.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_number_field.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_dup_keys.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "daba11c5282bc7f2ceb56aeca44141891d6b81bd11dd0064be8d6631fd02328e",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_number_field.json__payload_infinity_as_number.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_number_field.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_infinity_as_number.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "9942c73b6d8d68dc76147c6d5fa66a277f9ec10a89772603fba2963f647dbdc7",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_number_field.json__payload_nan_as_number.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_number_field.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_nan_as_number.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "65071e699e823ea1591d14caf0a8cf535dcb4b677d654888269c4543db198d42",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_number_field.json__payload_neg_infinity_as_number.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_number_field.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_neg_infinity_as_number.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "4afefdd8954ade799538791bb74aaf74e8bff840c8be3bad4a00fca883a57b0d",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_object_only.json__payload_wrong_shape_array.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_object_only.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_wrong_shape_array.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "289c68cab561213885a490ebdc0a65424eaebadafd65207d8392d426e8fc1d3d",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_object_only.json__payload_wrong_shape_null.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_object_only.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_wrong_shape_null.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "8c9ad351bdc60002629efd8bcf120fcd5127f3e70e44409e0ddb41b7cda7eeb9",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_pattern_anchored.json__payload_pattern_anchored_reject.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_pattern_anchored.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_pattern_anchored_reject.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "f96abc8851b12c1f446ccc8b6ff067736cdd77bae39f48ad6dbca2dd284b2d11",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_pattern_unanchored.json__payload_pattern_search.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_pattern_unanchored.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_pattern_search.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "e935f0338d400581d80d739cc4b6e8d1184c9cbd193d29b849846b17e529bede",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_redos.json__payload_redos_long.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_redos.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_redos_long.json"
+      ],
+      "exit_code": null,
+      "output_sha256": "7706acf95ddbbc9fee7b3066a2f5e02361d9ac19969a0e4dea15f29cfbb954a4",
+      "timed_out": true,
+      "tool": "schema-checker"
+    },
+    "SC-schema_redos.json__payload_redos_short.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_redos.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_redos_short.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "f05dfca7b01485901da56fff2f28be0aacc6bb92937b9db4987b4a30aa672eef",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_strict.json__payload_unexpected_key.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_strict.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_unexpected_key.json"
+      ],
+      "exit_code": 1,
+      "output_sha256": "c32c7154163153da7577974e2af71f61eac561ed3842d7ebf7dd7ad4eca9cac9",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_unicode.json__payload_unicode_astral.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_unicode.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_unicode_astral.json"
+      ],
+      "exit_code": 0,
+      "output_sha256": "b1d201952762c6a9d789fe065fe1b09aff80662585b2bea22eae1ebbe0393c2b",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-schema_unknown_keyword.json__payload_conform.json": {
+      "argv": [
+        "../adversarial-suite/fixtures/schema-checker/schema_unknown_keyword.json",
+        "../adversarial-suite/fixtures/schema-checker/payload_conform.json"
+      ],
+      "exit_code": 2,
+      "output_sha256": "fbbd23bcc336a487b1f774a9322330bdcadf58b10b924a5cbb242a35858c52a2",
+      "timed_out": false,
+      "tool": "schema-checker"
+    },
+    "SC-version": {
+      "argv": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "output_sha256": "fadcb560b9205d1e71225ceaab0e2c31ec3860d168603282c44561553dfd8a7d",
+      "timed_out": false,
+      "tool": "schema-checker"
+    }
+  },
+  "normalization": "absolute REPO_ROOT prefix replaced with <REPO_ROOT>; all argv/paths were already relative to the invoked tool's own directory."
+}
