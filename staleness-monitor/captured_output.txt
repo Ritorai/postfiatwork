@@ -161,14 +161,14 @@ Ran 156 tests in 0.413s
 
 OK
 
-$ python3 staleness.py tasks_fresh.json --now 2026-08-02T00:00:00Z ; echo "exit=$?"
+=== $ python3 staleness.py tasks_fresh.json --now 2026-08-02T00:00:00Z ; echo "exit=$?" ===
 {"findings":{"critical":[],"info":[],"warning":[]},"generated_at":"2026-08-02T00:00:00Z","summary":{"critical":0,"info":0,"total_findings":0,"total_tasks":8,"warning":0},"windows":{"accepted_stale_hours":48,"submitted_stale_hours":72}}
 exit=0
 
-$ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run1.json ; echo "exit=$?"
+=== $ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run2.json ; echo "exit=$?"
+=== $ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum report_run1.json report_run2.json
@@ -178,11 +178,11 @@ $ sha256sum report_run1.json report_run2.json
 $ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z --accepted-stale-hours 9999 --submitted-stale-hours 9999 ; echo "exit=$?"
+=== $ python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z --accepted-stale-hours 9999 --submitted-stale-hours 9999 ; echo "exit=$?" ===
 {"findings":{"critical":[{"age_human":"2d 0h 0m","age_seconds":172800,"bucket":"critical","code":"OVERDUE_PROPOSED","deadline":"2026-07-31T00:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-1","title":"Proposed, deadline 48h in the past (critical overdue)"},{"bucket":"critical","code":"MALFORMED_DEADLINE","deadline_raw":"2026-08-05T00:00:00+05:30","message":"timestamp is not expressed in UTC (non-zero offset): '2026-08-05T00:00:00+05:30'","status":"proposed","task_id":"S-10","title":"Deadline given with a non-UTC +05:30 offset"},{"bucket":"critical","code":"MALFORMED_DEADLINE","deadline_raw":"not-a-real-date","message":"unparseable ISO-8601 timestamp: 'not-a-real-date'","status":"proposed","task_id":"S-11","title":"Deadline is an unparseable string"},{"bucket":"critical","code":"MALFORMED_CREATED_AT","created_at_raw":"not-a-real-date","message":"unparseable ISO-8601 timestamp: 'not-a-real-date'","status":"accepted","task_id":"S-12","title":"created_at is an unparseable string"},{"bucket":"critical","code":"MALFORMED_CREATED_AT","created_at_raw":"2026-08-01T00:00:00+05:30","message":"timestamp is not expressed in UTC (non-zero offset): '2026-08-01T00:00:00+05:30'","status":"submitted","task_id":"S-13","title":"created_at given with a non-UTC +05:30 offset"},{"age_human":"2d 0h 0m","age_seconds":172800,"bucket":"critical","code":"DEADLINE_BEFORE_CREATED","created_at":"2026-08-01T00:00:00Z","deadline":"2026-07-30T00:00:00Z","message":"deadline is earlier than created_at (deadline was already past when the task was created)","status":"proposed","task_id":"S-14","title":"Deadline earlier than created_at, and also already overdue vs now"},{"age_human":"3d 0h 0m","age_seconds":259200,"bucket":"critical","code":"OVERDUE_PROPOSED","deadline":"2026-07-30T00:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-14","title":"Deadline earlier than created_at, and also already overdue vs now"}],"info":[{"age_human":"0d 1h 0m","age_seconds":3600,"bucket":"info","code":"OVERDUE_PROPOSED","deadline":"2026-08-01T23:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-3","title":"Proposed, deadline 1h in the past (info overdue)"}],"warning":[{"age_human":"0d 10h 0m","age_seconds":36000,"bucket":"warning","code":"OVERDUE_PROPOSED","deadline":"2026-08-01T14:00:00Z","message":"proposed task's deadline has passed","status":"proposed","task_id":"S-2","title":"Proposed, deadline 10h in the past (warning overdue)"}]},"generated_at":"2026-08-02T00:00:00Z","summary":{"critical":7,"info":1,"total_findings":9,"total_tasks":20,"warning":1},"windows":{"accepted_stale_hours":9999.0,"submitted_stale_hours":9999.0}}
 exit=1
 
-$ python3 staleness.py tasks_stale.json ; echo "exit=$?"
+=== $ python3 staleness.py tasks_stale.json ; echo "exit=$?" ===
 usage: staleness.py [-h] --now NOW
                     [--accepted-stale-hours ACCEPTED_STALE_HOURS]
                     [--submitted-stale-hours SUBMITTED_STALE_HOURS]
@@ -191,7 +191,7 @@ usage: staleness.py [-h] --now NOW
 staleness.py: error: the following arguments are required: --now
 exit=2
 
-$ python3 staleness.py /nonexistent.json --now 2026-08-02T00:00:00Z ; echo "exit=$?"
+=== $ python3 staleness.py /nonexistent.json --now 2026-08-02T00:00:00Z ; echo "exit=$?" ===
 staleness.py: error: input file not found: /nonexistent.json
 exit=2
 
