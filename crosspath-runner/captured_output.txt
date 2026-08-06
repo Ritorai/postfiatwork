@@ -89,7 +89,7 @@ $ cat manifest.json
     }
   }
 }
-$ python3 crosspath.py --root <tree> --manifest manifest.json ; echo "exit=$?"
+=== $ python3 crosspath.py --root <tree> --manifest manifest.json ; echo "exit=$?" ===
 exit=1
 {
     "code_counts": {
@@ -179,7 +179,7 @@ exit=1
 
 ### CONTROL: the same run with the planted leak removed
 
-$ python3 crosspath.py ... --only clean_tool,path-collision-scanner,regression-checker ; echo "exit=$?"
+=== $ python3 crosspath.py ... --only clean_tool,path-collision-scanner,regression-checker ; echo "exit=$?" ===
 {
   "status": "identical",
   "summary": {
@@ -262,7 +262,7 @@ in README.md.
 # this environment restored on top. Manifest: regression-checker/baselines.json
 # verbatim plus those two entries. This is how crosspath_report.json was made.
 
-$ python3 crosspath.py --root <tree> --manifest manifest_local.json -o crosspath_report.json ; echo "exit=$?"
+=== $ python3 crosspath.py --root <tree> --manifest manifest_local.json -o crosspath_report.json ; echo "exit=$?" ===
 exit=2
 
 $ python3 -c "print the coverage block"

@@ -1,0 +1,136 @@
+crosspath-runner -- relocated-checkout regression evidence
+============================================================
+
+What this file is: deterministic evidence that the README exit-code-table
+fix (see README.md, "### Exit codes") and its regression tests
+(test_exit_codes.py) behave identically from the original checkout and
+from a second, differently-named, differently-located copy of the whole
+repository. This is exactly the property crosspath-runner itself checks
+for other tools, applied here to the change made in this directory.
+
+Environment: CPython 3.11.15, Linux x86_64, stdlib only, no network.
+
+Checkouts compared
+-------------------
+original : /tmp/build_8/repo
+relocated: /tmp/build_8/relocated_9f3c7e2b1a
+(names differ in both spelling and length, deliberately, for the same
+reason crosspath.py's own two copy names do -- see README.md, "The two
+copy names, and a bug this tool had.")
+
+The relocated copy is a plain recursive copy of the entire repository
+(`cp -r repo relocated_9f3c7e2b1a`), not just this directory, so
+transcript-drift/driftcheck.py's cross-tool comparisons run unchanged in
+both places.
+
+Commands run in EACH checkout (cwd = <checkout>/crosspath-runner unless
+noted), output captured verbatim to the files listed below:
+
+    python3 -m unittest test_crosspath test_exit_codes -v
+    python3 -m unittest test_exit_codes.TestReadmeExitTableIsMachineReadable -v
+    python3 -c "... run_scenario_exit_code for clean/leaky/crash fixtures ..."
+
+and, with cwd = <checkout> (repo root):
+
+    python3 transcript-drift/driftcheck.py --root . \
+        --inventory transcript-drift/inventory.json \
+        -o <label>_driftcheck.json
+
+Results
+-------
+
+python3 -m unittest test_crosspath test_exit_codes -v
+    original : Ran 86 tests in 3.341s -- OK
+    relocated: Ran 86 tests in 3.045s -- OK
+
+python3 -m unittest test_exit_codes.TestReadmeExitTableIsMachineReadable -v
+    original : Ran 5 tests in 0.215s -- OK
+    relocated: Ran 5 tests in 0.215s -- OK
+    (both runs: test_divergence_codes_table_is_untouched_and_still_headed_code,
+    test_exit_code_section_exists, test_exit_table_header_matches_driftcheck_pattern,
+    test_harvested_exit_claims_equal_the_exit_codes_actually_observed,
+    test_zero_is_reachable_only_via_the_table_not_the_prose -- all ok)
+
+crosspath.py driven to each documented exit code, both checkouts:
+    original : exit0=0 exit1=1 exit2=2
+    relocated: exit0=0 exit1=1 exit2=2
+
+transcript-drift/driftcheck.py --root . --inventory transcript-drift/inventory.json
+    original : exit=1  (repo-wide; unrelated pre-existing findings elsewhere --
+                see "What this fix does and does not change" below)
+    relocated: exit=1  (identical)
+    crosspath-runner's only finding, in BOTH checkouts:
+        {"code": "TRANSCRIPT_HAS_NO_COMMAND_RECORDS",
+         "detail": {"reason": "no '=== $ command ===' header found; the
+                     transcript does not follow FORMAT.md"},
+         "tool": "crosspath-runner"}
+    drift_counts, both checkouts, byte-identical:
+        {"EXIT_CODE_MISMATCH": 3, "MISSING_README": 0, "MISSING_TRANSCRIPT": 0,
+         "README_COMMAND_NOT_IN_TRANSCRIPT": 32, "TEST_COUNT_MISMATCH": 3,
+         "TEST_COUNT_NOT_CLAIMED_IN_README": 2,
+         "TRANSCRIPT_HAS_NO_COMMAND_RECORDS": 7,
+         "TRANSCRIPT_RECORD_HAS_NO_EXIT": 48, "TRANSCRIPT_SHOWS_TEST_FAILURE": 0}
+
+Normalisation disclosed (applied ONLY when comparing, never written back
+into any committed file): the `unittest -v` transcripts contain one
+genuinely volatile field, the run duration on the "Ran N tests in X.XXXs"
+line (e.g. "3.341s" vs "3.045s" above -- real wall-clock variance between
+two runs on the same machine, nothing to do with location). For the
+byte-comparison below only, that field was replaced with the literal
+string <DURATION> via
+`sed -E 's/Ran ([0-9]+) tests? in [0-9.]+s/Ran \1 tests in <DURATION>s/'`
+in a scratch copy; the files as captured above and the source files in
+this repository are untouched. No other field varied and no other
+normalisation was applied. transcript-drift/driftcheck.py's own report
+needed no normalisation at all -- it is documented to contain no
+timestamps or durations by construction (see its module docstring), and
+the two runs were confirmed byte-identical without alteration.
+
+SHA-256 of the duration-normalised unittest transcripts (identical hash
+proves the two runs agree on everything except wall-clock time):
+    c8ec8f0243b24349995ec7c08c66b2a81d7d8b635a761e7fb7b0f8c2998006e0  original, test_crosspath+test_exit_codes -v
+    c8ec8f0243b24349995ec7c08c66b2a81d7d8b635a761e7fb7b0f8c2998006e0  relocated, test_crosspath+test_exit_codes -v
+    3209514a8a1960fa6a06edc08f0019ea62df953470143e9150cf8fee8231a1f5  original, TestReadmeExitTableIsMachineReadable -v
+    3209514a8a1960fa6a06edc08f0019ea62df953470143e9150cf8fee8231a1f5  relocated, TestReadmeExitTableIsMachineReadable -v
+
+SHA-256 of driftcheck's report JSON (no normalisation applied or needed):
+    498f7e79dcfbbfef4bf7d44b2a44fca9aa665f79ffda9cc501dbad9568800223  original  driftcheck.json
+    498f7e79dcfbbfef4bf7d44b2a44fca9aa665f79ffda9cc501dbad9568800223  relocated driftcheck.json
+
+SHA-256 of the changed/added source files, identical in both checkouts
+by construction of the copy (recorded for completeness, not as evidence
+of anything location-dependent -- a plain `cp -r` guarantees this):
+    711037d3c5485840ea506b8474c71d8c37003d28b8a049c3713ea616dcca79f0  README.md
+    bca44cb288489580e0771aa289806fdbe7526a2e02131d02c520b743815aa5cd  test_exit_codes.py
+
+What this fix does and does not change
+----------------------------------------
+Does: makes the exit-code table's header cell match
+`transcript-drift/driftcheck.py`'s `TABLE_EXIT_HEADER_RE`
+(`^\|\s*\**exit\b`), so all three rows -- `0`, `1`, `2` -- are harvested as
+README exit-code claims instead of only `1` and `2` (verified directly:
+`readme_exit_claims()` returned `{1, 2}` against the README text before
+this change and `{0, 1, 2}` after, with no other change to either file).
+
+Does NOT: change transcript-drift/driftcheck.py's overall verdict for this
+directory today. Its ONLY finding for crosspath-runner, unchanged before
+and after this fix, is TRANSCRIPT_HAS_NO_COMMAND_RECORDS -- because
+captured_output.txt is one of the repository's pre-FORMAT.md prose
+transcripts (no `=== $ command ===` headers), and driftcheck's own
+`compare()` returns as soon as a transcript has zero records, before it
+ever reaches the exit-code comparison. An EXIT_CODE_MISMATCH for the
+unacknowledged `0` was never actually produced by a real driftcheck run
+against this repository's committed transcript -- confirmed by running
+driftcheck before touching anything -- because that earlier-firing check
+pre-empts it. The header fix is still correct and worth making now: it
+removes a real, verified gap in what the README's own table can convey to
+a mechanical reader, and it means the eventual migration of this
+directory's transcript to FORMAT.md (out of scope here; a separate task
+covers all seven pre-FORMAT.md transcripts in this repository) will not
+also need a documentation fix at that time -- the table will already be
+correct and machine-readable.
+
+Also does NOT: change the repository-wide driftcheck exit code (`1` in
+both checkouts, before and after) -- there are unrelated findings in other
+tool directories (see drift_counts above) that this patch does not touch
+and does not claim to fix.

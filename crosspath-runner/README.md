@@ -36,6 +36,7 @@ network. Verified on CPython 3.11.15, Linux x86_64.
 |---|---|
 | `crosspath.py` | the runner |
 | `test_crosspath.py` | 72 unit/integration tests (`unittest`, stdlib only) |
+| `test_exit_codes.py` | 14 focused tests: real subprocess runs producing each of the three table rows above, plus a regression test that the README's exit-code table is machine-readable by `transcript-drift/driftcheck.py`'s own rule (`python3 -m unittest test_crosspath test_exit_codes` runs all 86 together) |
 | `manifest_local.json` | `regression-checker/baselines.json` plus the two entries runnable in this environment |
 | `crosspath_report.json` | the generated result artifact, with its `coverage` block |
 | `captured_output.txt` | real terminal output of the verification commands below |
@@ -63,11 +64,59 @@ python3 crosspath.py --path-a DIR --path-b DIR --manifest FILE [-o FILE]
 
 ### Exit codes
 
-| Code | Meaning |
+| Exit | Meaning |
 |---|---|
 | `0` | every tool produced identical canonical output from both paths |
 | `1` | at least one tool diverged |
 | `2` | setup error, **or** a tool could not be executed in one or both copies |
+
+All three values above match `main()`'s actual `return` statements in
+`crosspath.py` (verified in `test_exit_codes.py`, which drives the CLI to
+each of the three table rows above as a real subprocess). The table itself
+was always correct; only its header cell was not. `transcript-drift/driftcheck.py`
+harvests a README's exit-code table only when the first column header
+matches `TABLE_EXIT_HEADER_RE` (`^\|\s*\**exit\b`) — it must start with the
+word "exit". This table's header cell was `Code`, so the header check never
+matched and the table was skipped entirely; none of `0`, `1`, or `2` were
+ever harvested from it. driftcheck's other extraction path, a prose regex
+for phrases like `` exit `2` ``, separately picked up `1` and `2` from the
+sentence below (`` exit `2` here and exit `1` in ``), but not `0` — the
+prose regex requires `exit` to be followed immediately by whitespace or `=`,
+and "exit**s** `0`" (see "Verification" below) has an `s` in the way. The
+combined effect was that driftcheck could only ever attribute `{1, 2}` to
+this README, never `{0, 1, 2}`, even though `0` was documented in this
+table the whole time. Renaming the header cell from `Code` to `Exit` is the
+whole fix: it makes the table match `TABLE_EXIT_HEADER_RE`, so all three
+rows are now harvested. See `test_exit_codes.py::TestReadmeExitTableIsMachineReadable`
+for the regression test, and its docstring for one further caveat: this
+repository's own driftcheck run currently reports `TRANSCRIPT_HAS_NO_COMMAND_RECORDS`
+for this directory (not `EXIT_CODE_MISMATCH`) regardless of this fix, because
+`captured_output.txt` predates `FORMAT.md`'s `=== $ command ===` record
+format and driftcheck's comparison returns before it ever reaches the
+exit-code check when a transcript has zero records. Migrating that
+transcript is out of scope here (a separate task covers the seven
+pre-`FORMAT.md` transcripts in this repository); this fix makes the
+documentation itself machine-readable so that whenever that migration
+happens, the exit-code comparison will find `{0, 1, 2}` fully acknowledged
+instead of rediscovering this same gap.
+
+**That migration has now landed, and the effect was measured rather than
+predicted.** With this directory's transcript migrated to `FORMAT.md`
+records, driftcheck reaches the exit-code check for the first time, and the
+header fix is what decides the outcome:
+
+| `crosspath-runner/README.md` header | driftcheck finding for this directory | repo-wide findings |
+|---|---|---|
+| `Code` (before this fix) | `EXIT_CODE_MISMATCH` — `readme_exit_claims [1, 2]`, `transcript_exits [0, 1, 2]`, `unacknowledged [0]` | 105 |
+| `Exit` (after this fix) | no exit-code finding | 104 |
+
+Both rows are real runs against the same tree, differing only in that one
+word. So the one-word change is not cosmetic and not merely
+forward-looking: it removes a finding that would otherwise have appeared
+the moment the transcript became parseable. The directory still carries a
+`README_COMMAND_NOT_IN_TRANSCRIPT` finding, which this patch does not
+claim to fix — several documented commands are usage synopses with
+placeholders rather than literal invocations.
 
 **Why an execution error is exit `2` here and exit `1` in
 `regression-checker`.** There, a tool that stopped running *is* the
