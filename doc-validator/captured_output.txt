@@ -196,14 +196,14 @@ OK
 {"counts":{},"finding_count":0,"findings":[],"ok":true,"tool_count":1}
 {"counts":{"DOC001_UNDOCUMENTED_FLAG":1,"DOC004_EXIT_CODE_UNDOCUMENTED":2},"finding_count":3,"findings":[{"code":"DOC001_UNDOCUMENTED_FLAG","detail":"./README.md: argparse in ./tool.py defines flag '--undocumented' which appears nowhere in ./README.md","path":"./README.md"},{"code":"DOC004_EXIT_CODE_UNDOCUMENTED","detail":"./README.md: ./tool.py can exit with code 0 but ./README.md never documents exit code 0","path":"./README.md"},{"code":"DOC004_EXIT_CODE_UNDOCUMENTED","detail":"./README.md: ./tool.py can exit with code 2 but ./README.md never documents exit code 2","path":"./README.md"}],"ok":false,"tool_count":1}
 
-$ python3 docval.py --root samples_consistent ; echo "exit=$?"
+=== $ python3 docval.py --root samples_consistent ; echo "exit=$?" ===
 {"counts":{},"finding_count":0,"findings":[],"ok":true,"tool_count":1}
 exit=0
 
-$ python3 docval.py --root samples_inconsistent -o r1.json ; echo "exit=$?"
+=== $ python3 docval.py --root samples_inconsistent -o r1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 docval.py --root samples_inconsistent -o r2.json ; echo "exit=$?"
+=== $ python3 docval.py --root samples_inconsistent -o r2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum r1.json r2.json
@@ -213,11 +213,11 @@ bb4a1db9c624855ec36caeb3ef4afc452f22f7d6c975eb08a7a7819c1b5a7fdf  r2.json
 $ cmp r1.json r2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 docval.py --root samples_inconsistent --no-run ; echo "exit=$?"
+=== $ python3 docval.py --root samples_inconsistent --no-run ; echo "exit=$?" ===
 {"counts":{"DOC001_UNDOCUMENTED_FLAG":1,"DOC002_PHANTOM_FLAG":2,"DOC003_EXIT_CODE_UNREACHABLE":1,"DOC004_EXIT_CODE_UNDOCUMENTED":2,"DOC005_COMMAND_BLOCK_FAILED":1,"DOC006_COMMAND_BLOCK_UNPARSEABLE":2,"DOC007_NO_README":1,"DOC008_NO_CLI":1},"finding_count":11,"findings":[{"code":"DOC001_UNDOCUMENTED_FLAG","detail":"bad_pair/README.md: argparse in bad_pair/tool.py defines flag '--output' which appears nowhere in bad_pair/README.md","path":"bad_pair/README.md"},{"code":"DOC002_PHANTOM_FLAG","detail":"bad_pair/README.md: documents flag '--config' which bad_pair/tool.py does not define via argparse","path":"bad_pair/README.md"},{"code":"DOC002_PHANTOM_FLAG","detail":"bad_pair/README.md: documents flag '-x' which bad_pair/tool.py does not define via argparse","path":"bad_pair/README.md"},{"code":"DOC003_EXIT_CODE_UNREACHABLE","detail":"bad_pair/README.md: documents exit code 9 but no sys.exit/return path in bad_pair/tool.py can produce it","path":"bad_pair/README.md"},{"code":"DOC004_EXIT_CODE_UNDOCUMENTED","detail":"bad_pair/README.md: bad_pair/tool.py can exit with code 2 but bad_pair/README.md never documents exit code 2","path":"bad_pair/README.md"},{"code":"DOC004_EXIT_CODE_UNDOCUMENTED","detail":"bad_pair/README.md: bad_pair/tool.py can exit with code 3 but bad_pair/README.md never documents exit code 3","path":"bad_pair/README.md"},{"code":"DOC005_COMMAND_BLOCK_FAILED","detail":"bad_pair/README.md:30: does not run as written: target script 'missing_tool.py' not found","path":"bad_pair/README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"bad_pair/README.md:31: refused: python3 invoked with '-m' (module/flag form, not a file inside the tool directory) -- e.g. '-m unittest' is refused under the hard contract","path":"bad_pair/README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"bad_pair/README.md:32: refused: shell metacharacter '|' present in 'echo hi | python3 tool.py x.json'","path":"bad_pair/README.md"},{"code":"DOC007_NO_README","detail":"missing_readme: directory contains an argparse CLI (tool.py) but no README.md","path":"missing_readme"},{"code":"DOC008_NO_CLI","detail":"missing_cli: directory contains README.md but no discoverable argparse CLI (.py file that builds an ArgumentParser and calls parse_args)","path":"missing_cli"}],"ok":false,"tool_count":3}
 exit=1
 
-$ python3 docval.py --root /nonexistent_dir ; echo "exit=$?"
+=== $ python3 docval.py --root /nonexistent_dir ; echo "exit=$?" ===
 docval: error: --root '/nonexistent_dir' is not a directory
 exit=2
 
