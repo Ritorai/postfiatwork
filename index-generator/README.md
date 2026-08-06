@@ -299,8 +299,8 @@ and is left unedited for that reason. The repo-wide propagation it
 anticipated has since landed (`payload-validator`, `queue-auditor`,
 `wallet-reconciler`, `commit-claim-auditor`, `dup-detector`,
 `transcript-schema`, each in its own commit), so the numbers have moved.
-Re-running the same command against the current tree reports **49
-transcript files scanned, 521 command records, 11 flagged records across
+Re-running the same command against the current tree reports **50
+transcript files scanned, 526 command records, 11 flagged records across
 9 directories**.
 
 That number is still not the number a reader wants. `pipe_scan.py` counts
