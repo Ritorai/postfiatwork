@@ -180,14 +180,14 @@ Ran 175 tests in 0.270s
 
 OK
 
-$ python3 queue_audit.py snapshot_clean.json ; echo "exit=$?"
+=== $ python3 queue_audit.py snapshot_clean.json ; echo "exit=$?" ===
 {"finding_count":0,"findings":[],"result":"clean","task_count":6}
 exit=0
 
-$ python3 queue_audit.py snapshot_dirty.json -o report_run1.json ; echo "exit=$?"
+=== $ python3 queue_audit.py snapshot_dirty.json -o report_run1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 queue_audit.py snapshot_dirty.json -o report_run2.json ; echo "exit=$?"
+=== $ python3 queue_audit.py snapshot_dirty.json -o report_run2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum report_run1.json report_run2.json
@@ -197,14 +197,14 @@ $ sha256sum report_run1.json report_run2.json
 $ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ cat snapshot_dirty.json | python3 queue_audit.py - ; echo "exit=$?"
+=== $ cat snapshot_dirty.json | python3 queue_audit.py - ; echo "exit=$?" ===
 {"finding_count":19,"findings":[{"code":"DEADLINE_BEFORE_CREATED","detail":"deadline (2026-01-01T00:00:00Z) is before created_at (2026-03-01T00:00:00Z)","task_id":"DEADLINE-BEFORE"},{"code":"DUPLICATE_TASK_ID","detail":"task_id 'DUP-1' appears 2 times","task_id":"DUP-1"},{"code":"INVALID_REWARD","detail":"reward must be numeric, got boolean True","task_id":"BOOL-REWARD"},{"code":"INVALID_REWARD","detail":"reward is NaN","task_id":"NAN-REWARD"},{"code":"INVALID_REWARD","detail":"reward is negative (-5)","task_id":"NEG-REWARD"},{"code":"INVALID_REWARD","detail":"reward must be a JSON number, got a string ('10')","task_id":"STR-REWARD"},{"code":"INVALID_TIMESTAMP","detail":"created_at is not a valid UTC ISO-8601 timestamp ('not-a-timestamp')","task_id":"BAD-TS"},{"code":"INVALID_TIMESTAMP","detail":"created_at is not a valid UTC ISO-8601 timestamp ('2026-01-01T00:00:00')","task_id":"NAIVE-TS"},{"code":"INVALID_TIMESTAMP","detail":"created_at is not a valid UTC ISO-8601 timestamp ('2026-01-01T00:00:00+05:00')","task_id":"NONUTC-TS"},{"code":"MALFORMED_RECORD","detail":"task record at index 4 is not a JSON object (got NoneType)","task_id":"<index:4>"},{"code":"MALFORMED_RECORD","detail":"missing required field 'task_id'","task_id":"<index:5>"},{"code":"MALFORMED_RECORD","detail":"field 'status' must be a non-empty string, got int","task_id":"BAD-STATUS-TYPE"},{"code":"MALFORMED_RECORD","detail":"missing required field 'title'","task_id":"MISS-TITLE"},{"code":"STATUS_LIST_MISMATCH","detail":"status 'rewarded' does not match list 'outstanding'","task_id":"MISMATCH-1"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'archived' is 0 but actual count is 1","task_id":"archived"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'extra_bucket_not_used' is 2 but actual count is 0","task_id":"extra_bucket_not_used"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'outstanding' is 100 but actual count is 14","task_id":"outstanding"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'rewarded' is 3 but actual count is 0","task_id":"rewarded"},{"code":"SUMMARY_COUNT_MISMATCH","detail":"summary count for bucket 'weird_bucket' is not numeric (got str)","task_id":"weird_bucket"}],"result":"findings","task_count":16}
 exit=1
 
-$ python3 queue_audit.py /nonexistent.json ; echo "exit=$?"
+=== $ python3 queue_audit.py /nonexistent.json ; echo "exit=$?" ===
 queue_audit.py: error: could not read '/nonexistent.json': [Errno 2] No such file or directory: '/nonexistent.json'
 exit=2
 
-$ echo '{not json' | python3 queue_audit.py - ; echo "exit=$?"
+=== $ echo '{not json' | python3 queue_audit.py - ; echo "exit=$?" ===
 queue_audit.py: error: invalid JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
 exit=2
