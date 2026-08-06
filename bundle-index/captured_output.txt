@@ -2,19 +2,19 @@
  Bundle Index CLI -- verification transcript
 ==============================================================
 
-$ uname -srm
+=== $ uname -srm ===
 Linux 6.8.0-124-generic x86_64
 exit=0
 
-$ python3 --version
+=== $ python3 --version ===
 Python 3.10.12
 exit=0
 
-$ pwd
+=== $ pwd ===
 /tmp/build_bundleindex
 exit=0
 
-$ ls -1
+=== $ ls -1 ===
 README.md
 __pycache__
 bundle_bad
@@ -27,7 +27,7 @@ exit=0
  STEP 1  Test suite
 ==============================================================
 
-$ python3 -m unittest test_bundle_index -v
+=== $ python3 -m unittest test_bundle_index -v ===
 test_clean_bundle_exit_code_zero (test_bundle_index.TestBuildReportBasics) ... ok
 test_file_count_matches_files_length (test_bundle_index.TestBuildReportBasics) ... ok
 test_files_list_sorted_by_relative_path (test_bundle_index.TestBuildReportBasics) ... ok
@@ -214,7 +214,7 @@ exit=0
  STEP 2  bundle_ok -- clean bundle
 ==============================================================
 
-$ python3 bundle_index.py bundle_ok ; echo "exit=$?"
+=== $ python3 bundle_index.py bundle_ok ; echo "exit=$?" ===
 {"exit_code":0,"file_count":4,"files":[{"detected_type":"markdown","line_count":14,"relative_path":"README.md","sha256":"91cd9077361439e05acc8ddd2b77fe571761ad1c81ddfd84d102dfa14a4ebdda","size_bytes":375},{"detected_type":"json","line_count":5,"relative_path":"data.json","sha256":"acf7743d238e9757bb40709acc518fe43b3945fe9ab6e1b6e3b06e5e680c4504","size_bytes":69},{"detected_type":"python","line_count":11,"relative_path":"greeter.py","sha256":"5d6ce54a0fe56a705f4cee18055d4ba2b4c45ebecd82b29c08c336d219784772","size_bytes":250},{"detected_type":"text","line_count":2,"relative_path":"notes.txt","sha256":"62fca1a8c9e1e954462d2d80d23e5aa50ea8823070e9259ea519e373ae5096fc","size_bytes":167}],"finding_count":0,"findings":[],"rerun_command":{"found":true,"language":"bash","text":"python3 -m unittest test_greeter -v\npython3 greeter.py --name Ada"},"schema_version":1,"status":"clean","tool":"bundle_index","tool_version":"1.0.0"}
 exit=0
 
@@ -222,11 +222,11 @@ exit=0
  STEP 3  bundle_bad -- findings bundle, written twice
 ==============================================================
 
-$ python3 bundle_index.py bundle_bad -o r1.json ; echo "exit=$?"
+=== $ python3 bundle_index.py bundle_bad -o r1.json ; echo "exit=$?" ===
 {"exit_code":1,"file_count":10,"files":[{"detected_type":"binary","line_count":null,"relative_path":".DS_Store","sha256":"f6547627dbf5a6f9215ba108d8122181220926dbc55eb69b7a29dc45b7dbb208","size_bytes":33},{"detected_type":"text","line_count":1,"relative_path":".git/HEAD","sha256":"28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80","size_bytes":21},{"detected_type":"text","line_count":3,"relative_path":".git/config","sha256":"850b95ebbbb9dc7827cb07d1099222cebf6e0d98f7294879fbdbb49c1fc6de64","size_bytes":50},{"detected_type":"binary","line_count":null,"relative_path":"__pycache__/main.cpython-310.pyc","sha256":"f653f190a06b5a4a919f0d50a5f2ce0d501aa45f9016789ba403ffd179852bb9","size_bytes":55},{"detected_type":"unreadable","line_count":null,"relative_path":"broken_link.txt","sha256":null,"size_bytes":null},{"detected_type":"empty","line_count":0,"relative_path":"empty.txt","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0},{"detected_type":"binary","line_count":null,"relative_path":"image.bin","sha256":"dce925d10bea03f72bb047e039bbeb64a584944156b2a6830332c51e30ec92cc","size_bytes":65},{"detected_type":"python","line_count":9,"relative_path":"src/main.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"python","line_count":9,"relative_path":"src/main_copy.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"empty","line_count":0,"relative_path":"zero.bin","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0}],"finding_count":12,"findings":[{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","paths":["empty.txt","zero.bin"]},{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","paths":["src/main.py","src/main_copy.py"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["empty.txt"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["zero.bin"]},{"code":"MISSING_README","detail":"no README.md at bundle root","paths":["README.md"]},{"code":"NO_RERUN_BLOCK","detail":"no README.md to extract a rerun block from","paths":["README.md"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename is '.DS_Store'","paths":[".DS_Store"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/HEAD"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/config"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '__pycache__' directory","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename has suspicious suffix '.pyc'","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"UNREADABLE_FILE","detail":"file could not be read (FileNotFoundError)","paths":["broken_link.txt"]}],"rerun_command":{"found":false,"language":null,"text":null},"schema_version":1,"status":"findings","tool":"bundle_index","tool_version":"1.0.0"}
 exit=1
 
-$ python3 bundle_index.py bundle_bad -o r2.json ; echo "exit=$?"
+=== $ python3 bundle_index.py bundle_bad -o r2.json ; echo "exit=$?" ===
 {"exit_code":1,"file_count":10,"files":[{"detected_type":"binary","line_count":null,"relative_path":".DS_Store","sha256":"f6547627dbf5a6f9215ba108d8122181220926dbc55eb69b7a29dc45b7dbb208","size_bytes":33},{"detected_type":"text","line_count":1,"relative_path":".git/HEAD","sha256":"28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80","size_bytes":21},{"detected_type":"text","line_count":3,"relative_path":".git/config","sha256":"850b95ebbbb9dc7827cb07d1099222cebf6e0d98f7294879fbdbb49c1fc6de64","size_bytes":50},{"detected_type":"binary","line_count":null,"relative_path":"__pycache__/main.cpython-310.pyc","sha256":"f653f190a06b5a4a919f0d50a5f2ce0d501aa45f9016789ba403ffd179852bb9","size_bytes":55},{"detected_type":"unreadable","line_count":null,"relative_path":"broken_link.txt","sha256":null,"size_bytes":null},{"detected_type":"empty","line_count":0,"relative_path":"empty.txt","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0},{"detected_type":"binary","line_count":null,"relative_path":"image.bin","sha256":"dce925d10bea03f72bb047e039bbeb64a584944156b2a6830332c51e30ec92cc","size_bytes":65},{"detected_type":"python","line_count":9,"relative_path":"src/main.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"python","line_count":9,"relative_path":"src/main_copy.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"empty","line_count":0,"relative_path":"zero.bin","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0}],"finding_count":12,"findings":[{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","paths":["empty.txt","zero.bin"]},{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","paths":["src/main.py","src/main_copy.py"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["empty.txt"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["zero.bin"]},{"code":"MISSING_README","detail":"no README.md at bundle root","paths":["README.md"]},{"code":"NO_RERUN_BLOCK","detail":"no README.md to extract a rerun block from","paths":["README.md"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename is '.DS_Store'","paths":[".DS_Store"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/HEAD"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/config"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '__pycache__' directory","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename has suspicious suffix '.pyc'","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"UNREADABLE_FILE","detail":"file could not be read (FileNotFoundError)","paths":["broken_link.txt"]}],"rerun_command":{"found":false,"language":null,"text":null},"schema_version":1,"status":"findings","tool":"bundle_index","tool_version":"1.0.0"}
 exit=1
 
@@ -234,12 +234,12 @@ exit=1
  STEP 4  determinism -- hashes, byte comparison
 ==============================================================
 
-$ sha256sum r1.json r2.json
+=== $ sha256sum r1.json r2.json ===
 cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  r1.json
 cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  r2.json
 exit=0
 
-$ cmp r1.json r2.json && echo BYTE-IDENTICAL
+=== $ cmp r1.json r2.json && echo BYTE-IDENTICAL ===
 BYTE-IDENTICAL
 exit=0
 
@@ -247,7 +247,7 @@ exit=0
  STEP 5  invalid input
 ==============================================================
 
-$ python3 bundle_index.py /nonexistent_dir ; echo "exit=$?"
+=== $ python3 bundle_index.py /nonexistent_dir ; echo "exit=$?" ===
 bundle_index: input error: bundle directory '/nonexistent_dir' does not exist
 exit=2
 
@@ -255,7 +255,7 @@ exit=2
  STEP 6  no absolute paths in the report
 ==============================================================
 
-$ grep -c "/sessions\|/tmp\|/home" r1.json
+=== $ grep -c "/sessions\|/tmp\|/home" r1.json ===
 0
 exit=1
 
@@ -267,20 +267,20 @@ Copying bundle_bad to a completely different absolute path and
 re-indexing it there. If the report is truly path-independent,
 its SHA-256 must match r1.json's SHA-256 exactly.
 
-$ cp -r bundle_bad /tmp/relocated_bundle
+=== $ cp -r bundle_bad /tmp/relocated_bundle ===
 (already copied above)
 exit=0
 
-$ python3 bundle_index.py /tmp/relocated_bundle -o /tmp/relocated_report.json ; echo "exit=$?"
+=== $ python3 bundle_index.py /tmp/relocated_bundle -o /tmp/relocated_report.json ; echo "exit=$?" ===
 {"exit_code":1,"file_count":10,"files":[{"detected_type":"binary","line_count":null,"relative_path":".DS_Store","sha256":"f6547627dbf5a6f9215ba108d8122181220926dbc55eb69b7a29dc45b7dbb208","size_bytes":33},{"detected_type":"text","line_count":1,"relative_path":".git/HEAD","sha256":"28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80","size_bytes":21},{"detected_type":"text","line_count":3,"relative_path":".git/config","sha256":"850b95ebbbb9dc7827cb07d1099222cebf6e0d98f7294879fbdbb49c1fc6de64","size_bytes":50},{"detected_type":"binary","line_count":null,"relative_path":"__pycache__/main.cpython-310.pyc","sha256":"f653f190a06b5a4a919f0d50a5f2ce0d501aa45f9016789ba403ffd179852bb9","size_bytes":55},{"detected_type":"unreadable","line_count":null,"relative_path":"broken_link.txt","sha256":null,"size_bytes":null},{"detected_type":"empty","line_count":0,"relative_path":"empty.txt","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0},{"detected_type":"binary","line_count":null,"relative_path":"image.bin","sha256":"dce925d10bea03f72bb047e039bbeb64a584944156b2a6830332c51e30ec92cc","size_bytes":65},{"detected_type":"python","line_count":9,"relative_path":"src/main.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"python","line_count":9,"relative_path":"src/main_copy.py","sha256":"c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","size_bytes":158},{"detected_type":"empty","line_count":0,"relative_path":"zero.bin","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","size_bytes":0}],"finding_count":12,"findings":[{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","paths":["empty.txt","zero.bin"]},{"code":"DUPLICATE_CONTENT","detail":"2 files share SHA-256 c1a461644a8dc59922b7984fe837ac96cd9bcf06e08d60c67ae29ff0c0a39a5e","paths":["src/main.py","src/main_copy.py"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["empty.txt"]},{"code":"EMPTY_FILE","detail":"file is zero bytes","paths":["zero.bin"]},{"code":"MISSING_README","detail":"no README.md at bundle root","paths":["README.md"]},{"code":"NO_RERUN_BLOCK","detail":"no README.md to extract a rerun block from","paths":["README.md"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename is '.DS_Store'","paths":[".DS_Store"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/HEAD"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '.git' directory","paths":[".git/config"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"path contains '__pycache__' directory","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"SUSPICIOUS_ARTIFACT","detail":"filename has suspicious suffix '.pyc'","paths":["__pycache__/main.cpython-310.pyc"]},{"code":"UNREADABLE_FILE","detail":"file could not be read (FileNotFoundError)","paths":["broken_link.txt"]}],"rerun_command":{"found":false,"language":null,"text":null},"schema_version":1,"status":"findings","tool":"bundle_index","tool_version":"1.0.0"}
 exit=1
 
-$ sha256sum r1.json /tmp/relocated_report.json
+=== $ sha256sum r1.json /tmp/relocated_report.json ===
 cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  r1.json
 cbd9842ac642edcf318f15d8534288b4fc69173378b57a8e370eef9653e1d8a5  /tmp/relocated_report.json
 exit=0
 
-$ cmp r1.json /tmp/relocated_report.json && echo "RELOCATION-IDENTICAL"
+=== $ cmp r1.json /tmp/relocated_report.json && echo "RELOCATION-IDENTICAL" ===
 RELOCATION-IDENTICAL
 exit=0
 
