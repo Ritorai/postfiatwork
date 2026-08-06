@@ -287,12 +287,12 @@ It scans every sibling tool directory in this repository, each with its own
 that is the tool's documented "findings present" status, not a failure.
 
 ```
-files_scanned: 76
-tests_scanned: 6107
-findings_total: 240
+files_scanned: 77
+tests_scanned: 6155
+findings_total: 242
   WA001_NO_ASSERTION: 14
   WA002_CALL_ONLY: 3
-  WA003_SELF_DERIVED_EXPECTATION: 118
+  WA003_SELF_DERIVED_EXPECTATION: 120
   WA004_SKIPPED_TEST: 105
 files_with_errors: 0
 ```
@@ -315,7 +315,7 @@ drifted apart with nothing to catch them:
 |---|---|---|---|
 | what this README claimed | 35 | 3198 | 92 |
 | what `self_scan_report.json` actually contained | 39 | 3430 | 112 |
-| what the current tree produces | 76 | 6107 | 240 |
+| what the current tree produces | 77 | 6155 | 242 |
 
 The README was not describing its own committed artifact, and the artifact
 was not describing the repository. The unedited before/after runs are in
