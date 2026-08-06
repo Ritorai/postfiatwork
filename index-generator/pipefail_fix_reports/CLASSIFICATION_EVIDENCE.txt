@@ -1,0 +1,101 @@
+############################################################
+# CLASSIFICATION_EVIDENCE.txt
+#
+# Unedited runs behind index-generator/README.md, "Finding 4,
+# current state". Produced by the same rec() convention as
+# capture.sh: every record is a real run, header + exit= line,
+# `bash -c 'set -o pipefail; ...'` so no stage's status is masked.
+#
+# Section A -- the raw counter and the classifier, side by side,
+#              run in place.
+# Section B -- the same two commands run from a relocated copy of
+#              the whole tree under a DIFFERENTLY-NAMED absolute
+#              path, byte-compared against Section A.
+# Section C -- the three index-generator test suites, in place and
+#              relocated.
+#
+# Nothing in this file is transcribed by hand.
+############################################################
+
+--- Section A: in place ---
+
+=== $ python3 pipe_scan.py --repo-root .. ===
+{"files_with_piped_records":[{"piped_records":1,"tool":"bundle-index"},{"piped_records":1,"tool":"claim-checker"},{"piped_records":1,"tool":"commit-claim-auditor"},{"piped_records":1,"tool":"exit-harness"},{"piped_records":2,"tool":"index-generator"},{"piped_records":1,"tool":"payload-validator"},{"piped_records":2,"tool":"queue-auditor"},{"piped_records":1,"tool":"report-freshness"},{"piped_records":1,"tool":"wallet-reconciler"}],"total_command_records":521,"total_files_with_a_piped_record":9,"total_piped_records":11,"transcript_files_scanned":49}
+exit=0
+
+=== $ python3 pipe_classify.py --repo-root .. ===
+{"bar_character_counts_by_kind":{"escaped":0,"or_operator":2,"pipeline":4,"quoted":11},"tools":[{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/sessions\\|/tmp\\|/home\" r1.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":258}],"records_with_a_bar":1,"tool":"bundle-index"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":310}],"records_with_a_bar":1,"tool":"claim-checker"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -cE 'time\\.time|utcnow|now\\(\\)' claimhist.py","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":53}],"records_with_a_bar":1,"tool":"commit-claim-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"test -f out_bad.json && echo EXISTS || echo NOT_CREATED","counts":{"escaped":0,"or_operator":2,"pipeline":0,"quoted":0},"is_pipeline":false,"line":184}],"records_with_a_bar":1,"tool":"exit-harness"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -n 'time\\.time\\|utcnow\\|now()' indexgen.py; echo grep_exit=$?","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":453},{"bar_count":1,"command":"python3 pipe_classify.py --command 'grep -c \"a|b\" f.json'","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":1},"is_pipeline":false,"line":641}],"records_with_a_bar":2,"tool":"index-generator"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"cat payloads_bad.json | python3 payload_validate.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":211}],"records_with_a_bar":1,"tool":"payload-validator"},{"pipeline_records":2,"records":[{"bar_count":1,"command":"cat snapshot_dirty.json | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":200},{"bar_count":1,"command":"echo '{not json' | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":208}],"records_with_a_bar":2,"tool":"queue-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/root\\|/home\" freshness_report.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":29}],"records_with_a_bar":1,"tool":"report-freshness"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"echo '{\"opening_balance\":\"0\",\"closing_balance\":\"0\",\"events\":[{\"event_id\":\"e1\",\"type\":\"reward\",\"amount\":NaN,\"at\":\"2026-01-01T00:00:00Z\"}]}' | python3 wallet_reconcile.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":171}],"records_with_a_bar":1,"tool":"wallet-reconciler"}],"total_command_records":521,"total_files_with_a_bar_record":9,"total_files_with_a_pipeline_record":3,"total_non_pipeline_bar_records":7,"total_pipeline_records":4,"total_records_with_a_bar":11,"transcript_files_scanned":49}
+exit=0
+
+=== $ python3 pipe_classify.py --command 'grep -c "a|b" f.json' ===
+{"bar_count":1,"command":"grep -c \"a|b\" f.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":1},"is_pipeline":false}
+exit=0
+
+=== $ python3 pipe_classify.py --command 'cat f | prog -' ===
+{"bar_count":1,"command":"cat f | prog -","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true}
+exit=0
+
+=== $ python3 pipe_classify.py --command 'test -f x && echo Y || echo N' ===
+{"bar_count":2,"command":"test -f x && echo Y || echo N","counts":{"escaped":0,"or_operator":2,"pipeline":0,"quoted":0},"is_pipeline":false}
+exit=0
+
+--- Section B: relocated copy (differently-named absolute path) ---
+The tree was copied to a path whose basename differs from the
+original, so a report that leaked its own location could not match.
+
+=== $ python3 pipe_scan.py --repo-root .. > /tmp/relB_scan.json; python3 pipe_classify.py --repo-root .. > /tmp/relB_classify.json; echo generated ===
+generated
+exit=0
+
+=== $ python3 pipe_scan.py --repo-root .. > /tmp/inpA_scan.json; python3 pipe_classify.py --repo-root .. > /tmp/inpA_classify.json; echo generated ===
+generated
+exit=0
+
+=== $ cmp /tmp/inpA_scan.json /tmp/relB_scan.json && echo BYTE_IDENTICAL_pipe_scan ===
+BYTE_IDENTICAL_pipe_scan
+exit=0
+
+=== $ cmp /tmp/inpA_classify.json /tmp/relB_classify.json && echo BYTE_IDENTICAL_pipe_classify ===
+BYTE_IDENTICAL_pipe_classify
+exit=0
+
+--- Section C: test suites ---
+
+=== $ python3 -m unittest test_indexgen ===
+.........................................................................................................indexgen.py: error: --root '/no/such/dir/at/all' is not a directory
+.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_x1p1fv3e/no_such_subdir/report.json'
+.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_i9frdqru/no_such_subdir/INDEX.md'
+.....................
+----------------------------------------------------------------------
+Ran 140 tests in 0.281s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_capture ===
+.....................................
+----------------------------------------------------------------------
+Ran 37 tests in 0.773s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_pipe_classify ===
+........................................................................
+----------------------------------------------------------------------
+Ran 72 tests in 0.572s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_pipe_classify ===
+........................................................................
+----------------------------------------------------------------------
+Ran 72 tests in 0.557s
+
+OK
+exit=0
+
+############################################################
+# END OF EVIDENCE
+############################################################
