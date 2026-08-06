@@ -1,0 +1,517 @@
+{
+  "counts": {
+    "migrated": 7
+  },
+  "dry_run": false,
+  "results": [
+    {
+      "changed": true,
+      "left_bare": [],
+      "path": "bundle-index/captured_output.txt",
+      "promoted": [
+        {
+          "command": "uname -srm",
+          "exit_line": 7,
+          "line": 5
+        },
+        {
+          "command": "python3 --version",
+          "exit_line": 11,
+          "line": 9
+        },
+        {
+          "command": "pwd",
+          "exit_line": 15,
+          "line": 13
+        },
+        {
+          "command": "ls -1",
+          "exit_line": 24,
+          "line": 17
+        },
+        {
+          "command": "python3 -m unittest test_bundle_index -v",
+          "exit_line": 211,
+          "line": 30
+        },
+        {
+          "command": "python3 bundle_index.py bundle_ok ; echo \"exit=$?\"",
+          "exit_line": 219,
+          "line": 217
+        },
+        {
+          "command": "python3 bundle_index.py bundle_bad -o r1.json ; echo \"exit=$?\"",
+          "exit_line": 227,
+          "line": 225
+        },
+        {
+          "command": "python3 bundle_index.py bundle_bad -o r2.json ; echo \"exit=$?\"",
+          "exit_line": 231,
+          "line": 229
+        },
+        {
+          "command": "sha256sum r1.json r2.json",
+          "exit_line": 240,
+          "line": 237
+        },
+        {
+          "command": "cmp r1.json r2.json && echo BYTE-IDENTICAL",
+          "exit_line": 244,
+          "line": 242
+        },
+        {
+          "command": "python3 bundle_index.py /nonexistent_dir ; echo \"exit=$?\"",
+          "exit_line": 252,
+          "line": 250
+        },
+        {
+          "command": "grep -c \"/sessions\\|/tmp\\|/home\" r1.json",
+          "exit_line": 260,
+          "line": 258
+        },
+        {
+          "command": "cp -r bundle_bad /tmp/relocated_bundle",
+          "exit_line": 272,
+          "line": 270
+        },
+        {
+          "command": "python3 bundle_index.py /tmp/relocated_bundle -o /tmp/relocated_report.json ; echo \"exit=$?\"",
+          "exit_line": 276,
+          "line": 274
+        },
+        {
+          "command": "sha256sum r1.json /tmp/relocated_report.json",
+          "exit_line": 281,
+          "line": 278
+        },
+        {
+          "command": "cmp r1.json /tmp/relocated_report.json && echo \"RELOCATION-IDENTICAL\"",
+          "exit_line": 285,
+          "line": 283
+        }
+      ],
+      "reason": "promoted 16/16 bare command line(s) to headers using their own exit= value; 0 left unchanged (no recoverable exit=)",
+      "refused_records": [],
+      "source_file": null,
+      "status": "migrated",
+      "tool": "bundle-index",
+      "verification": null
+    },
+    {
+      "changed": true,
+      "left_bare": [
+        {
+          "command": "python3 --version",
+          "line": 18,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 19-21); left as plain text, not promoted"
+        },
+        {
+          "command": "uname -s -m",
+          "line": 21,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 22-24); left as plain text, not promoted"
+        },
+        {
+          "command": "python3 -m unittest test_crosspath 2>&1 | tail -n 3",
+          "line": 24,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 25-37); left as plain text, not promoted"
+        },
+        {
+          "command": "cat manifest.json",
+          "line": 37,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 38-92); left as plain text, not promoted"
+        },
+        {
+          "command": "grep -c \"/root\\|/tmp\\|/home\\|xp_a\\|xp_b\" out.json",
+          "line": 219,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 220-265); left as plain text, not promoted"
+        },
+        {
+          "command": "python3 -c \"print the coverage block\"",
+          "line": 268,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 269-392); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp crosspath_report.json <(rerun) && echo REPRODUCIBLE",
+          "line": 392,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 393-395); left as plain text, not promoted"
+        },
+        {
+          "command": "grep -c \"/root\\|/tmp\\|/home\\|xp_a\\|xp_b\" crosspath_report.json",
+          "line": 395,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 396-397); left as plain text, not promoted"
+        }
+      ],
+      "path": "crosspath-runner/captured_output.txt",
+      "promoted": [
+        {
+          "command": "python3 crosspath.py --root <tree> --manifest manifest.json ; echo \"exit=$?\"",
+          "exit_line": 93,
+          "line": 92
+        },
+        {
+          "command": "python3 crosspath.py ... --only clean_tool,path-collision-scanner,regression-checker ; echo \"exit=$?\"",
+          "exit_line": 216,
+          "line": 182
+        },
+        {
+          "command": "python3 crosspath.py --root <tree> --manifest manifest_local.json -o crosspath_report.json ; echo \"exit=$?\"",
+          "exit_line": 266,
+          "line": 265
+        }
+      ],
+      "reason": "promoted 3/11 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)",
+      "refused_records": [],
+      "source_file": null,
+      "status": "migrated",
+      "tool": "crosspath-runner",
+      "verification": null
+    },
+    {
+      "changed": true,
+      "left_bare": [
+        {
+          "command": "python3 -m unittest test_docval -v",
+          "line": 1,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-199); left as plain text, not promoted"
+        },
+        {
+          "command": "sha256sum r1.json r2.json",
+          "line": 209,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 210-213); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp r1.json r2.json && echo BYTE-IDENTICAL",
+          "line": 213,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 214-216); left as plain text, not promoted"
+        },
+        {
+          "command": "grep -c \"/sessions\\|/tmp\\|/home\" r1.json",
+          "line": 224,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 225-226); left as plain text, not promoted"
+        }
+      ],
+      "path": "doc-validator/captured_output.txt",
+      "promoted": [
+        {
+          "command": "python3 docval.py --root samples_consistent ; echo \"exit=$?\"",
+          "exit_line": 201,
+          "line": 199
+        },
+        {
+          "command": "python3 docval.py --root samples_inconsistent -o r1.json ; echo \"exit=$?\"",
+          "exit_line": 204,
+          "line": 203
+        },
+        {
+          "command": "python3 docval.py --root samples_inconsistent -o r2.json ; echo \"exit=$?\"",
+          "exit_line": 207,
+          "line": 206
+        },
+        {
+          "command": "python3 docval.py --root samples_inconsistent --no-run ; echo \"exit=$?\"",
+          "exit_line": 218,
+          "line": 216
+        },
+        {
+          "command": "python3 docval.py --root /nonexistent_dir ; echo \"exit=$?\"",
+          "exit_line": 222,
+          "line": 220
+        }
+      ],
+      "reason": "promoted 5/9 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)",
+      "refused_records": [],
+      "source_file": null,
+      "status": "migrated",
+      "tool": "doc-validator",
+      "verification": null
+    },
+    {
+      "changed": true,
+      "left_bare": [
+        {
+          "command": "sha256sum report_run1.json report_run2.json",
+          "line": 156,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 157-160); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL",
+          "line": 160,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 161-163); left as plain text, not promoted"
+        }
+      ],
+      "path": "link-integrity/captured_output.txt",
+      "promoted": [
+        {
+          "command": "python3 -m unittest test_link_integrity -v",
+          "exit_line": 144,
+          "line": 1
+        },
+        {
+          "command": "python3 link_integrity.py lifecycle_ok.json evidence_ok.json ; echo \"exit=$?\"",
+          "exit_line": 148,
+          "line": 146
+        },
+        {
+          "command": "python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run1.json ; echo \"exit=$?\"",
+          "exit_line": 151,
+          "line": 150
+        },
+        {
+          "command": "python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run2.json ; echo \"exit=$?\"",
+          "exit_line": 154,
+          "line": 153
+        },
+        {
+          "command": "python3 link_integrity.py /nonexistent.json evidence_ok.json ; echo \"exit=$?\"",
+          "exit_line": 165,
+          "line": 163
+        },
+        {
+          "command": "python3 link_integrity.py lifecycle_ok.json ; echo \"exit=$?\"",
+          "exit_line": 170,
+          "line": 167
+        }
+      ],
+      "reason": "promoted 6/8 bare command line(s) to headers using their own exit= value; 2 left unchanged (no recoverable exit=)",
+      "refused_records": [],
+      "source_file": null,
+      "status": "migrated",
+      "tool": "link-integrity",
+      "verification": null
+    },
+    {
+      "changed": true,
+      "left_bare": [
+        {
+          "command": "python3 -m unittest test_ndscan -v",
+          "line": 1,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-229); left as plain text, not promoted"
+        },
+        {
+          "command": "sha256sum r1.json r2.json",
+          "line": 239,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 240-243); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp r1.json r2.json && echo BYTE-IDENTICAL",
+          "line": 243,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 244-246); left as plain text, not promoted"
+        },
+        {
+          "command": "grep -c \"/sessions\\|/tmp\\|/home\" r1.json",
+          "line": 254,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 255-258); left as plain text, not promoted"
+        },
+        {
+          "command": "mkdir -p /tmp/relocated_samples_risky && cp -r samples_risky/* /tmp/relocated_samples_risky/",
+          "line": 258,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 259-259); left as plain text, not promoted"
+        },
+        {
+          "command": "python3 ndscan.py --root samples_risky -o /tmp/orig_relocation_check.json ; sha256sum /tmp/orig_relocation_check.json",
+          "line": 259,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 260-261); left as plain text, not promoted"
+        },
+        {
+          "command": "python3 ndscan.py --root /tmp/relocated_samples_risky -o /tmp/relocated_relocation_check.json ; sha256sum /tmp/relocated_relocation_check.json",
+          "line": 261,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 262-263); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp /tmp/orig_relocation_check.json /tmp/relocated_relocation_check.json && echo RELOCATION-BYTE-IDENTICAL",
+          "line": 263,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 264-265); left as plain text, not promoted"
+        }
+      ],
+      "path": "nondeterminism-scanner/captured_output.txt",
+      "promoted": [
+        {
+          "command": "python3 ndscan.py --root samples_clean ; echo \"exit=$?\"",
+          "exit_line": 231,
+          "line": 229
+        },
+        {
+          "command": "python3 ndscan.py --root samples_risky -o r1.json ; echo \"exit=$?\"",
+          "exit_line": 234,
+          "line": 233
+        },
+        {
+          "command": "python3 ndscan.py --root samples_risky -o r2.json ; echo \"exit=$?\"",
+          "exit_line": 237,
+          "line": 236
+        },
+        {
+          "command": "python3 ndscan.py --root samples_risky --rule ND001_WALL_CLOCK ; echo \"exit=$?\"",
+          "exit_line": 248,
+          "line": 246
+        },
+        {
+          "command": "python3 ndscan.py --root /nonexistent_dir ; echo \"exit=$?\"",
+          "exit_line": 252,
+          "line": 250
+        }
+      ],
+      "reason": "promoted 5/13 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)",
+      "refused_records": [],
+      "source_file": null,
+      "status": "migrated",
+      "tool": "nondeterminism-scanner",
+      "verification": null
+    },
+    {
+      "changed": true,
+      "left_bare": [
+        {
+          "command": "sha256sum report_run1.json report_run2.json",
+          "line": 206,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 207-210); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL",
+          "line": 210,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 211-213); left as plain text, not promoted"
+        }
+      ],
+      "path": "preflight/captured_output.txt",
+      "promoted": [
+        {
+          "command": "python3 -m unittest test_preflight -v",
+          "exit_line": 190,
+          "line": 1
+        },
+        {
+          "command": "python3 preflight.py tasks_ready.json evidence_ready.json ; echo \"exit=$?\"",
+          "exit_line": 194,
+          "line": 192
+        },
+        {
+          "command": "python3 -m preflight tasks_ready.json evidence_ready.json ; echo \"exit=$?\"",
+          "exit_line": 198,
+          "line": 196
+        },
+        {
+          "command": "python3 preflight.py tasks_issues.json evidence_issues.json -o report_run1.json ; echo \"exit=$?\"",
+          "exit_line": 201,
+          "line": 200
+        },
+        {
+          "command": "python3 preflight.py tasks_issues.json evidence_issues.json -o report_run2.json ; echo \"exit=$?\"",
+          "exit_line": 204,
+          "line": 203
+        },
+        {
+          "command": "python3 preflight.py /nonexistent.json evidence_ready.json ; echo \"exit=$?\"",
+          "exit_line": 215,
+          "line": 213
+        },
+        {
+          "command": "python3 preflight.py tasks_ready.json ; echo \"exit=$?\"",
+          "exit_line": 220,
+          "line": 217
+        }
+      ],
+      "reason": "promoted 7/9 bare command line(s) to headers using their own exit= value; 2 left unchanged (no recoverable exit=)",
+      "refused_records": [],
+      "source_file": null,
+      "status": "migrated",
+      "tool": "preflight",
+      "verification": null
+    },
+    {
+      "changed": true,
+      "left_bare": [
+        {
+          "command": "sha256sum r1.json r2.json",
+          "line": 228,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 229-232); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp r1.json r2.json && echo BYTE-IDENTICAL",
+          "line": 232,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 233-235); left as plain text, not promoted"
+        },
+        {
+          "command": "grep -c \"/sessions\\|/tmp\\|/home\" r1.json",
+          "line": 243,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 244-247); left as plain text, not promoted"
+        },
+        {
+          "command": "cp -r samples_weak /tmp/relocated_weak_copy",
+          "line": 247,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 248-248); left as plain text, not promoted"
+        },
+        {
+          "command": "python3 weakassert.py --root samples_weak > /tmp/reloc_a.json",
+          "line": 248,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 249-249); left as plain text, not promoted"
+        },
+        {
+          "command": "python3 weakassert.py --root /tmp/relocated_weak_copy > /tmp/reloc_b.json",
+          "line": 249,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 250-250); left as plain text, not promoted"
+        },
+        {
+          "command": "sha256sum /tmp/reloc_a.json /tmp/reloc_b.json",
+          "line": 250,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 251-253); left as plain text, not promoted"
+        },
+        {
+          "command": "cmp /tmp/reloc_a.json /tmp/reloc_b.json && echo RELOCATION-IDENTICAL",
+          "line": 253,
+          "why": "no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 254-257); left as plain text, not promoted"
+        }
+      ],
+      "path": "weak-assertion-scanner/captured_output.txt",
+      "promoted": [
+        {
+          "command": "python3 -m unittest test_weakassert -v",
+          "exit_line": 216,
+          "line": 1
+        },
+        {
+          "command": "python3 weakassert.py --root samples_strong ; echo \"exit=$?\"",
+          "exit_line": 220,
+          "line": 218
+        },
+        {
+          "command": "python3 weakassert.py --root samples_weak -o r1.json ; echo \"exit=$?\"",
+          "exit_line": 223,
+          "line": 222
+        },
+        {
+          "command": "python3 weakassert.py --root samples_weak -o r2.json ; echo \"exit=$?\"",
+          "exit_line": 226,
+          "line": 225
+        },
+        {
+          "command": "python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo \"exit=$?\"",
+          "exit_line": 237,
+          "line": 235
+        },
+        {
+          "command": "python3 weakassert.py --root /nonexistent_dir ; echo \"exit=$?\"",
+          "exit_line": 241,
+          "line": 239
+        },
+        {
+          "command": "python3 weakassert.py --root demo_category ; echo \"exit=$?\"",
+          "exit_line": 259,
+          "line": 257
+        },
+        {
+          "command": "python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo \"exit=$?\"",
+          "exit_line": 262,
+          "line": 260
+        }
+      ],
+      "reason": "promoted 8/16 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)",
+      "refused_records": [],
+      "source_file": null,
+      "status": "migrated",
+      "tool": "weak-assertion-scanner",
+      "verification": null
+    }
+  ],
+  "schema_version": 1,
+  "tool": "transcript-drift-migrate"
+}

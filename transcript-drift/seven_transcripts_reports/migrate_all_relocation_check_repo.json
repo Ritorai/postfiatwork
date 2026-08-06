@@ -1,0 +1,854 @@
+{
+  "counts": {
+    "refused": 15,
+    "unchanged_conformant": 34
+  },
+  "dry_run": false,
+  "results": [
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/adversarial-suite/captured_output.txt",
+      "promoted": [],
+      "reason": "all 8 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "adversarial-suite",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/budget-forecaster/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_forecast -v): record body (lines 1-46) contains no line matching exit=<int>; a value cannot be safely invented; line 54 (sha256sum forecast_run1.json forecast_run2.json): record body (lines 54-56) contains no line matching exit=<int>; a value cannot be safely invented; line 57 (cmp ... && echo BYTE-IDENTICAL): record body (lines 57-59) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_forecast -v",
+          "line": 1,
+          "why": "record body (lines 1-46) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum forecast_run1.json forecast_run2.json",
+          "line": 54,
+          "why": "record body (lines 54-56) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp ... && echo BYTE-IDENTICAL",
+          "line": 57,
+          "why": "record body (lines 57-59) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "budget-forecaster",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/bundle-index/captured_output.txt",
+      "promoted": [],
+      "reason": "all 16 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "bundle-index",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/bundle-verifier/captured_output.txt",
+      "promoted": [],
+      "reason": "4 record(s) with no recoverable exit= value: line 136 (cat sample_report_clean.json): record body (lines 136-138) contains no line matching exit=<int>; a value cannot be safely invented; line 141 (cat sample_report_tampered.json): record body (lines 141-143) contains no line matching exit=<int>; a value cannot be safely invented; line 151 (sha256sum ../det_run1.json ../det_run2.json): record body (lines 151-153) contains no line matching exit=<int>; a value cannot be safely invented; line 158 (sha256sum ../det_run1.json ../det_run2.json ../det_run3.json): record body (lines 158-161) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "cat sample_report_clean.json",
+          "line": 136,
+          "why": "record body (lines 136-138) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cat sample_report_tampered.json",
+          "line": 141,
+          "why": "record body (lines 141-143) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum ../det_run1.json ../det_run2.json",
+          "line": 151,
+          "why": "record body (lines 151-153) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum ../det_run1.json ../det_run2.json ../det_run3.json",
+          "line": 158,
+          "why": "record body (lines 158-161) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "bundle-verifier",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/claim-checker/captured_output.txt",
+      "promoted": [],
+      "reason": "7 record(s) with no recoverable exit= value: line 305 (sha256sum r1.json r2.json): record body (lines 305-307) contains no line matching exit=<int>; a value cannot be safely invented; line 308 (cmp r1.json r2.json && echo IDENTICAL): record body (lines 308-309) contains no line matching exit=<int>; a value cannot be safely invented; line 310 (grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)): record body (lines 310-320) contains no line matching exit=<int>; a value cannot be safely invented; line 321 (mkdir -p <fresh-tempdir>/deep/nested/path): record body (lines 321-321) contains no line matching exit=<int>; a value cannot be safely invented; line 322 (cp -r bundle_false <fresh-tempdir>/deep/nested/path/bundle_false): record body (lines 322-322) contains no line matching exit=<int>; a value cannot be safely invented; line 326 (sha256sum r1.json r2.json r3.json): record body (lines 326-330) contains no line matching exit=<int>; a value cannot be safely invented; line 331 (cmp r1.json r2.json && cmp r1.json r3.json && echo ALL_THREE_IDENTICAL): record body (lines 331-337) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "sha256sum r1.json r2.json",
+          "line": 305,
+          "why": "record body (lines 305-307) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp r1.json r2.json && echo IDENTICAL",
+          "line": 308,
+          "why": "record body (lines 308-309) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)",
+          "line": 310,
+          "why": "record body (lines 310-320) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "mkdir -p <fresh-tempdir>/deep/nested/path",
+          "line": 321,
+          "why": "record body (lines 321-321) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cp -r bundle_false <fresh-tempdir>/deep/nested/path/bundle_false",
+          "line": 322,
+          "why": "record body (lines 322-322) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum r1.json r2.json r3.json",
+          "line": 326,
+          "why": "record body (lines 326-330) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp r1.json r2.json && cmp r1.json r3.json && echo ALL_THREE_IDENTICAL",
+          "line": 331,
+          "why": "record body (lines 331-337) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "claim-checker",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/claim-crosscheck/captured_output.txt",
+      "promoted": [],
+      "reason": "all 5 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "claim-crosscheck",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/commit-claim-auditor/captured_output.txt",
+      "promoted": [],
+      "reason": "all 18 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "commit-claim-auditor",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/consolidate/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "consolidate",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/contradiction-detector/captured_output.txt",
+      "promoted": [],
+      "reason": "all 7 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "contradiction-detector",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/crosspath-runner/captured_output.txt",
+      "promoted": [],
+      "reason": "all 3 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "crosspath-runner",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/doc-validator/captured_output.txt",
+      "promoted": [],
+      "reason": "all 5 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "doc-validator",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/dup-detector/captured_output.txt",
+      "promoted": [],
+      "reason": "all 14 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "dup-detector",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/env-leak-scanner/captured_output.txt",
+      "promoted": [],
+      "reason": "all 17 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "env-leak-scanner",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/event-linter/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_event_lint -v): record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented; line 45 (sha256sum report_invalid_run1.json report_invalid_run2.json): record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented; line 48 (cmp ... && echo BYTE-IDENTICAL): record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_event_lint -v",
+          "line": 1,
+          "why": "record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum report_invalid_run1.json report_invalid_run2.json",
+          "line": 45,
+          "why": "record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp ... && echo BYTE-IDENTICAL",
+          "line": 48,
+          "why": "record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "event-linter",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/evidence-harness/captured_output.txt",
+      "promoted": [],
+      "reason": "all 19 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "evidence-harness",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/evidence-manifest/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_manifest -v): record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented; line 47 (sha256sum manifest_run1.json manifest_run2.json): record body (lines 47-50) contains no line matching exit=<int>; a value cannot be safely invented; line 51 (cmp manifest_run1.json manifest_run2.json && echo BYTE-IDENTICAL): record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_manifest -v",
+          "line": 1,
+          "why": "record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum manifest_run1.json manifest_run2.json",
+          "line": 47,
+          "why": "record body (lines 47-50) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp manifest_run1.json manifest_run2.json && echo BYTE-IDENTICAL",
+          "line": 51,
+          "why": "record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "evidence-manifest",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/evidence-scorer/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_score_evidence -v): record body (lines 1-48) contains no line matching exit=<int>; a value cannot be safely invented; line 60 (sha256sum report_mixed_run1.json report_mixed_run2.json): record body (lines 60-62) contains no line matching exit=<int>; a value cannot be safely invented; line 63 (cmp ... && echo BYTE-IDENTICAL): record body (lines 63-65) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_score_evidence -v",
+          "line": 1,
+          "why": "record body (lines 1-48) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum report_mixed_run1.json report_mixed_run2.json",
+          "line": 60,
+          "why": "record body (lines 60-62) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp ... && echo BYTE-IDENTICAL",
+          "line": 63,
+          "why": "record body (lines 63-65) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "evidence-scorer",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/evidence-validator/captured_output.txt",
+      "promoted": [],
+      "reason": "all 3 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "evidence-validator",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/exit-harness/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 233 (python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_match.json; echo \"exit(all-match)=$?\"): record body (lines 233-235) contains no line matching exit=<int>; a value cannot be safely invented; line 236 (python3 exitharness.py --manifest manifest_sample_failures.json --root fixture_tools -o out_failures.json; echo \"exit(some-fail)=$?\"): record body (lines 236-238) contains no line matching exit=<int>; a value cannot be safely invented; line 239 (python3 exitharness.py --manifest bad_manifest.json --root fixture_tools -o out_bad.json; echo \"exit(harness-error)=$?\"): record body (lines 239-249) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_match.json; echo \"exit(all-match)=$?\"",
+          "line": 233,
+          "why": "record body (lines 233-235) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "python3 exitharness.py --manifest manifest_sample_failures.json --root fixture_tools -o out_failures.json; echo \"exit(some-fail)=$?\"",
+          "line": 236,
+          "why": "record body (lines 236-238) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "python3 exitharness.py --manifest bad_manifest.json --root fixture_tools -o out_bad.json; echo \"exit(harness-error)=$?\"",
+          "line": 239,
+          "why": "record body (lines 239-249) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "exit-harness",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/index-generator/captured_output.txt",
+      "promoted": [],
+      "reason": "all 59 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "index-generator",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/lifecycle-linter/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_lifecycle_lint -v): record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented; line 45 (sha256sum report_invalid_run1.json report_invalid_run2.json): record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented; line 48 (cmp report_invalid_run1.json report_invalid_run2.json && echo BYTE-IDENTICAL): record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_lifecycle_lint -v",
+          "line": 1,
+          "why": "record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum report_invalid_run1.json report_invalid_run2.json",
+          "line": 45,
+          "why": "record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp report_invalid_run1.json report_invalid_run2.json && echo BYTE-IDENTICAL",
+          "line": 48,
+          "why": "record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "lifecycle-linter",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/limitations-probe/captured_output.txt",
+      "promoted": [],
+      "reason": "all 2 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "limitations-probe",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/link-integrity/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "link-integrity",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/loop-health/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "loop-health",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/nondeterminism-scanner/captured_output.txt",
+      "promoted": [],
+      "reason": "all 5 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "nondeterminism-scanner",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/path-collision-scanner/captured_output.txt",
+      "promoted": [],
+      "reason": "all 11 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "path-collision-scanner",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/payload-validator/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "payload-validator",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/preflight/captured_output.txt",
+      "promoted": [],
+      "reason": "all 7 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "preflight",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/queue-auditor/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "queue-auditor",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/readme-index/captured_output.txt",
+      "promoted": [],
+      "reason": "all 19 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "readme-index",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/regression-checker/captured_output.txt",
+      "promoted": [],
+      "reason": "all 11 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "regression-checker",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/report-freshness/captured_output.txt",
+      "promoted": [],
+      "reason": "all 5 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "report-freshness",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/reward-anomaly/captured_output.txt",
+      "promoted": [],
+      "reason": "all 7 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "reward-anomaly",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/reward-reconciler/captured_output.txt",
+      "promoted": [],
+      "reason": "2 record(s) with no recoverable exit= value: line 37 (sha256sum report_run1.json report_run2.json): record body (lines 37-40) contains no line matching exit=<int>; a value cannot be safely invented; line 41 (cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL): record body (lines 41-42) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "sha256sum report_run1.json report_run2.json",
+          "line": 37,
+          "why": "record body (lines 37-40) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL",
+          "line": 41,
+          "why": "record body (lines 41-42) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "reward-reconciler",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/schema-checker/captured_output.txt",
+      "promoted": [],
+      "reason": "all 9 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "schema-checker",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/scorecard/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "scorecard",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/snapshot-diff/captured_output.txt",
+      "promoted": [],
+      "reason": "all 7 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "snapshot-diff",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/sortkey-detector/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 224 (sha256sum of two independent runs (consolidate control)): record body (lines 224-230) contains no line matching exit=<int>; a value cannot be safely invented; line 231 (sha256sum original vs relocated-and-renamed copy (consolidate control)): record body (lines 231-235) contains no line matching exit=<int>; a value cannot be safely invented; line 236 (sha256sum original vs relocated-and-renamed copy (schema_check control)): record body (lines 236-242) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "sha256sum of two independent runs (consolidate control)",
+          "line": 224,
+          "why": "record body (lines 224-230) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum original vs relocated-and-renamed copy (consolidate control)",
+          "line": 231,
+          "why": "record body (lines 231-235) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum original vs relocated-and-renamed copy (schema_check control)",
+          "line": 236,
+          "why": "record body (lines 236-242) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "sortkey-detector",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/staleness-monitor/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "staleness-monitor",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/sybil-detector/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_sybil_detect -v): record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented; line 48 (sha256sum report_sybil_run1.json report_sybil_run2.json): record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented; line 51 (cmp ... && echo BYTE-IDENTICAL): record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_sybil_detect -v",
+          "line": 1,
+          "why": "record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum report_sybil_run1.json report_sybil_run2.json",
+          "line": 48,
+          "why": "record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp ... && echo BYTE-IDENTICAL",
+          "line": 51,
+          "why": "record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "sybil-detector",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/tamper-runner/captured_output.txt",
+      "promoted": [],
+      "reason": "all 23 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "tamper-runner",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/thread-check/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "thread-check",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/throughput-reporter/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_throughput -v): record body (lines 1-41) contains no line matching exit=<int>; a value cannot be safely invented; line 53 (sha256sum report_breach_run1.json report_breach_run2.json): record body (lines 53-55) contains no line matching exit=<int>; a value cannot be safely invented; line 56 (cmp ... && echo BYTE-IDENTICAL): record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_throughput -v",
+          "line": 1,
+          "why": "record body (lines 1-41) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum report_breach_run1.json report_breach_run2.json",
+          "line": 53,
+          "why": "record body (lines 53-55) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp ... && echo BYTE-IDENTICAL",
+          "line": 56,
+          "why": "record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "throughput-reporter",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/transcript-drift/captured_output.txt",
+      "promoted": [],
+      "reason": "all 16 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "transcript-drift",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/transcript-schema/captured_output.txt",
+      "promoted": [],
+      "reason": "all 6 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "transcript-schema",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/wallet-reconciler/captured_output.txt",
+      "promoted": [],
+      "reason": "2 record(s) with no recoverable exit= value: line 160 (sha256sum report_run1.json report_run2.json): record body (lines 160-163) contains no line matching exit=<int>; a value cannot be safely invented; line 164 (cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL): record body (lines 164-166) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "sha256sum report_run1.json report_run2.json",
+          "line": 160,
+          "why": "record body (lines 160-163) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL",
+          "line": 164,
+          "why": "record body (lines 164-166) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "wallet-reconciler",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/weak-assertion-scanner/captured_output.txt",
+      "promoted": [],
+      "reason": "all 8 record(s) already have a header and an exit= value; nothing to migrate",
+      "refused_records": [],
+      "source_file": null,
+      "status": "unchanged_conformant",
+      "tool": "weak-assertion-scanner",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/xrpl-address/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_address_validate -v): record body (lines 1-44) contains no line matching exit=<int>; a value cannot be safely invented; line 56 (sha256sum report_invalid_run1.json report_invalid_run2.json): record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented; line 59 (cmp ... && echo BYTE-IDENTICAL): record body (lines 59-61) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_address_validate -v",
+          "line": 1,
+          "why": "record body (lines 1-44) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum report_invalid_run1.json report_invalid_run2.json",
+          "line": 56,
+          "why": "record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp ... && echo BYTE-IDENTICAL",
+          "line": 59,
+          "why": "record body (lines 59-61) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "xrpl-address",
+      "verification": null
+    },
+    {
+      "changed": false,
+      "left_bare": [],
+      "path": "/tmp/build_9/repo/xrpl-auditor/captured_output.txt",
+      "promoted": [],
+      "reason": "3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_payout_audit -v): record body (lines 1-34) contains no line matching exit=<int>; a value cannot be safely invented; line 46 (sha256sum audit_dirty_run1.json audit_dirty_run2.json): record body (lines 46-48) contains no line matching exit=<int>; a value cannot be safely invented; line 49 (cmp ... && echo BYTE-IDENTICAL): record body (lines 49-51) contains no line matching exit=<int>; a value cannot be safely invented",
+      "refused_records": [
+        {
+          "command": "python3 -m unittest test_payout_audit -v",
+          "line": 1,
+          "why": "record body (lines 1-34) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "sha256sum audit_dirty_run1.json audit_dirty_run2.json",
+          "line": 46,
+          "why": "record body (lines 46-48) contains no line matching exit=<int>; a value cannot be safely invented"
+        },
+        {
+          "command": "cmp ... && echo BYTE-IDENTICAL",
+          "line": 49,
+          "why": "record body (lines 49-51) contains no line matching exit=<int>; a value cannot be safely invented"
+        }
+      ],
+      "source_file": null,
+      "status": "refused",
+      "tool": "xrpl-auditor",
+      "verification": null
+    }
+  ],
+  "schema_version": 1,
+  "tool": "transcript-drift-migrate"
+}

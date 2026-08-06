@@ -1,0 +1,48 @@
+# Relocation / byte-identity evidence -- seven-transcripts delivery
+# Generated 2026-08-06T18:22:56Z by running the report generators twice:
+#   once in the original checkout (/tmp/build_9/repo at delivery time)
+#   once in a copy at a DIFFERENTLY-NAMED absolute path (/tmp/build_9/relocated_xyz)
+# Both trees were post-migration (the seven already carrying their promoted headers).
+#
+# validate_transcript.py --root . and driftcheck.py --root . reports are BYTE-IDENTICAL
+# (sha256, no normalisation needed) because both tools report tool-relative labels
+# ('bundle-index/captured_output.txt'), never the absolute filesystem path.
+
+== driftcheck.py --root . -o report.json ==
+be993ba4dfdf8b4f1e226adcdb2e4ce0fac6412daabd4a58f7a6895f7b266d5b  /tmp/build_9/work/reloc_reports/drift_repo.json
+be993ba4dfdf8b4f1e226adcdb2e4ce0fac6412daabd4a58f7a6895f7b266d5b  /tmp/build_9/work/reloc_reports/drift_relocated_xyz.json
+
+== transcript-schema/validate_transcript.py --root . -o report.json ==
+a67b16881adedd43ea63ae6c5057ec2177811db6eb547d5cc20288d81d50241f  /tmp/build_9/work/reloc_reports/validate_repo.json
+a67b16881adedd43ea63ae6c5057ec2177811db6eb547d5cc20288d81d50241f  /tmp/build_9/work/reloc_reports/validate_relocated_xyz.json
+
+== the seven captured_output.txt files themselves ==
+d566de972a967718be7a3d97f2a4016b57f52d8a3ab74e1ad394b66c4158098d  /tmp/build_9/repo/bundle-index/captured_output.txt
+d566de972a967718be7a3d97f2a4016b57f52d8a3ab74e1ad394b66c4158098d  /tmp/build_9/relocated_xyz/bundle-index/captured_output.txt
+402ec0af0b112a5887b2e55d1619d08563dea6068c251d0605957db095c6d477  /tmp/build_9/repo/crosspath-runner/captured_output.txt
+402ec0af0b112a5887b2e55d1619d08563dea6068c251d0605957db095c6d477  /tmp/build_9/relocated_xyz/crosspath-runner/captured_output.txt
+b75c10a95379f478256fcbe7d98b1a2bf3100e73e85d393c46d99b95b418121f  /tmp/build_9/repo/doc-validator/captured_output.txt
+b75c10a95379f478256fcbe7d98b1a2bf3100e73e85d393c46d99b95b418121f  /tmp/build_9/relocated_xyz/doc-validator/captured_output.txt
+9adde462dda534f641335dc8cbfc204bcffb49e25ad148aef9f3700492433ab2  /tmp/build_9/repo/link-integrity/captured_output.txt
+9adde462dda534f641335dc8cbfc204bcffb49e25ad148aef9f3700492433ab2  /tmp/build_9/relocated_xyz/link-integrity/captured_output.txt
+3c4060b088ea9450c9d851070431fdf243e2e46151f507a5e13681e7a35484dd  /tmp/build_9/repo/nondeterminism-scanner/captured_output.txt
+3c4060b088ea9450c9d851070431fdf243e2e46151f507a5e13681e7a35484dd  /tmp/build_9/relocated_xyz/nondeterminism-scanner/captured_output.txt
+69c5c41e48ff0bbfab0ccbb1da61c6ae6f291445d8af9f1a54329ef97a9383b7  /tmp/build_9/repo/preflight/captured_output.txt
+69c5c41e48ff0bbfab0ccbb1da61c6ae6f291445d8af9f1a54329ef97a9383b7  /tmp/build_9/relocated_xyz/preflight/captured_output.txt
+8c826590355c59c407add594e93437b8d711ca2907be732c2df4e4c6e90b3277  /tmp/build_9/repo/weak-assertion-scanner/captured_output.txt
+8c826590355c59c407add594e93437b8d711ca2907be732c2df4e4c6e90b3277  /tmp/build_9/relocated_xyz/weak-assertion-scanner/captured_output.txt
+
+== migrate.py --all --root . -o report.json ==
+# NOT byte-identical without normalisation: migrate.py's report includes the literal
+# 'path' field it was invoked with (root-relative to the --root argument, which differs
+# by construction between the two trees: '/tmp/build_9/repo/...' vs
+# '/tmp/build_9/relocated_xyz/...'). This is an EXPECTED, DOCUMENTED difference in the
+# report's own bookkeeping, not evidence of hidden state or non-determinism -- every
+# other field (status, reason, promoted/left_bare/refused_records, verification
+# before/after counts, counts summary) is identical. Verified programmatically: replacing
+# each tree's own root prefix with a placeholder in the 'path' field before comparing
+# makes the two reports equal by Python dict equality (json.loads(a) == json.loads(b)
+# after that one substitution). See migrate_all_repo.json / migrate_all_relocated_xyz.json
+# for the raw (un-normalised) reports this was computed from.
+5a72586f4ad2421c928d7294c7b1484b1748adb62e1fdf0558a5dd5e95fc88d2  /tmp/build_9/work/reloc_reports/migrate_all_repo.json
+b7109067717ecaba7fe20a59ea6cd07b48d5912ff06db5bf7582371abb6692f1  /tmp/build_9/work/reloc_reports/migrate_all_relocated_xyz.json

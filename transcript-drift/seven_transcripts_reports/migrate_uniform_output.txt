@@ -1,0 +1,99 @@
+migrate.py 
+[migrated] bundle-index/captured_output.txt (bundle-index)
+    promoted 16/16 bare command line(s) to headers using their own exit= value; 0 left unchanged (no recoverable exit=)
+    promoted line 5: uname -srm (exit= at line 7)
+    promoted line 9: python3 --version (exit= at line 11)
+    promoted line 13: pwd (exit= at line 15)
+    promoted line 17: ls -1 (exit= at line 24)
+    promoted line 30: python3 -m unittest test_bundle_index -v (exit= at line 211)
+    promoted line 217: python3 bundle_index.py bundle_ok ; echo "exit=$?" (exit= at line 219)
+    promoted line 225: python3 bundle_index.py bundle_bad -o r1.json ; echo "exit=$?" (exit= at line 227)
+    promoted line 229: python3 bundle_index.py bundle_bad -o r2.json ; echo "exit=$?" (exit= at line 231)
+    promoted line 237: sha256sum r1.json r2.json (exit= at line 240)
+    promoted line 242: cmp r1.json r2.json && echo BYTE-IDENTICAL (exit= at line 244)
+    promoted line 250: python3 bundle_index.py /nonexistent_dir ; echo "exit=$?" (exit= at line 252)
+    promoted line 258: grep -c "/sessions\|/tmp\|/home" r1.json (exit= at line 260)
+    promoted line 270: cp -r bundle_bad /tmp/relocated_bundle (exit= at line 272)
+    promoted line 274: python3 bundle_index.py /tmp/relocated_bundle -o /tmp/relocated_report.json ; echo "exit=$?" (exit= at line 276)
+    promoted line 278: sha256sum r1.json /tmp/relocated_report.json (exit= at line 281)
+    promoted line 283: cmp r1.json /tmp/relocated_report.json && echo "RELOCATION-IDENTICAL" (exit= at line 285)
+[migrated] crosspath-runner/captured_output.txt (crosspath-runner)
+    promoted 3/11 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)
+    promoted line 92: python3 crosspath.py --root <tree> --manifest manifest.json ; echo "exit=$?" (exit= at line 93)
+    promoted line 182: python3 crosspath.py ... --only clean_tool,path-collision-scanner,regression-checker ; echo "exit=$?" (exit= at line 216)
+    promoted line 265: python3 crosspath.py --root <tree> --manifest manifest_local.json -o crosspath_report.json ; echo "exit=$?" (exit= at line 266)
+    left unchanged line 18: python3 --version -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 19-21); left as plain text, not promoted
+    left unchanged line 21: uname -s -m -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 22-24); left as plain text, not promoted
+    left unchanged line 24: python3 -m unittest test_crosspath 2>&1 | tail -n 3 -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 25-37); left as plain text, not promoted
+    left unchanged line 37: cat manifest.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 38-92); left as plain text, not promoted
+    left unchanged line 219: grep -c "/root\|/tmp\|/home\|xp_a\|xp_b" out.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 220-265); left as plain text, not promoted
+    left unchanged line 268: python3 -c "print the coverage block" -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 269-392); left as plain text, not promoted
+    left unchanged line 392: cmp crosspath_report.json <(rerun) && echo REPRODUCIBLE -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 393-395); left as plain text, not promoted
+    left unchanged line 395: grep -c "/root\|/tmp\|/home\|xp_a\|xp_b" crosspath_report.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 396-397); left as plain text, not promoted
+[migrated] doc-validator/captured_output.txt (doc-validator)
+    promoted 5/9 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)
+    promoted line 199: python3 docval.py --root samples_consistent ; echo "exit=$?" (exit= at line 201)
+    promoted line 203: python3 docval.py --root samples_inconsistent -o r1.json ; echo "exit=$?" (exit= at line 204)
+    promoted line 206: python3 docval.py --root samples_inconsistent -o r2.json ; echo "exit=$?" (exit= at line 207)
+    promoted line 216: python3 docval.py --root samples_inconsistent --no-run ; echo "exit=$?" (exit= at line 218)
+    promoted line 220: python3 docval.py --root /nonexistent_dir ; echo "exit=$?" (exit= at line 222)
+    left unchanged line 1: python3 -m unittest test_docval -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-199); left as plain text, not promoted
+    left unchanged line 209: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 210-213); left as plain text, not promoted
+    left unchanged line 213: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 214-216); left as plain text, not promoted
+    left unchanged line 224: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 225-226); left as plain text, not promoted
+[migrated] link-integrity/captured_output.txt (link-integrity)
+    promoted 6/8 bare command line(s) to headers using their own exit= value; 2 left unchanged (no recoverable exit=)
+    promoted line 1: python3 -m unittest test_link_integrity -v (exit= at line 144)
+    promoted line 146: python3 link_integrity.py lifecycle_ok.json evidence_ok.json ; echo "exit=$?" (exit= at line 148)
+    promoted line 150: python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run1.json ; echo "exit=$?" (exit= at line 151)
+    promoted line 153: python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run2.json ; echo "exit=$?" (exit= at line 154)
+    promoted line 163: python3 link_integrity.py /nonexistent.json evidence_ok.json ; echo "exit=$?" (exit= at line 165)
+    promoted line 167: python3 link_integrity.py lifecycle_ok.json ; echo "exit=$?" (exit= at line 170)
+    left unchanged line 156: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 157-160); left as plain text, not promoted
+    left unchanged line 160: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 161-163); left as plain text, not promoted
+[migrated] nondeterminism-scanner/captured_output.txt (nondeterminism-scanner)
+    promoted 5/13 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)
+    promoted line 229: python3 ndscan.py --root samples_clean ; echo "exit=$?" (exit= at line 231)
+    promoted line 233: python3 ndscan.py --root samples_risky -o r1.json ; echo "exit=$?" (exit= at line 234)
+    promoted line 236: python3 ndscan.py --root samples_risky -o r2.json ; echo "exit=$?" (exit= at line 237)
+    promoted line 246: python3 ndscan.py --root samples_risky --rule ND001_WALL_CLOCK ; echo "exit=$?" (exit= at line 248)
+    promoted line 250: python3 ndscan.py --root /nonexistent_dir ; echo "exit=$?" (exit= at line 252)
+    left unchanged line 1: python3 -m unittest test_ndscan -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-229); left as plain text, not promoted
+    left unchanged line 239: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 240-243); left as plain text, not promoted
+    left unchanged line 243: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 244-246); left as plain text, not promoted
+    left unchanged line 254: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 255-258); left as plain text, not promoted
+    left unchanged line 258: mkdir -p /tmp/relocated_samples_risky && cp -r samples_risky/* /tmp/relocated_samples_risky/ -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 259-259); left as plain text, not promoted
+    left unchanged line 259: python3 ndscan.py --root samples_risky -o /tmp/orig_relocation_check.json ; sha256sum /tmp/orig_relocation_check.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 260-261); left as plain text, not promoted
+    left unchanged line 261: python3 ndscan.py --root /tmp/relocated_samples_risky -o /tmp/relocated_relocation_check.json ; sha256sum /tmp/relocated_relocation_check.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 262-263); left as plain text, not promoted
+    left unchanged line 263: cmp /tmp/orig_relocation_check.json /tmp/relocated_relocation_check.json && echo RELOCATION-BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 264-265); left as plain text, not promoted
+[migrated] preflight/captured_output.txt (preflight)
+    promoted 7/9 bare command line(s) to headers using their own exit= value; 2 left unchanged (no recoverable exit=)
+    promoted line 1: python3 -m unittest test_preflight -v (exit= at line 190)
+    promoted line 192: python3 preflight.py tasks_ready.json evidence_ready.json ; echo "exit=$?" (exit= at line 194)
+    promoted line 196: python3 -m preflight tasks_ready.json evidence_ready.json ; echo "exit=$?" (exit= at line 198)
+    promoted line 200: python3 preflight.py tasks_issues.json evidence_issues.json -o report_run1.json ; echo "exit=$?" (exit= at line 201)
+    promoted line 203: python3 preflight.py tasks_issues.json evidence_issues.json -o report_run2.json ; echo "exit=$?" (exit= at line 204)
+    promoted line 213: python3 preflight.py /nonexistent.json evidence_ready.json ; echo "exit=$?" (exit= at line 215)
+    promoted line 217: python3 preflight.py tasks_ready.json ; echo "exit=$?" (exit= at line 220)
+    left unchanged line 206: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 207-210); left as plain text, not promoted
+    left unchanged line 210: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 211-213); left as plain text, not promoted
+[migrated] weak-assertion-scanner/captured_output.txt (weak-assertion-scanner)
+    promoted 8/16 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)
+    promoted line 1: python3 -m unittest test_weakassert -v (exit= at line 216)
+    promoted line 218: python3 weakassert.py --root samples_strong ; echo "exit=$?" (exit= at line 220)
+    promoted line 222: python3 weakassert.py --root samples_weak -o r1.json ; echo "exit=$?" (exit= at line 223)
+    promoted line 225: python3 weakassert.py --root samples_weak -o r2.json ; echo "exit=$?" (exit= at line 226)
+    promoted line 235: python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo "exit=$?" (exit= at line 237)
+    promoted line 239: python3 weakassert.py --root /nonexistent_dir ; echo "exit=$?" (exit= at line 241)
+    promoted line 257: python3 weakassert.py --root demo_category ; echo "exit=$?" (exit= at line 259)
+    promoted line 260: python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo "exit=$?" (exit= at line 262)
+    left unchanged line 228: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 229-232); left as plain text, not promoted
+    left unchanged line 232: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 233-235); left as plain text, not promoted
+    left unchanged line 243: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 244-247); left as plain text, not promoted
+    left unchanged line 247: cp -r samples_weak /tmp/relocated_weak_copy -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 248-248); left as plain text, not promoted
+    left unchanged line 248: python3 weakassert.py --root samples_weak > /tmp/reloc_a.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 249-249); left as plain text, not promoted
+    left unchanged line 249: python3 weakassert.py --root /tmp/relocated_weak_copy > /tmp/reloc_b.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 250-250); left as plain text, not promoted
+    left unchanged line 250: sha256sum /tmp/reloc_a.json /tmp/reloc_b.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 251-253); left as plain text, not promoted
+    left unchanged line 253: cmp /tmp/reloc_a.json /tmp/reloc_b.json && echo RELOCATION-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 254-257); left as plain text, not promoted
+
+counts: {"migrated": 7}
