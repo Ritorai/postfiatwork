@@ -226,14 +226,14 @@ Ran 221 tests in 0.796s
 
 OK
 
-$ python3 ndscan.py --root samples_clean ; echo "exit=$?"
+=== $ python3 ndscan.py --root samples_clean ; echo "exit=$?" ===
 {"errors":[],"findings":[],"min_severity":"low","rules_run":["ND001_WALL_CLOCK","ND002_UNSORTED_LISTDIR","ND003_UNORDERED_ITERATION","ND004_UNSAFE_REPR","ND005_UNSEEDED_RANDOM","ND006_FLOAT_IN_MONEY"],"schema_version":1,"summary":{"by_rule":{"ND001_WALL_CLOCK":0,"ND002_UNSORTED_LISTDIR":0,"ND003_UNORDERED_ITERATION":0,"ND004_UNSAFE_REPR":0,"ND005_UNSEEDED_RANDOM":0,"ND006_FLOAT_IN_MONEY":0},"by_severity":{"high":0,"low":0,"medium":0},"files_errored":0,"files_scanned":6,"findings_count":0},"tool":"ndscan"}
 exit=0
 
-$ python3 ndscan.py --root samples_risky -o r1.json ; echo "exit=$?"
+=== $ python3 ndscan.py --root samples_risky -o r1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 ndscan.py --root samples_risky -o r2.json ; echo "exit=$?"
+=== $ python3 ndscan.py --root samples_risky -o r2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum r1.json r2.json
@@ -243,11 +243,11 @@ f6ab980d2e3e6e02974624b25f3221a0e6179bd8d4d7ab182e22ac2652ba5de5  r2.json
 $ cmp r1.json r2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 ndscan.py --root samples_risky --rule ND001_WALL_CLOCK ; echo "exit=$?"
+=== $ python3 ndscan.py --root samples_risky --rule ND001_WALL_CLOCK ; echo "exit=$?" ===
 {"errors":[],"findings":[{"col":12,"detail":"call to datetime.datetime.now() reads the wall clock","line":14,"path":"risky_all_in_one.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.datetime.now() reads the wall clock","line":8,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.datetime.utcnow() reads the wall clock","line":9,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.date.today() reads the wall clock","line":10,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to time.time() reads the wall clock","line":11,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to time.monotonic() reads the wall clock","line":12,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"},{"col":8,"detail":"call to datetime.datetime.now() reads the wall clock","line":13,"path":"risky_nd001_wallclock.py","rule_id":"ND001_WALL_CLOCK","severity":"high"}],"min_severity":"low","rules_run":["ND001_WALL_CLOCK"],"schema_version":1,"summary":{"by_rule":{"ND001_WALL_CLOCK":7},"by_severity":{"high":7,"low":0,"medium":0},"files_errored":0,"files_scanned":7,"findings_count":7},"tool":"ndscan"}
 exit=1
 
-$ python3 ndscan.py --root /nonexistent_dir ; echo "exit=$?"
+=== $ python3 ndscan.py --root /nonexistent_dir ; echo "exit=$?" ===
 ndscan: error: --root path does not exist or is not a directory: /nonexistent_dir
 exit=2
 
