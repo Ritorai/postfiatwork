@@ -1,4 +1,4 @@
-$ python3 -m unittest test_preflight -v
+=== $ python3 -m unittest test_preflight -v ===
 test_malformed_duplicate_records_not_counted (test_preflight.AnalyzeDuplicateSubmissionIdTests) ... ok
 test_three_duplicates_flagged_once_with_count_3 (test_preflight.AnalyzeDuplicateSubmissionIdTests) ... ok
 test_two_duplicates_flagged_once_with_count_2 (test_preflight.AnalyzeDuplicateSubmissionIdTests) ... ok
@@ -189,18 +189,18 @@ Ran 183 tests in 0.010s
 OK
 exit=0
 
-$ python3 preflight.py tasks_ready.json evidence_ready.json ; echo "exit=$?"
+=== $ python3 preflight.py tasks_ready.json evidence_ready.json ; echo "exit=$?" ===
 {"issues":[],"ready":true,"summary":{"evidence_count":3,"issue_count":0,"issue_counts_by_code":{"DUPLICATE_SUBMISSION_ID":0,"EMPTY_EVIDENCE_VALUE":0,"EVIDENCE_TYPE_MISMATCH":0,"MALFORMED_RECORD":0,"ORPHAN_EVIDENCE":0,"TASK_MISSING_EVIDENCE":0,"UNSUBMITTABLE_STATUS":0},"task_count":3}}
 exit=0
 
-$ python3 -m preflight tasks_ready.json evidence_ready.json ; echo "exit=$?"
+=== $ python3 -m preflight tasks_ready.json evidence_ready.json ; echo "exit=$?" ===
 {"issues":[],"ready":true,"summary":{"evidence_count":3,"issue_count":0,"issue_counts_by_code":{"DUPLICATE_SUBMISSION_ID":0,"EMPTY_EVIDENCE_VALUE":0,"EVIDENCE_TYPE_MISMATCH":0,"MALFORMED_RECORD":0,"ORPHAN_EVIDENCE":0,"TASK_MISSING_EVIDENCE":0,"UNSUBMITTABLE_STATUS":0},"task_count":3}}
 exit=0
 
-$ python3 preflight.py tasks_issues.json evidence_issues.json -o report_run1.json ; echo "exit=$?"
+=== $ python3 preflight.py tasks_issues.json evidence_issues.json -o report_run1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 preflight.py tasks_issues.json evidence_issues.json -o report_run2.json ; echo "exit=$?"
+=== $ python3 preflight.py tasks_issues.json evidence_issues.json -o report_run2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum report_run1.json report_run2.json
@@ -210,11 +210,11 @@ dcec3443f4a10d90f6c970de0cd21d45382b863df7c1dd102bcf3fb7e99e1953  report_run2.js
 $ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 preflight.py /nonexistent.json evidence_ready.json ; echo "exit=$?"
+=== $ python3 preflight.py /nonexistent.json evidence_ready.json ; echo "exit=$?" ===
 preflight: error: file not found: /nonexistent.json
 exit=2
 
-$ python3 preflight.py tasks_ready.json ; echo "exit=$?"
+=== $ python3 preflight.py tasks_ready.json ; echo "exit=$?" ===
 usage: preflight [-h] [-o FILE] tasks_file evidence_file
 preflight: error: the following arguments are required: evidence_file
 exit=2
