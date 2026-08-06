@@ -1,0 +1,69 @@
+RELOCATION EVIDENCE -- pipefail-masking fix (this delivery)
+=============================================================
+
+Method: the whole tree (as committed by this delivery) was copied,
+byte-for-byte via `cp -r`, to a DIFFERENTLY-NAMED absolute path:
+
+    original:  /tmp/build_10/repo
+    relocated: /tmp/build_10/relocated_pipefail_check_xyz
+
+Then, at the relocated path, EVERY affected capture.sh was re-run AGAIN
+(against the already-fixed committed captured_output.txt -- i.e. this is
+not just "copy and compare", it re-executes the actual fix logic at the
+new path) and every repo-wide report generator was re-run.
+
+1. `diff -rq --exclude=__pycache__` between the two full trees: NO
+   DIFFERENCES, before OR after re-running capture.sh at the relocated
+   path. No normalisation of any kind was needed or applied anywhere in
+   this comparison -- none of the six modified captured_output.txt files,
+   the six new capture.sh scripts, or the six new test_capture_fix.py
+   files contain an absolute path, a hostname, or a wall-clock value.
+
+2. Report generators, run independently at each path, byte-identical
+   (sha256, no normalisation):
+
+   index-generator/pipe_scan.py --repo-root .
+     original:  db69e49ac178350c44cc66c60197393a515400383b93f5e326c0243f773edc90
+     relocated: db69e49ac178350c44cc66c60197393a515400383b93f5e326c0243f773edc90
+
+   transcript-drift/driftcheck.py --root .
+     original:  cbdc2d4f426f91c0fb8556d1f67b2626a1050c7148704941e6e997a6d18b01dd
+     relocated: cbdc2d4f426f91c0fb8556d1f67b2626a1050c7148704941e6e997a6d18b01dd
+
+   transcript-schema/validate_transcript.py --root .
+     original:  a67b16881adedd43ea63ae6c5057ec2177811db6eb547d5cc20288d81d50241f
+     relocated: a67b16881adedd43ea63ae6c5057ec2177811db6eb547d5cc20288d81d50241f
+
+3. Re-running each of the six new capture.sh scripts AT THE RELOCATED
+   PATH, against that path's own (already-fixed) captured_output.txt:
+
+   commit-claim-auditor : refuses ("old header not found verbatim") -- expected;
+                           this record's header text was replaced, not preserved
+                           (see capture.sh's own header comment), so a second run
+                           correctly finds nothing to fix rather than guessing.
+   transcript-schema    : refuses, same reason.
+   dup-detector          : refuses, same reason.
+   payload-validator     : re-runs successfully, reproduces byte-identical output.
+   queue-auditor         : re-runs successfully (both records), byte-identical.
+   wallet-reconciler     : re-runs successfully, byte-identical.
+
+   captured_output.txt sha256 after this second run, original vs relocated
+   (all six MATCH):
+
+     commit-claim-auditor : 092a3a7362b34bc3f2bbea88205c5bba5257d5ea37e22ff513e900adacbb1d67
+     transcript-schema    : f1e09a5c56d2906a3cb86f7b08afb4c7348ca535090fbf1886c1f5b8a38a0064
+     dup-detector          : da0f70d4e5e2012540a820b748edb3920dd59460e77ad56869bccceccbdca351
+     payload-validator     : 868dd67f6ac62162917c34c4750669d3de901d57cc321b070bfd2c6e55ea242e
+     queue-auditor          : 6156c751d970ace864d8a7b5a54105426518075cf37330b340d1ca7fbb5193c3
+     wallet-reconciler      : 3df94af050f1763370e1f7a636a3bcffe59e40e7396d20b1f86c729b34fe2729
+
+4. test_capture_fix.py, run at the relocated path, for all six directories:
+   71/71 pass (13+13+12+11+11+11), same counts as at the original path.
+
+No file was hand-edited to produce any of the above. Nothing needed
+normalisation because none of this delivery's new/changed files embed an
+absolute path, a hostname, or a timestamp -- the only volatile bytes
+anywhere in the affected transcripts are the pre-existing
+"Ran N tests in X.XXXs" duration lines (unittest's own timer), which
+FORMAT.md already documents as present-but-unread, and which
+driftcheck.py/validate_transcript.py never compare.
