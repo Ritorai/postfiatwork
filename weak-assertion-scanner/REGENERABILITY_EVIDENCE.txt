@@ -1,0 +1,145 @@
+############################################################
+# BEFORE: the gap, reproduced
+#
+# Every record below is a real run against the committed tree
+# at HEAD, using the rec() convention (header, real run,
+# exit= line, `bash -c 'set -o pipefail; ...'`).
+############################################################
+
+--- 1. The command README.md documents cannot be run ---
+README.md, "Self-scan results (real, committed)", states that
+self_scan_report.json is the unedited output of:
+    python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o self_scan_report.json
+That --root is an absolute path inside a sandbox session that no
+longer exists. It is not a path in this repository and it is not a
+path on any machine a reviewer has.
+
+=== $ test -e /sessions/sharp-stoic-knuth/mnt/outputs && echo EXISTS || echo ABSENT ===
+ABSENT
+exit=0
+
+=== $ python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o /tmp/wa_doc_cmd.json ===
+weakassert: error: --root '/sessions/sharp-stoic-knuth/mnt/outputs' is not a directory
+exit=2
+
+--- 2. README numbers vs the committed report they describe ---
+
+=== $ python3 -c "import json,re; r=json.load(open('self_scan_report.json')); s=r['summary']; print('committed report: files_scanned=%s tests_scanned=%s findings_total=%s' % (r['files_scanned'], r['tests_scanned'], s['findings_total'])); print('committed by category:', json.dumps(s['findings_by_category'], sort_keys=True))" ===
+committed report: files_scanned=39 tests_scanned=3430 findings_total=112
+committed by category: {"WA001_NO_ASSERTION": 16, "WA002_CALL_ONLY": 7, "WA003_SELF_DERIVED_EXPECTATION": 70, "WA004_SKIPPED_TEST": 19}
+exit=0
+
+=== $ grep -n -E '^(files_scanned|tests_scanned|findings_total|  WA00)' README.md ===
+290:files_scanned: 35
+291:tests_scanned: 3198
+292:findings_total: 92
+293:  WA001_NO_ASSERTION: 8
+294:  WA002_CALL_ONLY: 4
+295:  WA003_SELF_DERIVED_EXPECTATION: 67
+296:  WA004_SKIPPED_TEST: 13
+exit=0
+
+--- 3. The committed report vs the current tree ---
+
+=== $ python3 weakassert.py --root .. -o /tmp/wa_live.json ===
+exit=1
+
+=== $ python3 -c "import json; a=json.load(open('self_scan_report.json')); b=json.load(open('/tmp/wa_live.json')); print('committed : files=%s tests=%s total=%s' % (a['files_scanned'], a['tests_scanned'], a['summary']['findings_total'])); print('live rescan: files=%s tests=%s total=%s' % (b['files_scanned'], b['tests_scanned'], b['summary']['findings_total']))" ===
+committed : files=39 tests=3430 total=112
+live rescan: files=74 tests=6039 total=239
+exit=0
+
+--- 4. It is not covered by report-freshness/manifest.json ---
+
+=== $ python3 -c "import json; m=json.load(open('../report-freshness/manifest.json')); ids=[e['id'] for e in m['entries']]; print('manifest entries:'); [print('  '+i) for i in ids]; print('weak-assertion-scanner covered:', any('weak-assertion' in i for i in ids))" ===
+manifest entries:
+  regression-checker:baseline_coverage_report.json
+  claim-crosscheck:sample_run.json
+  transcript-schema:validation_report.json
+  env-leak-scanner:leak_report_2026-08-04.json
+  transcript-drift:drift_report_after_migration.json
+weak-assertion-scanner covered: False
+exit=0
+
+############################################################
+# AFTER: the repair, verified
+#
+# ON SELF-REFERENCE: section 8 runs test_weakassert_regen
+# with TestEvidenceIsCommitted excluded. That class reads
+# THIS file, which is mid-write at that moment -- its own
+# record's exit= line does not exist yet, so the class would
+# necessarily see one more header than exit line and fail.
+# The exclusion is named, not filtered, and that class runs
+# and passes in the full invocation against the finished
+# file (see README.md).
+############################################################
+
+--- 5. The documented command now runs, and reproduces the committed report ---
+
+=== $ grep -n 'python3 weakassert.py --root ..' README.md ===
+31:python3 weakassert.py --root PATH_TO_TEST_TREE
+62:$ python3 weakassert.py --root demo_category            ; echo $?
+65:$ python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo $?
+282:python3 weakassert.py --root .. -o self_scan_report.json
+308:`python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o self_scan_report.json`
+466:python3 weakassert.py --root samples_strong ; echo "exit=$?"
+467:python3 weakassert.py --root samples_weak -o r1.json ; echo "exit=$?"
+468:python3 weakassert.py --root samples_weak -o r2.json ; echo "exit=$?"
+471:python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo "exit=$?"
+472:python3 weakassert.py --root /nonexistent_dir ; echo "exit=$?"
+484:python3 weakassert.py --root samples_weak > /tmp/a.json
+485:python3 weakassert.py --root /tmp/relocated_weak_copy > /tmp/b.json
+exit=0
+
+=== $ python3 weakassert.py --root .. -o /tmp/wa_after.json ===
+exit=1
+
+=== $ cmp /tmp/wa_after.json self_scan_report.json && echo BYTE_IDENTICAL ===
+BYTE_IDENTICAL
+exit=0
+
+--- 6. Relocated copy of the whole tree, differently named ---
+
+=== $ cd /tmp/reloc_wa2_6229/postfiatwork-relocated-under-a-different-name/weak-assertion-scanner && python3 weakassert.py --root .. -o /tmp/wa_reloc.json ===
+exit=1
+
+=== $ cmp /tmp/wa_reloc.json self_scan_report.json && echo BYTE_IDENTICAL_RELOCATED ===
+BYTE_IDENTICAL_RELOCATED
+exit=0
+
+--- 7. report-freshness now tracks it ---
+
+=== $ cd ../report-freshness && python3 freshness.py -o /tmp/fresh_after.json ===
+exit=0
+
+=== $ python3 -c "import json; r=json.load(open('/tmp/fresh_after.json')); print(json.dumps(r['counts'], sort_keys=True)); [print(' ', e['id'], e['state']) for e in r['entries']]" ===
+{"generation_failed": 0, "match": 4, "missing": 0, "pinned_missing": 0, "pinned_present": 2, "stale": 0, "tool_missing": 0, "total": 6}
+  claim-crosscheck:sample_run.json match
+  env-leak-scanner:leak_report_2026-08-04.json pinned_present
+  regression-checker:baseline_coverage_report.json match
+  transcript-drift:drift_report_after_migration.json pinned_present
+  transcript-schema:validation_report.json match
+  weak-assertion-scanner:self_scan_report.json match
+exit=0
+
+--- 8. Test suites ---
+
+=== $ python3 -m unittest test_weakassert ===
+..........................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 202 tests in 0.154s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_weakassert_regen.TestDocumentedCommand test_weakassert_regen.TestCommittedReportIsRebuildable test_weakassert_regen.TestReadmeMatchesTheReport test_weakassert_regen.TestManifestCoverage test_weakassert_regen.TestRelocation ===
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 4.611s
+
+OK
+exit=0
+
+############################################################
+# END OF EVIDENCE
+############################################################

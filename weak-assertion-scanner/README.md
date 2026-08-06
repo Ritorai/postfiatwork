@@ -275,31 +275,76 @@ never really runs" situation, it is ordinary control flow).
 
 ## Self-scan results (real, committed)
 
-`self_scan_report.json` is the actual, unedited output of:
+`self_scan_report.json` is the actual, unedited output of, run from this
+directory:
 
 ```
-python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o self_scan_report.json
+python3 weakassert.py --root .. -o self_scan_report.json
 ```
 
-run against the ~30 sibling tool directories under `outputs/`, each with
-its own large `unittest` suite (35 test files matched the discovery rule,
-including a few fixture-style `test_*.py` files nested one level inside
-`claim-checker/` and `evidence-harness/`).
+It scans every sibling tool directory in this repository, each with its own
+`unittest` suite. The command exits `1`, because the scan finds something;
+that is the tool's documented "findings present" status, not a failure.
 
 ```
-files_scanned: 35
-tests_scanned: 3198
-findings_total: 92
-  WA001_NO_ASSERTION: 8
-  WA002_CALL_ONLY: 4
-  WA003_SELF_DERIVED_EXPECTATION: 67
-  WA004_SKIPPED_TEST: 13
+files_scanned: 75
+tests_scanned: 6066
+findings_total: 239
+  WA001_NO_ASSERTION: 14
+  WA002_CALL_ONLY: 3
+  WA003_SELF_DERIVED_EXPECTATION: 117
+  WA004_SKIPPED_TEST: 105
 files_with_errors: 0
 ```
+
+Those seven numbers are not typed by hand. `test_weakassert_regen.py`
+parses this fenced block out of this README and asserts each value against
+`self_scan_report.json`, and asserts that the report byte-matches a fresh
+run of the command above. If either drifts, the suite fails.
+
+### Why that guarantee exists: this section used to be wrong
+
+Until this repair, the command documented here was
+`python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o self_scan_report.json`
+-- an absolute path inside a sandbox session that no longer exists, so the
+committed report could not be rebuilt by anyone, on any machine (it exits
+`2`, "not a directory"). Behind that unrunnable command three things had
+drifted apart with nothing to catch them:
+
+| | files | tests | findings |
+|---|---|---|---|
+| what this README claimed | 35 | 3198 | 92 |
+| what `self_scan_report.json` actually contained | 39 | 3430 | 112 |
+| what the current tree produces | 75 | 6066 | 239 |
+
+The README was not describing its own committed artifact, and the artifact
+was not describing the repository. The unedited before/after runs are in
+`REGENERABILITY_EVIDENCE.txt`.
+
+Two things changed so this cannot recur silently: the entry
+`weak-assertion-scanner:self_scan_report.json` was added to
+`report-freshness/manifest.json` as `regenerable`, so the repo-wide
+freshness check now rebuilds this report and byte-compares it; and the
+README-to-report assertions described above were added.
 
 **This is not "nothing found" and it is not "everything is broken" either -
 read the breakdown below**, since raw counts alone would overstate the
 problem by a wide margin (WA003 in particular).
+
+### Scope note on the hand review below
+
+Everything from here to the end of this section is the **original hand
+review of the 2026-08-04 corpus: 35 files, 92 findings**. It is preserved
+because the judgements in it are real -- each finding was opened and read
+-- and because the reasoning about *why* WA003 over-reports is what makes
+the raw count interpretable at all.
+
+It has **not** been redone for the current 74-file, 239-finding corpus, and
+it is not a claim about it. The file-and-line citations below are as of
+that earlier corpus and some line numbers have since moved. Read the counts
+above as mechanical and current; read the analysis below as a hand review
+of an earlier, smaller subset. Redoing it at the current size is a separate
+piece of work, not something to imply was done here.
 
 **WA001 / WA002 (8 + 4 findings): all 8 are true positives.** Every one of
 them is a real test with zero assertions. Four of the eight are also
