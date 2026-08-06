@@ -328,6 +328,86 @@ nested `FunctionDef`/`AsyncFunctionDef`/`Lambda` nodes. Pinned by
    credit, which is correct but easy to misread as a false negative if the
    module's actual error handling isn't visible in the same read.
 
+## `optioncheck.py` -- cross-tool shared option checking
+
+`docval.py` asks whether a tool documents its own flags. `optioncheck.py`,
+in this same directory, asks a question no tool here asked before: **when
+two tools accept the same long option, do they accept it the same way?**
+
+It is not a second argparse extractor. It imports `docval` and reuses the
+hard, dangerous part -- the AST walk that reads `add_argument(...)` calls
+without ever importing the target module -- plus its discovery, constant
+resolution, `relpath` and `canonical_dumps`. What it adds is the shape:
+`docval.ArgparseInfo` stores flags as a bare set of strings, which answers
+"is this documented?" and cannot answer "do two tools agree?".
+
+Four dimensions are compared per option:
+
+| Dimension | Source |
+|---|---|
+| `action` | the literal `action=`, or `store` when absent |
+| `takes_value` | derived from `action` and `nargs`, not guessed |
+| `type` | the literal `type=` name, or null |
+| `choices` | the sorted literal `choices=` members, or null |
+
+Every option lands in exactly one state: `conflict` (two or more tools
+disagree on a dimension), `match` (two or more tools agree), or
+`single_use` (only one tool defines it).
+
+### What it found
+
+```
+python3 optioncheck.py --root ..
+```
+
+```
+options compared: 85   conflict: 1   match: 15   single_use: 69
+usages: 181   unsupported_dynamic: 5
+```
+
+**The finding: `--timeout` is not one option, it is two.**
+
+| `type=` | Tools |
+|---|---|
+| `float` | `contradiction-detector`, `exit-harness`, `sortkey-detector`, `tamper-runner` |
+| `int` | `crosspath-runner`, `regression-checker`, `report-freshness` |
+
+Same spelling, same purpose, incompatible parsing: `--timeout 1.5` is
+accepted by four of these tools and rejected by the other three. Nothing in
+the repository would have surfaced that, because each tool's own README is
+internally consistent -- the inconsistency only exists *between* READMEs,
+which is precisely the gap this check covers. `test_optioncheck.py` pins
+the finding, so if the tree is fixed or changes shape this README stops
+being able to go quietly stale.
+
+### What it refuses to guess
+
+`choices=SOME_CONSTANT`, `type=lambda ...`, `add_argument(*spec)` and
+`**kwargs` expansion cannot be resolved from the syntax tree without
+executing code. Those are collected into `unsupported_dynamic` **with the
+reason** and are excluded from comparison entirely, rather than compared on
+their resolvable half -- a half-resolved option compared against a fully
+resolved one produces confident nonsense. 5 such definitions exist
+today, all of them `choices=` referencing a module constant.
+
+Short flags are reported as `aliases` but are never the grouping key: `-o`
+does mean "output" almost everywhere here, but grouping on a single letter
+would manufacture conflicts out of unrelated options.
+
+### Rerun
+
+```
+python3 -m unittest test_optioncheck
+python3 optioncheck.py --root .. -o option_report.json
+python3 optioncheck.py --root .. --option --timeout
+```
+
+Exit `0` when no option conflicts, `1` when at least one does, `2` on a bad
+`--root`. `option_report.json` is the committed output; the test suite
+byte-compares it against a live rescan, and separately re-runs the scan
+from a relocated copy of the whole repository at a differently-named path
+and requires byte-identical output.
+
 ## Rerun commands
 
 ```
