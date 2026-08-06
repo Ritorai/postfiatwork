@@ -7,7 +7,7 @@ cwd: /tmp/build
 ================================================================
 
 ### STEP 1 -- unittest suite
-$ python3 -m unittest test_schema_check -v
+=== $ python3 -m unittest test_schema_check -v ===
 test_array_of_objects_nested_pointers (test_schema_check.TestArrayConstraints) ... ok
 test_items_rule_applied_to_every_element (test_schema_check.TestArrayConstraints) ... ok
 test_max_items_reported (test_schema_check.TestArrayConstraints) ... ok
@@ -111,17 +111,17 @@ OK
 exit=0
 
 ### STEP 2 -- conforming batch (expect exit 0)
-$ python3 schema_check.py schema.json payloads_valid.json
+=== $ python3 schema_check.py schema.json payloads_valid.json ===
 {"exit_code":0,"io_errors":[],"ok":true,"payload_source":"payloads_valid.json","schema_errors":[],"schema_source":"schema.json","status":"conform","summary":{},"tool_version":"1.0.0","violation_count":0,"violations":[]}
 exit=0
 
 ### STEP 3a -- non-conforming batch, run 1 (expect exit 1)
-$ python3 schema_check.py schema.json payloads_invalid.json -o report_run1.json
+=== $ python3 schema_check.py schema.json payloads_invalid.json -o report_run1.json ===
 schema_check.py: status=violations violations=19 report=report_run1.json
 exit=1
 
 ### STEP 3b -- non-conforming batch, run 2 (expect exit 1)
-$ python3 schema_check.py schema.json payloads_invalid.json -o report_run2.json
+=== $ python3 schema_check.py schema.json payloads_invalid.json -o report_run2.json ===
 schema_check.py: status=violations violations=19 report=report_run2.json
 exit=1
 
@@ -252,7 +252,7 @@ exit=1
 }
 
 ### STEP 4 -- byte-identity proof
-$ sha256sum report_run1.json report_run2.json
+=== $ sha256sum report_run1.json report_run2.json ===
 786fd1f71c588c9b8ade9d41e832735b30a0473659301739cdf2cb14a24b391c  report_run1.json
 786fd1f71c588c9b8ade9d41e832735b30a0473659301739cdf2cb14a24b391c  report_run2.json
 exit=0
@@ -264,7 +264,7 @@ $ wc -c report_run1.json report_run2.json
 5148 total
 
 ### STEP 4b -- violation code counts on the invalid fixture
-$ python3 -c "import json;d=json.load(open('report_run1.json'));[print('%-18s %d'%(k,v)) for k,v in sorted(d['summary'].items())];print('TOTAL              %d'%d['violation_count'])"
+=== $ python3 -c "import json;d=json.load(open('report_run1.json'));[print('%-18s %d'%(k,v)) for k,v in sorted(d['summary'].items())];print('TOTAL              %d'%d['violation_count'])" ===
 DUPLICATE_ITEMS    1
 ENUM_MISMATCH      2
 MAXIMUM            1
@@ -281,7 +281,7 @@ TOTAL              19
 exit=0
 
 ### STEP 5 -- malformed schema (expect exit 2)
-$ python3 schema_check.py schema_malformed.json payloads_valid.json
+=== $ python3 schema_check.py schema_malformed.json payloads_valid.json ===
 {"exit_code":2,"io_errors":[],"ok":false,"payload_source":"payloads_valid.json","schema_errors":[{"code":"SCHEMA_UNKNOWN_KEYWORD","message":"unknown top-level schema keyword 'flavour'","pointer":"/flavour"},{"code":"SCHEMA_BAD_KEYWORD_TYPE","message":"'additional_properties' must be a boolean, got string","pointer":"/root/additional_properties"},{"code":"SCHEMA_BAD_REGEX","message":"'pattern' is not a valid regular expression: unterminated character set at position 1","pointer":"/root/properties/id/pattern"},{"code":"SCHEMA_UNKNOWN_TYPE","message":"unknown type \"strings\" (allowed: any, array, boolean, integer, null, number, object, string)","pointer":"/root/properties/id/type"},{"code":"SCHEMA_UNKNOWN_KEYWORD","message":"unknown schema keyword 'colour'","pointer":"/root/properties/items_list/items/colour"},{"code":"SCHEMA_EMPTY_ENUM","message":"'enum' must contain at least one value","pointer":"/root/properties/items_list/items/enum"},{"code":"SCHEMA_BAD_KEYWORD_TYPE","message":"'min_items' must be a non-negative integer, got \"two\"","pointer":"/root/properties/items_list/min_items"},{"code":"SCHEMA_MISSING_TYPE","message":"schema node must declare a 'type'","pointer":"/root/properties/nameless"},{"code":"SCHEMA_BAD_BOUNDS","message":"'maximum' (1) must not be less than 'minimum' (10)","pointer":"/root/properties/score/maximum"},{"code":"SCHEMA_KEYWORD_NOT_APPLICABLE","message":"keyword 'pattern' is not applicable to type number","pointer":"/root/properties/score/pattern"},{"code":"SCHEMA_BAD_KEYWORD_TYPE","message":"'required' entries must be strings, got integer","pointer":"/root/required/1"}],"schema_source":"schema_malformed.json","status":"error","summary":{"SCHEMA_BAD_BOUNDS":1,"SCHEMA_BAD_KEYWORD_TYPE":3,"SCHEMA_BAD_REGEX":1,"SCHEMA_EMPTY_ENUM":1,"SCHEMA_KEYWORD_NOT_APPLICABLE":1,"SCHEMA_MISSING_TYPE":1,"SCHEMA_UNKNOWN_KEYWORD":2,"SCHEMA_UNKNOWN_TYPE":1},"tool_version":"1.0.0","violation_count":0,"violations":[]}
 exit=2
 --- pretty view of the same report ---
@@ -365,12 +365,12 @@ exit=2
 }
 
 ### STEP 6 -- nonexistent payload file (expect exit 2)
-$ python3 schema_check.py schema.json does_not_exist.json
+=== $ python3 schema_check.py schema.json does_not_exist.json ===
 {"exit_code":2,"io_errors":[{"code":"IO_ERROR","message":"cannot read payload file \"does_not_exist.json\": No such file or directory","pointer":""}],"ok":false,"payload_source":"does_not_exist.json","schema_errors":[],"schema_source":"schema.json","status":"error","summary":{"IO_ERROR":1},"tool_version":"1.0.0","violation_count":0,"violations":[]}
 exit=2
 
 ### STEP 6b -- nonexistent schema file (expect exit 2)
-$ python3 schema_check.py no_such_schema.json payloads_valid.json
+=== $ python3 schema_check.py no_such_schema.json payloads_valid.json ===
 {"exit_code":2,"io_errors":[{"code":"IO_ERROR","message":"cannot read schema file \"no_such_schema.json\": No such file or directory","pointer":""}],"ok":false,"payload_source":"payloads_valid.json","schema_errors":[],"schema_source":"no_such_schema.json","status":"error","summary":{"IO_ERROR":1},"tool_version":"1.0.0","violation_count":0,"violations":[]}
 exit=2
 
