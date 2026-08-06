@@ -2,19 +2,19 @@
  Evidence Verification Harness -- verification transcript
 ==============================================================
 
-$ uname -srm
+=== $ uname -srm ===
 Linux 6.8.0-124-generic x86_64
 exit=0
 
-$ python3 --version
+=== $ python3 --version ===
 Python 3.10.12
 exit=0
 
-$ pwd
+=== $ pwd ===
 ./evidence-harness
 exit=0
 
-$ ls -1
+=== $ ls -1 ===
 README.md
 bundle_bad
 bundle_good
@@ -28,7 +28,7 @@ exit=0
  STEP 1  Test suite
 ==============================================================
 
-$ python3 -m unittest test_harness -v
+=== $ python3 -m unittest test_harness -v ===
 test_empty_bundle_fails_every_declared_check (test_harness.TestBundleShape) ... ok
 test_empty_requirements_and_empty_bundle_passes_without_strict (test_harness.TestBundleShape) ... ok
 test_strict_flags_empty_bundle_as_a_gap (test_harness.TestBundleShape) ... ok
@@ -103,7 +103,7 @@ exit=0
  STEP 2  CLI against bundle_good  (expect exit 0), run 1 of 2
 ==============================================================
 
-$ python3 harness.py requirements.json bundle_good -o report_good_run1.json
+=== $ python3 harness.py requirements.json bundle_good -o report_good_run1.json ===
 {"bundle_dir":"bundle_good","bundle_files":["README.md","sum_lines.py","test_sum_lines.py","verification.txt"],"checks":[{"check":"min_test_count","detail":"largest observed test run was 12 test(s), meeting the required minimum of 10","evidence":["README.md: Ran 12 tests","verification.txt: Ran 12 tests"],"gaps":[],"status":"pass"},{"check":"require_exit_codes","detail":"found 2 exit-code marker(s) in the bundle","evidence":["README.md: exit=0","verification.txt: exit=0"],"gaps":[],"status":"pass"},{"check":"require_hashes","detail":"found 4 distinct sha256 digest(s) across the bundle","evidence":["README.md: 078fd1389f695e00c7a0fb03e8fac36c5a0a4953b93b9cfa393941e1f8ef1d5d","README.md: 61d8f294247ffd26d7d477a0156d778efab30466493b28d4307cfca3ea746a67","verification.txt: 078fd1389f695e00c7a0fb03e8fac36c5a0a4953b93b9cfa393941e1f8ef1d5d","verification.txt: 61d8f294247ffd26d7d477a0156d778efab30466493b28d4307cfca3ea746a67"],"gaps":[],"status":"pass"},{"check":"required_commands","detail":"all 2 required command(s) appear in the bundle","evidence":["'python3 -m json.tool' found in: README.md, verification.txt","'python3 -m unittest' found in: README.md, verification.txt"],"gaps":[],"status":"pass"},{"check":"required_files","detail":"all 2 required file pattern(s) matched at least one file","evidence":["'*.py' matched: sum_lines.py, test_sum_lines.py","'README.md' matched: README.md"],"gaps":[],"status":"pass"},{"check":"strict_coverage","detail":"--strict not requested","evidence":[],"gaps":[],"status":"skipped"},{"check":"unknown_requirement_keys","detail":"every declared requirement key is recognised","evidence":[],"gaps":[],"status":"skipped"}],"exit_code":0,"gap_count":0,"gaps":[],"requirements_file":"requirements.json","schema_version":1,"status":"pass","strict":false,"summary":{"checks_failed":0,"checks_passed":5,"checks_skipped":2,"checks_total":7,"checks_warned":0,"files_in_bundle":4,"files_scanned_as_text":4,"files_skipped":0},"tool":"evidence-verification-harness","unscanned_files":[]}
 exit=0
 
@@ -111,7 +111,7 @@ exit=0
  STEP 3  CLI against bundle_good  (expect exit 0), run 2 of 2
 ==============================================================
 
-$ python3 harness.py requirements.json bundle_good -o report_good_run2.json
+=== $ python3 harness.py requirements.json bundle_good -o report_good_run2.json ===
 {"bundle_dir":"bundle_good","bundle_files":["README.md","sum_lines.py","test_sum_lines.py","verification.txt"],"checks":[{"check":"min_test_count","detail":"largest observed test run was 12 test(s), meeting the required minimum of 10","evidence":["README.md: Ran 12 tests","verification.txt: Ran 12 tests"],"gaps":[],"status":"pass"},{"check":"require_exit_codes","detail":"found 2 exit-code marker(s) in the bundle","evidence":["README.md: exit=0","verification.txt: exit=0"],"gaps":[],"status":"pass"},{"check":"require_hashes","detail":"found 4 distinct sha256 digest(s) across the bundle","evidence":["README.md: 078fd1389f695e00c7a0fb03e8fac36c5a0a4953b93b9cfa393941e1f8ef1d5d","README.md: 61d8f294247ffd26d7d477a0156d778efab30466493b28d4307cfca3ea746a67","verification.txt: 078fd1389f695e00c7a0fb03e8fac36c5a0a4953b93b9cfa393941e1f8ef1d5d","verification.txt: 61d8f294247ffd26d7d477a0156d778efab30466493b28d4307cfca3ea746a67"],"gaps":[],"status":"pass"},{"check":"required_commands","detail":"all 2 required command(s) appear in the bundle","evidence":["'python3 -m json.tool' found in: README.md, verification.txt","'python3 -m unittest' found in: README.md, verification.txt"],"gaps":[],"status":"pass"},{"check":"required_files","detail":"all 2 required file pattern(s) matched at least one file","evidence":["'*.py' matched: sum_lines.py, test_sum_lines.py","'README.md' matched: README.md"],"gaps":[],"status":"pass"},{"check":"strict_coverage","detail":"--strict not requested","evidence":[],"gaps":[],"status":"skipped"},{"check":"unknown_requirement_keys","detail":"every declared requirement key is recognised","evidence":[],"gaps":[],"status":"skipped"}],"exit_code":0,"gap_count":0,"gaps":[],"requirements_file":"requirements.json","schema_version":1,"status":"pass","strict":false,"summary":{"checks_failed":0,"checks_passed":5,"checks_skipped":2,"checks_total":7,"checks_warned":0,"files_in_bundle":4,"files_scanned_as_text":4,"files_skipped":0},"tool":"evidence-verification-harness","unscanned_files":[]}
 exit=0
 
@@ -119,7 +119,7 @@ exit=0
  STEP 4  CLI against bundle_bad   (expect exit 1), run 1 of 2
 ==============================================================
 
-$ python3 harness.py requirements.json bundle_bad -o report_bad_run1.json
+=== $ python3 harness.py requirements.json bundle_bad -o report_bad_run1.json ===
 {"bundle_dir":"bundle_bad","bundle_files":["partial_log.txt","run_notes.md","test_tool.py","tool.py"],"checks":[{"check":"min_test_count","detail":"largest observed test run was 4 test(s), the brief requires at least 10","evidence":["partial_log.txt: Ran 4 tests"],"gaps":["min_test_count: the largest 'Ran N tests' value in the bundle is 4 but the brief requires at least 10; add 6 more test(s) and re-capture the run"],"status":"fail"},{"check":"require_exit_codes","detail":"found 2 exit-code marker(s) in the bundle","evidence":["partial_log.txt: exit=0","partial_log.txt: exit=1"],"gaps":[],"status":"pass"},{"check":"require_hashes","detail":"no 64-character sha256 digest found in any of the 4 scanned text file(s)","evidence":[],"gaps":["require_hashes: no 64-hex-character sha256 digest appears in any of the 4 scanned text file(s); run sha256sum over the artefacts and paste the output into the bundle"],"status":"fail"},{"check":"required_commands","detail":"1 of 2 required command(s) never appear in the bundle: 'python3 -m unittest'","evidence":["'python3 -m json.tool' found in: partial_log.txt"],"gaps":["required_commands: the command 'python3 -m unittest' does not appear in any of the 4 scanned text file(s); document the command and paste its captured output"],"status":"fail"},{"check":"required_files","detail":"1 of 2 required file pattern(s) unmatched: 'README.md'","evidence":["'*.py' matched: test_tool.py, tool.py"],"gaps":["required_files: no file in the bundle matches the required pattern 'README.md' (bundle contains 4 file(s))"],"status":"fail"},{"check":"strict_coverage","detail":"--strict not requested","evidence":[],"gaps":[],"status":"skipped"},{"check":"unknown_requirement_keys","detail":"every declared requirement key is recognised","evidence":[],"gaps":[],"status":"skipped"}],"exit_code":1,"gap_count":4,"gaps":["min_test_count: the largest 'Ran N tests' value in the bundle is 4 but the brief requires at least 10; add 6 more test(s) and re-capture the run","require_hashes: no 64-hex-character sha256 digest appears in any of the 4 scanned text file(s); run sha256sum over the artefacts and paste the output into the bundle","required_commands: the command 'python3 -m unittest' does not appear in any of the 4 scanned text file(s); document the command and paste its captured output","required_files: no file in the bundle matches the required pattern 'README.md' (bundle contains 4 file(s))"],"requirements_file":"requirements.json","schema_version":1,"status":"gap","strict":false,"summary":{"checks_failed":4,"checks_passed":1,"checks_skipped":2,"checks_total":7,"checks_warned":0,"files_in_bundle":4,"files_scanned_as_text":4,"files_skipped":0},"tool":"evidence-verification-harness","unscanned_files":[]}
 exit=1
 
@@ -127,7 +127,7 @@ exit=1
  STEP 5  CLI against bundle_bad   (expect exit 1), run 2 of 2
 ==============================================================
 
-$ python3 harness.py requirements.json bundle_bad -o report_bad_run2.json
+=== $ python3 harness.py requirements.json bundle_bad -o report_bad_run2.json ===
 {"bundle_dir":"bundle_bad","bundle_files":["partial_log.txt","run_notes.md","test_tool.py","tool.py"],"checks":[{"check":"min_test_count","detail":"largest observed test run was 4 test(s), the brief requires at least 10","evidence":["partial_log.txt: Ran 4 tests"],"gaps":["min_test_count: the largest 'Ran N tests' value in the bundle is 4 but the brief requires at least 10; add 6 more test(s) and re-capture the run"],"status":"fail"},{"check":"require_exit_codes","detail":"found 2 exit-code marker(s) in the bundle","evidence":["partial_log.txt: exit=0","partial_log.txt: exit=1"],"gaps":[],"status":"pass"},{"check":"require_hashes","detail":"no 64-character sha256 digest found in any of the 4 scanned text file(s)","evidence":[],"gaps":["require_hashes: no 64-hex-character sha256 digest appears in any of the 4 scanned text file(s); run sha256sum over the artefacts and paste the output into the bundle"],"status":"fail"},{"check":"required_commands","detail":"1 of 2 required command(s) never appear in the bundle: 'python3 -m unittest'","evidence":["'python3 -m json.tool' found in: partial_log.txt"],"gaps":["required_commands: the command 'python3 -m unittest' does not appear in any of the 4 scanned text file(s); document the command and paste its captured output"],"status":"fail"},{"check":"required_files","detail":"1 of 2 required file pattern(s) unmatched: 'README.md'","evidence":["'*.py' matched: test_tool.py, tool.py"],"gaps":["required_files: no file in the bundle matches the required pattern 'README.md' (bundle contains 4 file(s))"],"status":"fail"},{"check":"strict_coverage","detail":"--strict not requested","evidence":[],"gaps":[],"status":"skipped"},{"check":"unknown_requirement_keys","detail":"every declared requirement key is recognised","evidence":[],"gaps":[],"status":"skipped"}],"exit_code":1,"gap_count":4,"gaps":["min_test_count: the largest 'Ran N tests' value in the bundle is 4 but the brief requires at least 10; add 6 more test(s) and re-capture the run","require_hashes: no 64-hex-character sha256 digest appears in any of the 4 scanned text file(s); run sha256sum over the artefacts and paste the output into the bundle","required_commands: the command 'python3 -m unittest' does not appear in any of the 4 scanned text file(s); document the command and paste its captured output","required_files: no file in the bundle matches the required pattern 'README.md' (bundle contains 4 file(s))"],"requirements_file":"requirements.json","schema_version":1,"status":"gap","strict":false,"summary":{"checks_failed":4,"checks_passed":1,"checks_skipped":2,"checks_total":7,"checks_warned":0,"files_in_bundle":4,"files_scanned_as_text":4,"files_skipped":0},"tool":"evidence-verification-harness","unscanned_files":[]}
 exit=1
 
@@ -135,7 +135,7 @@ exit=1
  STEP 6  The bundle_bad gaps, one per line, for readability
 ==============================================================
 
-$ python3 -c import json;[print('GAP:',g) for g in json.load(open('report_bad_run1.json'))['gaps']]
+=== $ python3 -c import json;[print('GAP:',g) for g in json.load(open('report_bad_run1.json'))['gaps']] ===
 GAP: min_test_count: the largest 'Ran N tests' value in the bundle is 4 but the brief requires at least 10; add 6 more test(s) and re-capture the run
 GAP: require_hashes: no 64-hex-character sha256 digest appears in any of the 4 scanned text file(s); run sha256sum over the artefacts and paste the output into the bundle
 GAP: required_commands: the command 'python3 -m unittest' does not appear in any of the 4 scanned text file(s); document the command and paste its captured output
@@ -146,35 +146,35 @@ exit=0
  STEP 7  Reproducibility: sha256 + cmp of the two bad reports
 ==============================================================
 
-$ sha256sum report_bad_run1.json report_bad_run2.json
+=== $ sha256sum report_bad_run1.json report_bad_run2.json ===
 64ec48dc2f0a27ab85f9b3b80001e13bfc5d9fe8f8d5ad258db0caa255a81b73  report_bad_run1.json
 64ec48dc2f0a27ab85f9b3b80001e13bfc5d9fe8f8d5ad258db0caa255a81b73  report_bad_run2.json
 exit=0
 
-$ cmp report_bad_run1.json report_bad_run2.json
+=== $ cmp report_bad_run1.json report_bad_run2.json ===
 exit=0
 
-$ sha256sum report_good_run1.json report_good_run2.json
+=== $ sha256sum report_good_run1.json report_good_run2.json ===
 92eb165229761d11b7138dfea41d70a58e57e72daf8d9840d8c2c5a924e88f6a  report_good_run1.json
 92eb165229761d11b7138dfea41d70a58e57e72daf8d9840d8c2c5a924e88f6a  report_good_run2.json
 exit=0
 
-$ cmp report_good_run1.json report_good_run2.json
+=== $ cmp report_good_run1.json report_good_run2.json ===
 exit=0
 
 ==============================================================
  STEP 8  Invalid input paths (expect exit 2)
 ==============================================================
 
-$ python3 harness.py no_such_requirements.json bundle_good
+=== $ python3 harness.py no_such_requirements.json bundle_good ===
 harness: input error: cannot read requirements file 'no_such_requirements.json': No such file or directory
 exit=2
 
-$ python3 harness.py requirements.json no_such_bundle
+=== $ python3 harness.py requirements.json no_such_bundle ===
 harness: input error: bundle directory 'no_such_bundle' does not exist
 exit=2
 
-$ python3 harness.py requirements.json harness.py
+=== $ python3 harness.py requirements.json harness.py ===
 harness: input error: bundle path 'harness.py' is not a directory
 exit=2
 
@@ -182,7 +182,7 @@ exit=2
  STEP 9  --strict on the good bundle (expect exit 0)
 ==============================================================
 
-$ python3 harness.py requirements.json bundle_good --strict
+=== $ python3 harness.py requirements.json bundle_good --strict ===
 {"bundle_dir":"bundle_good","bundle_files":["README.md","sum_lines.py","test_sum_lines.py","verification.txt"],"checks":[{"check":"min_test_count","detail":"largest observed test run was 12 test(s), meeting the required minimum of 10","evidence":["README.md: Ran 12 tests","verification.txt: Ran 12 tests"],"gaps":[],"status":"pass"},{"check":"require_exit_codes","detail":"found 2 exit-code marker(s) in the bundle","evidence":["README.md: exit=0","verification.txt: exit=0"],"gaps":[],"status":"pass"},{"check":"require_hashes","detail":"found 4 distinct sha256 digest(s) across the bundle","evidence":["README.md: 078fd1389f695e00c7a0fb03e8fac36c5a0a4953b93b9cfa393941e1f8ef1d5d","README.md: 61d8f294247ffd26d7d477a0156d778efab30466493b28d4307cfca3ea746a67","verification.txt: 078fd1389f695e00c7a0fb03e8fac36c5a0a4953b93b9cfa393941e1f8ef1d5d","verification.txt: 61d8f294247ffd26d7d477a0156d778efab30466493b28d4307cfca3ea746a67"],"gaps":[],"status":"pass"},{"check":"required_commands","detail":"all 2 required command(s) appear in the bundle","evidence":["'python3 -m json.tool' found in: README.md, verification.txt","'python3 -m unittest' found in: README.md, verification.txt"],"gaps":[],"status":"pass"},{"check":"required_files","detail":"all 2 required file pattern(s) matched at least one file","evidence":["'*.py' matched: sum_lines.py, test_sum_lines.py","'README.md' matched: README.md"],"gaps":[],"status":"pass"},{"check":"strict_coverage","detail":"strict-mode preconditions met: 5 verifiable requirement(s) declared, 4 text file(s) scanned","evidence":["min_test_count","require_exit_codes","require_hashes","required_commands","required_files"],"gaps":[],"status":"pass"},{"check":"unknown_requirement_keys","detail":"every declared requirement key is recognised","evidence":[],"gaps":[],"status":"skipped"}],"exit_code":0,"gap_count":0,"gaps":[],"requirements_file":"requirements.json","schema_version":1,"status":"pass","strict":true,"summary":{"checks_failed":0,"checks_passed":6,"checks_skipped":1,"checks_total":7,"checks_warned":0,"files_in_bundle":4,"files_scanned_as_text":4,"files_skipped":0},"tool":"evidence-verification-harness","unscanned_files":[]}
 exit=0
 
@@ -190,7 +190,7 @@ exit=0
  STEP 10 Canonical-form assertions on the emitted report
 ==============================================================
 
-$ python3 -c 
+=== $ python3 -c  ===
 import json
 raw = open('report_bad_run1.json','rb').read()
 assert raw.endswith(b'}\n') and not raw.endswith(b'\n\n'), 'trailing newline'
