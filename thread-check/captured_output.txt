@@ -234,14 +234,14 @@ Ran 229 tests in 0.310s
 
 OK
 
-$ python3 thread_check.py threads_complete.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+=== $ python3 thread_check.py threads_complete.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" ===
 {"findings":[],"generated_at":"2026-08-03T00:00:00Z","options":{"unanswered_max_hours":48},"summary":{"counts_by_code":{"DANGLING_REPLY":0,"EMPTY_THREAD":0,"INVALID_TIMESTAMP":0,"MALFORMED_RECORD":0,"NO_ARTIFACT_REFERENCE":0,"OUT_OF_ORDER_MESSAGE":0,"RESTATEMENT_ONLY":0,"UNANSWERED_OVERDUE":0,"UNANSWERED_QUESTION":0},"total_findings":0,"total_threads":5},"thread_summaries":[{"answered_count":1,"message_count":3,"question_count":1,"task_id":"T-CLEAN-ANSWERED","unanswered_count":0},{"answered_count":2,"message_count":4,"question_count":2,"task_id":"T-CLEAN-MULTI-QUESTION-ANSWERED","unanswered_count":0},{"answered_count":0,"message_count":3,"question_count":0,"task_id":"T-CLEAN-NO-QUESTIONS","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-CLEAN-RECENT-ANSWERED","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-CLEAN-UNICODE","unanswered_count":0}]}
 exit=0
 
-$ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?"
+=== $ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?"
+=== $ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum r1.json r2.json
@@ -251,11 +251,11 @@ b651d3418ed1d440430f122d26859f852ed0eb885f1f54a267db8f3e47d779e5  r2.json
 $ cmp r1.json r2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z --unanswered-max-hours 99999 ; echo "exit=$?"
+=== $ python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z --unanswered-max-hours 99999 ; echo "exit=$?" ===
 {"findings":[{"code":"MALFORMED_RECORD","message":"record at index 0 is not a JSON object","record_index":0,"task_id":"<index:0>"},{"code":"DANGLING_REPLY","in_reply_to":"m-does-not-exist","message":"thread 'T-DANGLING-REPLY' message 'm2' (index 1) has in_reply_to 'm-does-not-exist', which does not match any message_id in this thread","message_id":"m2","message_index":1,"task_id":"T-DANGLING-REPLY"},{"code":"UNANSWERED_QUESTION","message":"thread 'T-DANGLING-REPLY' reviewer message 'm1' (index 0) contains a question with no contributor response after it","message_id":"m1","message_index":0,"task_id":"T-DANGLING-REPLY"},{"code":"EMPTY_THREAD","message":"thread 'T-EMPTY' has zero messages","task_id":"T-EMPTY"},{"at_raw":"not-a-real-timestamp","code":"INVALID_TIMESTAMP","message":"thread 'T-INVALID-TIMESTAMP' message 'm1' (index 0): unparseable ISO-8601 timestamp: 'not-a-real-timestamp'","message_id":"m1","message_index":0,"task_id":"T-INVALID-TIMESTAMP"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message at index 0 has a missing or invalid 'message_id' (must be a non-empty string)","message_index":0,"task_id":"T-MALFORMED-MESSAGES"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message 'm2' (index 1) has a missing or invalid 'role' (must be 'reviewer' or 'contributor'): 'coordinator'","message_id":"m2","message_index":1,"task_id":"T-MALFORMED-MESSAGES"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message 'm3' (index 2) has a missing or non-string 'text'","message_id":"m3","message_index":2,"task_id":"T-MALFORMED-MESSAGES"},{"code":"MALFORMED_RECORD","message":"thread 'T-MALFORMED-MESSAGES' message 'm4' (index 3) is missing required key: at","message_id":"m4","message_index":3,"task_id":"T-MALFORMED-MESSAGES"},{"code":"NO_ARTIFACT_REFERENCE","in_response_to":"m1","message":"thread 'T-NO-ARTIFACT' contributor message 'm2' (index 1), answering 'm1', cites no concrete artifact reference","message_id":"m2","message_index":1,"task_id":"T-NO-ARTIFACT"},{"at":"2026-08-02T19:00:00Z","code":"OUT_OF_ORDER_MESSAGE","conflicts_with_at":"2026-08-02T23:00:00Z","conflicts_with_message_id":"m1","message":"thread 'T-OUT-OF-ORDER' message 'm2' (index 1) has timestamp 2026-08-02T19:00:00Z, which is earlier than 2026-08-02T23:00:00Z on message 'm1', which appears earlier in the input array","message_id":"m2","message_index":1,"task_id":"T-OUT-OF-ORDER"},{"code":"NO_ARTIFACT_REFERENCE","in_response_to":"m1","message":"thread 'T-RESTATEMENT-ONLY' contributor message 'm2' (index 1), answering 'm1', cites no concrete artifact reference","message_id":"m2","message_index":1,"task_id":"T-RESTATEMENT-ONLY"},{"code":"RESTATEMENT_ONLY","in_response_to":"m1","message":"thread 'T-RESTATEMENT-ONLY' contributor message 'm2' (index 1), answering 'm1', is substantially a restatement of the question rather than an answer -- candidate for human review, not a verdict","message_id":"m2","message_index":1,"new_token_ratio":0.0,"overlap_ratio":1.0,"task_id":"T-RESTATEMENT-ONLY"},{"code":"UNANSWERED_QUESTION","message":"thread 'T-UNANSWERED-OVERDUE' reviewer message 'm1' (index 0) contains a question with no contributor response after it","message_id":"m1","message_index":0,"task_id":"T-UNANSWERED-OVERDUE"},{"code":"UNANSWERED_QUESTION","message":"thread 'T-UNANSWERED-RECENT' reviewer message 'm1' (index 0) contains a question with no contributor response after it","message_id":"m1","message_index":0,"task_id":"T-UNANSWERED-RECENT"}],"generated_at":"2026-08-03T00:00:00Z","options":{"unanswered_max_hours":99999.0},"summary":{"counts_by_code":{"DANGLING_REPLY":1,"EMPTY_THREAD":1,"INVALID_TIMESTAMP":1,"MALFORMED_RECORD":5,"NO_ARTIFACT_REFERENCE":2,"OUT_OF_ORDER_MESSAGE":1,"RESTATEMENT_ONLY":1,"UNANSWERED_OVERDUE":0,"UNANSWERED_QUESTION":3},"total_findings":15,"total_threads":10},"thread_summaries":[{"answered_count":0,"message_count":2,"question_count":1,"task_id":"T-DANGLING-REPLY","unanswered_count":1},{"answered_count":0,"message_count":0,"question_count":0,"task_id":"T-EMPTY","unanswered_count":0},{"answered_count":0,"message_count":2,"question_count":0,"task_id":"T-INVALID-TIMESTAMP","unanswered_count":0},{"answered_count":0,"message_count":4,"question_count":0,"task_id":"T-MALFORMED-MESSAGES","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-NO-ARTIFACT","unanswered_count":0},{"answered_count":0,"message_count":2,"question_count":0,"task_id":"T-OUT-OF-ORDER","unanswered_count":0},{"answered_count":1,"message_count":2,"question_count":1,"task_id":"T-RESTATEMENT-ONLY","unanswered_count":0},{"answered_count":0,"message_count":1,"question_count":1,"task_id":"T-UNANSWERED-OVERDUE","unanswered_count":1},{"answered_count":0,"message_count":1,"question_count":1,"task_id":"T-UNANSWERED-RECENT","unanswered_count":1}]}
 exit=1
 
-$ python3 thread_check.py threads_incomplete.json ; echo "exit=$?"
+=== $ python3 thread_check.py threads_incomplete.json ; echo "exit=$?" ===
 usage: thread_check.py [-h] --now NOW
                        [--unanswered-max-hours UNANSWERED_MAX_HOURS]
                        [-o OUTPUT]
@@ -263,7 +263,7 @@ usage: thread_check.py [-h] --now NOW
 thread_check.py: error: the following arguments are required: --now
 exit=2
 
-$ python3 thread_check.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?"
+=== $ python3 thread_check.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" ===
 thread_check.py: error: input file not found: /nonexistent.json
 exit=2
 
