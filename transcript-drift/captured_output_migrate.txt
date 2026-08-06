@@ -1,0 +1,53 @@
+transcript-drift/migrate.py -- captured verification output
+Environment: CPython 3.11.15, Linux x86_64, stdlib only, no network.
+Run against a fresh clone of the public repository at commit b645d63.
+The suite is run twice: once on the pristine tree, once on the tree after
+this migration has been applied, because a committed migration changes the
+very files the real-repo tests read.
+
+=== $ python3 -m unittest test_migrate ===
+----------------------------------------------------------------------
+Ran 158 tests in 2.863s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_migrate  # on the pristine pre-migration tree ===
+----------------------------------------------------------------------
+Ran 158 tests in 4.484s
+
+OK
+exit=0
+
+=== $ python3 driftcheck.py --root .. --inventory inventory.json -o drift_report_before_migration.json ===
+findings 94
+  EXIT_CODE_MISMATCH                 3
+  MISSING_TRANSCRIPT                 1
+  README_COMMAND_NOT_IN_TRANSCRIPT   13
+  TEST_COUNT_MISMATCH                4
+  TEST_COUNT_NOT_CLAIMED_IN_README   2
+  TRANSCRIPT_HAS_NO_COMMAND_RECORDS  23
+  TRANSCRIPT_RECORD_HAS_NO_EXIT      48
+exit=1
+
+=== $ python3 migrate.py --all --root .. --report migrate_report.json ===
+counts: {"migrated": 17, "refused": 22, "unchanged_conformant": 7}
+exit=3
+
+=== $ python3 driftcheck.py --root .. --inventory inventory.json -o drift_report_after_migration.json ===
+findings 94
+  EXIT_CODE_MISMATCH                 3
+  README_COMMAND_NOT_IN_TRANSCRIPT   30
+  TEST_COUNT_MISMATCH                4
+  TEST_COUNT_NOT_CLAIMED_IN_README   2
+  TRANSCRIPT_HAS_NO_COMMAND_RECORDS  7
+  TRANSCRIPT_RECORD_HAS_NO_EXIT      48
+exit=1
+
+=== $ python3 driftcheck.py --root <11-tool historical scope> --inventory <scope> ===
+historical scope before: 22  after: 22
+exit=1
+
+=== $ python3 migrate.py --all --root .. --report /tmp/again.json  # idempotence ===
+second run changed no file; every transcript byte-identical to the first run
+exit=3

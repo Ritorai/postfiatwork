@@ -1,0 +1,453 @@
+migrate.py 
+[refused] ../budget-forecaster/captured_output.txt (budget-forecaster)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_forecast -v): record body (lines 1-46) contains no line matching exit=<int>; a value cannot be safely invented; line 54 (sha256sum forecast_run1.json forecast_run2.json): record body (lines 54-56) contains no line matching exit=<int>; a value cannot be safely invented; line 57 (cmp ... && echo BYTE-IDENTICAL): record body (lines 57-59) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_forecast -v -- record body (lines 1-46) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 54: sha256sum forecast_run1.json forecast_run2.json -- record body (lines 54-56) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 57: cmp ... && echo BYTE-IDENTICAL -- record body (lines 57-59) contains no line matching exit=<int>; a value cannot be safely invented
+[refused] ../bundle-index/captured_output.txt (bundle-index)
+    verify-no-regression: this rewrite would increase driftcheck.py's findings for this tool from 1 to 3 (new/increased code(s): EXIT_CODE_MISMATCH, README_COMMAND_NOT_IN_TRANSCRIPT, TEST_COUNT_NOT_CLAIMED_IN_README); reverted, left unchanged. Underlying migration reason (not applied): promoted 16/16 bare command line(s) to headers using their own exit= value; 0 left unchanged (no recoverable exit=)
+    promoted line 5: uname -srm (exit= at line 7)
+    promoted line 9: python3 --version (exit= at line 11)
+    promoted line 13: pwd (exit= at line 15)
+    promoted line 17: ls -1 (exit= at line 24)
+    promoted line 30: python3 -m unittest test_bundle_index -v (exit= at line 211)
+    promoted line 217: python3 bundle_index.py bundle_ok ; echo "exit=$?" (exit= at line 219)
+    promoted line 225: python3 bundle_index.py bundle_bad -o r1.json ; echo "exit=$?" (exit= at line 227)
+    promoted line 229: python3 bundle_index.py bundle_bad -o r2.json ; echo "exit=$?" (exit= at line 231)
+    promoted line 237: sha256sum r1.json r2.json (exit= at line 240)
+    promoted line 242: cmp r1.json r2.json && echo BYTE-IDENTICAL (exit= at line 244)
+    promoted line 250: python3 bundle_index.py /nonexistent_dir ; echo "exit=$?" (exit= at line 252)
+    promoted line 258: grep -c "/sessions\|/tmp\|/home" r1.json (exit= at line 260)
+    promoted line 270: cp -r bundle_bad /tmp/relocated_bundle (exit= at line 272)
+    promoted line 274: python3 bundle_index.py /tmp/relocated_bundle -o /tmp/relocated_report.json ; echo "exit=$?" (exit= at line 276)
+    promoted line 278: sha256sum r1.json /tmp/relocated_report.json (exit= at line 281)
+    promoted line 283: cmp r1.json /tmp/relocated_report.json && echo "RELOCATION-IDENTICAL" (exit= at line 285)
+    verify-no-regression: 1 -> 3 finding(s) for this tool [BLOCKED]
+[refused] ../bundle-verifier/captured_output.txt (bundle-verifier)
+    4 record(s) with no recoverable exit= value: line 136 (cat sample_report_clean.json): record body (lines 136-138) contains no line matching exit=<int>; a value cannot be safely invented; line 141 (cat sample_report_tampered.json): record body (lines 141-143) contains no line matching exit=<int>; a value cannot be safely invented; line 151 (sha256sum ../det_run1.json ../det_run2.json): record body (lines 151-153) contains no line matching exit=<int>; a value cannot be safely invented; line 158 (sha256sum ../det_run1.json ../det_run2.json ../det_run3.json): record body (lines 158-161) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 136: cat sample_report_clean.json -- record body (lines 136-138) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 141: cat sample_report_tampered.json -- record body (lines 141-143) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 151: sha256sum ../det_run1.json ../det_run2.json -- record body (lines 151-153) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 158: sha256sum ../det_run1.json ../det_run2.json ../det_run3.json -- record body (lines 158-161) contains no line matching exit=<int>; a value cannot be safely invented
+[refused] ../claim-checker/captured_output.txt (claim-checker)
+    7 record(s) with no recoverable exit= value: line 305 (sha256sum r1.json r2.json): record body (lines 305-307) contains no line matching exit=<int>; a value cannot be safely invented; line 308 (cmp r1.json r2.json && echo IDENTICAL): record body (lines 308-309) contains no line matching exit=<int>; a value cannot be safely invented; line 310 (grep -c "/tmp\|/home\|/sessions" r1.json (expect 0)): record body (lines 310-320) contains no line matching exit=<int>; a value cannot be safely invented; line 321 (mkdir -p <fresh-tempdir>/deep/nested/path): record body (lines 321-321) contains no line matching exit=<int>; a value cannot be safely invented; line 322 (cp -r bundle_false <fresh-tempdir>/deep/nested/path/bundle_false): record body (lines 322-322) contains no line matching exit=<int>; a value cannot be safely invented; line 326 (sha256sum r1.json r2.json r3.json): record body (lines 326-330) contains no line matching exit=<int>; a value cannot be safely invented; line 331 (cmp r1.json r2.json && cmp r1.json r3.json && echo ALL_THREE_IDENTICAL): record body (lines 331-337) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 305: sha256sum r1.json r2.json -- record body (lines 305-307) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 308: cmp r1.json r2.json && echo IDENTICAL -- record body (lines 308-309) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 310: grep -c "/tmp\|/home\|/sessions" r1.json (expect 0) -- record body (lines 310-320) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 321: mkdir -p <fresh-tempdir>/deep/nested/path -- record body (lines 321-321) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 322: cp -r bundle_false <fresh-tempdir>/deep/nested/path/bundle_false -- record body (lines 322-322) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 326: sha256sum r1.json r2.json r3.json -- record body (lines 326-330) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 331: cmp r1.json r2.json && cmp r1.json r3.json && echo ALL_THREE_IDENTICAL -- record body (lines 331-337) contains no line matching exit=<int>; a value cannot be safely invented
+[unchanged_conformant] ../claim-crosscheck/captured_output.txt (claim-crosscheck)
+    all 10 record(s) already have a header and an exit= value; nothing to migrate
+[unchanged_conformant] ../commit-claim-auditor/captured_output.txt (commit-claim-auditor)
+    all 18 record(s) already have a header and an exit= value; nothing to migrate
+[migrated] ../consolidate/captured_output.txt (consolidate)
+    promoted 6/13 bare command line(s) to headers using their own exit= value; 7 left unchanged (no recoverable exit=)
+    promoted line 160: python3 consolidate.py reports_clean ; echo "exit=$?" (exit= at line 162)
+    promoted line 164: python3 consolidate.py reports_mixed -o report_run1.json ; echo "exit=$?" (exit= at line 165)
+    promoted line 167: python3 consolidate.py reports_mixed -o report_run2.json ; echo "exit=$?" (exit= at line 168)
+    promoted line 177: python3 consolidate.py reports_mixed --severity-threshold critical ; echo "exit=$?" (exit= at line 179)
+    promoted line 181: python3 consolidate.py /nonexistent_dir ; echo "exit=$?" (exit= at line 183)
+    promoted line 191: cd /tmp/relocated && python3 /tmp/build_consolidate/consolidate.py reports_mixed -o relocated_report.json ; echo "exit=$?" (exit= at line 192)
+    left unchanged line 1: python3 -m unittest test_consolidate -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-160); left as plain text, not promoted
+    left unchanged line 170: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 171-174); left as plain text, not promoted
+    left unchanged line 174: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 175-177); left as plain text, not promoted
+    left unchanged line 185: grep -c "/sessions\|/tmp\|/home" report_run1.json ; echo "abs-path-grep-exit=$?" -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 186-190); left as plain text, not promoted
+    left unchanged line 190: mkdir -p /tmp/relocated && cp -r reports_mixed /tmp/relocated/reports_mixed -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 191-191); left as plain text, not promoted
+    left unchanged line 194: sha256sum /tmp/relocated/relocated_report.json /tmp/build_consolidate/report_run1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 195-198); left as plain text, not promoted
+    left unchanged line 198: cmp /tmp/relocated/relocated_report.json /tmp/build_consolidate/report_run1.json && echo RELOCATION-HASH-MATCH -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 199-200); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[migrated] ../contradiction-detector/captured_output.txt (contradiction-detector)
+    promoted 7/16 bare command line(s) to headers using their own exit= value; 9 left unchanged (no recoverable exit=)
+    promoted line 176: python3 contradict.py cases_agree ; echo "exit=$?" (exit= at line 178)
+    promoted line 180: python3 contradict.py cases_conflict -o r1.json ; echo "exit=$?" (exit= at line 181)
+    promoted line 183: python3 contradict.py cases_conflict -o r2.json ; echo "exit=$?" (exit= at line 184)
+    promoted line 193: python3 contradict.py /nonexistent_dir ; echo "exit=$?" (exit= at line 195)
+    promoted line 217: python3 contradict.py cases_agree --checkers-root <live-postfiatwork-checkout> ; echo exit=$? (exit= at line 219)
+    promoted line 221: python3 contradict.py cases_conflict --checkers-root <live-postfiatwork-checkout> ; echo exit=$? (exit= at line 223)
+    promoted line 228: python3 contradict.py /tmp/real_identity_shipped --checkers-root <live-postfiatwork-checkout> ; echo exit=$? (exit= at line 230)
+    left unchanged line 1: python3 -m unittest test_contradict -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-176); left as plain text, not promoted
+    left unchanged line 186: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 187-190); left as plain text, not promoted
+    left unchanged line 190: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 191-193); left as plain text, not promoted
+    left unchanged line 197: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 198-204); left as plain text, not promoted
+    left unchanged line 204: cp -r cases_conflict /tmp/relocated_test2/a/b/c/cases_conflict   # different absolute path -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 205-205); left as plain text, not promoted
+    left unchanged line 205: python3 contradict.py cases_conflict -o /tmp/original_location.json   # from original location -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 206-206); left as plain text, not promoted
+    left unchanged line 206: (cd /tmp/relocated_test2/a/b/c && python3 <original-path>/contradict.py cases_conflict -o /tmp/relocated.json) -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 207-207); left as plain text, not promoted
+    left unchanged line 207: sha256sum /tmp/original_location.json /tmp/relocated.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 208-210); left as plain text, not promoted
+    left unchanged line 210: cmp /tmp/original_location.json /tmp/relocated.json && echo RELOCATION-BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 211-217); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../crosspath-runner/captured_output.txt (crosspath-runner)
+    verify-no-regression: this rewrite would increase driftcheck.py's findings for this tool from 1 to 2 (new/increased code(s): EXIT_CODE_MISMATCH, README_COMMAND_NOT_IN_TRANSCRIPT); reverted, left unchanged. Underlying migration reason (not applied): promoted 3/11 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)
+    promoted line 92: python3 crosspath.py --root <tree> --manifest manifest.json ; echo "exit=$?" (exit= at line 93)
+    promoted line 182: python3 crosspath.py ... --only clean_tool,path-collision-scanner,regression-checker ; echo "exit=$?" (exit= at line 216)
+    promoted line 265: python3 crosspath.py --root <tree> --manifest manifest_local.json -o crosspath_report.json ; echo "exit=$?" (exit= at line 266)
+    left unchanged line 18: python3 --version -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 19-21); left as plain text, not promoted
+    left unchanged line 21: uname -s -m -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 22-24); left as plain text, not promoted
+    left unchanged line 24: python3 -m unittest test_crosspath 2>&1 | tail -n 3 -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 25-37); left as plain text, not promoted
+    left unchanged line 37: cat manifest.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 38-92); left as plain text, not promoted
+    left unchanged line 219: grep -c "/root\|/tmp\|/home\|xp_a\|xp_b" out.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 220-265); left as plain text, not promoted
+    left unchanged line 268: python3 -c "print the coverage block" -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 269-392); left as plain text, not promoted
+    left unchanged line 392: cmp crosspath_report.json <(rerun) && echo REPRODUCIBLE -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 393-395); left as plain text, not promoted
+    left unchanged line 395: grep -c "/root\|/tmp\|/home\|xp_a\|xp_b" crosspath_report.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 396-397); left as plain text, not promoted
+    verify-no-regression: 1 -> 2 finding(s) for this tool [BLOCKED]
+[refused] ../doc-validator/captured_output.txt (doc-validator)
+    verify-no-regression: this rewrite would increase driftcheck.py's findings for this tool from 1 to 2 (new/increased code(s): EXIT_CODE_MISMATCH, README_COMMAND_NOT_IN_TRANSCRIPT); reverted, left unchanged. Underlying migration reason (not applied): promoted 5/9 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)
+    promoted line 199: python3 docval.py --root samples_consistent ; echo "exit=$?" (exit= at line 201)
+    promoted line 203: python3 docval.py --root samples_inconsistent -o r1.json ; echo "exit=$?" (exit= at line 204)
+    promoted line 206: python3 docval.py --root samples_inconsistent -o r2.json ; echo "exit=$?" (exit= at line 207)
+    promoted line 216: python3 docval.py --root samples_inconsistent --no-run ; echo "exit=$?" (exit= at line 218)
+    promoted line 220: python3 docval.py --root /nonexistent_dir ; echo "exit=$?" (exit= at line 222)
+    left unchanged line 1: python3 -m unittest test_docval -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-199); left as plain text, not promoted
+    left unchanged line 209: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 210-213); left as plain text, not promoted
+    left unchanged line 213: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 214-216); left as plain text, not promoted
+    left unchanged line 224: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 225-226); left as plain text, not promoted
+    verify-no-regression: 1 -> 2 finding(s) for this tool [BLOCKED]
+[migrated] ../dup-detector/captured_output.txt (dup-detector)
+    promoted 14/14 bare command line(s) to headers using their own exit= value; 0 left unchanged (no recoverable exit=)
+    promoted line 8: python3 -m unittest test_dupdetect -v 2>&1 (exit= at line 127)
+    promoted line 130: python3 dupdetect.py records_clean.json (exit= at line 132)
+    promoted line 135: python3 dupdetect.py records_dupes.json -o report_run1.json (exit= at line 137)
+    promoted line 140: python3 dupdetect.py records_dupes.json -o report_run2.json (exit= at line 142)
+    promoted line 145: sha256sum report_run1.json report_run2.json (exit= at line 148)
+    promoted line 150: cmp report_run1.json report_run2.json && echo 'BYTE-IDENTICAL' (exit= at line 152)
+    promoted line 154: wc -c report_run1.json report_run2.json (exit= at line 158)
+    promoted line 161: python3 -c "import json;r=json.load(open('report_run1.json'));print('records',r['record_count'],'comparisons',r['comparison_count'],'flagged',r['flagged_count']);[print(p['submission_id_a'],p['submission_id_b'],'score=',p['score'],'shingles=',p['overlap_count']) for p in r['flagged_pairs']]" (exit= at line 165)
+    promoted line 168: python3 dupdetect.py records_dupes.json --threshold 0.99 -o report_strict.json (exit= at line 170)
+    promoted line 172: python3 -c "import json;r=json.load(open('report_strict.json'));print('threshold',r['config']['threshold'],'flagged',r['flagged_count']);[print(p['submission_id_a'],p['submission_id_b'],'score=',p['score']) for p in r['flagged_pairs']]" (exit= at line 175)
+    promoted line 178: python3 dupdetect.py no_such_file.json (exit= at line 180)
+    promoted line 183: printf '[[[' > /tmp/bad.json; python3 dupdetect.py /tmp/bad.json (exit= at line 185)
+    promoted line 188: printf '[{"submission_id":"X","text":"a"},{"submission_id":"X","text":"b"}]' > /tmp/dupid.json; python3 dupdetect.py /tmp/dupid.json (exit= at line 190)
+    promoted line 193: cat report_run1.json | head -c 300; echo '   ...[truncated for display; full file is report_run1.json]' (exit= at line 195)
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[unchanged_conformant] ../env-leak-scanner/captured_output.txt (env-leak-scanner)
+    all 17 record(s) already have a header and an exit= value; nothing to migrate
+[refused] ../event-linter/captured_output.txt (event-linter)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_event_lint -v): record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented; line 45 (sha256sum report_invalid_run1.json report_invalid_run2.json): record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented; line 48 (cmp ... && echo BYTE-IDENTICAL): record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_event_lint -v -- record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 45: sha256sum report_invalid_run1.json report_invalid_run2.json -- record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 48: cmp ... && echo BYTE-IDENTICAL -- record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented
+[migrated] ../evidence-harness/captured_output.txt (evidence-harness)
+    promoted 19/19 bare command line(s) to headers using their own exit= value; 0 left unchanged (no recoverable exit=)
+    promoted line 5: uname -srm (exit= at line 7)
+    promoted line 9: python3 --version (exit= at line 11)
+    promoted line 13: pwd (exit= at line 15)
+    promoted line 17: ls -1 (exit= at line 25)
+    promoted line 31: python3 -m unittest test_harness -v (exit= at line 100)
+    promoted line 106: python3 harness.py requirements.json bundle_good -o report_good_run1.json (exit= at line 108)
+    promoted line 114: python3 harness.py requirements.json bundle_good -o report_good_run2.json (exit= at line 116)
+    promoted line 122: python3 harness.py requirements.json bundle_bad -o report_bad_run1.json (exit= at line 124)
+    promoted line 130: python3 harness.py requirements.json bundle_bad -o report_bad_run2.json (exit= at line 132)
+    promoted line 138: python3 -c import json;[print('GAP:',g) for g in json.load(open('report_bad_run1.json'))['gaps']] (exit= at line 143)
+    promoted line 149: sha256sum report_bad_run1.json report_bad_run2.json (exit= at line 152)
+    promoted line 154: cmp report_bad_run1.json report_bad_run2.json (exit= at line 155)
+    promoted line 157: sha256sum report_good_run1.json report_good_run2.json (exit= at line 160)
+    promoted line 162: cmp report_good_run1.json report_good_run2.json (exit= at line 163)
+    promoted line 169: python3 harness.py no_such_requirements.json bundle_good (exit= at line 171)
+    promoted line 173: python3 harness.py requirements.json no_such_bundle (exit= at line 175)
+    promoted line 177: python3 harness.py requirements.json harness.py (exit= at line 179)
+    promoted line 185: python3 harness.py requirements.json bundle_good --strict (exit= at line 187)
+    promoted line 193: python3 -c  (exit= at line 208)
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../evidence-manifest/captured_output.txt (evidence-manifest)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_manifest -v): record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented; line 47 (sha256sum manifest_run1.json manifest_run2.json): record body (lines 47-50) contains no line matching exit=<int>; a value cannot be safely invented; line 51 (cmp manifest_run1.json manifest_run2.json && echo BYTE-IDENTICAL): record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_manifest -v -- record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 47: sha256sum manifest_run1.json manifest_run2.json -- record body (lines 47-50) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 51: cmp manifest_run1.json manifest_run2.json && echo BYTE-IDENTICAL -- record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented
+[refused] ../evidence-scorer/captured_output.txt (evidence-scorer)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_score_evidence -v): record body (lines 1-48) contains no line matching exit=<int>; a value cannot be safely invented; line 60 (sha256sum report_mixed_run1.json report_mixed_run2.json): record body (lines 60-62) contains no line matching exit=<int>; a value cannot be safely invented; line 63 (cmp ... && echo BYTE-IDENTICAL): record body (lines 63-65) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_score_evidence -v -- record body (lines 1-48) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 60: sha256sum report_mixed_run1.json report_mixed_run2.json -- record body (lines 60-62) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 63: cmp ... && echo BYTE-IDENTICAL -- record body (lines 63-65) contains no line matching exit=<int>; a value cannot be safely invented
+[migrated] ../evidence-validator/captured_output.txt (evidence-validator)
+    captured_output.txt did not exist; copied verbatim (binary, byte-identical) from the single fully-conformant candidate 'run_output.txt' -- 'run_output.txt' is left in place, unchanged (copy, not move: nothing already on disk is destroyed)
+    source: run_output.txt
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../exit-harness/captured_output.txt (exit-harness)
+    3 record(s) with no recoverable exit= value: line 233 (python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_match.json; echo "exit(all-match)=$?"): record body (lines 233-235) contains no line matching exit=<int>; a value cannot be safely invented; line 236 (python3 exitharness.py --manifest manifest_sample_failures.json --root fixture_tools -o out_failures.json; echo "exit(some-fail)=$?"): record body (lines 236-238) contains no line matching exit=<int>; a value cannot be safely invented; line 239 (python3 exitharness.py --manifest bad_manifest.json --root fixture_tools -o out_bad.json; echo "exit(harness-error)=$?"): record body (lines 239-249) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 233: python3 exitharness.py --manifest manifest_example.json --root fixture_tools -o out_match.json; echo "exit(all-match)=$?" -- record body (lines 233-235) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 236: python3 exitharness.py --manifest manifest_sample_failures.json --root fixture_tools -o out_failures.json; echo "exit(some-fail)=$?" -- record body (lines 236-238) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 239: python3 exitharness.py --manifest bad_manifest.json --root fixture_tools -o out_bad.json; echo "exit(harness-error)=$?" -- record body (lines 239-249) contains no line matching exit=<int>; a value cannot be safely invented
+[unchanged_conformant] ../index-generator/captured_output.txt (index-generator)
+    all 51 record(s) already have a header and an exit= value; nothing to migrate
+[refused] ../lifecycle-linter/captured_output.txt (lifecycle-linter)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_lifecycle_lint -v): record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented; line 45 (sha256sum report_invalid_run1.json report_invalid_run2.json): record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented; line 48 (cmp report_invalid_run1.json report_invalid_run2.json && echo BYTE-IDENTICAL): record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_lifecycle_lint -v -- record body (lines 1-33) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 45: sha256sum report_invalid_run1.json report_invalid_run2.json -- record body (lines 45-47) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 48: cmp report_invalid_run1.json report_invalid_run2.json && echo BYTE-IDENTICAL -- record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented
+[migrated] ../limitations-probe/captured_output.txt (limitations-probe)
+    promoted 2/10 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)
+    promoted line 13: python3 probe.py ; echo "exit=$?" (exit= at line 81)
+    promoted line 83: python3 probe.py -o probe_report.json ; echo "exit=$?" (exit= at line 84)
+    left unchanged line 8: python3 --version ; node --version ; jq --version -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 9-13); left as plain text, not promoted
+    left unchanged line 86: python3 probe.py -o /tmp/again.json && cmp probe_report.json /tmp/again.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 87-92); left as plain text, not promoted
+    left unchanged line 92: python3 ../evidence-manifest/manifest.py build /tmp/nan.json > /tmp/nan_manifest.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 93-94); left as plain text, not promoted
+    left unchanged line 94: grep -o "NaN" /tmp/nan_manifest.json | head -1 -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 95-97); left as plain text, not promoted
+    left unchanged line 97: node -e "JSON.parse(...)"   # strict RFC 8259 -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 98-100); left as plain text, not promoted
+    left unchanged line 100: python3 -c "json.load(..., parse_constant=raise)" -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 101-103); left as plain text, not promoted
+    left unchanged line 103: python3 -c "json.load(...)"   # default, non-standard extension -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 104-106); left as plain text, not promoted
+    left unchanged line 106: jq -r .batch_root /tmp/nan_manifest.json ; echo "jq exit=$?" -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 107-111); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../link-integrity/captured_output.txt (link-integrity)
+    verify-no-regression: this rewrite would increase driftcheck.py's findings for this tool from 1 to 2 (new/increased code(s): README_COMMAND_NOT_IN_TRANSCRIPT, TEST_COUNT_NOT_CLAIMED_IN_README); reverted, left unchanged. Underlying migration reason (not applied): promoted 6/8 bare command line(s) to headers using their own exit= value; 2 left unchanged (no recoverable exit=)
+    promoted line 1: python3 -m unittest test_link_integrity -v (exit= at line 144)
+    promoted line 146: python3 link_integrity.py lifecycle_ok.json evidence_ok.json ; echo "exit=$?" (exit= at line 148)
+    promoted line 150: python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run1.json ; echo "exit=$?" (exit= at line 151)
+    promoted line 153: python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run2.json ; echo "exit=$?" (exit= at line 154)
+    promoted line 163: python3 link_integrity.py /nonexistent.json evidence_ok.json ; echo "exit=$?" (exit= at line 165)
+    promoted line 167: python3 link_integrity.py lifecycle_ok.json ; echo "exit=$?" (exit= at line 170)
+    left unchanged line 156: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 157-160); left as plain text, not promoted
+    left unchanged line 160: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 161-163); left as plain text, not promoted
+    verify-no-regression: 1 -> 2 finding(s) for this tool [BLOCKED]
+[migrated] ../loop-health/captured_output.txt (loop-health)
+    promoted 6/10 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)
+    promoted line 210: python3 loop_health.py histories_healthy.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" (exit= at line 212)
+    promoted line 214: python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?" (exit= at line 215)
+    promoted line 217: python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?" (exit= at line 218)
+    promoted line 227: python3 loop_health.py histories_unhealthy.json --now 2026-08-03T00:00:00Z --review-overdue-hours 99999 ; echo "exit=$?" (exit= at line 229)
+    promoted line 231: python3 loop_health.py histories_unhealthy.json ; echo "exit=$?" (exit= at line 237)
+    promoted line 239: python3 loop_health.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" (exit= at line 241)
+    left unchanged line 1: python3 -m unittest test_loop_health -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-210); left as plain text, not promoted
+    left unchanged line 220: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 221-224); left as plain text, not promoted
+    left unchanged line 224: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 225-227); left as plain text, not promoted
+    left unchanged line 243: grep -n "now()\|utcnow\|time.time" loop_health.py -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 244-245); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../nondeterminism-scanner/captured_output.txt (nondeterminism-scanner)
+    verify-no-regression: this rewrite would increase driftcheck.py's findings for this tool from 1 to 2 (new/increased code(s): EXIT_CODE_MISMATCH, README_COMMAND_NOT_IN_TRANSCRIPT); reverted, left unchanged. Underlying migration reason (not applied): promoted 5/13 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)
+    promoted line 229: python3 ndscan.py --root samples_clean ; echo "exit=$?" (exit= at line 231)
+    promoted line 233: python3 ndscan.py --root samples_risky -o r1.json ; echo "exit=$?" (exit= at line 234)
+    promoted line 236: python3 ndscan.py --root samples_risky -o r2.json ; echo "exit=$?" (exit= at line 237)
+    promoted line 246: python3 ndscan.py --root samples_risky --rule ND001_WALL_CLOCK ; echo "exit=$?" (exit= at line 248)
+    promoted line 250: python3 ndscan.py --root /nonexistent_dir ; echo "exit=$?" (exit= at line 252)
+    left unchanged line 1: python3 -m unittest test_ndscan -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-229); left as plain text, not promoted
+    left unchanged line 239: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 240-243); left as plain text, not promoted
+    left unchanged line 243: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 244-246); left as plain text, not promoted
+    left unchanged line 254: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 255-258); left as plain text, not promoted
+    left unchanged line 258: mkdir -p /tmp/relocated_samples_risky && cp -r samples_risky/* /tmp/relocated_samples_risky/ -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 259-259); left as plain text, not promoted
+    left unchanged line 259: python3 ndscan.py --root samples_risky -o /tmp/orig_relocation_check.json ; sha256sum /tmp/orig_relocation_check.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 260-261); left as plain text, not promoted
+    left unchanged line 261: python3 ndscan.py --root /tmp/relocated_samples_risky -o /tmp/relocated_relocation_check.json ; sha256sum /tmp/relocated_relocation_check.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 262-263); left as plain text, not promoted
+    left unchanged line 263: cmp /tmp/orig_relocation_check.json /tmp/relocated_relocation_check.json && echo RELOCATION-BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 264-265); left as plain text, not promoted
+    verify-no-regression: 1 -> 2 finding(s) for this tool [BLOCKED]
+[migrated] ../path-collision-scanner/captured_output.txt (path-collision-scanner)
+    promoted 11/22 bare command line(s) to headers using their own exit= value; 11 left unchanged (no recoverable exit=)
+    promoted line 30: ls fixtures ; echo "exit=$?" (exit= at line 32)
+    promoted line 39: python3 make_fixtures.py --check ; echo "exit=$?" (exit= at line 41)
+    promoted line 53: python3 pathscan.py --paths-from fixtures/clean.paths ; echo "exit=$?" (exit= at line 55)
+    promoted line 57: python3 pathscan.py --paths-from fixtures/dirty.paths -o d1.json ; echo "exit=$?" (exit= at line 58)
+    promoted line 122: python3 pathscan.py --paths-from fixtures/malformed.paths ; echo "exit=$?" (exit= at line 124)
+    promoted line 126: python3 pathscan.py --paths-from fixtures/not_utf8.paths ; echo "exit=$?" (exit= at line 128)
+    promoted line 130: python3 pathscan.py --paths-from fixtures/dirty.paths --rules WINDOWS_RESERVED_NAME ; echo "exit=$?" (exit= at line 132)
+    promoted line 134: python3 pathscan.py --paths-from fixtures/clean.paths --rules NOPE ; echo "exit=$?" (exit= at line 136)
+    promoted line 149: python3 pathscan.py --root .../repoA -o A.json ; echo "exit=$?" (exit= at line 150)
+    promoted line 178: python3 pathscan.py --root .../repoB_with_a_much_longer_name -o B.json ; echo "exit=$?" (exit= at line 179)
+    promoted line 196: python3 pathscan.py --root .../repo_positive_control ; echo "exit=$?" (exit= at line 237)
+    left unchanged line 21: python3 --version -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 22-24); left as plain text, not promoted
+    left unchanged line 24: uname -s -m -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 25-27); left as plain text, not promoted
+    left unchanged line 27: git --version -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 28-30); left as plain text, not promoted
+    left unchanged line 34: python3 -m unittest test_pathscan 2>&1 | tail -n 3 -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 35-39); left as plain text, not promoted
+    left unchanged line 43: python3 pathscan.py --list-rules -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 44-53); left as plain text, not promoted
+    left unchanged line 60: python3 -m json.tool d1.json | head -n 60 -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 61-122); left as plain text, not promoted
+    left unchanged line 146: git -C .../repoA ls-files | wc -l -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 147-149); left as plain text, not promoted
+    left unchanged line 152: python3 -m json.tool A.json   (findings elided: there are none) -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 153-178); left as plain text, not promoted
+    left unchanged line 181: sha256sum A.json B.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 182-185); left as plain text, not promoted
+    left unchanged line 185: cmp A.json B.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 186-188); left as plain text, not promoted
+    left unchanged line 188: grep -c "/root\|/tmp\|/home\|repoA\|repoB" A.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 189-196); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[migrated] ../payload-validator/captured_output.txt (payload-validator)
+    promoted 6/9 bare command line(s) to headers using their own exit= value; 3 left unchanged (no recoverable exit=)
+    promoted line 188: python3 payload_validate.py payloads_ok.json ; echo "exit=$?" (exit= at line 190)
+    promoted line 192: python3 payload_validate.py payloads_bad.json -o r1.json ; echo "exit=$?" (exit= at line 194)
+    promoted line 196: python3 payload_validate.py payloads_bad.json -o r2.json ; echo "exit=$?" (exit= at line 198)
+    promoted line 207: python3 payload_validate.py payloads_bad.json --max-memo-bytes 1000000 ; echo "exit=$?" (exit= at line 209)
+    promoted line 211: cat payloads_bad.json | python3 payload_validate.py - ; echo "exit=$?" (exit= at line 213)
+    promoted line 215: python3 payload_validate.py /nonexistent.json ; echo "exit=$?" (exit= at line 217)
+    left unchanged line 1: python3 -m unittest test_payload_validate -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-188); left as plain text, not promoted
+    left unchanged line 200: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 201-204); left as plain text, not promoted
+    left unchanged line 204: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 205-207); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../preflight/captured_output.txt (preflight)
+    verify-no-regression: this rewrite would increase driftcheck.py's findings for this tool from 1 to 3 (new/increased code(s): EXIT_CODE_MISMATCH, README_COMMAND_NOT_IN_TRANSCRIPT, TEST_COUNT_NOT_CLAIMED_IN_README); reverted, left unchanged. Underlying migration reason (not applied): promoted 7/9 bare command line(s) to headers using their own exit= value; 2 left unchanged (no recoverable exit=)
+    promoted line 1: python3 -m unittest test_preflight -v (exit= at line 190)
+    promoted line 192: python3 preflight.py tasks_ready.json evidence_ready.json ; echo "exit=$?" (exit= at line 194)
+    promoted line 196: python3 -m preflight tasks_ready.json evidence_ready.json ; echo "exit=$?" (exit= at line 198)
+    promoted line 200: python3 preflight.py tasks_issues.json evidence_issues.json -o report_run1.json ; echo "exit=$?" (exit= at line 201)
+    promoted line 203: python3 preflight.py tasks_issues.json evidence_issues.json -o report_run2.json ; echo "exit=$?" (exit= at line 204)
+    promoted line 213: python3 preflight.py /nonexistent.json evidence_ready.json ; echo "exit=$?" (exit= at line 215)
+    promoted line 217: python3 preflight.py tasks_ready.json ; echo "exit=$?" (exit= at line 220)
+    left unchanged line 206: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 207-210); left as plain text, not promoted
+    left unchanged line 210: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 211-213); left as plain text, not promoted
+    verify-no-regression: 1 -> 3 finding(s) for this tool [BLOCKED]
+[migrated] ../queue-auditor/captured_output.txt (queue-auditor)
+    promoted 6/9 bare command line(s) to headers using their own exit= value; 3 left unchanged (no recoverable exit=)
+    promoted line 183: python3 queue_audit.py snapshot_clean.json ; echo "exit=$?" (exit= at line 185)
+    promoted line 187: python3 queue_audit.py snapshot_dirty.json -o report_run1.json ; echo "exit=$?" (exit= at line 188)
+    promoted line 190: python3 queue_audit.py snapshot_dirty.json -o report_run2.json ; echo "exit=$?" (exit= at line 191)
+    promoted line 200: cat snapshot_dirty.json | python3 queue_audit.py - ; echo "exit=$?" (exit= at line 202)
+    promoted line 204: python3 queue_audit.py /nonexistent.json ; echo "exit=$?" (exit= at line 206)
+    promoted line 208: echo '{not json' | python3 queue_audit.py - ; echo "exit=$?" (exit= at line 210)
+    left unchanged line 1: python3 -m unittest test_queue_audit -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-183); left as plain text, not promoted
+    left unchanged line 193: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 194-197); left as plain text, not promoted
+    left unchanged line 197: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 198-200); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[unchanged_conformant] ../readme-index/captured_output.txt (readme-index)
+    all 19 record(s) already have a header and an exit= value; nothing to migrate
+[migrated] ../regression-checker/captured_output.txt (regression-checker)
+    promoted 11/17 bare command line(s) to headers using their own exit= value; 6 left unchanged (no recoverable exit=)
+    promoted line 24: ls fixtures ; echo "exit=$?" (exit= at line 26)
+    promoted line 33: python3 make_fixtures.py --check ; echo "exit=$?" (exit= at line 35)
+    promoted line 37: python3 regress.py --root fixtures --baselines fixtures/baselines_ok.json ; echo "exit=$?" (exit= at line 39)
+    promoted line 41: python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r1.json ; echo "exit=$?" (exit= at line 42)
+    promoted line 44: python3 regress.py --root fixtures --baselines fixtures/baselines_drift.json -o r2.json ; echo "exit=$?" (exit= at line 45)
+    promoted line 57: python3 regress.py --root fixtures --baselines /nonexistent.json ; echo "exit=$?" (exit= at line 59)
+    promoted line 80: python3 ORIG/regress.py --root . --baselines baselines_bool.json ; echo "exit=$?" (exit= at line 82)
+    promoted line 84: python3 FIXED/regress.py --root . --baselines baselines_bool.json ; echo "exit=$?" (exit= at line 86)
+    promoted line 91: python3 ORIG/regress.py --root . --baselines baselines_crash.json ; echo "exit=$?" (exit= at line 93)
+    promoted line 95: python3 FIXED/regress.py --root . --baselines baselines_crash.json ; echo "exit=$?" (exit= at line 97)
+    promoted line 101: python3 FIXED/regress.py --update-baselines --root . --baselines baselines_crash.json ; echo "exit=$?" (exit= at line 107)
+    left unchanged line 18: python3 --version -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 19-21); left as plain text, not promoted
+    left unchanged line 21: uname -s -m -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 22-24); left as plain text, not promoted
+    left unchanged line 28: python3 -m unittest test_regress test_regress_newline test_regress_integrity 2>&1 | tail -n 3 -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 29-33); left as plain text, not promoted
+    left unchanged line 47: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 48-51); left as plain text, not promoted
+    left unchanged line 51: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 52-54); left as plain text, not promoted
+    left unchanged line 54: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 55-57); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[migrated] ../reward-anomaly/captured_output.txt (reward-anomaly)
+    promoted 7/12 bare command line(s) to headers using their own exit= value; 5 left unchanged (no recoverable exit=)
+    promoted line 151: python3 reconcile_anomaly.py tasks_ok.json payouts_ok.json ; echo "exit=$?" (exit= at line 153)
+    promoted line 155: python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run1.json ; echo "exit=$?" (exit= at line 156)
+    promoted line 158: python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json -o report_run2.json ; echo "exit=$?" (exit= at line 159)
+    promoted line 168: python3 reconcile_anomaly.py tasks_bad.json payouts_bad.json --tolerance 1000000 ; echo "exit=$?" (exit= at line 170)
+    promoted line 172: python3 reconcile_anomaly.py /nonexistent.json payouts_ok.json ; echo "exit=$?" (exit= at line 174)
+    promoted line 176: python3 reconcile_anomaly.py tasks_ok.json ; echo "exit=$?" (exit= at line 180)
+    promoted line 187: python3 reconcile_anomaly.py tasks.json payouts.json ; echo "exit=$?" (exit= at line 189)
+    left unchanged line 1: python3 -m unittest test_reconcile_anomaly -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-151); left as plain text, not promoted
+    left unchanged line 161: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 162-165); left as plain text, not promoted
+    left unchanged line 165: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 166-168); left as plain text, not promoted
+    left unchanged line 183: cat tasks.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 184-185); left as plain text, not promoted
+    left unchanged line 185: cat payouts.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 186-187); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../reward-reconciler/captured_output.txt (reward-reconciler)
+    2 record(s) with no recoverable exit= value: line 37 (sha256sum report_run1.json report_run2.json): record body (lines 37-40) contains no line matching exit=<int>; a value cannot be safely invented; line 41 (cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL): record body (lines 41-42) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 37: sha256sum report_run1.json report_run2.json -- record body (lines 37-40) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 41: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- record body (lines 41-42) contains no line matching exit=<int>; a value cannot be safely invented
+[migrated] ../schema-checker/captured_output.txt (schema-checker)
+    promoted 9/11 bare command line(s) to headers using their own exit= value; 2 left unchanged (no recoverable exit=)
+    promoted line 10: python3 -m unittest test_schema_check -v (exit= at line 111)
+    promoted line 114: python3 schema_check.py schema.json payloads_valid.json (exit= at line 116)
+    promoted line 119: python3 schema_check.py schema.json payloads_invalid.json -o report_run1.json (exit= at line 121)
+    promoted line 124: python3 schema_check.py schema.json payloads_invalid.json -o report_run2.json (exit= at line 126)
+    promoted line 255: sha256sum report_run1.json report_run2.json (exit= at line 258)
+    promoted line 267: python3 -c "import json;d=json.load(open('report_run1.json'));[print('%-18s %d'%(k,v)) for k,v in sorted(d['summary'].items())];print('TOTAL              %d'%d['violation_count'])" (exit= at line 281)
+    promoted line 284: python3 schema_check.py schema_malformed.json payloads_valid.json (exit= at line 286)
+    promoted line 368: python3 schema_check.py schema.json does_not_exist.json (exit= at line 370)
+    promoted line 373: python3 schema_check.py no_such_schema.json payloads_valid.json (exit= at line 375)
+    left unchanged line 259: cmp report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 260-261); left as plain text, not promoted
+    left unchanged line 261: wc -c report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 262-267); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[migrated] ../scorecard/captured_output.txt (scorecard)
+    promoted 6/10 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)
+    promoted line 196: python3 scorecard.py histories_clean.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" (exit= at line 198)
+    promoted line 200: python3 scorecard.py histories_flagged.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?" (exit= at line 201)
+    promoted line 203: python3 scorecard.py histories_flagged.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?" (exit= at line 204)
+    promoted line 213: python3 scorecard.py histories_clean.json --now 2026-08-03T00:00:00Z --min-tasks 100 ; echo "exit=$?" (exit= at line 215)
+    promoted line 217: python3 scorecard.py histories_clean.json ; echo "exit=$?" (exit= at line 221)
+    promoted line 223: python3 scorecard.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" (exit= at line 225)
+    left unchanged line 1: python3 -m unittest test_scorecard -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-196); left as plain text, not promoted
+    left unchanged line 206: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 207-210); left as plain text, not promoted
+    left unchanged line 210: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 211-213); left as plain text, not promoted
+    left unchanged line 227: grep -n "now()\|utcnow\|time.time" scorecard.py -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 228-229); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[migrated] ../snapshot-diff/captured_output.txt (snapshot-diff)
+    promoted 7/11 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)
+    promoted line 230: python3 snapdiff.py snapshot_before.json snapshot_after_same.json ; echo "exit=$?" (exit= at line 232)
+    promoted line 234: python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r1.json ; echo "exit=$?" (exit= at line 235)
+    promoted line 237: python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r2.json ; echo "exit=$?" (exit= at line 238)
+    promoted line 247: python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --ignore reward --ignore status ; echo "exit=$?" (exit= at line 249)
+    promoted line 251: python3 snapdiff.py snapshot_after_changed.json snapshot_before.json -o rev.json ; echo "exit=$?" (exit= at line 252)
+    promoted line 254: python3 snapdiff.py /nonexistent.json snapshot_before.json ; echo "exit=$?" (exit= at line 256)
+    promoted line 258: python3 snapdiff.py snapshot_before.json ; echo "exit=$?" (exit= at line 261)
+    left unchanged line 1: python3 -m unittest test_snapdiff -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-230); left as plain text, not promoted
+    left unchanged line 240: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 241-244); left as plain text, not promoted
+    left unchanged line 244: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 245-247); left as plain text, not promoted
+    left unchanged line 263: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 264-265); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../sortkey-detector/captured_output.txt (sortkey-detector)
+    3 record(s) with no recoverable exit= value: line 224 (sha256sum of two independent runs (consolidate control)): record body (lines 224-230) contains no line matching exit=<int>; a value cannot be safely invented; line 231 (sha256sum original vs relocated-and-renamed copy (consolidate control)): record body (lines 231-235) contains no line matching exit=<int>; a value cannot be safely invented; line 236 (sha256sum original vs relocated-and-renamed copy (schema_check control)): record body (lines 236-242) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 224: sha256sum of two independent runs (consolidate control) -- record body (lines 224-230) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 231: sha256sum original vs relocated-and-renamed copy (consolidate control) -- record body (lines 231-235) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 236: sha256sum original vs relocated-and-renamed copy (schema_check control) -- record body (lines 236-242) contains no line matching exit=<int>; a value cannot be safely invented
+[migrated] ../staleness-monitor/captured_output.txt (staleness-monitor)
+    promoted 6/10 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)
+    promoted line 164: python3 staleness.py tasks_fresh.json --now 2026-08-02T00:00:00Z ; echo "exit=$?" (exit= at line 166)
+    promoted line 168: python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run1.json ; echo "exit=$?" (exit= at line 169)
+    promoted line 171: python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z -o report_run2.json ; echo "exit=$?" (exit= at line 172)
+    promoted line 181: python3 staleness.py tasks_stale.json --now 2026-08-02T00:00:00Z --accepted-stale-hours 9999 --submitted-stale-hours 9999 ; echo "exit=$?" (exit= at line 183)
+    promoted line 185: python3 staleness.py tasks_stale.json ; echo "exit=$?" (exit= at line 192)
+    promoted line 194: python3 staleness.py /nonexistent.json --now 2026-08-02T00:00:00Z ; echo "exit=$?" (exit= at line 196)
+    left unchanged line 1: python3 -m unittest test_staleness -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-164); left as plain text, not promoted
+    left unchanged line 174: sha256sum report_run1.json report_run2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 175-178); left as plain text, not promoted
+    left unchanged line 178: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 179-181); left as plain text, not promoted
+    left unchanged line 198: grep -n "now()\|utcnow\|time.time" staleness.py -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 199-200); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../sybil-detector/captured_output.txt (sybil-detector)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_sybil_detect -v): record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented; line 48 (sha256sum report_sybil_run1.json report_sybil_run2.json): record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented; line 51 (cmp ... && echo BYTE-IDENTICAL): record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_sybil_detect -v -- record body (lines 1-36) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 48: sha256sum report_sybil_run1.json report_sybil_run2.json -- record body (lines 48-50) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 51: cmp ... && echo BYTE-IDENTICAL -- record body (lines 51-53) contains no line matching exit=<int>; a value cannot be safely invented
+[unchanged_conformant] ../tamper-runner/captured_output.txt (tamper-runner)
+    all 23 record(s) already have a header and an exit= value; nothing to migrate
+[migrated] ../thread-check/captured_output.txt (thread-check)
+    promoted 6/10 bare command line(s) to headers using their own exit= value; 4 left unchanged (no recoverable exit=)
+    promoted line 237: python3 thread_check.py threads_complete.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" (exit= at line 239)
+    promoted line 241: python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r1.json ; echo "exit=$?" (exit= at line 242)
+    promoted line 244: python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z -o r2.json ; echo "exit=$?" (exit= at line 245)
+    promoted line 254: python3 thread_check.py threads_incomplete.json --now 2026-08-03T00:00:00Z --unanswered-max-hours 99999 ; echo "exit=$?" (exit= at line 256)
+    promoted line 258: python3 thread_check.py threads_incomplete.json ; echo "exit=$?" (exit= at line 264)
+    promoted line 266: python3 thread_check.py /nonexistent.json --now 2026-08-03T00:00:00Z ; echo "exit=$?" (exit= at line 268)
+    left unchanged line 1: python3 -m unittest test_thread_check -v -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 2-237); left as plain text, not promoted
+    left unchanged line 247: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 248-251); left as plain text, not promoted
+    left unchanged line 251: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 252-254); left as plain text, not promoted
+    left unchanged line 270: grep -n "now()\|utcnow\|time.time" thread_check.py -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 271-272); left as plain text, not promoted
+    verify-no-regression: 1 -> 1 finding(s) for this tool
+[refused] ../throughput-reporter/captured_output.txt (throughput-reporter)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_throughput -v): record body (lines 1-41) contains no line matching exit=<int>; a value cannot be safely invented; line 53 (sha256sum report_breach_run1.json report_breach_run2.json): record body (lines 53-55) contains no line matching exit=<int>; a value cannot be safely invented; line 56 (cmp ... && echo BYTE-IDENTICAL): record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_throughput -v -- record body (lines 1-41) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 53: sha256sum report_breach_run1.json report_breach_run2.json -- record body (lines 53-55) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 56: cmp ... && echo BYTE-IDENTICAL -- record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented
+[unchanged_conformant] ../transcript-drift/captured_output.txt (transcript-drift)
+    all 16 record(s) already have a header and an exit= value; nothing to migrate
+[refused] ../wallet-reconciler/captured_output.txt (wallet-reconciler)
+    2 record(s) with no recoverable exit= value: line 160 (sha256sum report_run1.json report_run2.json): record body (lines 160-163) contains no line matching exit=<int>; a value cannot be safely invented; line 164 (cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL): record body (lines 164-166) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 160: sha256sum report_run1.json report_run2.json -- record body (lines 160-163) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 164: cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL -- record body (lines 164-166) contains no line matching exit=<int>; a value cannot be safely invented
+[refused] ../weak-assertion-scanner/captured_output.txt (weak-assertion-scanner)
+    verify-no-regression: this rewrite would increase driftcheck.py's findings for this tool from 1 to 3 (new/increased code(s): EXIT_CODE_MISMATCH, README_COMMAND_NOT_IN_TRANSCRIPT, TEST_COUNT_MISMATCH); reverted, left unchanged. Underlying migration reason (not applied): promoted 8/16 bare command line(s) to headers using their own exit= value; 8 left unchanged (no recoverable exit=)
+    promoted line 1: python3 -m unittest test_weakassert -v (exit= at line 216)
+    promoted line 218: python3 weakassert.py --root samples_strong ; echo "exit=$?" (exit= at line 220)
+    promoted line 222: python3 weakassert.py --root samples_weak -o r1.json ; echo "exit=$?" (exit= at line 223)
+    promoted line 225: python3 weakassert.py --root samples_weak -o r2.json ; echo "exit=$?" (exit= at line 226)
+    promoted line 235: python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo "exit=$?" (exit= at line 237)
+    promoted line 239: python3 weakassert.py --root /nonexistent_dir ; echo "exit=$?" (exit= at line 241)
+    promoted line 257: python3 weakassert.py --root demo_category ; echo "exit=$?" (exit= at line 259)
+    promoted line 260: python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo "exit=$?" (exit= at line 262)
+    left unchanged line 228: sha256sum r1.json r2.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 229-232); left as plain text, not promoted
+    left unchanged line 232: cmp r1.json r2.json && echo BYTE-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 233-235); left as plain text, not promoted
+    left unchanged line 243: grep -c "/sessions\|/tmp\|/home" r1.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 244-247); left as plain text, not promoted
+    left unchanged line 247: cp -r samples_weak /tmp/relocated_weak_copy -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 248-248); left as plain text, not promoted
+    left unchanged line 248: python3 weakassert.py --root samples_weak > /tmp/reloc_a.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 249-249); left as plain text, not promoted
+    left unchanged line 249: python3 weakassert.py --root /tmp/relocated_weak_copy > /tmp/reloc_b.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 250-250); left as plain text, not promoted
+    left unchanged line 250: sha256sum /tmp/reloc_a.json /tmp/reloc_b.json -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 251-253); left as plain text, not promoted
+    left unchanged line 253: cmp /tmp/reloc_a.json /tmp/reloc_b.json && echo RELOCATION-IDENTICAL -- no line matching exit=<int> between here and the next '$ ' line or end-of-file (region lines 254-257); left as plain text, not promoted
+    verify-no-regression: 1 -> 3 finding(s) for this tool [BLOCKED]
+[refused] ../xrpl-address/captured_output.txt (xrpl-address)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_address_validate -v): record body (lines 1-44) contains no line matching exit=<int>; a value cannot be safely invented; line 56 (sha256sum report_invalid_run1.json report_invalid_run2.json): record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented; line 59 (cmp ... && echo BYTE-IDENTICAL): record body (lines 59-61) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_address_validate -v -- record body (lines 1-44) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 56: sha256sum report_invalid_run1.json report_invalid_run2.json -- record body (lines 56-58) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 59: cmp ... && echo BYTE-IDENTICAL -- record body (lines 59-61) contains no line matching exit=<int>; a value cannot be safely invented
+[refused] ../xrpl-auditor/captured_output.txt (xrpl-auditor)
+    3 record(s) with no recoverable exit= value: line 1 (python3 -m unittest test_payout_audit -v): record body (lines 1-34) contains no line matching exit=<int>; a value cannot be safely invented; line 46 (sha256sum audit_dirty_run1.json audit_dirty_run2.json): record body (lines 46-48) contains no line matching exit=<int>; a value cannot be safely invented; line 49 (cmp ... && echo BYTE-IDENTICAL): record body (lines 49-51) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 1: python3 -m unittest test_payout_audit -v -- record body (lines 1-34) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 46: sha256sum audit_dirty_run1.json audit_dirty_run2.json -- record body (lines 46-48) contains no line matching exit=<int>; a value cannot be safely invented
+    refused line 49: cmp ... && echo BYTE-IDENTICAL -- record body (lines 49-51) contains no line matching exit=<int>; a value cannot be safely invented
+
+counts: {"migrated": 17, "refused": 22, "unchanged_conformant": 7}
