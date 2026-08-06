@@ -1,0 +1,235 @@
+coverage_audit.py -- captured verification output
+Environment: CPython 3.11.15, Linux x86_64, stdlib only, no network.
+Working directory for these commands: regression-checker/ (repo root is its parent).
+
+=== $ python3 -m unittest test_coverage_audit -v ===
+test_exit_code_zero_when_fully_reproducing (test_coverage_audit.TestBuildReportAllReproducing.test_exit_code_zero_when_fully_reproducing) ... ok
+test_status_field_is_reproducing (test_coverage_audit.TestBuildReportAllReproducing.test_status_field_is_reproducing) ... ok
+test_totals_all_in_reproducing_bucket (test_coverage_audit.TestBuildReportAllReproducing.test_totals_all_in_reproducing_bucket) ... ok
+test_baseline_entries_count (test_coverage_audit.TestBuildReportAllStates.test_baseline_entries_count) ... ok
+test_counts_match_hand_count (test_coverage_audit.TestBuildReportAllStates.test_counts_match_hand_count) ... ok
+test_discovered_directories_count (test_coverage_audit.TestBuildReportAllStates.test_discovered_directories_count) ... ok
+test_discovered_plus_baseline_minus_overlap_identity (test_coverage_audit.TestBuildReportAllStates.test_discovered_plus_baseline_minus_overlap_identity) ... ok
+test_every_state_appears_exactly_once (test_coverage_audit.TestBuildReportAllStates.test_every_state_appears_exactly_once) ... ok
+test_exit_code_is_nonzero_when_not_all_reproducing (test_coverage_audit.TestBuildReportAllStates.test_exit_code_is_nonzero_when_not_all_reproducing) ... ok
+test_no_absolute_paths_in_report_text (test_coverage_audit.TestBuildReportAllStates.test_no_absolute_paths_in_report_text) ... ok
+test_report_is_json_serializable_and_canonical (test_coverage_audit.TestBuildReportAllStates.test_report_is_json_serializable_and_canonical) ... ok
+test_report_status_field_reflects_issues (test_coverage_audit.TestBuildReportAllStates.test_report_status_field_reflects_issues) ... ok
+test_results_sorted_by_tool_name (test_coverage_audit.TestBuildReportAllStates.test_results_sorted_by_tool_name) ... ok
+test_totals_sum_equals_len_results (test_coverage_audit.TestBuildReportAllStates.test_totals_sum_equals_len_results) ... ok
+test_empty_repo_is_trivially_exit_zero (test_coverage_audit.TestBuildReportEmptyRepo.test_empty_repo_is_trivially_exit_zero) ... ok
+test_malformed_baselines_raises_before_touching_root (test_coverage_audit.TestBuildReportSetupErrors.test_malformed_baselines_raises_before_touching_root) ... ok
+test_missing_baselines_raises (test_coverage_audit.TestBuildReportSetupErrors.test_missing_baselines_raises) ... ok
+test_root_not_directory_raises (test_coverage_audit.TestBuildReportSetupErrors.test_root_not_directory_raises) ... ok
+test_cli_default_timeout_flag_accepted (test_coverage_audit.TestCLI.test_cli_default_timeout_flag_accepted) ... ok
+test_cli_exit_one_on_not_baselined (test_coverage_audit.TestCLI.test_cli_exit_one_on_not_baselined) ... ok
+test_cli_exit_one_on_stale (test_coverage_audit.TestCLI.test_cli_exit_one_on_stale) ... ok
+test_cli_exit_two_on_bool_expected_exit_code (test_coverage_audit.TestCLI.test_cli_exit_two_on_bool_expected_exit_code) ... ok
+test_cli_exit_two_on_malformed_json (test_coverage_audit.TestCLI.test_cli_exit_two_on_malformed_json) ... ok
+test_cli_exit_two_on_missing_baselines_file (test_coverage_audit.TestCLI.test_cli_exit_two_on_missing_baselines_file) ... ok
+test_cli_exit_two_on_root_not_directory (test_coverage_audit.TestCLI.test_cli_exit_two_on_root_not_directory) ... ok
+test_cli_exit_zero_all_reproducing (test_coverage_audit.TestCLI.test_cli_exit_zero_all_reproducing) ... ok
+test_cli_help_exits_zero (test_coverage_audit.TestCLI.test_cli_help_exits_zero) ... ok
+test_cli_stdout_has_no_extraneous_output_on_success (test_coverage_audit.TestCLI.test_cli_stdout_has_no_extraneous_output_on_success) ... ok
+test_cli_unwritable_output_is_setup_error (test_coverage_audit.TestCLI.test_cli_unwritable_output_is_setup_error) ... ok
+test_cli_writes_output_file (test_coverage_audit.TestCLI.test_cli_writes_output_file) ... ok
+test_ascii_only (test_coverage_audit.TestCanonicalJSON.test_ascii_only) ... ok
+test_deterministic_across_calls (test_coverage_audit.TestCanonicalJSON.test_deterministic_across_calls) ... ok
+test_no_extra_whitespace (test_coverage_audit.TestCanonicalJSON.test_no_extra_whitespace) ... ok
+test_single_trailing_newline (test_coverage_audit.TestCanonicalJSON.test_single_trailing_newline) ... ok
+test_sorted_keys (test_coverage_audit.TestCanonicalJSON.test_sorted_keys) ... ok
+test_directory_with_no_entry_is_not_baselined (test_coverage_audit.TestClassifyNotBaselined.test_directory_with_no_entry_is_not_baselined) ... ok
+test_not_baselined_detail_mentions_no_entry (test_coverage_audit.TestClassifyNotBaselined.test_not_baselined_detail_mentions_no_entry) ... ok
+test_entry_without_directory_is_orphaned (test_coverage_audit.TestClassifyOrphanedBaseline.test_entry_without_directory_is_orphaned) ... ok
+test_orphaned_detail_mentions_missing_directory (test_coverage_audit.TestClassifyOrphanedBaseline.test_orphaned_detail_mentions_missing_directory) ... ok
+test_orphaned_never_attempts_execution (test_coverage_audit.TestClassifyOrphanedBaseline.test_orphaned_never_attempts_execution) ... ok
+test_reproducing_nonzero_expected_exit (test_coverage_audit.TestClassifyReproducing.test_reproducing_nonzero_expected_exit) ... ok
+test_reproducing_result_has_no_reasons_key (test_coverage_audit.TestClassifyReproducing.test_reproducing_result_has_no_reasons_key) ... ok
+test_reproducing_stdout_mode (test_coverage_audit.TestClassifyReproducing.test_reproducing_stdout_mode) ... ok
+test_reproducing_when_exit_and_hash_match (test_coverage_audit.TestClassifyReproducing.test_reproducing_when_exit_and_hash_match) ... ok
+test_directory_exists_but_script_absent (test_coverage_audit.TestClassifySourceMissing.test_directory_exists_but_script_absent) ... ok
+test_source_missing_detail_names_script (test_coverage_audit.TestClassifySourceMissing.test_source_missing_detail_names_script) ... ok
+test_source_missing_never_attempts_execution (test_coverage_audit.TestClassifySourceMissing.test_source_missing_never_attempts_execution) ... ok
+test_source_missing_rejects_absolute_path_script (test_coverage_audit.TestClassifySourceMissing.test_source_missing_rejects_absolute_path_script) ... ok
+test_source_missing_rejects_path_traversal_script (test_coverage_audit.TestClassifySourceMissing.test_source_missing_rejects_path_traversal_script) ... ok
+test_stale_never_equals_reproducing_state_string (test_coverage_audit.TestClassifyStale.test_stale_never_equals_reproducing_state_string) ... ok
+test_stale_on_exit_code_mismatch (test_coverage_audit.TestClassifyStale.test_stale_on_exit_code_mismatch) ... ok
+test_stale_on_hash_mismatch (test_coverage_audit.TestClassifyStale.test_stale_on_hash_mismatch) ... ok
+test_stale_on_null_expected_hash (test_coverage_audit.TestClassifyStale.test_stale_on_null_expected_hash) ... ok
+test_stale_on_report_not_created (test_coverage_audit.TestClassifyStale.test_stale_on_report_not_created) ... ok
+test_stale_with_both_exit_and_hash_mismatch (test_coverage_audit.TestClassifyStale.test_stale_with_both_exit_and_hash_mismatch) ... ok
+test_nonexistent_interpreter_is_unrunnable (test_coverage_audit.TestClassifyUnrunnable.test_nonexistent_interpreter_is_unrunnable) ... ok
+test_timeout_is_unrunnable (test_coverage_audit.TestClassifyUnrunnable.test_timeout_is_unrunnable) ... ok
+test_unrunnable_has_detail_error_text (test_coverage_audit.TestClassifyUnrunnable.test_unrunnable_has_detail_error_text) ... ok
+test_unrunnable_never_reported_as_reproducing (test_coverage_audit.TestClassifyUnrunnable.test_unrunnable_never_reported_as_reproducing) ... ok
+test_two_runs_same_directory_are_byte_identical (test_coverage_audit.TestDeterminismSameDirectory.test_two_runs_same_directory_are_byte_identical) ... ok
+test_empty_root_returns_empty_list (test_coverage_audit.TestDiscoverToolDirs.test_empty_root_returns_empty_list) ... ok
+test_file_as_root_raises (test_coverage_audit.TestDiscoverToolDirs.test_file_as_root_raises) ... ok
+test_finds_subdirectories (test_coverage_audit.TestDiscoverToolDirs.test_finds_subdirectories) ... ok
+test_nonexistent_root_raises (test_coverage_audit.TestDiscoverToolDirs.test_nonexistent_root_raises) ... ok
+test_result_is_sorted (test_coverage_audit.TestDiscoverToolDirs.test_result_is_sorted) ... ok
+test_skips_dotdirs (test_coverage_audit.TestDiscoverToolDirs.test_skips_dotdirs) ... ok
+test_skips_plain_files (test_coverage_audit.TestDiscoverToolDirs.test_skips_plain_files) ... ok
+test_skips_pycache (test_coverage_audit.TestDiscoverToolDirs.test_skips_pycache) ... ok
+test_empty_command_returns_none (test_coverage_audit.TestFindScriptToken.test_empty_command_returns_none) ... ok
+test_extra_args_ignored (test_coverage_audit.TestFindScriptToken.test_extra_args_ignored) ... ok
+test_interpreter_alone_no_script_returns_none (test_coverage_audit.TestFindScriptToken.test_interpreter_alone_no_script_returns_none) ... ok
+test_no_py_token_returns_none (test_coverage_audit.TestFindScriptToken.test_no_py_token_returns_none) ... ok
+test_non_interpreter_falls_back_to_py_scan (test_coverage_audit.TestFindScriptToken.test_non_interpreter_falls_back_to_py_scan) ... ok
+test_python3_interpreter (test_coverage_audit.TestFindScriptToken.test_python3_interpreter) ... ok
+test_python_interpreter (test_coverage_audit.TestFindScriptToken.test_python_interpreter) ... ok
+test_versioned_python_interpreter (test_coverage_audit.TestFindScriptToken.test_versioned_python_interpreter) ... ok
+test_versioned_python_interpreter_single_digit (test_coverage_audit.TestFindScriptToken.test_versioned_python_interpreter_single_digit) ... ok
+test_bool_false_is_not_exit_code (test_coverage_audit.TestIsExitCode.test_bool_false_is_not_exit_code) ... ok
+test_bool_true_is_not_exit_code (test_coverage_audit.TestIsExitCode.test_bool_true_is_not_exit_code) ... ok
+test_float_is_not_exit_code (test_coverage_audit.TestIsExitCode.test_float_is_not_exit_code) ... ok
+test_none_is_not_exit_code (test_coverage_audit.TestIsExitCode.test_none_is_not_exit_code) ... ok
+test_plain_int_negative_is_exit_code (test_coverage_audit.TestIsExitCode.test_plain_int_negative_is_exit_code) ... ok
+test_plain_int_positive_is_exit_code (test_coverage_audit.TestIsExitCode.test_plain_int_positive_is_exit_code) ... ok
+test_plain_int_zero_is_exit_code (test_coverage_audit.TestIsExitCode.test_plain_int_zero_is_exit_code) ... ok
+test_python_native_bool_int_equality_sanity (test_coverage_audit.TestIsExitCode.test_python_native_bool_int_equality_sanity) ... ok
+test_string_is_not_exit_code (test_coverage_audit.TestIsExitCode.test_string_is_not_exit_code) ... ok
+test_command_empty_list_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_command_empty_list_raises) ... ok
+test_command_not_list_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_command_not_list_raises) ... ok
+test_command_with_non_string_token_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_command_with_non_string_token_raises) ... ok
+test_expected_exit_code_bool_false_raises_not_coerced (test_coverage_audit.TestLoadBaselinesEntryValidation.test_expected_exit_code_bool_false_raises_not_coerced) ... ok
+test_expected_exit_code_bool_true_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_expected_exit_code_bool_true_raises) ... ok
+test_expected_exit_code_float_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_expected_exit_code_float_raises) ... ok
+test_expected_exit_code_string_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_expected_exit_code_string_raises) ... ok
+test_expected_hash_non_hex_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_expected_hash_non_hex_raises) ... ok
+test_expected_hash_non_string_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_expected_hash_non_string_raises) ... ok
+test_expected_hash_wrong_length_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_expected_hash_wrong_length_raises) ... ok
+test_invalid_report_mode_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_invalid_report_mode_raises) ... ok
+test_missing_command_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_missing_command_raises) ... ok
+test_missing_expected_exit_code_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_missing_expected_exit_code_raises) ... ok
+test_missing_expected_report_sha256_key_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_missing_expected_report_sha256_key_raises) ... ok
+test_missing_report_mode_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_missing_report_mode_raises) ... ok
+test_missing_status_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_missing_status_raises) ... ok
+test_status_unbaselineable_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_status_unbaselineable_raises) ... ok
+test_status_unknown_string_raises (test_coverage_audit.TestLoadBaselinesEntryValidation.test_status_unknown_string_raises) ... ok
+test_valid_uppercase_hex_hash_accepted (test_coverage_audit.TestLoadBaselinesEntryValidation.test_valid_uppercase_hex_hash_accepted) ... ok
+test_empty_file_raises (test_coverage_audit.TestLoadBaselinesMalformedJSON.test_empty_file_raises) ... ok
+test_entry_not_object_raises (test_coverage_audit.TestLoadBaselinesMalformedJSON.test_entry_not_object_raises) ... ok
+test_invalid_json_raises (test_coverage_audit.TestLoadBaselinesMalformedJSON.test_invalid_json_raises) ... ok
+test_tools_value_not_object_raises (test_coverage_audit.TestLoadBaselinesMalformedJSON.test_tools_value_not_object_raises) ... ok
+test_top_level_list_instead_of_object_raises (test_coverage_audit.TestLoadBaselinesMalformedJSON.test_top_level_list_instead_of_object_raises) ... ok
+test_top_level_object_without_tools_key_raises (test_coverage_audit.TestLoadBaselinesMalformedJSON.test_top_level_object_without_tools_key_raises) ... ok
+test_directory_as_baselines_path_raises (test_coverage_audit.TestLoadBaselinesMissingOrUnreadable.test_directory_as_baselines_path_raises) ... ok
+test_missing_file_message_names_path (test_coverage_audit.TestLoadBaselinesMissingOrUnreadable.test_missing_file_message_names_path) ... ok
+test_missing_file_raises_setup_error (test_coverage_audit.TestLoadBaselinesMissingOrUnreadable.test_missing_file_raises_setup_error) ... ok
+test_unreadable_file_raises_setup_error (test_coverage_audit.TestLoadBaselinesMissingOrUnreadable.test_unreadable_file_raises_setup_error) ... skipped 'running as root: chmod 000 does not block reads'
+test_multiple_entries_all_loaded (test_coverage_audit.TestLoadBaselinesValid.test_multiple_entries_all_loaded) ... ok
+test_null_expected_hash_accepted (test_coverage_audit.TestLoadBaselinesValid.test_null_expected_hash_accepted) ... ok
+test_returns_plain_dict_not_original_object_identity (test_coverage_audit.TestLoadBaselinesValid.test_returns_plain_dict_not_original_object_identity) ... ok
+test_single_valid_entry_loads (test_coverage_audit.TestLoadBaselinesValid.test_single_valid_entry_loads) ... ok
+test_baseline_starts_valid_and_exit_is_zero (test_coverage_audit.TestPositiveControlStaleFlip.test_baseline_starts_valid_and_exit_is_zero) ... ok
+test_mutating_expected_exit_code_flips_state_to_stale_and_exit_nonzero (test_coverage_audit.TestPositiveControlStaleFlip.test_mutating_expected_exit_code_flips_state_to_stale_and_exit_nonzero) ... ok
+test_mutating_hash_flips_state_to_stale_and_exit_nonzero (test_coverage_audit.TestPositiveControlStaleFlip.test_mutating_hash_flips_state_to_stale_and_exit_nonzero) ... ok
+test_real_baselines_json_was_never_touched (test_coverage_audit.TestPositiveControlStaleFlip.test_real_baselines_json_was_never_touched) ... ok
+test_reverting_the_mutation_flips_back_to_zero (test_coverage_audit.TestPositiveControlStaleFlip.test_reverting_the_mutation_flips_back_to_zero) ... ok
+test_all_other_baselined_tools_reproduce (test_coverage_audit.TestRealRepository.test_all_other_baselined_tools_reproduce) ... ok
+test_baseline_entries_count_is_23 (test_coverage_audit.TestRealRepository.test_baseline_entries_count_is_23) ... ok
+test_bug_hunt_finding_bundle_index_is_stale (test_coverage_audit.TestRealRepository.test_bug_hunt_finding_bundle_index_is_stale) ... ok
+test_discovered_directories_count_is_45 (test_coverage_audit.TestRealRepository.test_discovered_directories_count_is_45) ... ok
+test_exit_code_is_nonzero (test_coverage_audit.TestRealRepository.test_exit_code_is_nonzero) ... ok
+test_not_baselined_count_is_22 (test_coverage_audit.TestRealRepository.test_not_baselined_count_is_22) ... ok
+test_orphaned_baseline_count_is_zero (test_coverage_audit.TestRealRepository.test_orphaned_baseline_count_is_zero) ... ok
+test_reproducing_count_is_22 (test_coverage_audit.TestRealRepository.test_reproducing_count_is_22) ... ok
+test_source_missing_count_is_zero (test_coverage_audit.TestRealRepository.test_source_missing_count_is_zero) ... ok
+test_stale_count_is_1 (test_coverage_audit.TestRealRepository.test_stale_count_is_1) ... ok
+test_totals_sum_to_45 (test_coverage_audit.TestRealRepository.test_totals_sum_to_45) ... ok
+test_unrunnable_count_is_zero (test_coverage_audit.TestRealRepository.test_unrunnable_count_is_zero) ... ok
+test_file_mode_nonzero_exit (test_coverage_audit.TestRunCommand.test_file_mode_nonzero_exit) ... ok
+test_file_mode_report_not_created (test_coverage_audit.TestRunCommand.test_file_mode_report_not_created) ... ok
+test_file_mode_success (test_coverage_audit.TestRunCommand.test_file_mode_success) ... ok
+test_nonexistent_interpreter_is_unrunnable (test_coverage_audit.TestRunCommand.test_nonexistent_interpreter_is_unrunnable) ... ok
+test_report_bytes_length_recorded (test_coverage_audit.TestRunCommand.test_report_bytes_length_recorded) ... ok
+test_stdout_mode_success (test_coverage_audit.TestRunCommand.test_stdout_mode_success) ... ok
+test_temp_report_dir_cleaned_up (test_coverage_audit.TestRunCommand.test_temp_report_dir_cleaned_up) ... ok
+test_timeout_is_unrunnable (test_coverage_audit.TestRunCommand.test_timeout_is_unrunnable) ... ok
+test_deterministic (test_coverage_audit.TestSha256Hex.test_deterministic) ... ok
+test_different_input_different_hash (test_coverage_audit.TestSha256Hex.test_different_input_different_hash) ... ok
+test_hex_length_is_64 (test_coverage_audit.TestSha256Hex.test_hex_length_is_64) ... ok
+test_known_value_empty_bytes (test_coverage_audit.TestSha256Hex.test_known_value_empty_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 148 tests in 16.958s
+
+OK (skipped=1)
+exit=0
+
+=== $ python3 coverage_audit.py -o baseline_coverage_report.json ===
+exit=1
+
+(this is the committed, unedited regression-checker/baseline_coverage_report.json;
+ counts.discovered_directories=45 counts.baseline_entries=23
+ counts.reproducing=22 counts.stale=1 counts.not_baselined=22
+ counts.orphaned_baseline=0 counts.source_missing=0 counts.unrunnable=0)
+
+--- Positive control: isolated fixture, one valid baseline mutated into a stale entry ---
+(built fresh under /tmp, never touches the real regression-checker/baselines.json;
+ same tool script + same tool dir both times, only the recorded expected_report_sha256 changes)
+
+=== $ python3 coverage_audit.py --root root --baselines baselines_valid.json -o report_valid.json ===
+exit=0
+
+=== $ python3 -c "import json; d=json.load(open('report_valid.json')); print(d['results'][0]['state'])" ===
+reproducing
+exit=0
+
+=== $ python3 coverage_audit.py --root root --baselines baselines_stale.json -o report_stale.json ===
+exit=1
+
+=== $ python3 -c "import json; d=json.load(open('report_stale.json')); r=d['results'][0]; print(r['state'], r['reasons'])" ===
+stale ['hash_mismatch']
+exit=0
+
+SUMMARY of the flip: valid baseline -> exit 0; identical tool, mutated (stale) baseline -> exit 1.
+
+--- Determinism proof, including a relocation leg ---
+
+=== $ python3 coverage_audit.py -o /tmp/run1.json ===
+exit=1
+
+
+=== $ python3 coverage_audit.py -o /tmp/run2.json ===
+exit=1
+
+=== $ sha256sum /tmp/run1.json /tmp/run2.json ===
+40dc7f3f3c304cfb18c42b94a1bd291c7bf67fd16b9dd4eab11ed8972cc45de0  /tmp/run1.json
+40dc7f3f3c304cfb18c42b94a1bd291c7bf67fd16b9dd4eab11ed8972cc45de0  /tmp/run2.json
+exit=0
+
+=== $ cmp /tmp/run1.json /tmp/run2.json && echo BYTE-IDENTICAL ===
+BYTE-IDENTICAL
+exit=0
+
+--- relocation leg: same tree, copied to a DIFFERENTLY-NAMED absolute path ---
+
+=== $ cp -r <repo> /tmp/reloc_xyz_29718 ===
+exit=0
+
+=== $ cd /tmp/reloc_xyz_29718/regression-checker && python3 coverage_audit.py -o /tmp/run3_reloc.json ===
+exit=1
+
+=== $ sha256sum /tmp/run3_reloc.json ===
+40dc7f3f3c304cfb18c42b94a1bd291c7bf67fd16b9dd4eab11ed8972cc45de0  /tmp/run3_reloc.json
+exit=0
+
+=== $ diff /tmp/run1.json /tmp/run3_reloc.json && echo RELOCATED-RUN-BYTE-IDENTICAL ===
+RELOCATED-RUN-BYTE-IDENTICAL
+exit=0
+
+All three sha256 values identical: 40dc7f3f3c304cfb18c42b94a1bd291c7bf67fd16b9dd4eab11ed8972cc45de0
+(the relocated tree was removed after this check; only the hash and this transcript remain)
+
+--- Bug hunt: real, unedited reproduction of the bundle-index divergence ---
+
+=== $ cd bundle-index && python3 bundle_index.py bundle_bad -o /tmp/x.json ===
+bundle_index: input error: bundle directory 'bundle_bad' does not exist
+exit=2
+
+Baseline for bundle-index expects exit 1; only bundle_ok/ is committed under
+bundle-index/, bundle_bad/ is not. coverage_audit.py reports this as:
+  state: stale, reasons: [exit_code_mismatch, report_not_created]
+This is the one real, non-manufactured divergence found among the 23 baselined tools.
