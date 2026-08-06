@@ -227,14 +227,14 @@ Ran 222 tests in 0.739s
 
 OK
 
-$ python3 snapdiff.py snapshot_before.json snapshot_after_same.json ; echo "exit=$?"
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_same.json ; echo "exit=$?" ===
 {"change_count":0,"changes":[],"ignored_fields":[],"result":"identical","task_count_after":12,"task_count_before":12}
 exit=0
 
-$ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r1.json ; echo "exit=$?"
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r2.json ; echo "exit=$?"
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o r2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum r1.json r2.json
@@ -244,18 +244,18 @@ ca482c447dd77ad9bdcc3bdf57b75aaa38397be473a9585bb5394bd695ad2eca  r2.json
 $ cmp r1.json r2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --ignore reward --ignore status ; echo "exit=$?"
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --ignore reward --ignore status ; echo "exit=$?" ===
 {"change_count":7,"changes":[{"items":[{"id":"EV-A2","type":"link"}],"task_id":"TASK-EVIDENCE-ADD","type":"EVIDENCE_ADDED"},{"items":[{"id":"EV-R2","type":"doc"}],"task_id":"TASK-EVIDENCE-REMOVE","type":"EVIDENCE_REMOVED"},{"field":"list","from":"outstanding","task_id":"TASK-FIELD-LIST","to":"archived","type":"FIELD_CHANGED"},{"field":"title","from":"\u00c5ngstr\u00f6m calibration \u2014 caf\u00e9 run","task_id":"TASK-FIELD-TITLE-UNICODE","to":"\u00c5ngstr\u00f6m calibration \u2014 \u4eac\u90fd run","type":"FIELD_CHANGED"},{"from":{"in_progress":1,"outstanding":8,"rewarded":3},"task_id":null,"to":{"archived":1,"in_progress":2,"outstanding":7,"rewarded":3},"type":"SUMMARY_CHANGED"},{"task":{"created_at":"2026-01-13T00:00:00Z","deadline":"2026-02-13T00:00:00Z","evidence":[],"list":"outstanding","reward":"5","status":"outstanding","task_id":"TASK-ADDED-ONE","title":"New scouting task"},"task_id":"TASK-ADDED-ONE","type":"TASK_ADDED"},{"task":{"created_at":"2026-01-12T00:00:00Z","deadline":"2026-02-12T00:00:00Z","evidence":[],"list":"outstanding","reward":"15","status":"outstanding","task_id":"TASK-REMOVED-ONE","title":"This task will be removed"},"task_id":"TASK-REMOVED-ONE","type":"TASK_REMOVED"}],"ignored_fields":["reward","status"],"result":"changed","task_count_after":12,"task_count_before":12}
 exit=1
 
-$ python3 snapdiff.py snapshot_after_changed.json snapshot_before.json -o rev.json ; echo "exit=$?"
+=== $ python3 snapdiff.py snapshot_after_changed.json snapshot_before.json -o rev.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 snapdiff.py /nonexistent.json snapshot_before.json ; echo "exit=$?"
+=== $ python3 snapdiff.py /nonexistent.json snapshot_before.json ; echo "exit=$?" ===
 snapdiff.py: error: could not read '/nonexistent.json': [Errno 2] No such file or directory: '/nonexistent.json'
 exit=2
 
-$ python3 snapdiff.py snapshot_before.json ; echo "exit=$?"
+=== $ python3 snapdiff.py snapshot_before.json ; echo "exit=$?" ===
 usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
 snapdiff.py: error: the following arguments are required: after
 exit=2
