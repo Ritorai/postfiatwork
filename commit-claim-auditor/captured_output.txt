@@ -2,30 +2,10 @@ captured_output.txt - commit-claim-auditor
 Real transcript. Every command below was executed; every hash was produced by the run shown.
 Paths are relative so this transcript is reproducible from a fresh clone.
 
-=== $ python3 -m unittest test_claimhist -v 2>&1 | tail -25 ===
-test_hash_inside_backticks_matches (test_claimhist.TestShaTokenRe.test_hash_inside_backticks_matches) ... ok
-test_matches_standalone_64_hex (test_claimhist.TestShaTokenRe.test_matches_standalone_64_hex) ... ok
-test_multiple_tokens_per_line (test_claimhist.TestShaTokenRe.test_multiple_tokens_per_line) ... ok
-test_underscore_adjacent_hash_still_matches (test_claimhist.TestShaTokenRe.test_underscore_adjacent_hash_still_matches) ... ok
-test_associated_target_only_populated_when_run_tests_and_found (test_claimhist.TestTestcountClaimRecompute.test_associated_target_only_populated_when_run_tests_and_found) ... ok
-test_claim_shape_recorded (test_claimhist.TestTestcountClaimRecompute.test_claim_shape_recorded) ... ok
-test_current_with_run_tests (test_claimhist.TestTestcountClaimRecompute.test_current_with_run_tests) ... ok
-test_malformed_ambiguous_number_regardless_of_run_tests (test_claimhist.TestTestcountClaimRecompute.test_malformed_ambiguous_number_regardless_of_run_tests) ... ok
-test_malformed_ambiguous_test_module (test_claimhist.TestTestcountClaimRecompute.test_malformed_ambiguous_test_module) ... ok
-test_missing_source_no_test_module (test_claimhist.TestTestcountClaimRecompute.test_missing_source_no_test_module) ... ok
-test_no_claim_on_unrelated_line (test_claimhist.TestTestcountClaimRecompute.test_no_claim_on_unrelated_line) ... ok
-test_not_recomputed_by_default (test_claimhist.TestTestcountClaimRecompute.test_not_recomputed_by_default) ... ok
-test_stale_with_run_tests (test_claimhist.TestTestcountClaimRecompute.test_stale_with_run_tests) ... ok
-test_unittest_execution_failed_with_run_tests (test_claimhist.TestTestcountClaimRecompute.test_unittest_execution_failed_with_run_tests) ... ok
-test_bare_cr_line_endings (test_claimhist.TestUnicodeAndCrlf.test_bare_cr_line_endings) ... ok
-test_crlf_preserves_line_numbers (test_claimhist.TestUnicodeAndCrlf.test_crlf_preserves_line_numbers) ... ok
-test_invalid_utf8_does_not_crash_and_other_claims_found (test_claimhist.TestUnicodeAndCrlf.test_invalid_utf8_does_not_crash_and_other_claims_found) ... ok
-test_mixed_lf_and_crlf (test_claimhist.TestUnicodeAndCrlf.test_mixed_lf_and_crlf) ... ok
-test_unicode_filename_current (test_claimhist.TestUnicodeAndCrlf.test_unicode_filename_current) ... ok
-test_unicode_prose_parsed (test_claimhist.TestUnicodeAndCrlf.test_unicode_prose_parsed) ... ok
-
+=== $ python3 -m unittest test_claimhist ===
+..........................................................................................................................................................
 ----------------------------------------------------------------------
-Ran 154 tests in 4.149s
+Ran 154 tests in 2.671s
 
 OK
 exit=0
