@@ -1,4 +1,4 @@
-$ python3 -m unittest test_weakassert -v
+=== $ python3 -m unittest test_weakassert -v ===
 test_category_choices_enforced (test_weakassert.TestArgParser) ... ok
 test_category_repeatable (test_weakassert.TestArgParser) ... ok
 test_default_category_is_none (test_weakassert.TestArgParser) ... ok
@@ -215,14 +215,14 @@ Ran 202 tests in 0.075s
 OK
 exit=0
 
-$ python3 weakassert.py --root samples_strong ; echo "exit=$?"
+=== $ python3 weakassert.py --root samples_strong ; echo "exit=$?" ===
 {"category_filter":null,"errors":[],"files_scanned":1,"findings":[],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA001_NO_ASSERTION":0,"WA002_CALL_ONLY":0,"WA003_SELF_DERIVED_EXPECTATION":0,"WA004_SKIPPED_TEST":0},"findings_total":0},"tests_scanned":14,"tool":"weakassert"}
 exit=0
 
-$ python3 weakassert.py --root samples_weak -o r1.json ; echo "exit=$?"
+=== $ python3 weakassert.py --root samples_weak -o r1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 weakassert.py --root samples_weak -o r2.json ; echo "exit=$?"
+=== $ python3 weakassert.py --root samples_weak -o r2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum r1.json r2.json
@@ -232,11 +232,11 @@ d76cc52792d197f82f38b713a9ca39b5a1d271a728e31af2aee271ea8b72e9d9  r2.json
 $ cmp r1.json r2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo "exit=$?"
+=== $ python3 weakassert.py --root samples_weak --category WA004_SKIPPED_TEST ; echo "exit=$?" ===
 {"category_filter":["WA004_SKIPPED_TEST"],"errors":[],"files_scanned":1,"findings":[{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): skip","line":51,"path":"test_subject.py","test_name":"TestSkipped.test_decorator_skip"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): skipIf","line":55,"path":"test_subject.py","test_name":"TestSkipped.test_decorator_skip_if"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): skipUnless","line":59,"path":"test_subject.py","test_name":"TestSkipped.test_decorator_skip_unless"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): self.skipTest","line":62,"path":"test_subject.py","test_name":"TestSkipped.test_body_only_skip_test"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): class:skip","line":68,"path":"test_subject.py","test_name":"TestWholeClassSkipped.test_member_a"},{"category":"WA004_SKIPPED_TEST","detail":"skip marker(s): class:skip","line":71,"path":"test_subject.py","test_name":"TestWholeClassSkipped.test_member_b"}],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA004_SKIPPED_TEST":6},"findings_total":6},"tests_scanned":15,"tool":"weakassert"}
 exit=1
 
-$ python3 weakassert.py --root /nonexistent_dir ; echo "exit=$?"
+=== $ python3 weakassert.py --root /nonexistent_dir ; echo "exit=$?" ===
 weakassert: error: --root '/nonexistent_dir' is not a directory
 exit=2
 
@@ -254,9 +254,9 @@ $ cmp /tmp/reloc_a.json /tmp/reloc_b.json && echo RELOCATION-IDENTICAL
 RELOCATION-IDENTICAL
 
 === --category DEMO (extra, beyond mandatory list) ===
-$ python3 weakassert.py --root demo_category ; echo "exit=$?"
+=== $ python3 weakassert.py --root demo_category ; echo "exit=$?" ===
 {"category_filter":null,"errors":[],"files_scanned":1,"findings":[{"category":"WA001_NO_ASSERTION","detail":"no self.assert*/fail/bare-assert/assertRaises found in body (checked one level of self./bare helper calls)","line":7,"path":"test_only_no_assertion.py","test_name":"TestDemo.test_nothing_is_checked"}],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA001_NO_ASSERTION":1,"WA002_CALL_ONLY":0,"WA003_SELF_DERIVED_EXPECTATION":0,"WA004_SKIPPED_TEST":0},"findings_total":1},"tests_scanned":1,"tool":"weakassert"}
 exit=1
-$ python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo "exit=$?"
+=== $ python3 weakassert.py --root demo_category --category WA004_SKIPPED_TEST ; echo "exit=$?" ===
 {"category_filter":["WA004_SKIPPED_TEST"],"errors":[],"files_scanned":1,"findings":[],"schema_version":1,"summary":{"files_with_errors":0,"findings_by_category":{"WA004_SKIPPED_TEST":0},"findings_total":0},"tests_scanned":1,"tool":"weakassert"}
 exit=0
