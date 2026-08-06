@@ -1,0 +1,311 @@
+report-freshness -- captured verification output
+==================================================
+
+Records follow transcript-drift/FORMAT.md: a "=== $ command ===" header,
+the verbatim output, and an exit= line on its own line in the body.
+
+Environment: CPython 3.11.15, Linux x86_64, stdlib only, no network.
+
+This transcript documents the two-location byte-identity proof AFTER
+adding kind: "regenerable" / "pinned" to the manifest and folding in the
+new transcript-schema/ and adversarial-suite/ directories (per the
+coordinator's requested design change). The checker is run once inside
+this checkout (location 1), the entire repository is then copied to a
+second, differently-named absolute path (location 2), and the checker is
+run there too. The two freshness_report.json files are shown to be
+byte-identical by diff and by matching SHA-256, and neither location's
+absolute path appears in either output (grep exits 1 -- "no match found"
+-- for both).
+
+exit=1 on freshness.py is expected here: of the 5 shipped manifest
+entries, the 2 pinned entries (env-leak-scanner, transcript-drift) are
+pinned_present (never regenerated, as designed), and all 3 regenerable
+entries (regression-checker, claim-crosscheck, transcript-schema)
+currently report state "stale" -- see freshness_report.json and
+README.md "Two-location proof" for why: adding report-freshness/,
+transcript-schema/, and adversarial-suite/ in this same commit changes
+what those three repo-enumerating/repo-scanning generators produce. This
+is a real, observed result, not tuned to look clean. exit=1 (not 3)
+because no entry is generation_failed/tool_missing/pinned_missing.
+
+This checker was NEVER run in a way that overwrites a committed report
+in place: every regenerated artifact is written under a fresh tempfile
+directory this script creates outside the repository (see freshness.py's
+run_generation()). regression-checker/baseline_coverage_report.json and
+claim-crosscheck/sample_run.json on disk are byte-identical, before and
+after every command below, to what they were before this checker ever
+ran -- verified explicitly in the "sha256sum of committed reports
+outside report-freshness/" record.
+
+=== $ python3 -m unittest test_freshness -v ===
+test_counts_sum_of_states_equals_total (test_freshness.TestCLI.test_counts_sum_of_states_equals_total) ... /tmp/build_6/repo/report-freshness/test_freshness.py:1002: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/freshness_cli_7mzgdult/manifest.json' mode='r' encoding='utf-8'>
+  entries = json.load(open(manifest_path, encoding="utf-8"))["entries"]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_counts_total_matches_entries_length (test_freshness.TestCLI.test_counts_total_matches_entries_length) ... ok
+test_custom_timeout_causes_timeout_state (test_freshness.TestCLI.test_custom_timeout_causes_timeout_state) ... ok
+test_entries_sorted_by_id (test_freshness.TestCLI.test_entries_sorted_by_id) ... ok
+test_exit_0_all_match (test_freshness.TestCLI.test_exit_0_all_match) ... ok
+test_exit_0_all_match_and_pinned_present (test_freshness.TestCLI.test_exit_0_all_match_and_pinned_present) ... /tmp/build_6/repo/report-freshness/test_freshness.py:1002: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/freshness_cli_d_cf6wfl/manifest.json' mode='r' encoding='utf-8'>
+  entries = json.load(open(manifest_path, encoding="utf-8"))["entries"]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_exit_1_missing (test_freshness.TestCLI.test_exit_1_missing) ... ok
+test_exit_1_stale (test_freshness.TestCLI.test_exit_1_stale) ... ok
+test_exit_2_malformed_manifest (test_freshness.TestCLI.test_exit_2_malformed_manifest) ... ok
+test_exit_2_output_unwritable (test_freshness.TestCLI.test_exit_2_output_unwritable) ... ok
+test_exit_2_root_not_a_directory (test_freshness.TestCLI.test_exit_2_root_not_a_directory) ... ok
+test_exit_3_generation_failed (test_freshness.TestCLI.test_exit_3_generation_failed) ... ok
+test_exit_3_pinned_missing (test_freshness.TestCLI.test_exit_3_pinned_missing) ... ok
+test_exit_3_pinned_missing_outranks_stale (test_freshness.TestCLI.test_exit_3_pinned_missing_outranks_stale) ... ok
+test_exit_3_takes_priority_over_stale (test_freshness.TestCLI.test_exit_3_takes_priority_over_stale) ... ok
+test_exit_3_tool_missing (test_freshness.TestCLI.test_exit_3_tool_missing) ... ok
+test_help_exits_0 (test_freshness.TestCLI.test_help_exits_0) ... ok
+test_json_top_level_keys (test_freshness.TestCLI.test_json_top_level_keys) ... ok
+test_no_absolute_path_markers_in_output (test_freshness.TestCLI.test_no_absolute_path_markers_in_output) ... /tmp/build_6/repo/report-freshness/test_freshness.py:1002: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/freshness_cli_oqcq9lp1/manifest.json' mode='r' encoding='utf-8'>
+  entries = json.load(open(manifest_path, encoding="utf-8"))["entries"]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_output_defaults_to_stdout (test_freshness.TestCLI.test_output_defaults_to_stdout) ... ok
+test_output_written_to_file (test_freshness.TestCLI.test_output_written_to_file) ... ok
+test_pinned_entry_generator_never_invoked_end_to_end (test_freshness.TestCLI.test_pinned_entry_generator_never_invoked_end_to_end) ... ok
+test_unknown_argument_exits_2 (test_freshness.TestCLI.test_unknown_argument_exits_2) ... ok
+test_ascii_only (test_freshness.TestCanonicalJson.test_ascii_only) ... ok
+test_deterministic_across_calls (test_freshness.TestCanonicalJson.test_deterministic_across_calls) ... ok
+test_round_trip (test_freshness.TestCanonicalJson.test_round_trip) ... ok
+test_sorted_keys (test_freshness.TestCanonicalJson.test_sorted_keys) ... ok
+test_tight_separators (test_freshness.TestCanonicalJson.test_tight_separators) ... ok
+test_trailing_newline (test_freshness.TestCanonicalJson.test_trailing_newline) ... ok
+test_pinned_missing_reason_mentions_evidence (test_freshness.TestClassifyPinnedPure.test_pinned_missing_reason_mentions_evidence) ... ok
+test_pinned_missing_when_bytes_none (test_freshness.TestClassifyPinnedPure.test_pinned_missing_when_bytes_none) ... ok
+test_pinned_present_empty_bytes_still_present (test_freshness.TestClassifyPinnedPure.test_pinned_present_empty_bytes_still_present) ... ok
+test_pinned_present_when_bytes_exist (test_freshness.TestClassifyPinnedPure.test_pinned_present_when_bytes_exist) ... ok
+test_exit_match_no_output_committed_absent_expected_0 (test_freshness.TestClassifyRegenerablePure.test_exit_match_no_output_committed_absent_expected_0) ... ok
+test_exit_match_no_output_committed_absent_expected_1 (test_freshness.TestClassifyRegenerablePure.test_exit_match_no_output_committed_absent_expected_1) ... ok
+test_exit_match_no_output_committed_present_expected_0 (test_freshness.TestClassifyRegenerablePure.test_exit_match_no_output_committed_present_expected_0) ... ok
+test_exit_match_no_output_committed_present_expected_1 (test_freshness.TestClassifyRegenerablePure.test_exit_match_no_output_committed_present_expected_1) ... ok
+test_exit_mismatch_0_expected_1_actual (test_freshness.TestClassifyRegenerablePure.test_exit_mismatch_0_expected_1_actual) ... ok
+test_exit_mismatch_1_expected_0_actual (test_freshness.TestClassifyRegenerablePure.test_exit_mismatch_1_expected_0_actual) ... ok
+test_exit_mismatch_1_expected_2_actual (test_freshness.TestClassifyRegenerablePure.test_exit_mismatch_1_expected_2_actual) ... ok
+test_exit_mismatch_none_actual_treated_as_mismatch (test_freshness.TestClassifyRegenerablePure.test_exit_mismatch_none_actual_treated_as_mismatch) ... ok
+test_exit_mismatch_signal_negative (test_freshness.TestClassifyRegenerablePure.test_exit_mismatch_signal_negative) ... ok
+test_launch_error_committed_absent (test_freshness.TestClassifyRegenerablePure.test_launch_error_committed_absent) ... ok
+test_launch_error_committed_present (test_freshness.TestClassifyRegenerablePure.test_launch_error_committed_present) ... ok
+test_match_expected_0 (test_freshness.TestClassifyRegenerablePure.test_match_expected_0) ... ok
+test_match_expected_1 (test_freshness.TestClassifyRegenerablePure.test_match_expected_1) ... ok
+test_missing_expected_0 (test_freshness.TestClassifyRegenerablePure.test_missing_expected_0) ... ok
+test_missing_expected_1 (test_freshness.TestClassifyRegenerablePure.test_missing_expected_1) ... ok
+test_stale_binary_content (test_freshness.TestClassifyRegenerablePure.test_stale_binary_content) ... ok
+test_stale_expected_0_single_byte_diff (test_freshness.TestClassifyRegenerablePure.test_stale_expected_0_single_byte_diff) ... ok
+test_stale_expected_1_length_diff (test_freshness.TestClassifyRegenerablePure.test_stale_expected_1_length_diff) ... ok
+test_timed_out_committed_absent (test_freshness.TestClassifyRegenerablePure.test_timed_out_committed_absent) ... ok
+test_timed_out_committed_present (test_freshness.TestClassifyRegenerablePure.test_timed_out_committed_present) ... ok
+test_tool_missing_wins_over_everything_committed_absent (test_freshness.TestClassifyRegenerablePure.test_tool_missing_wins_over_everything_committed_absent) ... ok
+test_tool_missing_wins_over_everything_committed_present (test_freshness.TestClassifyRegenerablePure.test_tool_missing_wins_over_everything_committed_present) ... ok
+test_expected_nonzero_exit_treated_as_legitimate_when_match (test_freshness.TestEvaluateEntry.test_expected_nonzero_exit_treated_as_legitimate_when_match) ... ok
+test_expected_nonzero_exit_treated_as_legitimate_when_stale (test_freshness.TestEvaluateEntry.test_expected_nonzero_exit_treated_as_legitimate_when_stale) ... ok
+test_pinned_entry_generator_never_invoked_even_when_tool_and_script_exist (test_freshness.TestEvaluateEntry.test_pinned_entry_generator_never_invoked_even_when_tool_and_script_exist) ... ok
+test_pinned_entry_generator_never_invoked_when_missing_too (test_freshness.TestEvaluateEntry.test_pinned_entry_generator_never_invoked_when_missing_too) ... ok
+test_pinned_entry_records_committed_hash_and_length (test_freshness.TestEvaluateEntry.test_pinned_entry_records_committed_hash_and_length) ... ok
+test_pinned_entry_with_no_generation_field_at_all (test_freshness.TestEvaluateEntry.test_pinned_entry_with_no_generation_field_at_all) ... ok
+test_regenerable_entry_still_detects_modification_after_kind_split (test_freshness.TestEvaluateEntry.test_regenerable_entry_still_detects_modification_after_kind_split) ... ok
+test_state_generation_failed_launch_error (test_freshness.TestEvaluateEntry.test_state_generation_failed_launch_error) ... ok
+test_state_generation_failed_timeout (test_freshness.TestEvaluateEntry.test_state_generation_failed_timeout) ... ok
+test_state_generation_failed_unexpected_exit (test_freshness.TestEvaluateEntry.test_state_generation_failed_unexpected_exit) ... ok
+test_state_generation_failed_writes_nothing (test_freshness.TestEvaluateEntry.test_state_generation_failed_writes_nothing) ... ok
+test_state_match (test_freshness.TestEvaluateEntry.test_state_match) ... ok
+test_state_missing (test_freshness.TestEvaluateEntry.test_state_missing) ... ok
+test_state_pinned_missing (test_freshness.TestEvaluateEntry.test_state_pinned_missing) ... ok
+test_state_pinned_present (test_freshness.TestEvaluateEntry.test_state_pinned_present) ... ok
+test_state_stale_modified (test_freshness.TestEvaluateEntry.test_state_stale_modified) ... ok
+test_state_tool_missing_cwd_absent (test_freshness.TestEvaluateEntry.test_state_tool_missing_cwd_absent) ... ok
+test_state_tool_missing_script_absent (test_freshness.TestEvaluateEntry.test_state_tool_missing_script_absent) ... ok
+test_bool_false_rejected (test_freshness.TestIsExitCode.test_bool_false_rejected) ... ok
+test_bool_true_rejected (test_freshness.TestIsExitCode.test_bool_true_rejected) ... ok
+test_float_rejected (test_freshness.TestIsExitCode.test_float_rejected) ... ok
+test_int_zero_is_valid (test_freshness.TestIsExitCode.test_int_zero_is_valid) ... ok
+test_negative_int_is_valid (test_freshness.TestIsExitCode.test_negative_int_is_valid) ... ok
+test_none_rejected (test_freshness.TestIsExitCode.test_none_rejected) ... ok
+test_string_rejected (test_freshness.TestIsExitCode.test_string_rejected) ... ok
+test_malformed_argv_contains_non_string (test_freshness.TestManifestValidationErrors.test_malformed_argv_contains_non_string) ... ok
+test_malformed_argv_empty_list (test_freshness.TestManifestValidationErrors.test_malformed_argv_empty_list) ... ok
+test_malformed_argv_missing_out_placeholder (test_freshness.TestManifestValidationErrors.test_malformed_argv_missing_out_placeholder) ... ok
+test_malformed_argv_not_a_list (test_freshness.TestManifestValidationErrors.test_malformed_argv_not_a_list) ... ok
+test_malformed_committed_report_absolute_path (test_freshness.TestManifestValidationErrors.test_malformed_committed_report_absolute_path) ... ok
+test_malformed_committed_report_empty_string (test_freshness.TestManifestValidationErrors.test_malformed_committed_report_empty_string) ... ok
+test_malformed_committed_report_not_string (test_freshness.TestManifestValidationErrors.test_malformed_committed_report_not_string) ... ok
+test_malformed_cwd_absolute_path (test_freshness.TestManifestValidationErrors.test_malformed_cwd_absolute_path) ... ok
+test_malformed_cwd_empty_string (test_freshness.TestManifestValidationErrors.test_malformed_cwd_empty_string) ... ok
+test_malformed_cwd_not_string (test_freshness.TestManifestValidationErrors.test_malformed_cwd_not_string) ... ok
+test_malformed_description_not_a_string (test_freshness.TestManifestValidationErrors.test_malformed_description_not_a_string) ... ok
+test_malformed_duplicate_id (test_freshness.TestManifestValidationErrors.test_malformed_duplicate_id) ... ok
+test_malformed_duplicate_id_across_kinds (test_freshness.TestManifestValidationErrors.test_malformed_duplicate_id_across_kinds) ... ok
+test_malformed_entries_empty_list (test_freshness.TestManifestValidationErrors.test_malformed_entries_empty_list) ... ok
+test_malformed_entries_not_a_list (test_freshness.TestManifestValidationErrors.test_malformed_entries_not_a_list) ... ok
+test_malformed_entry_missing_committed_report (test_freshness.TestManifestValidationErrors.test_malformed_entry_missing_committed_report) ... ok
+test_malformed_entry_missing_id (test_freshness.TestManifestValidationErrors.test_malformed_entry_missing_id) ... ok
+test_malformed_entry_missing_kind (test_freshness.TestManifestValidationErrors.test_malformed_entry_missing_kind) ... ok
+test_malformed_entry_missing_tool (test_freshness.TestManifestValidationErrors.test_malformed_entry_missing_tool) ... ok
+test_malformed_entry_not_object (test_freshness.TestManifestValidationErrors.test_malformed_entry_not_object) ... ok
+test_malformed_expected_exit_code_bool_false (test_freshness.TestManifestValidationErrors.test_malformed_expected_exit_code_bool_false) ... ok
+test_malformed_expected_exit_code_bool_true (test_freshness.TestManifestValidationErrors.test_malformed_expected_exit_code_bool_true) ... ok
+test_malformed_expected_exit_code_float (test_freshness.TestManifestValidationErrors.test_malformed_expected_exit_code_float) ... ok
+test_malformed_expected_exit_code_string (test_freshness.TestManifestValidationErrors.test_malformed_expected_exit_code_string) ... ok
+test_malformed_generation_missing_argv (test_freshness.TestManifestValidationErrors.test_malformed_generation_missing_argv) ... ok
+test_malformed_generation_missing_cwd (test_freshness.TestManifestValidationErrors.test_malformed_generation_missing_cwd) ... ok
+test_malformed_generation_not_object (test_freshness.TestManifestValidationErrors.test_malformed_generation_not_object) ... ok
+test_malformed_id_empty_string (test_freshness.TestManifestValidationErrors.test_malformed_id_empty_string) ... ok
+test_malformed_id_not_string (test_freshness.TestManifestValidationErrors.test_malformed_id_not_string) ... ok
+test_malformed_inputs_contains_non_string (test_freshness.TestManifestValidationErrors.test_malformed_inputs_contains_non_string) ... ok
+test_malformed_inputs_not_a_list (test_freshness.TestManifestValidationErrors.test_malformed_inputs_not_a_list) ... ok
+test_malformed_kind_empty_string (test_freshness.TestManifestValidationErrors.test_malformed_kind_empty_string) ... ok
+test_malformed_kind_invalid_value (test_freshness.TestManifestValidationErrors.test_malformed_kind_invalid_value) ... ok
+test_malformed_kind_not_string (test_freshness.TestManifestValidationErrors.test_malformed_kind_not_string) ... ok
+test_malformed_kind_null (test_freshness.TestManifestValidationErrors.test_malformed_kind_null) ... ok
+test_malformed_missing_entries_key (test_freshness.TestManifestValidationErrors.test_malformed_missing_entries_key) ... ok
+test_malformed_pinned_committed_report_absolute_path (test_freshness.TestManifestValidationErrors.test_malformed_pinned_committed_report_absolute_path) ... ok
+test_malformed_pinned_expected_exit_code_bool (test_freshness.TestManifestValidationErrors.test_malformed_pinned_expected_exit_code_bool) ... ok
+test_malformed_pinned_expected_exit_code_string (test_freshness.TestManifestValidationErrors.test_malformed_pinned_expected_exit_code_string) ... ok
+test_malformed_pinned_generation_argv_not_a_list (test_freshness.TestManifestValidationErrors.test_malformed_pinned_generation_argv_not_a_list) ... ok
+test_malformed_pinned_generation_cwd_absolute_path (test_freshness.TestManifestValidationErrors.test_malformed_pinned_generation_cwd_absolute_path) ... ok
+test_malformed_pinned_generation_missing_argv (test_freshness.TestManifestValidationErrors.test_malformed_pinned_generation_missing_argv) ... ok
+test_malformed_pinned_generation_missing_cwd (test_freshness.TestManifestValidationErrors.test_malformed_pinned_generation_missing_cwd) ... ok
+test_malformed_pinned_generation_not_object (test_freshness.TestManifestValidationErrors.test_malformed_pinned_generation_not_object) ... ok
+test_malformed_pinned_id_empty_string (test_freshness.TestManifestValidationErrors.test_malformed_pinned_id_empty_string) ... ok
+test_malformed_pinned_tool_empty_string (test_freshness.TestManifestValidationErrors.test_malformed_pinned_tool_empty_string) ... ok
+test_malformed_regenerable_missing_expected_exit_code (test_freshness.TestManifestValidationErrors.test_malformed_regenerable_missing_expected_exit_code) ... ok
+test_malformed_regenerable_missing_generation (test_freshness.TestManifestValidationErrors.test_malformed_regenerable_missing_generation) ... ok
+test_malformed_tool_contains_backslash (test_freshness.TestManifestValidationErrors.test_malformed_tool_contains_backslash) ... ok
+test_malformed_tool_contains_forward_slash (test_freshness.TestManifestValidationErrors.test_malformed_tool_contains_forward_slash) ... ok
+test_malformed_tool_empty_string (test_freshness.TestManifestValidationErrors.test_malformed_tool_empty_string) ... ok
+test_malformed_tool_not_string (test_freshness.TestManifestValidationErrors.test_malformed_tool_not_string) ... ok
+test_malformed_top_level_is_string (test_freshness.TestManifestValidationErrors.test_malformed_top_level_is_string) ... ok
+test_malformed_top_level_not_object (test_freshness.TestManifestValidationErrors.test_malformed_top_level_not_object) ... ok
+test_manifest_file_invalid_json (test_freshness.TestManifestValidationErrorsExtra.test_manifest_file_invalid_json) ... ok
+test_manifest_file_missing (test_freshness.TestManifestValidationErrorsExtra.test_manifest_file_missing) ... ok
+test_description_defaults_to_none (test_freshness.TestManifestValidationValid.test_description_defaults_to_none) ... ok
+test_explicit_description_and_inputs_preserved (test_freshness.TestManifestValidationValid.test_explicit_description_and_inputs_preserved) ... ok
+test_inputs_defaults_to_empty_list (test_freshness.TestManifestValidationValid.test_inputs_defaults_to_empty_list) ... ok
+test_loads_pinned_entry_with_generation_and_exit_code (test_freshness.TestManifestValidationValid.test_loads_pinned_entry_with_generation_and_exit_code) ... ok
+test_loads_pinned_entry_with_generation_but_no_exit_code (test_freshness.TestManifestValidationValid.test_loads_pinned_entry_with_generation_but_no_exit_code) ... ok
+test_loads_pinned_entry_with_no_generation (test_freshness.TestManifestValidationValid.test_loads_pinned_entry_with_no_generation) ... ok
+test_loads_single_regenerable_entry (test_freshness.TestManifestValidationValid.test_loads_single_regenerable_entry) ... ok
+test_mixed_regenerable_and_pinned_entries_load (test_freshness.TestManifestValidationValid.test_mixed_regenerable_and_pinned_entries_load) ... ok
+test_pinned_generation_argv_does_not_require_out_placeholder (test_freshness.TestManifestValidationValid.test_pinned_generation_argv_does_not_require_out_placeholder) ... ok
+test_two_entries_unique_ids_ok (test_freshness.TestManifestValidationValid.test_two_entries_unique_ids_ok) ... ok
+test_all_ids_unique (test_freshness.TestRealManifestDogfood.test_all_ids_unique) ... ok
+test_build_report_real_repo_counts_total (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_counts_total) ... ok
+test_build_report_real_repo_deterministic_across_runs (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_deterministic_across_runs) ... ok
+test_build_report_real_repo_entries_sorted (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_entries_sorted) ... ok
+test_build_report_real_repo_every_state_valid (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_every_state_valid) ... ok
+test_build_report_real_repo_exit_code_not_setup_error (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_exit_code_not_setup_error) ... ok
+test_build_report_real_repo_json_round_trips (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_json_round_trips) ... ok
+test_build_report_real_repo_no_path_leak_markers (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_no_path_leak_markers) ... ok
+test_build_report_real_repo_no_tmp_slash_substring (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_no_tmp_slash_substring) ... ok
+test_build_report_real_repo_observed_states_are_valid (test_freshness.TestRealManifestDogfood.test_build_report_real_repo_observed_states_are_valid) ... ok
+test_committed_freshness_report_json_not_modified_by_dogfood_tests (test_freshness.TestRealManifestDogfood.test_committed_freshness_report_json_not_modified_by_dogfood_tests) ... ok
+test_each_entry_has_full_field_set (test_freshness.TestRealManifestDogfood.test_each_entry_has_full_field_set) ... ok
+test_env_leak_scanner_entry_is_pinned_not_regenerable (test_freshness.TestRealManifestDogfood.test_env_leak_scanner_entry_is_pinned_not_regenerable) ... ok
+test_every_entry_tool_directory_exists (test_freshness.TestRealManifestDogfood.test_every_entry_tool_directory_exists) ... ok
+test_every_regenerable_entry_generation_cwd_exists (test_freshness.TestRealManifestDogfood.test_every_regenerable_entry_generation_cwd_exists) ... ok
+test_loads_at_least_three_entries (test_freshness.TestRealManifestDogfood.test_loads_at_least_three_entries) ... ok
+test_manifest_file_is_valid_json (test_freshness.TestRealManifestDogfood.test_manifest_file_is_valid_json) ... ok
+test_manifest_has_at_least_three_regenerable_entries (test_freshness.TestRealManifestDogfood.test_manifest_has_at_least_three_regenerable_entries) ... ok
+test_manifest_has_at_least_two_pinned_entries (test_freshness.TestRealManifestDogfood.test_manifest_has_at_least_two_pinned_entries) ... ok
+test_pinned_entries_in_real_manifest_never_invoke_generator (test_freshness.TestRealManifestDogfood.test_pinned_entries_in_real_manifest_never_invoke_generator) ... ok
+test_regenerable_entries_in_real_manifest_have_expected_exit_code (test_freshness.TestRealManifestDogfood.test_regenerable_entries_in_real_manifest_have_expected_exit_code) ... ok
+test_transcript_drift_after_migration_entry_is_pinned_not_regenerable (test_freshness.TestRealManifestDogfood.test_transcript_drift_after_migration_entry_is_pinned_not_regenerable) ... ok
+test_output_never_contains_either_location_path (test_freshness.TestRelocatedRepository.test_output_never_contains_either_location_path) ... ok
+test_relocated_manifest_entry_order_does_not_affect_output (test_freshness.TestRelocatedRepository.test_relocated_manifest_entry_order_does_not_affect_output) ... ok
+test_relocated_report_reflects_real_states (test_freshness.TestRelocatedRepository.test_relocated_report_reflects_real_states) ... ok
+test_two_locations_hashes_match (test_freshness.TestRelocatedRepository.test_two_locations_hashes_match) ... ok
+test_two_locations_produce_byte_identical_reports (test_freshness.TestRelocatedRepository.test_two_locations_produce_byte_identical_reports) ... ok
+test_binary_content_roundtrip (test_freshness.TestRunGeneration.test_binary_content_roundtrip) ... ok
+test_launch_error_bad_interpreter (test_freshness.TestRunGeneration.test_launch_error_bad_interpreter) ... ok
+test_nowrite_mode (test_freshness.TestRunGeneration.test_nowrite_mode) ... ok
+test_timeout (test_freshness.TestRunGeneration.test_timeout) ... ok
+test_write_mode_exit_0 (test_freshness.TestRunGeneration.test_write_mode_exit_0) ... ok
+test_write_mode_exit_1 (test_freshness.TestRunGeneration.test_write_mode_exit_1) ... ok
+test_binary_safe (test_freshness.TestShaHelpers.test_binary_safe) ... ok
+test_different_bytes_different_hash (test_freshness.TestShaHelpers.test_different_bytes_different_hash) ... ok
+test_known_vector_abc (test_freshness.TestShaHelpers.test_known_vector_abc) ... ok
+test_known_vector_empty (test_freshness.TestShaHelpers.test_known_vector_empty) ... ok
+test_argv_without_py_token_skips_script_check (test_freshness.TestToolMissingReason.test_argv_without_py_token_skips_script_check) ... ok
+test_cwd_exists_script_missing (test_freshness.TestToolMissingReason.test_cwd_exists_script_missing) ... ok
+test_cwd_exists_script_present (test_freshness.TestToolMissingReason.test_cwd_exists_script_present) ... ok
+test_cwd_missing (test_freshness.TestToolMissingReason.test_cwd_missing) ... ok
+test_committed_report_bytes_unchanged (test_freshness.TestWorkingTreeUntouched.test_committed_report_bytes_unchanged) ... ok
+test_no_leftover_temp_directories (test_freshness.TestWorkingTreeUntouched.test_no_leftover_temp_directories) ... ok
+test_no_new_files_in_repo_root_without_output_flag (test_freshness.TestWorkingTreeUntouched.test_no_new_files_in_repo_root_without_output_flag) ... ok
+test_no_new_files_in_tool_directory (test_freshness.TestWorkingTreeUntouched.test_no_new_files_in_tool_directory) ... ok
+test_only_declared_output_file_created (test_freshness.TestWorkingTreeUntouched.test_only_declared_output_file_created) ... ok
+test_pinned_tool_directory_untouched (test_freshness.TestWorkingTreeUntouched.test_pinned_tool_directory_untouched) ... ok
+
+----------------------------------------------------------------------
+Ran 193 tests in 21.281s
+
+OK
+exit=0
+
+=== $ sha256sum regression-checker/baseline_coverage_report.json claim-crosscheck/sample_run.json transcript-drift/drift_report_after_migration.json env-leak-scanner/leak_report_2026-08-04.json transcript-schema/validation_report.json ===
+(run from /tmp/build_6/repo -- committed reports OUTSIDE report-freshness/, checked
+before running freshness.py, so they can be compared again afterward)
+689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b  regression-checker/baseline_coverage_report.json
+0a54c5eca02ef85cf741cd1dabc58bcde071667e4d07d453af70e06d20df0a50  claim-crosscheck/sample_run.json
+6a2a38fe7a5ec86a7b7437332eab8412affeec10fabb3cc99c1d3406764d7b73  transcript-drift/drift_report_after_migration.json
+dab40f0b653132521be15efa35ff84bb4d535517f264a529e4821898c013480b  env-leak-scanner/leak_report_2026-08-04.json
+8e1f6efc4bcc584757fb215802b0578c5f6aa735526c5335f37dddc53901ccc1  transcript-schema/validation_report.json
+exit=0
+
+=== $ python3 freshness.py -o freshness_report.json ===
+(run from /tmp/build_6/repo/report-freshness -- location 1; regenerates only into a
+tempfile.TemporaryDirectory() this script creates, never into the repository)
+exit=1
+
+=== $ sha256sum freshness_report.json ===
+(location 1)
+5089032f5e25e7d78baf7e3c20f6c9dadbc111816cec43d105c649492bd42ac7  freshness_report.json
+exit=0
+
+=== $ sha256sum regression-checker/baseline_coverage_report.json claim-crosscheck/sample_run.json transcript-drift/drift_report_after_migration.json env-leak-scanner/leak_report_2026-08-04.json transcript-schema/validation_report.json ===
+(run from /tmp/build_6/repo -- same five committed reports, checked again AFTER
+running freshness.py -- byte-identical to the "before" record above, proving
+freshness.py did not modify any committed report in the repository)
+689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b  regression-checker/baseline_coverage_report.json
+0a54c5eca02ef85cf741cd1dabc58bcde071667e4d07d453af70e06d20df0a50  claim-crosscheck/sample_run.json
+6a2a38fe7a5ec86a7b7437332eab8412affeec10fabb3cc99c1d3406764d7b73  transcript-drift/drift_report_after_migration.json
+dab40f0b653132521be15efa35ff84bb4d535517f264a529e4821898c013480b  env-leak-scanner/leak_report_2026-08-04.json
+8e1f6efc4bcc584757fb215802b0578c5f6aa735526c5335f37dddc53901ccc1  transcript-schema/validation_report.json
+exit=0
+
+=== $ cp -a /tmp/build_6/repo /tmp/build_6/relocated_v2_kj4x ===
+(a full copy of the repository at a second, differently-named absolute path -- location 2)
+exit=0
+
+=== $ python3 freshness.py -o freshness_report_relocated.json ===
+(run from /tmp/build_6/relocated_v2_kj4x/report-freshness -- location 2)
+exit=1
+
+=== $ sha256sum freshness_report_relocated.json ===
+(location 2, file at /tmp/build_6/relocated_v2_kj4x/report-freshness/freshness_report_relocated.json)
+5089032f5e25e7d78baf7e3c20f6c9dadbc111816cec43d105c649492bd42ac7  freshness_report_relocated.json
+exit=0
+
+=== $ diff /tmp/build_6/repo/report-freshness/freshness_report.json /tmp/build_6/relocated_v2_kj4x/report-freshness/freshness_report_relocated.json ===
+(no output -- diff found zero differences: byte-identical)
+exit=0
+
+=== $ grep -c "/tmp/build_6/repo" freshness_report_relocated.json /tmp/build_6/repo/report-freshness/freshness_report.json ===
+(run from /tmp/build_6/relocated_v2_kj4x/report-freshness -- checking that location 1's
+absolute path does not appear anywhere in either report; grep -c prints a 0 count per
+file and exits 1 because zero total matches were found across all files, which is the
+desired result)
+freshness_report_relocated.json:0
+/tmp/build_6/repo/report-freshness/freshness_report.json:0
+exit=1
+
+=== $ grep -c "/tmp/build_6/relocated_v2_kj4x" freshness_report_relocated.json /tmp/build_6/repo/report-freshness/freshness_report.json ===
+(same check for location 2's absolute path)
+freshness_report_relocated.json:0
+/tmp/build_6/repo/report-freshness/freshness_report.json:0
+exit=1
