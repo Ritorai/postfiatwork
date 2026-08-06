@@ -246,9 +246,9 @@ path (`/tmp/build_1/reloc_71bd4f`, not part of this commit) -- produced
 byte-identical canonical JSON:
 
 ```
-sha256(out1.json) = 44c5e381ec2e49907945311dd0f6e3fa99f35066c35da9749d44fb1a2812a301   (this checkout, run 1)
-sha256(out2.json) = 44c5e381ec2e49907945311dd0f6e3fa99f35066c35da9749d44fb1a2812a301   (this checkout, run 2)
-sha256(out3.json) = 44c5e381ec2e49907945311dd0f6e3fa99f35066c35da9749d44fb1a2812a301   (relocated copy, run 3)
+sha256(out1.json) = 0a54c5eca02ef85cf741cd1dabc58bcde071667e4d07d453af70e06d20df0a50   (this checkout, run 1)
+sha256(out2.json) = 0a54c5eca02ef85cf741cd1dabc58bcde071667e4d07d453af70e06d20df0a50   (this checkout, run 2)
+sha256(out3.json) = 0a54c5eca02ef85cf741cd1dabc58bcde071667e4d07d453af70e06d20df0a50   (relocated copy, run 3)
 ```
 
 All three hashes are equal. Full transcript, including the exact commands,
@@ -436,3 +436,34 @@ regenerates into a temp directory and `diff -r`s it against the committed
 Standard library only: `argparse`, `base64`, `filecmp`, `json`, `os`,
 `re`, `shutil`, `sys`, `tempfile`, `unittest`, `subprocess` (tests only).
 No third-party packages. No network access.
+
+
+---
+
+## Report-discovery note (updated after `baseline_coverage_report.json` landed)
+
+An earlier revision of this file recorded that report auto-discovery
+misfired for `regression-checker/`, resolving to `baselines.json` -- an
+INPUT fixture, not an output report. It found no claims there, so it did
+no harm, but the resolution was wrong and was disclosed as limitation 4.
+
+That directory now also ships `baseline_coverage_report.json`. With two
+candidate reports present, discovery no longer guesses: it records
+
+```
+"report_path": null,
+"skipped_reason": "no checkable claims (report discovery: ambiguous)"
+```
+
+which is the correct behaviour. The committed `sample_run.json` and the
+hashes above were regenerated against that state. The substantive result
+is unchanged -- 46 results, 1 discrepancy, the `snapshot-diff/README.md`
+contradiction in `env-leak-scanner`, exit 1.
+
+The general lesson is worth stating plainly, because it bit this
+repository twice in one day: a committed report that enumerates the whole
+repository is invalidated by any commit that adds a file to the
+repository. `sample_run.json` is a snapshot of the tree it was generated
+against, not a standing claim about every future tree. Re-run the
+documented command rather than trusting the committed hash if the tree has
+moved since.
