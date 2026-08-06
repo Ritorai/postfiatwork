@@ -190,7 +190,7 @@ error: duplicate submission_id 'X' at index 1; submission ids must be unique
 exit=2
 
 ### EXTRA - head of the canonical report for records_dupes.json
-=== $ cat report_run1.json | head -c 300; echo '   ...[truncated for display; full file is report_run1.json]' ===
+=== $ python3 -c "d=open('report_run1.json',encoding='utf-8').read(); print(d[:300]+'   ...[truncated for display; full file is report_run1.json]')" ===
 {"comparison_count":10,"config":{"shingle_size":5,"threshold":0.6},"flagged_count":2,"flagged_pairs":[{"overlap_count":81,"overlapping_shingles":["14 march she returned to","a fire extinguisher she reports","and did not hear any","and found the rear service","and notified the duty supervisor","and t   ...[truncated for display; full file is report_run1.json]
 exit=0
 
