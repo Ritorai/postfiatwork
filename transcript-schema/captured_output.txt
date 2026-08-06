@@ -10,11 +10,11 @@ tool it documents (validate_transcript.py validates itself).
 Python 3.11.15
 exit=0
 
-=== $ python3 -m unittest test_validate_transcript -v 2>&1 | tail -6 ===
-test_validate_transcript_imports_are_stdlib (test_validate_transcript.TestStdlibOnly.test_validate_transcript_imports_are_stdlib) ... ok
-
+=== $ python3 -m unittest test_validate_transcript ===
+...............................................................................OK: 33 fixture files + 1 empty dir(s), base64 round-trip clean, diff -r identical across two independent generate() calls
+...................................................................................................................
 ----------------------------------------------------------------------
-Ran 194 tests in 1.625s
+Ran 194 tests in 1.254s
 
 OK
 exit=0
