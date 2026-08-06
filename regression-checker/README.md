@@ -528,19 +528,19 @@ rather than hardcoding the repository's current size).
 ### What the committed report actually says (real run, this commit)
 
 ```
-counts.discovered_directories = 46
+counts.discovered_directories = 49
 counts.baseline_entries       = 23
 counts.reproducing            = 22
 counts.stale                  = 1
-counts.not_baselined          = 23
+counts.not_baselined          = 26
 counts.orphaned_baseline      = 0
 counts.source_missing         = 0
 counts.unrunnable             = 0
-counts.total_records          = 46   (== 22+1+23+0+0+0)
+counts.total_records          = 49   (== 22+1+26+0+0+0)
 exit code                     = 1
 ```
 
-**23 of 46 tool directories have no baseline entry at all** (every tool
+**26 of 49 tool directories have no baseline entry at all** (every tool
 except the 23 listed at the top of this file). That alone forces exit `1`
 and is the majority of the finding here -- baseline coverage is exactly
 half the repository, not the whole of it.
@@ -605,9 +605,9 @@ $ cd /tmp/reloc_cov_7q/regression-checker && python3 coverage_audit.py -o /tmp/r
 
 | Run | sha256 of report |
 |---|---|
-| run1 (original path) | `689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b` |
-| run2 (original path, second run) | `689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b` |
-| run3 (relocated to a differently-named path) | `689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b` |
+| run1 (original path) | `c35975e3827e2458c16d42683b91631b6f7fa2952781cd0fd940e153e2e375c6` |
+| run2 (original path, second run) | `c35975e3827e2458c16d42683b91631b6f7fa2952781cd0fd940e153e2e375c6` |
+| run3 (relocated to a differently-named path) | `c35975e3827e2458c16d42683b91631b6f7fa2952781cd0fd940e153e2e375c6` |
 
 All three identical. No absolute path, hostname, or timestamp reaches the
 report: `--root` and `--baselines` themselves are never written into it,
