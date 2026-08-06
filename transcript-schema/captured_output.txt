@@ -1,0 +1,66 @@
+transcript-schema -- captured verification output
+==================================================
+
+Every command below was actually executed in this environment and is
+recorded in this file's own format: a "=== $ command ===" header, the
+verbatim output, and an exit= line. This transcript is validated by the
+tool it documents (validate_transcript.py validates itself).
+
+=== $ python3 --version ===
+Python 3.11.15
+exit=0
+
+=== $ python3 -m unittest test_validate_transcript -v 2>&1 | tail -6 ===
+test_validate_transcript_imports_are_stdlib (test_validate_transcript.TestStdlibOnly.test_validate_transcript_imports_are_stdlib) ... ok
+
+----------------------------------------------------------------------
+Ran 194 tests in 1.625s
+
+OK
+exit=0
+
+=== $ python3 make_fixtures.py --verify ===
+OK: 33 fixture files + 1 empty dir(s), base64 round-trip clean, diff -r identical across two independent generate() calls
+exit=0
+
+=== $ python3 transcript-schema/validate_transcript.py --root . -o transcript-schema/validation_report.json ===
+exit=1
+
+=== $ python3 transcript-schema/validate_transcript.py --root . -o /tmp/run1.json; python3 transcript-schema/validate_transcript.py --root . -o /tmp/run2.json; sha256sum /tmp/run1.json /tmp/run2.json; cmp /tmp/run1.json /tmp/run2.json && echo BYTE_IDENTICAL_IN_PLACE ===
+810ab3c560b7abe2ffc4faee3e4577a08bbdd0b163b57c25b04816415013dafd  /tmp/run1.json
+810ab3c560b7abe2ffc4faee3e4577a08bbdd0b163b57c25b04816415013dafd  /tmp/run2.json
+BYTE_IDENTICAL_IN_PLACE
+exit=0
+
+=== $ cp -r /path/to/repo /path/to/relocated_check_xyz && cd /path/to/relocated_check_xyz && python3 transcript-schema/validate_transcript.py --root . -o /tmp/run3_relocated.json; sha256sum /tmp/run3_relocated.json; cmp /tmp/run1.json /tmp/run3_relocated.json && echo BYTE_IDENTICAL_RELOCATED ===
+810ab3c560b7abe2ffc4faee3e4577a08bbdd0b163b57c25b04816415013dafd  /tmp/run3_relocated.json
+BYTE_IDENTICAL_RELOCATED
+exit=0
+
+NOTE ON SELF-REFERENCE (prose; not a command record)
+=====================================================
+The report-generation record above ran while this transcript was still
+being appended to, so at that instant this file's own last-recorded
+command had a header but no exit= line yet, and validate_transcript.py
+--root . correctly reported transcript-schema/captured_output.txt against
+TRANSCRIPT_RECORD_HAS_NO_EXIT in the in-flight report. The committed
+validation_report.json was regenerated from the finished file, once the
+"exit=$?" for that command (and the two determinism records after it) had
+actually been appended. The two reports were diffed by finding set
+difference; findings present in only one of them:
+
+  in-flight only (1):
+    transcript-schema/captured_output.txt  TRANSCRIPT_RECORD_HAS_NO_EXIT  line 26
+
+  final only (0): (none)
+
+  in-flight: 116 findings    final: 115 findings
+
+These NOTE lines contain no "=== $ ... ===" header, no exit= line, no
+"Ran N tests" line and no OK/FAILED verdict, so appending them does not
+change what validate_transcript.py sees in any other record. Regenerating
+the report a second time after this append reproduces the exact same
+bytes as the version generated right before this NOTE was written --
+sha256(validation_report.json) is identical before and after this NOTE:
+
+  8e1f6efc4bcc584757fb215802b0578c5f6aa735526c5335f37dddc53901ccc1

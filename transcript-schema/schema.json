@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "name": "captured-output-transcript",
+  "format_reference": "transcript-drift/FORMAT.md",
+  "description": "Machine-readable grammar and diagnostic table for the captured_output.txt transcript format. validate_transcript.py reads every regex and every diagnostic's severity from this file; it does not hardcode them. Changing a pattern or a severity here changes what the validator accepts and what exit code it returns, without touching validate_transcript.py.",
+
+  "encoding": {
+    "decode": "utf-8",
+    "strict": true,
+    "strip_utf8_bom": true,
+    "newline_handling": "universal"
+  },
+
+  "patterns": {
+    "header": {
+      "regex": "^=== \\$ (.+?) ===\\s*$",
+      "description": "FORMAT.md's HEADER_RE, verbatim. Exactly one space after '===', one after '$', one before the closing '==='. Group 1 is the command text."
+    },
+    "header_lookalike": {
+      "regex": "^\\s*={2,}.*\\$.*={2,}\\s*$",
+      "description": "A loose near-miss of the header shape (some run of '=' ... a literal '$' ... a run of '=') that does NOT match the strict header regex. Used only to flag lines that look like a botched header attempt (wrong spacing, missing space, tabs) so they are not silently swallowed into a record's body or into preamble. Any line that matches 'header' is excluded from this check first."
+    },
+    "exit": {
+      "regex": "^\\s*exit=(-?\\d+)\\s*$",
+      "description": "FORMAT.md's EXIT_RE, verbatim. Group 1 is the (possibly negative) integer exit status. First match within a record wins; later matches in the same record are reported as informational duplicates, not errors -- FORMAT.md defines first-wins as correct behaviour, not a defect."
+    },
+    "exit_lookalike": {
+      "regex": "^\\s*[Ee][Xx][Ii][Tt]\\s*[:=]?\\s*\\S*\\s*$",
+      "description": "A loose near-miss of an exit assignment (wrong case, ':' instead of '=', a non-integer value, extra trailing text) that does NOT match the strict 'exit' pattern. Flagged so a typo like 'Exit=0' or 'exit=1.5' is reported precisely instead of silently producing an unexplained TRANSCRIPT_RECORD_HAS_NO_EXIT."
+    },
+    "ran": {
+      "regex": "^Ran (\\d+) tests? in ",
+      "description": "FORMAT.md's RAN_RE, verbatim. Required, once, inside any record whose command is a test command."
+    },
+    "ran_lookalike": {
+      "regex": "^\\s*[Rr]an\\b.*\\btests?\\b",
+      "description": "A loose near-miss of the 'Ran N tests in ...' summary line (wrong case, missing count, reworded) that does NOT match the strict 'ran' pattern."
+    },
+    "verdict": {
+      "regex": "^(OK|FAILED)\\b",
+      "description": "FORMAT.md's VERDICT_RE, verbatim. Group 1 is 'OK' or 'FAILED'. Scanned across the WHOLE file (not just inside records) for the FAILED-anywhere rule, and scanned per-record for the 'required for test commands' rule."
+    },
+    "test_command": {
+      "regex": "\\bunittest\\b",
+      "description": "HEURISTIC, not part of FORMAT.md: a record's header command is treated as a 'test command' (triggering the Ran/verdict requirements) if this pattern matches the command text. FORMAT.md does not define how to recognise a test command; this repository's transcripts invoke tests with 'python3 -m unittest ...', so matching the literal word 'unittest' is the pattern used. See README 'Limitations' for what this misses and what it can false-positive on."
+    }
+  },
+
+  "diagnostics": {
+    "TRANSCRIPT_HAS_NO_COMMAND_RECORDS": {
+      "severity": "error",
+      "scope": "file",
+      "shared_with_driftcheck": true,
+      "message": "no '=== $ command ===' header found anywhere in the file; the transcript has zero command records"
+    },
+    "TRANSCRIPT_RECORD_HAS_NO_EXIT": {
+      "severity": "error",
+      "scope": "record",
+      "shared_with_driftcheck": true,
+      "message": "record has no line matching the exit pattern"
+    },
+    "TRANSCRIPT_SHOWS_TEST_FAILURE": {
+      "severity": "error",
+      "scope": "file",
+      "shared_with_driftcheck": true,
+      "message": "a FAILED verdict line is committed in the transcript"
+    },
+    "TRANSCRIPT_RECORD_EXIT_MALFORMED": {
+      "severity": "error",
+      "scope": "record",
+      "shared_with_driftcheck": false,
+      "message": "line resembles an exit=<int> assignment but does not match the strict exit pattern"
+    },
+    "TRANSCRIPT_RECORD_DUPLICATE_EXIT": {
+      "severity": "info",
+      "scope": "record",
+      "shared_with_driftcheck": false,
+      "message": "a second (or later) valid exit= line appears in this record; FORMAT.md defines first-wins, so this is not itself an error"
+    },
+    "TRANSCRIPT_HEADER_MALFORMED": {
+      "severity": "error",
+      "scope": "file",
+      "shared_with_driftcheck": false,
+      "message": "line resembles a '=== $ command ===' header but does not match the strict header pattern"
+    },
+    "TRANSCRIPT_RECORD_MISSING_RAN_LINE": {
+      "severity": "error",
+      "scope": "record",
+      "shared_with_driftcheck": false,
+      "message": "record's command looks like a test command but has no 'Ran N tests in ' line"
+    },
+    "TRANSCRIPT_RECORD_MISSING_VERDICT": {
+      "severity": "error",
+      "scope": "record",
+      "shared_with_driftcheck": false,
+      "message": "record's command looks like a test command but has no OK/FAILED verdict line"
+    },
+    "TRANSCRIPT_RECORD_RAN_LINE_MALFORMED": {
+      "severity": "error",
+      "scope": "record",
+      "shared_with_driftcheck": false,
+      "message": "line resembles the unittest 'Ran N tests in ' summary but does not match the strict pattern"
+    },
+    "TRANSCRIPT_RECORD_VERDICT_BEFORE_RAN": {
+      "severity": "error",
+      "scope": "record",
+      "shared_with_driftcheck": false,
+      "message": "the record's verdict line (OK/FAILED) appears before its 'Ran N tests in ' line -- unittest never prints them in that order, so this indicates the transcript was edited or corrupted after capture"
+    },
+    "TRANSCRIPT_PREAMBLE_EXIT_LOOKALIKE": {
+      "severity": "info",
+      "scope": "file",
+      "shared_with_driftcheck": false,
+      "message": "a line matching the exit pattern (or a near miss) appears before the first header, i.e. inside preamble; FORMAT.md ignores preamble entirely, so this is informational only, typically a missing header above it"
+    },
+    "TRANSCRIPT_FILE_UNREADABLE": {
+      "severity": "error",
+      "scope": "file",
+      "shared_with_driftcheck": false,
+      "message": "the transcript file could not be read or decoded as UTF-8"
+    }
+  }
+}
