@@ -10,7 +10,7 @@ Python 3.11.15
 v22.22.2
 jq-1.7
 
-$ python3 probe.py ; echo "exit=$?"
+=== $ python3 probe.py ; echo "exit=$?" ===
 limitations-probe -- 12 probes, 12 reproduced
 ======================================================================
 
@@ -80,7 +80,7 @@ reward-reconciler    4/4 reproduced
 schema-checker       4/4 reproduced
 exit=0
 
-$ python3 probe.py -o probe_report.json ; echo "exit=$?"
+=== $ python3 probe.py -o probe_report.json ; echo "exit=$?" ===
 exit=0
 
 $ python3 probe.py -o /tmp/again.json && cmp probe_report.json /tmp/again.json && echo BYTE-IDENTICAL
