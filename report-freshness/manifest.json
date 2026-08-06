@@ -7,12 +7,19 @@
       "kind": "regenerable",
       "description": "Baseline coverage audit: checks every tool directory against baselines.json and reruns each baselined tool to see whether its committed report still reproduces. A current-state snapshot: it is supposed to reflect the repository as it exists right now, so it MUST regenerate byte-for-byte.",
       "generation": {
-        "argv": ["python3", "coverage_audit.py", "-o", "{OUT}"],
+        "argv": [
+          "python3",
+          "coverage_audit.py",
+          "-o",
+          "{OUT}"
+        ],
         "cwd": "regression-checker"
       },
       "committed_report": "regression-checker/baseline_coverage_report.json",
       "expected_exit_code": 1,
-      "inputs": ["regression-checker/baselines.json"]
+      "inputs": [
+        "regression-checker/baselines.json"
+      ]
     },
     {
       "id": "claim-crosscheck:sample_run.json",
@@ -20,7 +27,15 @@
       "kind": "regenerable",
       "description": "Cross-checks numeric/presence claims in every tool README against that tool's own committed report. Reads the whole repository tree (every README.md and every discoverable report file), so its inputs are effectively the full checkout rather than one fixture. A current-state snapshot: it is supposed to reflect the repository as it exists right now, so it MUST regenerate byte-for-byte.",
       "generation": {
-        "argv": ["python3", "crosscheck.py", "--root", "..", "--all", "-o", "{OUT}"],
+        "argv": [
+          "python3",
+          "crosscheck.py",
+          "--root",
+          "..",
+          "--all",
+          "-o",
+          "{OUT}"
+        ],
         "cwd": "claim-crosscheck"
       },
       "committed_report": "claim-crosscheck/sample_run.json",
@@ -33,12 +48,21 @@
       "kind": "regenerable",
       "description": "Validates every tool's captured_output.txt transcript against transcript-drift/FORMAT.md's grammar (header/exit/Ran/verdict line shape), independently of driftcheck.py's README cross-check. A current-state snapshot over every tool directory's transcript file: it is supposed to reflect the repository as it exists right now, so it MUST regenerate byte-for-byte.",
       "generation": {
-        "argv": ["python3", "validate_transcript.py", "--root", "..", "-o", "{OUT}"],
+        "argv": [
+          "python3",
+          "validate_transcript.py",
+          "--root",
+          "..",
+          "-o",
+          "{OUT}"
+        ],
         "cwd": "transcript-schema"
       },
       "committed_report": "transcript-schema/validation_report.json",
       "expected_exit_code": 1,
-      "inputs": ["transcript-schema/schema.json"]
+      "inputs": [
+        "transcript-schema/schema.json"
+      ]
     },
     {
       "id": "env-leak-scanner:leak_report_2026-08-04.json",
@@ -46,11 +70,22 @@
       "kind": "pinned",
       "description": "Point-in-time leak scan, dated in its own filename (2026-08-04). This is evidence of what the repository looked like on that date, not a claim about what it looks like today -- it must NEVER be regenerated against the current tree. Its generator also scans the entire repository, so regenerating it would report every unrelated file added since, which is exactly the false-staleness failure mode this manifest exists to avoid. The original generation command is recorded below purely for provenance; this checker never executes it.",
       "generation": {
-        "argv": ["python3", "leakscan.py", "--root", ".", "--review", "review.json", "-o", "{OUT}"],
+        "argv": [
+          "python3",
+          "leakscan.py",
+          "--root",
+          ".",
+          "--review",
+          "review.json",
+          "-o",
+          "{OUT}"
+        ],
         "cwd": "env-leak-scanner"
       },
       "committed_report": "env-leak-scanner/leak_report_2026-08-04.json",
-      "inputs": ["env-leak-scanner/review.json"]
+      "inputs": [
+        "env-leak-scanner/review.json"
+      ]
     },
     {
       "id": "transcript-drift:drift_report_after_migration.json",
@@ -58,11 +93,42 @@
       "kind": "pinned",
       "description": "The 'after' half of a committed before/after PAIR (drift_report_before_migration.json / drift_report_after_migration.json) documenting one specific migration run at one specific commit. It is evidence that the migration happened and what it changed, not a current-state claim -- regenerating it later against an unrelated later tree would silently turn documented migration evidence into a meaningless comparison. The original generation command is recorded below purely for provenance; this checker never executes it.",
       "generation": {
-        "argv": ["python3", "driftcheck.py", "--root", "..", "--inventory", "inventory.json", "-o", "{OUT}"],
+        "argv": [
+          "python3",
+          "driftcheck.py",
+          "--root",
+          "..",
+          "--inventory",
+          "inventory.json",
+          "-o",
+          "{OUT}"
+        ],
         "cwd": "transcript-drift"
       },
       "committed_report": "transcript-drift/drift_report_after_migration.json",
-      "inputs": ["transcript-drift/inventory.json"]
+      "inputs": [
+        "transcript-drift/inventory.json"
+      ]
+    },
+    {
+      "id": "weak-assertion-scanner:self_scan_report.json",
+      "tool": "weak-assertion-scanner",
+      "kind": "regenerable",
+      "description": "AST self-scan for weak unittest patterns (no assertion, call-only, self-derived expectation, skipped) across every sibling tool directory. A current-state snapshot over the whole repository's test suites: it is supposed to reflect the repository as it exists right now, so it MUST regenerate byte-for-byte. Added to this manifest during the repair recorded in weak-assertion-scanner/REGENERABILITY_EVIDENCE.txt, which found the report unrebuildable (its documented command named a dead absolute sandbox path) and three-way inconsistent with both its README and the tree.",
+      "generation": {
+        "argv": [
+          "python3",
+          "weakassert.py",
+          "--root",
+          "..",
+          "-o",
+          "{OUT}"
+        ],
+        "cwd": "weak-assertion-scanner"
+      },
+      "committed_report": "weak-assertion-scanner/self_scan_report.json",
+      "expected_exit_code": 1,
+      "inputs": []
     }
   ]
 }
