@@ -27,7 +27,7 @@ Linux x86_64
 $ git --version
 git version 2.43.0
 
-$ ls fixtures ; echo "exit=$?"
+=== $ ls fixtures ; echo "exit=$?" ===
 ls: cannot access 'fixtures': No such file or directory
 exit=2
 
@@ -36,7 +36,7 @@ Ran 95 tests in 1.254s
 
 OK
 
-$ python3 make_fixtures.py --check ; echo "exit=$?"
+=== $ python3 make_fixtures.py --check ; echo "exit=$?" ===
 fixtures match the generator (7 files)
 exit=0
 
@@ -50,11 +50,11 @@ UNSAFE_RELATIVE_PATH
 WINDOWS_ILLEGAL_CHARACTER
 WINDOWS_RESERVED_NAME
 
-$ python3 pathscan.py --paths-from fixtures/clean.paths ; echo "exit=$?"
+=== $ python3 pathscan.py --paths-from fixtures/clean.paths ; echo "exit=$?" ===
 {"distinct_paths":5,"findings":[],"paths_scanned":5,"rules_enabled":["CASE_FOLD_COLLISION","CONTROL_CHARACTER","DUPLICATE_PATH","TRAILING_DOT_OR_SPACE","UNICODE_NORMALIZATION_COLLISION","UNSAFE_RELATIVE_PATH","WINDOWS_ILLEGAL_CHARACTER","WINDOWS_RESERVED_NAME"],"schema_version":1,"source":"path-list","status":"clean","summary":{"CASE_FOLD_COLLISION":0,"CONTROL_CHARACTER":0,"DUPLICATE_PATH":0,"TRAILING_DOT_OR_SPACE":0,"UNICODE_NORMALIZATION_COLLISION":0,"UNSAFE_RELATIVE_PATH":0,"WINDOWS_ILLEGAL_CHARACTER":0,"WINDOWS_RESERVED_NAME":0},"tool":"path-collision-scanner"}
 exit=0
 
-$ python3 pathscan.py --paths-from fixtures/dirty.paths -o d1.json ; echo "exit=$?"
+=== $ python3 pathscan.py --paths-from fixtures/dirty.paths -o d1.json ; echo "exit=$?" ===
 exit=1
 
 $ python3 -m json.tool d1.json | head -n 60
@@ -119,19 +119,19 @@ $ python3 -m json.tool d1.json | head -n 60
                 "components": [
                     "summary."
 
-$ python3 pathscan.py --paths-from fixtures/malformed.paths ; echo "exit=$?"
+=== $ python3 pathscan.py --paths-from fixtures/malformed.paths ; echo "exit=$?" ===
 {"error":"fixtures/malformed.paths: entry 1 is empty (stray NUL separator?); refusing to guess","schema_version":1,"status":"error","tool":"path-collision-scanner"}
 exit=2
 
-$ python3 pathscan.py --paths-from fixtures/not_utf8.paths ; echo "exit=$?"
+=== $ python3 pathscan.py --paths-from fixtures/not_utf8.paths ; echo "exit=$?" ===
 {"error":"fixtures/not_utf8.paths: entry 1 is not valid UTF-8: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte","schema_version":1,"status":"error","tool":"path-collision-scanner"}
 exit=2
 
-$ python3 pathscan.py --paths-from fixtures/dirty.paths --rules WINDOWS_RESERVED_NAME ; echo "exit=$?"
+=== $ python3 pathscan.py --paths-from fixtures/dirty.paths --rules WINDOWS_RESERVED_NAME ; echo "exit=$?" ===
 {"distinct_paths":24,"findings":[{"detail":{"components":["aux"]},"paths":["aux"],"rule_id":"WINDOWS_RESERVED_NAME"},{"detail":{"components":["com1.txt"]},"paths":["com1.txt"],"rule_id":"WINDOWS_RESERVED_NAME"},{"detail":{"components":["NUL.json"]},"paths":["data/NUL.json"],"rule_id":"WINDOWS_RESERVED_NAME"}],"paths_scanned":24,"rules_enabled":["WINDOWS_RESERVED_NAME"],"schema_version":1,"source":"path-list","status":"findings","summary":{"CASE_FOLD_COLLISION":0,"CONTROL_CHARACTER":0,"DUPLICATE_PATH":0,"TRAILING_DOT_OR_SPACE":0,"UNICODE_NORMALIZATION_COLLISION":0,"UNSAFE_RELATIVE_PATH":0,"WINDOWS_ILLEGAL_CHARACTER":0,"WINDOWS_RESERVED_NAME":3},"tool":"path-collision-scanner"}
 exit=1
 
-$ python3 pathscan.py --paths-from fixtures/clean.paths --rules NOPE ; echo "exit=$?"
+=== $ python3 pathscan.py --paths-from fixtures/clean.paths --rules NOPE ; echo "exit=$?" ===
 {"error":"--rules names unknown rule id(s): NOPE (known: CASE_FOLD_COLLISION, CONTROL_CHARACTER, DUPLICATE_PATH, TRAILING_DOT_OR_SPACE, UNICODE_NORMALIZATION_COLLISION, UNSAFE_RELATIVE_PATH, WINDOWS_ILLEGAL_CHARACTER, WINDOWS_RESERVED_NAME)","schema_version":1,"status":"error","tool":"path-collision-scanner"}
 exit=2
 
@@ -146,7 +146,7 @@ Part 2 -- real repository scan, relocation proof, positive control
 $ git -C .../repoA ls-files | wc -l
 388
 
-$ python3 pathscan.py --root .../repoA -o A.json ; echo "exit=$?"
+=== $ python3 pathscan.py --root .../repoA -o A.json ; echo "exit=$?" ===
 exit=0
 
 $ python3 -m json.tool A.json   (findings elided: there are none)
@@ -175,7 +175,7 @@ $ python3 -m json.tool A.json   (findings elided: there are none)
 # Two runs from the same directory would prove nothing: the leak would be
 # identical in both.
 
-$ python3 pathscan.py --root .../repoB_with_a_much_longer_name -o B.json ; echo "exit=$?"
+=== $ python3 pathscan.py --root .../repoB_with_a_much_longer_name -o B.json ; echo "exit=$?" ===
 exit=0
 
 $ sha256sum A.json B.json
@@ -193,7 +193,7 @@ $ grep -c "/root\|/tmp\|/home\|repoA\|repoB" A.json
 # fail on a planted defect. Same 388-path tree, plus one README.MD beside the
 # existing README.md -- a pair that coexists on ext4 and collides everywhere else.
 
-$ python3 pathscan.py --root .../repo_positive_control ; echo "exit=$?"
+=== $ python3 pathscan.py --root .../repo_positive_control ; echo "exit=$?" ===
 {
     "distinct_paths": 389,
     "findings": [
