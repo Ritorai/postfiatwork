@@ -1,0 +1,116 @@
+=== $ python3 -m unittest test_validator -v ===
+test_exit_one_on_issues (test_validator.TestCliExitCodes) ... ok
+test_exit_two_on_invalid_json (test_validator.TestCliExitCodes) ... ok
+test_exit_two_on_missing_file (test_validator.TestCliExitCodes) ... ok
+test_exit_two_on_non_array (test_validator.TestCliExitCodes) ... ok
+test_exit_zero_on_clean (test_validator.TestCliExitCodes) ... ok
+test_distinct_records_are_clean (test_validator.TestDuplicates) ... ok
+test_duplicate_cid_reference_flagged (test_validator.TestDuplicates) ... ok
+test_duplicate_submission_id_flags_both (test_validator.TestDuplicates) ... ok
+test_bad_cid_flagged (test_validator.TestMalformedReferences) ... ok
+test_bad_task_id_flagged (test_validator.TestMalformedReferences) ... ok
+test_bad_tx_hash_lowercase_flagged (test_validator.TestMalformedReferences) ... ok
+test_bad_tx_hash_wrong_length_flagged (test_validator.TestMalformedReferences) ... ok
+test_empty_field_flagged (test_validator.TestMissingFields) ... ok
+test_missing_field_flagged (test_validator.TestMissingFields) ... ok
+test_non_object_record_flagged (test_validator.TestMissingFields) ... ok
+test_cidv1_accepted (test_validator.TestValidRecords) ... ok
+test_clean_record_has_no_issues (test_validator.TestValidRecords) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.115s
+
+OK
+exit=0
+
+=== $ python3 validator.py sample_valid.json --pretty ===
+{
+  "schema_version": "1.0",
+  "required_fields": [
+    "submission_id",
+    "task_id",
+    "wallet",
+    "cid",
+    "tx_hash"
+  ],
+  "totals": {
+    "records": 2,
+    "clean": 2,
+    "rejected": 0
+  },
+  "issue_totals": {},
+  "records": [
+    {
+      "index": 0,
+      "submission_id": "sub_1001",
+      "issues": [],
+      "status": "clean"
+    },
+    {
+      "index": 1,
+      "submission_id": "sub_1002",
+      "issues": [],
+      "status": "clean"
+    }
+  ]
+}
+exit=0
+
+=== $ python3 validator.py sample_invalid.json --pretty ===
+{
+  "schema_version": "1.0",
+  "required_fields": [
+    "submission_id",
+    "task_id",
+    "wallet",
+    "cid",
+    "tx_hash"
+  ],
+  "totals": {
+    "records": 3,
+    "clean": 0,
+    "rejected": 3
+  },
+  "issue_totals": {
+    "DUPLICATE_CID_REFERENCE": 2,
+    "DUPLICATE_SUBMISSION_ID": 2,
+    "EMPTY_FIELD": 1,
+    "MALFORMED_CID": 1,
+    "MALFORMED_TASK_ID": 1,
+    "MALFORMED_TX_HASH": 1,
+    "MISSING_FIELD": 1
+  },
+  "records": [
+    {
+      "index": 0,
+      "submission_id": "sub_2001",
+      "issues": [
+        "MALFORMED_CID"
+      ],
+      "status": "rejected"
+    },
+    {
+      "index": 1,
+      "submission_id": "sub_2002",
+      "issues": [
+        "EMPTY_FIELD:wallet",
+        "MALFORMED_TX_HASH",
+        "MALFORMED_TASK_ID",
+        "DUPLICATE_SUBMISSION_ID",
+        "DUPLICATE_CID_REFERENCE"
+      ],
+      "status": "rejected"
+    },
+    {
+      "index": 2,
+      "submission_id": "sub_2002",
+      "issues": [
+        "MISSING_FIELD:wallet",
+        "DUPLICATE_SUBMISSION_ID",
+        "DUPLICATE_CID_REFERENCE"
+      ],
+      "status": "rejected"
+    }
+  ]
+}
+exit=1
