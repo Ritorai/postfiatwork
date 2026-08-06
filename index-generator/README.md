@@ -28,6 +28,9 @@ test_indexgen.py      test suite (140 tests)
 test_capture.py       regression tests for the transcript-generation path (capture.sh)
 capture.sh            regenerates captured_output.txt; every record is a real run
 pipe_scan.py          Finding 4 disclosure utility (repo-wide, read-only)
+pipe_classify.py      shell-quote-aware companion: labels each `|` pipeline/or/quoted/escaped
+test_pipe_classify.py test suite for pipe_classify.py (72 tests)
+pipe_classification_report.json  committed pipe_classify.py output for the current tree
 compare_relocation.py normalises + hashes captured_output.txt for the relocation proof
 repro_findings.txt    live reproduction of Findings 1-3 against the ORIGINAL transcript
 README.md             this file
@@ -289,6 +292,69 @@ a correct fix would need real shell-quote-aware parsing and this
 utility's whole point is to be a small, honest, read-only counter, not a
 shell parser.
 
+### Finding 4, current state -- and where the false positives went
+
+The paragraph above describes the tree **as it was when that scan ran**
+and is left unedited for that reason. The repo-wide propagation it
+anticipated has since landed (`payload-validator`, `queue-auditor`,
+`wallet-reconciler`, `commit-claim-auditor`, `dup-detector`,
+`transcript-schema`, each in its own commit), so the numbers have moved.
+Re-running the same command against the current tree reports **49
+transcript files scanned, 521 command records, 11 flagged records across
+9 directories**.
+
+That number is still not the number a reader wants. `pipe_scan.py` counts
+`|` **characters**, and only **4 of those 11 records contain a shell
+pipeline at all**:
+
+| Verdict | Count | Records |
+|---|---|---|
+| Real pipeline | **4** | `payload-validator` (1), `queue-auditor` (2), `wallet-reconciler` (1) -- all four are `cat`/`echo ... \| prog -` stdin-path records, and **all four are already captured under `set -o pipefail`** |
+| Regex alternation inside a quoted `grep` pattern | 6 | `bundle-index`, `claim-checker`, `commit-claim-auditor`, `report-freshness`, and `index-generator` (2: its pre-existing `grep -n` record, plus the `pipe_classify.py --command` demonstration record added below, whose whole point is to be a `\|` that is not a pipe) |
+| `\|\|` shell OR operator | 1 | `exit-harness` |
+
+So the exit-masking exposure this section was written to track is
+**closed**: every genuine pipeline in the repository's committed
+transcripts now runs under `pipefail`, and the residual 6 are characters
+that were never pipes.
+
+`pipe_scan.py` is **not** changed to say so. Its raw output is quoted
+verbatim in this directory's own committed transcript, and tuning a
+disclosure tool until it reports zero is the failure mode this
+repository's evidence standard exists to prevent. The classification is
+added *beside* it instead:
+
+```
+python3 pipe_classify.py --repo-root ..
+python3 pipe_classify.py --command 'grep -c "a|b" f.json'
+```
+
+`pipe_classify.py` walks exactly the same directories and the same
+`=== $ ... ===` grammar, then labels every `|` as `pipeline`,
+`or_operator`, `quoted` or `escaped` using POSIX quoting rules (single
+quotes make everything literal including backslashes; double quotes
+escape only ``$ ` " \`` and newline; `$(...)` and backticks are *not*
+quoting, so a pipe inside a command substitution is a real pipeline).
+Its committed output is `pipe_classification_report.json`, and
+`test_pipe_classify.py` (72 tests) checks three separate things: the
+grammar against hand-decidable strings, agreement with `pipe_scan.py` on
+which records carry a `|` at all, and -- the part that matters -- the
+labels against a real shell, by asserting that `set -o pipefail` can
+change the exit status of a command labelled `pipeline` and cannot change
+it for one labelled otherwise.
+
+Two test counts appear for this suite, deliberately. `Ran 72 tests` is
+the whole module, run against the finished tree; `Ran 70 tests` is what
+`captured_output.txt` records, because the transcript's own run excludes
+`TestCommittedReportIsFresh` (2 tests). That class byte-compares the
+committed `pipe_classification_report.json` against a live rescan, and a
+rescan taken from inside `capture.sh` reads `captured_output.txt`
+mid-write, so it cannot agree with a report generated from the finished
+file. This is the same self-reference exclusion `test_capture.py` already
+uses, listed class by class in `capture.sh` rather than filtered, so the
+skipped tests are named rather than silently dropped -- and they do run,
+and must pass, in the full invocation below.
+
 **The fix**, in `capture.sh`:
 1. `rec()` runs every record under `bash -c 'set -o pipefail; ...'`
    instead of plain `sh -c "$*"`. `/bin/sh` on this box is `dash`, which
@@ -485,6 +551,43 @@ of `capture.sh`'s own relative-path records).
    Distinguishing false positives from real Finding-2-shaped bugs requires
    reading each flagged record's command by hand, which this task
    deliberately did not do for the nine directories outside its scope.
+
+   **Update: this limitation is now measured, not just stated.** Every
+   flagged record was read by hand in a later delivery
+   (`PIPEFAIL_MASKING_FIX.md` §1), and the by-hand verdicts have since
+   been made mechanical and testable in `pipe_classify.py` -- see
+   "Finding 4, current state" above. Against the current tree the
+   over-count is **7 of 11 flagged records**, i.e. `pipe_scan.py`'s raw
+   number is 2.75x the number of records that actually contain a
+   pipeline.
+   `pipe_scan.py` itself is still deliberately left naive, and this
+   limitation still describes it accurately; what has changed is that a
+   reader no longer has to take "upper bound" on trust, because the
+   companion tool says by how much and shows its work per record.
+   The companion tool has limitations of its own, stated in its module
+   docstring: it does not recognise `#` comments or here-documents, both
+   absent from every committed record, and both of which would make it
+   *over*-report a pipeline rather than hide one.
+
+   A note on the wording of the paragraph above, because it is evidence
+   about a different tool. An earlier draft opened that paragraph by
+   naming the companion script and then saying it "carries" limitations
+   of its own. `claim-crosscheck` flagged the sentence as a PRESENCE
+   discrepancy: that verb, sitting beside a path-shaped token, is its cue
+   for "this README claims the report lists that file". It is the
+   use-versus-mention false positive already documented in
+   `claim-crosscheck/README.md`, reproduced here by accident.
+
+   The first attempt to *explain* the flag tripped it a second time, for
+   the obvious reason -- the explanation quoted the offending phrase
+   verbatim, so the filename and the verb were adjacent again. That is
+   worth recording as a property of the detector rather than a nuisance:
+   with a substring-adjacency rule, the sentence describing a false
+   positive is itself a false positive, and the only ways out are to
+   loosen the rule, to suppress the record, or to write around it. This
+   README writes around it -- the script is named in one clause and the
+   verb appears in another -- and says so, which is the option that
+   leaves both the detector and the disclosure intact.
 
 ## Notes on design choices
 

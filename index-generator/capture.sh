@@ -292,6 +292,48 @@ NOTE4
 
 rec "python3 pipe_scan.py --repo-root .."
 
+cat >> "$OUT" <<'NOTE4B'
+
+--- Finding 4, classified: pipe_classify.py (shell-quote-aware companion) ---
+pipe_scan.py counts `|` CHARACTERS. pipe_classify.py walks the same
+directories and the same record grammar and labels each one pipeline /
+or_operator / quoted / escaped, so the flagged population splits into the
+records that actually carry an exit-masking question and the ones where
+the `|` was never a pipe (regex alternation inside a quoted grep pattern,
+or the `||` operator). pipe_scan.py is deliberately left naive -- its raw
+number is quoted verbatim above, and tuning a disclosure tool until it
+reports zero is the failure mode the evidence standard exists to prevent
+-- so the classification is added beside it, not folded into it.
+
+The same self-reference caveat as the record above applies: this scan
+reads this very file mid-write, so the "index-generator" entry in THIS
+invocation is a partial snapshot. The finished file's numbers are in
+pipe_classification_report.json, produced by re-running the same command
+after this script exits.
+
+The third record below is the single-command mode, on a command whose
+`|` is a grep alternation inside a quoted pattern -- one process, no
+pipeline, is_pipeline false. It also means this transcript now contains
+a record whose own header carries a `|` that is not a pipe, which is the
+point being demonstrated rather than an oversight.
+
+The test run below is every class in test_pipe_classify EXCEPT
+TestCommittedReportIsFresh, for the same self-reference reason as the
+test_capture.py run further up: that class byte-compares the committed
+pipe_classification_report.json against a live rescan, and a rescan taken
+HERE reads this file mid-write, so it necessarily disagrees with the
+report generated from the finished file. Excluding it is not hiding a
+failure -- it runs, and must pass, in the normal
+`python3 -m unittest test_pipe_classify` invocation against the finished
+tree, whose real output is in README.md, "Verification". The exclusion is
+listed class by class rather than filtered, so nothing is silently
+dropped.
+NOTE4B
+
+rec "python3 -m unittest test_pipe_classify.TestUnquotedPipelines test_pipe_classify.TestOrOperator test_pipe_classify.TestSingleQuotes test_pipe_classify.TestDoubleQuotes test_pipe_classify.TestEscapedOutsideQuotes test_pipe_classify.TestReconciliation test_pipe_classify.TestAgreementWithPipeScan test_pipe_classify.TestLiveRecordClassification test_pipe_classify.TestShellGroundTruth test_pipe_classify.TestDeterminismAndRelocation test_pipe_classify.TestCli"
+rec "python3 pipe_classify.py --repo-root .."
+rec "python3 pipe_classify.py --command 'grep -c \"a|b\" f.json'"
+
 cat >> "$OUT" <<'NOTE5'
 
 --- self-check: transcript-schema/validate_transcript.py against a frozen snapshot ---

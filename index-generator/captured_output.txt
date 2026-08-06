@@ -194,9 +194,9 @@ A catalogued TEST COUNT going stale must exit 1, tool count held correct. ... ok
 test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess)
 Same case, but through the real CLI so the exit code is the process's ... ok
 test_stdout_output_when_no_o_flag (test_indexgen.RunEndToEndTests.test_stdout_output_when_no_o_flag) ... ok
-test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_sme2ipx_/no_such_subdir/report.json'
+test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_bnhqkq2o/no_such_subdir/report.json'
 ok
-test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_l1d0nrxh/no_such_subdir/INDEX.md'
+test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_tcp93_zt/no_such_subdir/INDEX.md'
 ok
 test_write_index_creates_file (test_indexgen.RunEndToEndTests.test_write_index_creates_file) ... ok
 test_split_row_basic (test_indexgen.SplitRowTests.test_split_row_basic) ... ok
@@ -220,7 +220,7 @@ test_index_with_unicode_roundtrips (test_indexgen.UnicodeCrlfTests.test_index_wi
 test_unicode_description_end_to_end (test_indexgen.UnicodeCrlfTests.test_unicode_description_end_to_end) ... ok
 
 ----------------------------------------------------------------------
-Ran 140 tests in 0.251s
+Ran 140 tests in 0.289s
 
 OK
 exit=0
@@ -517,18 +517,18 @@ test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToE
 Same case, but through the real CLI so the exit code is the process's ... ok
 
 ----------------------------------------------------------------------
-Ran 2 tests in 0.028s
+Ran 2 tests in 0.039s
 
 OK
 exit=0
 
 === $ python3 -m unittest test_indexgen ===
 .........................................................................................................indexgen.py: error: --root '/no/such/dir/at/all' is not a directory
-.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_s61e1bba/no_such_subdir/report.json'
-.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_617zygcd/no_such_subdir/INDEX.md'
+.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_bpfcxj39/no_such_subdir/report.json'
+.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_18l66mg3/no_such_subdir/INDEX.md'
 .....................
 ----------------------------------------------------------------------
-Ran 140 tests in 0.225s
+Ran 140 tests in 0.327s
 
 OK
 exit=0
@@ -569,7 +569,7 @@ test_ignores_unpiped_records (test_capture.PipeScanTests.test_ignores_unpiped_re
 test_report_is_json_serializable_and_deterministic (test_capture.PipeScanTests.test_report_is_json_serializable_and_deterministic) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 0.423s
+Ran 18 tests in 0.542s
 
 OK
 exit=0
@@ -588,7 +588,58 @@ in README.md, "Finding 4", computed by running this same command again
 after this file is complete.
 
 === $ python3 pipe_scan.py --repo-root .. ===
-{"files_with_piped_records":[{"piped_records":1,"tool":"claim-checker"},{"piped_records":2,"tool":"commit-claim-auditor"},{"piped_records":1,"tool":"dup-detector"},{"piped_records":1,"tool":"exit-harness"},{"piped_records":1,"tool":"index-generator"},{"piped_records":1,"tool":"payload-validator"},{"piped_records":2,"tool":"queue-auditor"},{"piped_records":1,"tool":"report-freshness"},{"piped_records":1,"tool":"transcript-schema"},{"piped_records":1,"tool":"wallet-reconciler"}],"total_command_records":465,"total_files_with_a_piped_record":10,"total_piped_records":12,"transcript_files_scanned":49}
+{"files_with_piped_records":[{"piped_records":1,"tool":"bundle-index"},{"piped_records":1,"tool":"claim-checker"},{"piped_records":1,"tool":"commit-claim-auditor"},{"piped_records":1,"tool":"exit-harness"},{"piped_records":1,"tool":"index-generator"},{"piped_records":1,"tool":"payload-validator"},{"piped_records":2,"tool":"queue-auditor"},{"piped_records":1,"tool":"report-freshness"},{"piped_records":1,"tool":"wallet-reconciler"}],"total_command_records":515,"total_files_with_a_piped_record":9,"total_piped_records":10,"transcript_files_scanned":49}
+exit=0
+
+--- Finding 4, classified: pipe_classify.py (shell-quote-aware companion) ---
+pipe_scan.py counts `|` CHARACTERS. pipe_classify.py walks the same
+directories and the same record grammar and labels each one pipeline /
+or_operator / quoted / escaped, so the flagged population splits into the
+records that actually carry an exit-masking question and the ones where
+the `|` was never a pipe (regex alternation inside a quoted grep pattern,
+or the `||` operator). pipe_scan.py is deliberately left naive -- its raw
+number is quoted verbatim above, and tuning a disclosure tool until it
+reports zero is the failure mode the evidence standard exists to prevent
+-- so the classification is added beside it, not folded into it.
+
+The same self-reference caveat as the record above applies: this scan
+reads this very file mid-write, so the "index-generator" entry in THIS
+invocation is a partial snapshot. The finished file's numbers are in
+pipe_classification_report.json, produced by re-running the same command
+after this script exits.
+
+The third record below is the single-command mode, on a command whose
+`|` is a grep alternation inside a quoted pattern -- one process, no
+pipeline, is_pipeline false. It also means this transcript now contains
+a record whose own header carries a `|` that is not a pipe, which is the
+point being demonstrated rather than an oversight.
+
+The test run below is every class in test_pipe_classify EXCEPT
+TestCommittedReportIsFresh, for the same self-reference reason as the
+test_capture.py run further up: that class byte-compares the committed
+pipe_classification_report.json against a live rescan, and a rescan taken
+HERE reads this file mid-write, so it necessarily disagrees with the
+report generated from the finished file. Excluding it is not hiding a
+failure -- it runs, and must pass, in the normal
+`python3 -m unittest test_pipe_classify` invocation against the finished
+tree, whose real output is in README.md, "Verification". The exclusion is
+listed class by class rather than filtered, so nothing is silently
+dropped.
+
+=== $ python3 -m unittest test_pipe_classify.TestUnquotedPipelines test_pipe_classify.TestOrOperator test_pipe_classify.TestSingleQuotes test_pipe_classify.TestDoubleQuotes test_pipe_classify.TestEscapedOutsideQuotes test_pipe_classify.TestReconciliation test_pipe_classify.TestAgreementWithPipeScan test_pipe_classify.TestLiveRecordClassification test_pipe_classify.TestShellGroundTruth test_pipe_classify.TestDeterminismAndRelocation test_pipe_classify.TestCli ===
+......................................................................
+----------------------------------------------------------------------
+Ran 70 tests in 0.429s
+
+OK
+exit=0
+
+=== $ python3 pipe_classify.py --repo-root .. ===
+{"bar_character_counts_by_kind":{"escaped":0,"or_operator":2,"pipeline":4,"quoted":10},"tools":[{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/sessions\\|/tmp\\|/home\" r1.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":258}],"records_with_a_bar":1,"tool":"bundle-index"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":310}],"records_with_a_bar":1,"tool":"claim-checker"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -cE 'time\\.time|utcnow|now\\(\\)' claimhist.py","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":53}],"records_with_a_bar":1,"tool":"commit-claim-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"test -f out_bad.json && echo EXISTS || echo NOT_CREATED","counts":{"escaped":0,"or_operator":2,"pipeline":0,"quoted":0},"is_pipeline":false,"line":184}],"records_with_a_bar":1,"tool":"exit-harness"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -n 'time\\.time\\|utcnow\\|now()' indexgen.py; echo grep_exit=$?","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":453}],"records_with_a_bar":1,"tool":"index-generator"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"cat payloads_bad.json | python3 payload_validate.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":211}],"records_with_a_bar":1,"tool":"payload-validator"},{"pipeline_records":2,"records":[{"bar_count":1,"command":"cat snapshot_dirty.json | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":200},{"bar_count":1,"command":"echo '{not json' | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":208}],"records_with_a_bar":2,"tool":"queue-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/root\\|/home\" freshness_report.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":29}],"records_with_a_bar":1,"tool":"report-freshness"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"echo '{\"opening_balance\":\"0\",\"closing_balance\":\"0\",\"events\":[{\"event_id\":\"e1\",\"type\":\"reward\",\"amount\":NaN,\"at\":\"2026-01-01T00:00:00Z\"}]}' | python3 wallet_reconcile.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":171}],"records_with_a_bar":1,"tool":"wallet-reconciler"}],"total_command_records":517,"total_files_with_a_bar_record":9,"total_files_with_a_pipeline_record":3,"total_non_pipeline_bar_records":6,"total_pipeline_records":4,"total_records_with_a_bar":10,"transcript_files_scanned":49}
+exit=0
+
+=== $ python3 pipe_classify.py --command 'grep -c "a|b" f.json' ===
+{"bar_count":1,"command":"grep -c \"a|b\" f.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":1},"is_pipeline":false}
 exit=0
 
 --- self-check: transcript-schema/validate_transcript.py against a frozen snapshot ---
@@ -601,7 +652,7 @@ validation, run against the completed file after this script exits, is
 reported in README.md, "Verification".
 
 === $ python3 ../transcript-schema/validate_transcript.py _self_check_snapshot.txt ===
-{"diagnostic_counts":{"TRANSCRIPT_FILE_UNREADABLE":0,"TRANSCRIPT_HAS_NO_COMMAND_RECORDS":0,"TRANSCRIPT_HEADER_MALFORMED":0,"TRANSCRIPT_PREAMBLE_EXIT_LOOKALIKE":0,"TRANSCRIPT_RECORD_DUPLICATE_EXIT":0,"TRANSCRIPT_RECORD_EXIT_MALFORMED":0,"TRANSCRIPT_RECORD_HAS_NO_EXIT":0,"TRANSCRIPT_RECORD_MISSING_RAN_LINE":0,"TRANSCRIPT_RECORD_MISSING_VERDICT":0,"TRANSCRIPT_RECORD_RAN_LINE_MALFORMED":0,"TRANSCRIPT_RECORD_VERDICT_BEFORE_RAN":0,"TRANSCRIPT_SHOWS_TEST_FAILURE":0},"files_checked":["_self_check_snapshot.txt"],"findings":[],"schema_version":1,"stats":{"_self_check_snapshot.txt":{"records":56,"test_records":4}},"status":"valid","tool":"transcript-schema","transcript_schema_version":1}
+{"diagnostic_counts":{"TRANSCRIPT_FILE_UNREADABLE":0,"TRANSCRIPT_HAS_NO_COMMAND_RECORDS":0,"TRANSCRIPT_HEADER_MALFORMED":0,"TRANSCRIPT_PREAMBLE_EXIT_LOOKALIKE":0,"TRANSCRIPT_RECORD_DUPLICATE_EXIT":0,"TRANSCRIPT_RECORD_EXIT_MALFORMED":0,"TRANSCRIPT_RECORD_HAS_NO_EXIT":0,"TRANSCRIPT_RECORD_MISSING_RAN_LINE":0,"TRANSCRIPT_RECORD_MISSING_VERDICT":0,"TRANSCRIPT_RECORD_RAN_LINE_MALFORMED":0,"TRANSCRIPT_RECORD_VERDICT_BEFORE_RAN":0,"TRANSCRIPT_SHOWS_TEST_FAILURE":0},"files_checked":["_self_check_snapshot.txt"],"findings":[],"schema_version":1,"stats":{"_self_check_snapshot.txt":{"records":59,"test_records":5}},"status":"valid","tool":"transcript-schema","transcript_schema_version":1}
 exit=0
 
 --- self-check: transcript-drift/driftcheck.py, repo-wide, filtered to this tool ---
@@ -613,7 +664,7 @@ compares many directories at once and none of the others need freezing).
 exit=1
 
 === $ python3 -c "import json; r=json.load(open('_drift_snapshot.json')); print([f for f in r['findings'] if f['tool']=='index-generator'])" ===
-[{'code': 'TRANSCRIPT_RECORD_HAS_NO_EXIT', 'detail': {'command': 'python3 ../transcript-drift/driftcheck.py --root .. -o _drift_snapshot.json', 'line': 612}, 'tool': 'index-generator'}]
+[{'code': 'TEST_COUNT_MISMATCH', 'detail': {'readme_claims': [2, 3, 13, 18, 42, 72, 138, 140, 476], 'transcript_ran': [2, 18, 70, 140], 'unmatched': [70]}, 'tool': 'index-generator'}, {'code': 'TRANSCRIPT_RECORD_HAS_NO_EXIT', 'detail': {'command': 'python3 ../transcript-drift/driftcheck.py --root .. -o _drift_snapshot.json', 'line': 663}, 'tool': 'index-generator'}]
 exit=0
 
 ############################################################
