@@ -1,4 +1,4 @@
-$ python3 -m unittest test_link_integrity -v
+=== $ python3 -m unittest test_link_integrity -v ===
 test_build_report_clean (test_link_integrity.CanonicalOutputAndReportTests) ... ok
 test_build_report_dirty (test_link_integrity.CanonicalOutputAndReportTests) ... ok
 test_canonical_json_compact_separators (test_link_integrity.CanonicalOutputAndReportTests) ... ok
@@ -143,14 +143,14 @@ Ran 137 tests in 0.443s
 OK
 exit=0
 
-$ python3 link_integrity.py lifecycle_ok.json evidence_ok.json ; echo "exit=$?"
+=== $ python3 link_integrity.py lifecycle_ok.json evidence_ok.json ; echo "exit=$?" ===
 {"schema_version":"1.0","summary":{"counts_by_code":{},"is_clean":true,"violation_count":0},"violations":[]}
 exit=0
 
-$ python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run1.json ; echo "exit=$?"
+=== $ python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run1.json ; echo "exit=$?" ===
 exit=1
 
-$ python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run2.json ; echo "exit=$?"
+=== $ python3 link_integrity.py lifecycle_bad.json evidence_bad.json -o report_run2.json ; echo "exit=$?" ===
 exit=1
 
 $ sha256sum report_run1.json report_run2.json
@@ -160,11 +160,11 @@ f39bebe8fe88201bbbd0a30db96579f2a461b024af6f498db2c83792bfc01de2  report_run2.js
 $ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL
 BYTE-IDENTICAL
 
-$ python3 link_integrity.py /nonexistent.json evidence_ok.json ; echo "exit=$?"
+=== $ python3 link_integrity.py /nonexistent.json evidence_ok.json ; echo "exit=$?" ===
 link_integrity.py: error: lifecycle file not found: /nonexistent.json
 exit=2
 
-$ python3 link_integrity.py lifecycle_ok.json ; echo "exit=$?"
+=== $ python3 link_integrity.py lifecycle_ok.json ; echo "exit=$?" ===
 usage: link_integrity.py [-h] [-o OUTPUT] lifecycle_file evidence_file
 link_integrity.py: error: the following arguments are required: evidence_file
 exit=2
