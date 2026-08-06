@@ -521,28 +521,35 @@ counts.reproducing + counts.stale + counts.not_baselined
 
 holds exactly (`test_coverage_audit.py::TestBuildReportAllStates` pins
 this identity on a synthetic tree with all six states present at once;
-`TestRealRepository::test_totals_sum_to_45` pins it against the real
-repo).
+`TestRealRepository::test_totals_are_derivable_from_results` pins it
+against the real repo, deriving every total by counting `results[]`
+rather than hardcoding the repository's current size).
 
 ### What the committed report actually says (real run, this commit)
 
 ```
-counts.discovered_directories = 45
+counts.discovered_directories = 46
 counts.baseline_entries       = 23
 counts.reproducing            = 22
 counts.stale                  = 1
-counts.not_baselined          = 22
+counts.not_baselined          = 23
 counts.orphaned_baseline      = 0
 counts.source_missing         = 0
 counts.unrunnable             = 0
-counts.total_records          = 45   (== 22+1+22+0+0+0)
+counts.total_records          = 46   (== 22+1+23+0+0+0)
 exit code                     = 1
 ```
 
-**22 of 45 tool directories have no baseline entry at all** (every tool
+**23 of 46 tool directories have no baseline entry at all** (every tool
 except the 23 listed at the top of this file). That alone forces exit `1`
-and is the majority of the finding here -- baseline coverage is roughly
+and is the majority of the finding here -- baseline coverage is exactly
 half the repository, not the whole of it.
+
+These totals move whenever a tool directory is added, which is why the
+tests derive them from `results[]` instead of pinning them. An earlier
+draft of this file did hardcode 45/22, and it went stale the moment
+`claim-crosscheck/` was committed -- caught by re-running the suite
+against the pushed tree rather than the build sandbox.
 
 ## A real bug hunt finding: `bundle-index`'s baseline does not reproduce
 
@@ -592,15 +599,15 @@ the relocation leg is what actually tests for that.
 ```
 $ cd regression-checker && python3 coverage_audit.py -o /tmp/run1.json
 $ cd regression-checker && python3 coverage_audit.py -o /tmp/run2.json
-$ cp -r <repo> /tmp/reloc_xyz_29718   # differently-named absolute path
-$ cd /tmp/reloc_xyz_29718/regression-checker && python3 coverage_audit.py -o /tmp/run3_reloc.json
+$ cp -r <repo> /tmp/reloc_cov_7q   # differently-named absolute path
+$ cd /tmp/reloc_cov_7q/regression-checker && python3 coverage_audit.py -o /tmp/run3_reloc.json
 ```
 
 | Run | sha256 of report |
 |---|---|
-| run1 (original path) | `40dc7f3f3c304cfb18c42b94a1bd291c7bf67fd16b9dd4eab11ed8972cc45de0` |
-| run2 (original path, second run) | `40dc7f3f3c304cfb18c42b94a1bd291c7bf67fd16b9dd4eab11ed8972cc45de0` |
-| run3 (relocated to a differently-named path) | `40dc7f3f3c304cfb18c42b94a1bd291c7bf67fd16b9dd4eab11ed8972cc45de0` |
+| run1 (original path) | `689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b` |
+| run2 (original path, second run) | `689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b` |
+| run3 (relocated to a differently-named path) | `689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b` |
 
 All three identical. No absolute path, hostname, or timestamp reaches the
 report: `--root` and `--baselines` themselves are never written into it,

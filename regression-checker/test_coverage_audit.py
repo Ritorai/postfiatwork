@@ -1187,17 +1187,34 @@ class TestRealRepository(unittest.TestCase):
         )
 
     def test_exit_code_is_nonzero(self):
-        # 22 directories are known not-baselined; this can never be 0.
+        # Many directories are not baselined at all; this can never be 0.
         self.assertNotEqual(self.exit_code, 0)
 
     def test_baseline_entries_count_is_23(self):
         self.assertEqual(self.report["counts"]["baseline_entries"], 23)
 
-    def test_discovered_directories_count_is_45(self):
-        self.assertEqual(self.report["counts"]["discovered_directories"], 45)
+    def test_discovered_directories_matches_disk(self):
+        # Derived, not pinned: a hardcoded repo size breaks every time a new
+        # tool directory is added (it broke when claim-crosscheck landed).
+        # The invariant that actually matters is that discovery agrees with
+        # what is on disk.
+        on_disk = coverage_audit.discover_tool_dirs(REPO_ROOT)
+        self.assertEqual(
+            self.report["counts"]["discovered_directories"], len(on_disk)
+        )
 
-    def test_not_baselined_count_is_22(self):
-        self.assertEqual(self.report["counts"]["not_baselined"], 22)
+    def test_not_baselined_equals_discovered_minus_baselined_present(self):
+        counts = self.report["counts"]
+        baselined_present = (
+            counts["reproducing"]
+            + counts["stale"]
+            + counts["source_missing"]
+            + counts["unrunnable"]
+        )
+        self.assertEqual(
+            counts["not_baselined"],
+            counts["discovered_directories"] - baselined_present,
+        )
 
     def test_orphaned_baseline_count_is_zero(self):
         self.assertEqual(self.report["counts"]["orphaned_baseline"], 0)
@@ -1208,10 +1225,21 @@ class TestRealRepository(unittest.TestCase):
     def test_unrunnable_count_is_zero(self):
         self.assertEqual(self.report["counts"]["unrunnable"], 0)
 
-    def test_totals_sum_to_45(self):
+    def test_totals_are_derivable_from_results(self):
+        # Every total a reviewer reads must be recomputable by counting
+        # results[]. This is the arithmetic check, stated without pinning
+        # the repository's current size.
         counts = self.report["counts"]
-        self.assertEqual(sum(counts[s] for s in coverage_audit.ALL_STATES), 45)
-        self.assertEqual(len(self.report["results"]), 45)
+        results = self.report["results"]
+        self.assertEqual(sum(counts[s] for s in coverage_audit.ALL_STATES), len(results))
+        self.assertEqual(counts["total_records"], len(results))
+        self.assertEqual(counts["discovered_directories"], len(results))
+        for state in coverage_audit.ALL_STATES:
+            self.assertEqual(
+                counts[state],
+                sum(1 for r in results if r["state"] == state),
+                "counts[%s] disagrees with results[]" % state,
+            )
 
     def test_bug_hunt_finding_bundle_index_is_stale(self):
         # THE real finding: bundle-index's baseline command runs

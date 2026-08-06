@@ -544,6 +544,10 @@ def main(argv=None):
         }
         text = canonical_json(error_report)
         if args.output:
+            # The machine-readable error report still goes to --output, but a
+            # human running with -o would otherwise see an entirely silent
+            # exit 2. Echo one line to stderr as well.
+            sys.stderr.write("coverage_audit: setup error: %s\n" % exc)
             try:
                 with open(args.output, "w", encoding="utf-8", newline="\n") as fh:
                     fh.write(text)
