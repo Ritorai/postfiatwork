@@ -24,9 +24,14 @@ silently baked into a pretty-looking index.
 
 ```
 indexgen.py           entrypoint / implementation
-test_indexgen.py      test suite (138 tests)
+test_indexgen.py      test suite (140 tests)
+test_capture.py       regression tests for the transcript-generation path (capture.sh)
+capture.sh            regenerates captured_output.txt; every record is a real run
+pipe_scan.py          Finding 4 disclosure utility (repo-wide, read-only)
+compare_relocation.py normalises + hashes captured_output.txt for the relocation proof
+repro_findings.txt    live reproduction of Findings 1-3 against the ORIGINAL transcript
 README.md             this file
-fixture_repo/         6-tool fixture repo used for the demo + proof runs
+fixture_repo/         6-tool fixture repo used for the demo + proof runs (generated, not committed)
 root_readme_sample.md sample root README used to demonstrate ROOT_README_COUNT_DRIFT
 captured_output.txt   real transcript: test run, CLI invocations, determinism proof
 sample_report.json    sample JSON report (fixture_repo, findings present)
@@ -36,25 +41,45 @@ sample_INDEX.md       sample generated INDEX.md (from fixture_repo)
 
 ## Exact rerun commands
 
-Run the test suite:
+Run the test suite (indexgen.py itself):
 
 ```
 python3 -m unittest test_indexgen -v
 ```
 
-Generate an index + report for a repo:
+Run the transcript-generation regression tests (this task's addition; see
+"Transcript-generation path" below): `python3 -m unittest test_capture -v`.
+(Not shown as a fenced command here on purpose: `capture.sh` itself only
+ever runs a non-self-referential SUBSET of this module as one of its
+records -- see "Verification" for exactly why the full run can't check
+itself from inside its own transcript.)
+
+Regenerate `fixture_repo/` (not committed as loose files -- see
+"Regenerating the fixture"):
 
 ```
-python3 indexgen.py --root fixture_repo \
-    --write-index /tmp/out_INDEX.md \
-    --root-readme root_readme_sample.md \
-    -o /tmp/out_report.json
+python3 make_fixture_repo.py fixture_repo
+```
+
+Generate an index + report for the fixture repo (every path below is
+relative on purpose -- this is the literal command `capture.sh` records):
+
+```
+python3 indexgen.py --root fixture_repo --root-readme root_readme_sample.md --write-index fixture_INDEX.md -o fixture_report.json
 ```
 
 Check a previously-written index for drift (without rewriting it):
 
 ```
-python3 indexgen.py --root fixture_repo --check-index /tmp/out_INDEX.md -o /tmp/out_report2.json
+python3 indexgen.py --root fixture_repo --check-index fixture_INDEX.md -o fixture_report_check1.json
+```
+
+Regenerate `captured_output.txt` itself, and run all the demonstrations
+above (plus determinism/relocation proofs, error paths, and the Finding
+1-4 regression coverage) for real:
+
+```
+bash capture.sh
 ```
 
 ## Expected results (fixture_repo, 6 tools)
@@ -81,7 +106,7 @@ code for this run is `1` (findings present).
 
 ## Exit codes
 
-| Code | Meaning |
+| Exit | Meaning |
 |------|---------|
 | `0`  | Scan completed, zero findings. |
 | `1`  | Scan completed, one or more findings were produced. |
@@ -175,6 +200,213 @@ the fixture and re-running `indexgen.py` reproduces the committed
 shows that round trip and the diff proving the trees are byte-identical.
 
 
+## Transcript-generation path: the bug, and the fix
+
+`indexgen.py` was never buggy. `captured_output.txt` -- the evidence file
+this repository requires every tool directory to ship -- was, and there
+was no `capture.sh` that regenerated it (this directory shipped a
+hand-authored transcript with no runnable script behind it; the
+diff/round-trip record even contained a literal placeholder,
+`diff -r fixture_repo <regenerated>`, instead of a real destination path
+and real `diff` output -- a tell that it was written by hand, not run).
+
+`repro_findings.txt` (not named `captured_output.txt` on purpose, so
+neither checker discovers it as a real transcript) reproduces Findings
+1-3 against the ORIGINAL committed file, with real command output: the
+exact broken record verbatim, `validate_transcript.py` flagging it, the
+`grep`-found `Ran 138`/`Ran 140` contradiction, and the live Finding-2
+demo below run for real.
+
+**Finding 1.** One record's command was
+`python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued`.
+`grep` filtered out both the `Ran N tests in ...` line and the `OK`/
+`FAILED` verdict. `transcript-schema/validate_transcript.py` flagged this
+as `TRANSCRIPT_RECORD_MISSING_RAN_LINE` + `TRANSCRIPT_RECORD_MISSING_VERDICT`
+-- the only two such findings anywhere in the repository.
+
+**Finding 2 (the serious one).** The `exit=` recorded for that same
+record was `grep`'s exit status, not `unittest`'s, because the shared
+`rec()` convention runs every record through `sh -c "$*"`, and `sh -c` on
+a pipeline reports the LAST command's status. Reproduced live with a
+purpose-built suite (one passing test whose name `grep` matches, one
+failing test):
+
+```
+piped through grep    -> rc = 0    (what gets recorded as exit=)
+unittest directly     -> rc = 1    (the truth: the suite FAILED)
+with pipefail         -> rc = 1    (surfaces it)
+```
+
+A failing test suite could be recorded in committed evidence as
+`exit=0`. `test_capture.py`'s `PipefailMaskingTests` reproduces this
+exact scenario (and its fix) against a real throwaway failing suite, not
+just the minimal case.
+
+**Finding 3.** The old file simultaneously contained `Ran 138 tests`
+(stale, from before two tests were added) and `Ran 140 tests` (correct at
+the time) for the same suite, in the same committed file.
+
+`capture.sh` also runs two smaller, real, unpiped `unittest` invocations
+that legitimately produce their own distinct `Ran N tests` lines and are
+not part of Finding 3's contradiction: the two `test_stale_catalogued_*`
+regression tests, selected directly by dotted name (2 tests), and the
+non-self-referential subset of `test_capture.py` described under
+"Verification" (18 tests).
+
+**Finding 4 (repo-wide, disclosed but explicitly NOT fixed here --
+scoped to index-generator only).** The shared `rec()` pattern above is
+used by every other tool's `capture.sh` in this repository too, so any of
+their recorded commands that contain a pipe have the exact same Finding-2
+exit-masking problem. `pipe_scan.py` (added in this directory, read-only,
+touches nothing outside it) counts them repo-wide:
+
+```
+python3 pipe_scan.py --repo-root ..
+```
+
+At the time this was regenerated, that command reported **49 transcript
+files scanned, 12 piped command records across 10 tool directories**
+(`claim-checker`, `commit-claim-auditor`, `dup-detector`, `exit-harness`,
+`index-generator`, `payload-validator`, `queue-auditor`,
+`report-freshness`, `transcript-schema`, `wallet-reconciler` -- see
+`pipe_scan_report.json`'s `files_with_piped_records` for the exact
+per-directory counts, produced by the command above; none of the nine
+directories other than index-generator are modified by this change).
+
+Honest note on that number: `index-generator` still shows **1**, not
+`0`, in this scan -- and it is a genuine false positive of `pipe_scan.py`
+itself, caught by actually running the scanner rather than assuming the
+fix was complete. The flagged record is
+`grep -n 'time\.time\|utcnow\|now()' indexgen.py; echo grep_exit=$?`
+(Section 15 of `captured_output.txt`): the `|` there is a regex
+alternation operator INSIDE a single-quoted `grep` pattern argument, not
+a shell pipe -- there is no pipeline, no masking, and no second process
+whose exit status could shadow the first. `pipe_scan.py` does naive
+substring matching on the header text, not shell tokenisation, so it
+cannot tell the two apart. This is documented as a limitation below
+rather than "fixed" by making the header-matching pattern smarter, since
+a correct fix would need real shell-quote-aware parsing and this
+utility's whole point is to be a small, honest, read-only counter, not a
+shell parser.
+
+**The fix**, in `capture.sh`:
+1. `rec()` runs every record under `bash -c 'set -o pipefail; ...'`
+   instead of plain `sh -c "$*"`. `/bin/sh` on this box is `dash`, which
+   does not support `set -o pipefail` at all (`sh -c 'set -o pipefail'`
+   exits nonzero with "Illegal option") -- `capture.sh` therefore
+   requires `bash` explicitly and exits 2 with a clear message if it is
+   missing, rather than silently reverting to the unfixed behaviour.
+2. No record whose command runs `unittest` is also piped through a
+   filter. Where the old file spotlighted specific tests with
+   `... | grep <name>`, `capture.sh` now runs exactly those tests
+   directly via `unittest`'s own dotted test-selection syntax -- a real,
+   complete, unpiped invocation with its own genuine summary line,
+   verdict, and exit code.
+
+## Relocation and determinism (the byte-identity proof)
+
+`indexgen.py`'s own relocation invariance was already proven (Section 14
+of `captured_output.txt`, `RelocationTests` in `test_indexgen.py`): its
+JSON/Markdown OUTPUT never contains the absolute `--root` path, so two
+runs against the same fixture at two different absolute locations produce
+byte-identical output files. That is unaffected by this task.
+
+This task adds a SECOND, harder relocation proof: that regenerating
+`captured_output.txt` ITSELF -- by running `capture.sh` -- is
+location-independent. This is hard honestly, not trivially: a transcript
+records real durations, e.g. `Ran 140 tests in 0.268s`, and that number
+is never the same twice, by design (it is a real wall-clock measurement
+of a real `unittest` run). There is a SECOND, less obvious volatile
+field, found only by actually diffing real runs rather than assuming one
+field was the only problem: two of `test_indexgen.py`'s own tests
+(`test_unwritable_output_exit_2`, `test_unwritable_write_index_exit_2`)
+print an error message containing a `tempfile.TemporaryDirectory`'s
+random-suffixed path (e.g. `/tmp/indexgen_test_apnu6l9a/...`) to stderr,
+and `capture.sh` faithfully captures that stderr -- so the transcript
+embeds two more real, unique-per-run random strings, unrelated to this
+task's fix, pre-existing in `test_indexgen.py`, unmodified here. Faking
+byte-identity by hand-editing either field out of one copy would violate
+"never fabricate a run"; treating the files as byte-identical without
+accounting for them would be false.
+
+**The honest approach taken here: normalise both volatile fields in the
+COMPARISON, not in either transcript**, via `compare_relocation.py`:
+
+```python
+_RAN_LINE_RE = re.compile(r"(Ran \d+ tests? in )[0-9.]+s")
+_TMP_DIR_RE = re.compile(r"/tmp/indexgen_test_[A-Za-z0-9_]+")
+
+def normalise(text):
+    text = _RAN_LINE_RE.sub(r"\1<DURATION>s", text)
+    text = _TMP_DIR_RE.sub("/tmp/indexgen_test_<RANDOM>", text)
+    return text
+```
+
+The test COUNT (`\d+` right after `Ran `) is deliberately left alone --
+two files disagreeing on how many tests ran must still break
+byte-identity after normalisation, and `test_capture.py`'s
+`CompareRelocationTests` asserts exactly that (plus that an unrelated
+real content difference also survives normalisation, so the function
+cannot be accused of masking too much).
+
+Three independent, real `bash capture.sh` runs were made -- twice in
+place, once from a full copy of the repository relocated to
+`/tmp/build_7/relocated_xyz` (a differently-named absolute path) -- and
+each resulting `captured_output.txt` was copied out unmodified, then
+compared with `python3 compare_relocation.py run1.txt run2.txt run3.txt`
+(shown inline, not fenced: `compare_relocation.py` takes arbitrary
+caller-supplied paths, so there is no single canonical invocation for
+`capture.sh`'s own transcript to record).
+
+Actual result from that exact run (all three files 43715 bytes):
+
+| File | raw sha256 | normalised sha256 |
+|---|---|---|
+| run 1 (in place) | `aa80f14593089eb17c23f353c5987d5636724e3122f292bc9f72dd1713abdb1e` | `4a7fdda93325e0005ed95df795b8560790c388af57cbbb43c46218eedea3be6d` |
+| run 2 (in place) | `8236db3f411288b086d248892d8f278205fd0e077733e881b70c1f34a0e60f08` | `4a7fdda93325e0005ed95df795b8560790c388af57cbbb43c46218eedea3be6d` |
+| run 3 (relocated) | `c237da3b78210880190f9afdf99b26028ca8ca3d643880d7e65e539a0639ec10` | `4a7fdda93325e0005ed95df795b8560790c388af57cbbb43c46218eedea3be6d` |
+
+`raw_byte_identical: false` (as expected -- the two volatile fields
+really do differ every run), **`normalised_byte_identical: true`** across
+all three, including the relocated one. `diff`ing the three raw files
+directly (not shown here for length) confirms the ONLY lines that differ
+are `Ran N tests in <duration>s` lines and lines containing an
+`indexgen_test_<random>` path -- nothing else, on any of the three
+comparisons.
+
+**Why the whole repository is relocated, not just `index-generator/`:**
+`capture.sh` embeds two self-check records that read sibling tool
+directories by relative path (`../transcript-schema/validate_transcript.py`,
+`../transcript-drift/driftcheck.py`). A bare copy of `index-generator/`
+alone cannot run those two records (both would exit nonzero, and the
+relocated transcript would then genuinely differ from the in-place ones
+for a real reason, not a volatility artefact). This is itself one of the
+limitations below, not glossed over.
+
+## Verification
+
+`transcript-schema/validate_transcript.py` (run from `transcript-schema/`,
+against a single file) and `transcript-drift/driftcheck.py` (run from the
+repository root, against all 49 tool directories, filtered to
+`index-generator` here) were run BEFORE and AFTER this fix:
+
+| Check | Before | After |
+|---|---|---|
+| `validate_transcript.py ../index-generator/captured_output.txt` | `status: invalid`; 1x `TRANSCRIPT_RECORD_MISSING_RAN_LINE`, 1x `TRANSCRIPT_RECORD_MISSING_VERDICT` (both on the `grep stale_catalogued` record) | `status: valid`; **zero findings** |
+| `driftcheck.py --root .` (index-generator's findings only) | `EXIT_CODE_MISMATCH` (exit 0/1 unacknowledged by the README's exit-code prose), `README_COMMAND_NOT_IN_TRANSCRIPT` (2 example commands that didn't literally match any transcript header), `TEST_COUNT_MISMATCH` (README claimed `138`; transcript recorded `138` AND `140` -- Finding 3, visible here as a real cross-check failure, not just a manual read) | **zero findings** |
+
+Reproduce exactly:
+
+```
+cd transcript-schema && python3 validate_transcript.py ../index-generator/captured_output.txt
+```
+
+and, from the repository root: `python3 transcript-drift/driftcheck.py --root .`
+(shown inline, not fenced, for the same reason as the `test_capture -v`
+command above -- it inspects the whole repository from outside this
+directory, which is a real, correct way to run it, but not literally one
+of `capture.sh`'s own relative-path records).
+
 ## Limitations
 
 1. **Test-count extraction is a small set of regex heuristics, not real
@@ -209,6 +441,50 @@ shows that round trip and the diff proving the trees are byte-identical.
    recognized as a "tool" (no top-level `*.py` of its own), so no
    `MISSING_*` finding is produced either -- it is simply absent from the
    index, with no diagnostic pointing at why.
+5. **`capture.sh`'s two self-check records (`validate_transcript.py`,
+   `driftcheck.py` run against this very file) cannot check the FINISHED
+   file, because the record that would report the result is itself part
+   of the file being written.** The `validate_transcript.py` record works
+   around this honestly by checking a `cp`'d snapshot taken immediately
+   before it runs (so it sees a real, complete-up-to-that-point file, not
+   a hand-edited one) -- but that snapshot still excludes everything from
+   the snapshot step onward. The `driftcheck.py` record does not even get
+   that: it reads the literal on-disk `captured_output.txt` by name, so
+   it necessarily sees a mid-write file and its result inside the
+   transcript should be read as illustrative, not authoritative. The
+   authoritative post-completion numbers are the ones in "Verification"
+   above, from a separate run made after `capture.sh` exits -- this
+   limitation is exactly why that separate run is necessary and is not
+   redundant with the embedded ones.
+6. **The relocation proof requires relocating the whole repository, not
+   just this directory**, because of the same two self-check records:
+   they reference `../transcript-schema` and `../transcript-drift` by
+   relative path. Given only a standalone copy of `index-generator/`
+   (no siblings), `bash capture.sh` still runs and produces a transcript,
+   but the two self-check records genuinely fail (nonzero exit, real
+   Python tracebacks about missing files) rather than being skipped --
+   the relocated transcript would then legitimately differ from the
+   in-place ones, not because relocation broke anything indexgen-related,
+   but because the evidence-generation script has a real, undisclosed-
+   until-now dependency on sibling tooling.
+7. **`pipe_scan.py` (Finding 4) does substring matching on header text
+   (`"|" in command`), not shell-quote-aware parsing, so it cannot tell a
+   real pipe operator from a literal `|` inside a quoted argument.**
+   Observed directly, not hypothesised: this directory's OWN regenerated
+   `captured_output.txt` still triggers one false-positive hit --
+   `grep -n 'time\.time\|utcnow\|now()' indexgen.py; echo grep_exit=$?`
+   -- where the `|` is a `grep` alternation operator inside a
+   single-quoted pattern, not a pipeline; there is no second process and
+   nothing is masked. The repo-wide "10 directories, 12 records" count in
+   "Finding 4" is therefore an upper bound that can include such false
+   positives in either direction: it also cannot tell a genuinely harmless
+   pipe (like this directory's OTHER pattern,
+   `grep -c foo bar.json; echo grep_exit=$?`, which explicitly captures
+   the inner exit code into printed text and has no masking problem at
+   all) apart from one that silently swallows a real test failure.
+   Distinguishing false positives from real Finding-2-shaped bugs requires
+   reading each flagged record's command by hand, which this task
+   deliberately did not do for the nine directories outside its scope.
 
 ## Notes on design choices
 

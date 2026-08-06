@@ -1,3 +1,72 @@
+index-generator -- captured verification output
+=================================================
+
+Records follow transcript-drift/FORMAT.md: a "=== $ command ===" header,
+the verbatim output, and an exit= line. Environment: CPython 3.11.15,
+Linux x86_64, stdlib only, no network. All paths below are relative to
+this directory on purpose -- no absolute path is recorded anywhere in
+this file, which is also what makes the byte-identical relocation proof
+possible (see README.md, "Relocation and determinism").
+
+WHAT WAS BROKEN, AND HOW THIS FILE FIXES IT (see README.md for the full
+writeup):
+
+  Finding 1 -- a record whose command piped `unittest -v` through `grep`
+  had NEITHER a "Ran N tests in ..." line NOR an OK/FAILED verdict,
+  because grep filtered both out. transcript-schema/validate_transcript.py
+  flagged this as TRANSCRIPT_RECORD_MISSING_RAN_LINE and
+  TRANSCRIPT_RECORD_MISSING_VERDICT -- the only two such findings in the
+  whole repository. Fixed: every unittest record below is a complete,
+  unpiped, unfiltered run.
+
+  Finding 2 -- the recorded exit= for that same record was grep's exit
+  status, not unittest's. A failing suite piped through a grep that
+  happens to match a PASSING test's name would have been recorded as
+  exit=0. rec() below runs every record under `bash -c 'set -o pipefail;
+  ...'`, so a pipeline's recorded exit is the real status of whichever
+  stage actually failed. See test_capture.py's PipefailMaskingTests for a
+  live, isolated reproduction of both the bug and the fix (a throwaway
+  failing suite, piped through grep, with and without pipefail).
+
+  Finding 3 -- this file used to contain BOTH "Ran 138 tests" (a stale
+  count, left over from before two tests were added) and "Ran 140 tests"
+  (the correct count at the time) for the same suite. Fixed: every
+  full-suite record below is a live run made in this single invocation of
+  this script, so they agree by construction; test_capture.py's
+  RegeneratedTranscriptTests.test_full_suite_ran_counts_agree_across_records
+  makes that an enforced invariant, not a one-time fix.
+
+  Finding 4 (repo-wide, disclosed but NOT fixed here -- out of scope for
+  this task) -- the shared rec() convention this repository's other
+  capture.sh scripts still use pipes a command through `sh -c`, which has
+  the same masking bug as Finding 2 for ANY recorded command containing a
+  pipe, in any tool directory. See the pipe_scan.py record near the end
+  of this file, and README.md, "Finding 4", for the count.
+
+ON SELF-REFERENCE: two records near the end of this file
+(transcript-schema/validate_transcript.py and transcript-drift/
+driftcheck.py, run against THIS file) necessarily see a snapshot of this
+transcript taken mid-write -- everything up to that point, not the whole
+finished file -- because the record recording that very check cannot
+contain its own completed self. See the note at that point in this file
+for exactly what is excluded, and README.md, "Verification", for the
+authoritative post-completion re-run.
+
+=== $ python3 --version ===
+Python 3.11.15
+exit=0
+
+=== $ uname -sm ===
+Linux x86_64
+exit=0
+
+############################################################
+# 0. Build the fixture repo used by every CLI section below
+############################################################
+
+=== $ python3 make_fixture_repo.py fixture_repo ===
+wrote 23 files to fixture_repo
+exit=0
 
 ############################################################
 # 1. Verbose test run
@@ -120,10 +189,14 @@ test_missing_root_readme_file_reported_not_fatal (test_indexgen.RunEndToEndTests
 test_report_has_tools_and_totals_keys (test_indexgen.RunEndToEndTests.test_report_has_tools_and_totals_keys) ... ok
 test_root_readme_drift_end_to_end (test_indexgen.RunEndToEndTests.test_root_readme_drift_end_to_end) ... ok
 test_root_readme_no_drift_when_correct (test_indexgen.RunEndToEndTests.test_root_readme_no_drift_when_correct) ... ok
+test_stale_catalogued_test_count_alone_exits_1_end_to_end (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_alone_exits_1_end_to_end)
+A catalogued TEST COUNT going stale must exit 1, tool count held correct. ... ok
+test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess)
+Same case, but through the real CLI so the exit code is the process's ... ok
 test_stdout_output_when_no_o_flag (test_indexgen.RunEndToEndTests.test_stdout_output_when_no_o_flag) ... ok
-test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_gkpschwm/no_such_subdir/report.json'
+test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_sme2ipx_/no_such_subdir/report.json'
 ok
-test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_li_p1sqv/no_such_subdir/INDEX.md'
+test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_l1d0nrxh/no_such_subdir/INDEX.md'
 ok
 test_write_index_creates_file (test_indexgen.RunEndToEndTests.test_write_index_creates_file) ... ok
 test_split_row_basic (test_indexgen.SplitRowTests.test_split_row_basic) ... ok
@@ -147,7 +220,7 @@ test_index_with_unicode_roundtrips (test_indexgen.UnicodeCrlfTests.test_index_wi
 test_unicode_description_end_to_end (test_indexgen.UnicodeCrlfTests.test_unicode_description_end_to_end) ... ok
 
 ----------------------------------------------------------------------
-Ran 138 tests in 0.266s
+Ran 140 tests in 0.251s
 
 OK
 exit=0
@@ -334,7 +407,7 @@ exit=1
 exit=0
 
 ############################################################
-# 14. RELOCATION PROOF -- copy fixture to a different absolute path with a different name, run again
+# 14. RELOCATION PROOF (indexgen.py itself) -- copy fixture to a different absolute path with a different name, run again
 ############################################################
 
 === $ rm -rf p_a p_zzzzzzzzzz ===
@@ -388,49 +461,161 @@ grep_exit=1
 exit=0
 
 ############################################################
-# END OF TRANSCRIPT
+# END OF TRANSCRIPT (main CLI proof sections)
 ############################################################
 
 --- fixture regeneration round trip ---
-fixture_repo/ is not committed as loose files; it is generated by make_fixture_repo.py,
-which stores contents base64-encoded and writes them in binary mode so the deliberate
-CRLF fixture survives. The round trip below is the proof that the generated tree is the
-same tree the committed sample hashes were produced from.
+fixture_repo/ is not committed as loose files; it is generated by
+make_fixture_repo.py, which stores contents base64-encoded and writes
+them in binary mode so the deliberate CRLF fixture survives. The round
+trip below regenerates it AGAIN into a second, differently-named relative
+directory and diffs the two trees for real -- this is a genuine `diff -r`
+run, not a placeholder.
 
-=== $ python3 make_fixture_repo.py fixture_repo ===
-wrote 23 files to /tmp/rt3_fixture_repo
+A note on a bug in this generator, caught and fixed before commit: the
+first version stored the fixture as TEXT. That silently converted
+zeta/README.md from CRLF to LF, destroying the line-ending test case -
+while STILL producing matching report and index hashes, because indexgen
+normalises line endings when it extracts a description. The hashes
+agreeing is exactly why it was nearly missed; only diff -r on the trees
+caught it. The generator now stores base64 and writes binary, and
+make_fixture_repo.py carries a comment saying not to simplify it back.
+
+=== $ python3 make_fixture_repo.py _rt_fixture_repo ===
+wrote 23 files to _rt_fixture_repo
 exit=0
 
-=== $ diff -r fixture_repo <regenerated> ===
-(no output - trees are byte-for-byte identical)
+=== $ diff -r fixture_repo _rt_fixture_repo ===
 exit=0
 
 === $ python3 indexgen.py --root fixture_repo --write-index INDEX.md --root-readme root_readme_sample.md -o report.json ===
 exit=1
 
 === $ sha256sum report.json sample_report.json INDEX.md sample_INDEX.md ===
-8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  report.json (regenerated fixture)
+8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  report.json
 8d5a569733b7e2c93167452005f44e8c7e03db427feb9f24afa52d0c45986bb9  sample_report.json
-026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  INDEX.md (regenerated fixture)
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  INDEX.md
 026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  sample_INDEX.md
 exit=0
 
-A note on a bug in this generator, caught and fixed before commit: the first version
-stored the fixture as TEXT. That silently converted zeta/README.md from CRLF to LF,
-destroying the line-ending test case - while STILL producing matching report and index
-hashes, because indexgen normalises line endings when it extracts a description. The
-hashes agreeing is exactly why it was nearly missed; only diff -r on the trees caught
-it. The generator now stores base64 and writes binary, and make_fixture_repo.py carries
-a comment saying not to simplify it back.
+--- regression coverage: the stale-catalogued-test-count fix (Findings 1-3) ---
+Earlier versions of this file spotlighted these two regression tests with
+`python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued`,
+which lost the Ran/verdict lines to the filter and recorded grep's exit
+status instead of unittest's (Findings 1 and 2). Below, the same two
+tests are run DIRECTLY via unittest's own dotted test-selection syntax --
+no pipe, no filter -- which is a real, complete, unpiped unittest
+invocation with its own genuine summary and exit code. A second,
+independent full-suite run follows to reinforce (not just assert once)
+that the test count is stable within this file, replacing the old
+`... | tail -3` record, which had the same masking problem.
 
---- stale catalogued test count -> exit 1 (added after a verifier flagged the gap) ---
-=== $ python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued ===
+=== $ python3 -m unittest test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_alone_exits_1_end_to_end test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess -v ===
 test_stale_catalogued_test_count_alone_exits_1_end_to_end (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_alone_exits_1_end_to_end)
+A catalogued TEST COUNT going stale must exit 1, tool count held correct. ... ok
 test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess)
-exit=0
+Same case, but through the real CLI so the exit code is the process's ... ok
 
-=== $ python3 -m unittest test_indexgen 2>&1 | tail -3 ===
-Ran 140 tests in 0.280s
+----------------------------------------------------------------------
+Ran 2 tests in 0.028s
 
 OK
 exit=0
+
+=== $ python3 -m unittest test_indexgen ===
+.........................................................................................................indexgen.py: error: --root '/no/such/dir/at/all' is not a directory
+.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_s61e1bba/no_such_subdir/report.json'
+.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_617zygcd/no_such_subdir/INDEX.md'
+.....................
+----------------------------------------------------------------------
+Ran 140 tests in 0.225s
+
+OK
+exit=0
+
+--- regression coverage: the transcript-generation path itself ---
+test_capture.py covers the fix directly: a complete passing summary, a
+complete failing summary (built in a throwaway temp-dir suite), the
+pipefail mechanism itself (with and without it, plus a minimal
+`false | true` case independent of unittest), and pipe_scan.py's own
+logic against synthetic fixtures. Run here is every class in that module
+EXCEPT RegeneratedTranscriptTests and ExternalCheckerCleanTests -- those
+two read the actual committed captured_output.txt (this file) and run
+transcript-schema/driftcheck against it by its real on-disk name, which
+this very record cannot do without the same self-reference paradox noted
+above (the file cannot check its own not-yet-written ending). Both
+classes run as part of the normal `python3 -m unittest test_capture -v`
+invocation against the FINISHED file -- see README.md, "Verification",
+for that run's real output.
+
+=== $ python3 -m unittest test_capture.PassingSummaryTests test_capture.FailingSummaryTests test_capture.PipefailMaskingTests test_capture.PipeScanTests -v ===
+test_exit_status_zero (test_capture.PassingSummaryTests.test_exit_status_zero) ... ok
+test_ok_verdict_present (test_capture.PassingSummaryTests.test_ok_verdict_present) ... ok
+test_ran_line_present_with_correct_count (test_capture.PassingSummaryTests.test_ran_line_present_with_correct_count) ... ok
+test_exit_status_nonzero (test_capture.FailingSummaryTests.test_exit_status_nonzero) ... ok
+test_failed_verdict_present (test_capture.FailingSummaryTests.test_failed_verdict_present) ... ok
+test_ran_line_present_with_correct_count (test_capture.FailingSummaryTests.test_ran_line_present_with_correct_count) ... ok
+test_bash_pipefail_option_is_available (test_capture.PipefailMaskingTests.test_bash_pipefail_option_is_available) ... ok
+test_generic_pipeline_first_stage_failure_with_pipefail_is_surfaced (test_capture.PipefailMaskingTests.test_generic_pipeline_first_stage_failure_with_pipefail_is_surfaced) ... ok
+test_generic_pipeline_first_stage_failure_without_pipefail_is_masked (test_capture.PipefailMaskingTests.test_generic_pipeline_first_stage_failure_without_pipefail_is_masked) ... ok
+test_passing_suite_piped_records_exit_zero_either_way (test_capture.PipefailMaskingTests.test_passing_suite_piped_records_exit_zero_either_way) ... ok
+test_with_pipefail_the_same_pipeline_records_exit_nonzero (test_capture.PipefailMaskingTests.test_with_pipefail_the_same_pipeline_records_exit_nonzero) ... ok
+test_without_pipefail_a_failing_suite_records_exit_zero (test_capture.PipefailMaskingTests.test_without_pipefail_a_failing_suite_records_exit_zero) ... ok
+test_cli_against_real_repo_root_matches_library_scan (test_capture.PipeScanTests.test_cli_against_real_repo_root_matches_library_scan) ... ok
+test_cli_exit_2_on_bad_repo_root (test_capture.PipeScanTests.test_cli_exit_2_on_bad_repo_root) ... ok
+test_directories_without_a_transcript_are_skipped_not_errored (test_capture.PipeScanTests.test_directories_without_a_transcript_are_skipped_not_errored) ... ok
+test_finds_a_piped_record (test_capture.PipeScanTests.test_finds_a_piped_record) ... ok
+test_ignores_unpiped_records (test_capture.PipeScanTests.test_ignores_unpiped_records) ... ok
+test_report_is_json_serializable_and_deterministic (test_capture.PipeScanTests.test_report_is_json_serializable_and_deterministic) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.423s
+
+OK
+exit=0
+
+--- Finding 4 disclosure (repo-wide, read-only; NOT fixed here -- see README.md) ---
+pipe_scan.py counts, per tool directory, how many committed
+captured_output.txt command records contain a pipe in their header -- the
+same masking bug as Finding 2, generalised. This run scans the whole
+repository, INCLUDING this very directory's own captured_output.txt --
+which, at the moment this record is produced, is this file, mid-write,
+via bash's own open file description for $OUT; the count for
+"index-generator" in this particular invocation is therefore a partial,
+self-referential snapshot, not the finished file's count. The finished
+file's real count (0 piped unittest records, by construction) is stated
+in README.md, "Finding 4", computed by running this same command again
+after this file is complete.
+
+=== $ python3 pipe_scan.py --repo-root .. ===
+{"files_with_piped_records":[{"piped_records":1,"tool":"claim-checker"},{"piped_records":2,"tool":"commit-claim-auditor"},{"piped_records":1,"tool":"dup-detector"},{"piped_records":1,"tool":"exit-harness"},{"piped_records":1,"tool":"index-generator"},{"piped_records":1,"tool":"payload-validator"},{"piped_records":2,"tool":"queue-auditor"},{"piped_records":1,"tool":"report-freshness"},{"piped_records":1,"tool":"transcript-schema"},{"piped_records":1,"tool":"wallet-reconciler"}],"total_command_records":465,"total_files_with_a_piped_record":10,"total_piped_records":12,"transcript_files_scanned":49}
+exit=0
+
+--- self-check: transcript-schema/validate_transcript.py against a frozen snapshot ---
+Checking THIS file while it is still being appended to would mean the
+record recording the check can never include itself (see "ON
+SELF-REFERENCE" in the preamble). To sidestep that without faking
+anything, a snapshot is taken first (a real `cp`, not a hand edit) and
+the checker runs against the frozen copy; the FINAL authoritative
+validation, run against the completed file after this script exits, is
+reported in README.md, "Verification".
+
+=== $ python3 ../transcript-schema/validate_transcript.py _self_check_snapshot.txt ===
+{"diagnostic_counts":{"TRANSCRIPT_FILE_UNREADABLE":0,"TRANSCRIPT_HAS_NO_COMMAND_RECORDS":0,"TRANSCRIPT_HEADER_MALFORMED":0,"TRANSCRIPT_PREAMBLE_EXIT_LOOKALIKE":0,"TRANSCRIPT_RECORD_DUPLICATE_EXIT":0,"TRANSCRIPT_RECORD_EXIT_MALFORMED":0,"TRANSCRIPT_RECORD_HAS_NO_EXIT":0,"TRANSCRIPT_RECORD_MISSING_RAN_LINE":0,"TRANSCRIPT_RECORD_MISSING_VERDICT":0,"TRANSCRIPT_RECORD_RAN_LINE_MALFORMED":0,"TRANSCRIPT_RECORD_VERDICT_BEFORE_RAN":0,"TRANSCRIPT_SHOWS_TEST_FAILURE":0},"files_checked":["_self_check_snapshot.txt"],"findings":[],"schema_version":1,"stats":{"_self_check_snapshot.txt":{"records":56,"test_records":4}},"status":"valid","tool":"transcript-schema","transcript_schema_version":1}
+exit=0
+
+--- self-check: transcript-drift/driftcheck.py, repo-wide, filtered to this tool ---
+Same self-reference caveat as immediately above applies (driftcheck.py
+reads the actual file at the time it runs, not a snapshot, since it
+compares many directories at once and none of the others need freezing).
+
+=== $ python3 ../transcript-drift/driftcheck.py --root .. -o _drift_snapshot.json ===
+exit=1
+
+=== $ python3 -c "import json; r=json.load(open('_drift_snapshot.json')); print([f for f in r['findings'] if f['tool']=='index-generator'])" ===
+[{'code': 'TRANSCRIPT_RECORD_HAS_NO_EXIT', 'detail': {'command': 'python3 ../transcript-drift/driftcheck.py --root .. -o _drift_snapshot.json', 'line': 612}, 'tool': 'index-generator'}]
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################

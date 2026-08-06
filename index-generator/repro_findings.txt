@@ -1,0 +1,69 @@
+index-generator -- Findings 1-3 reproduction (BEFORE this task's fix)
+======================================================================
+
+Environment: CPython 3.11.15, Linux x86_64, stdlib only, no network.
+
+--- Finding 1 + 2: the exact broken record, copied verbatim from the
+    ORIGINAL committed index-generator/captured_output.txt (before this
+    task's fix), lines 427-436 of that file. Note: NEITHER a
+    'Ran N tests in ...' line NOR an OK/FAILED verdict appears in the
+    first record -- grep filtered both out. The exit=0 recorded for it
+    is grep's exit code (grep found a match), not unittest's.
+==== verbatim excerpt, original captured_output.txt, lines 427-436 ====
+=== $ python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued ===
+test_stale_catalogued_test_count_alone_exits_1_end_to_end (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_alone_exits_1_end_to_end)
+test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess)
+exit=0
+
+=== $ python3 -m unittest test_indexgen 2>&1 | tail -3 ===
+Ran 140 tests in 0.280s
+
+OK
+exit=0
+==== end excerpt ====
+
+transcript-schema/validate_transcript.py flags exactly this record:
+=== $ cd /tmp/GO2/transcript-schema && python3 validate_transcript.py ../index-generator/captured_output.txt ===
+{"diagnostic_counts":{"TRANSCRIPT_FILE_UNREADABLE":0,"TRANSCRIPT_HAS_NO_COMMAND_RECORDS":0,"TRANSCRIPT_HEADER_MALFORMED":0,"TRANSCRIPT_PREAMBLE_EXIT_LOOKALIKE":0,"TRANSCRIPT_RECORD_DUPLICATE_EXIT":0,"TRANSCRIPT_RECORD_EXIT_MALFORMED":0,"TRANSCRIPT_RECORD_HAS_NO_EXIT":0,"TRANSCRIPT_RECORD_MISSING_RAN_LINE":1,"TRANSCRIPT_RECORD_MISSING_VERDICT":1,"TRANSCRIPT_RECORD_RAN_LINE_MALFORMED":0,"TRANSCRIPT_RECORD_VERDICT_BEFORE_RAN":0,"TRANSCRIPT_SHOWS_TEST_FAILURE":0},"files_checked":["../index-generator/captured_output.txt"],"findings":[{"code":"TRANSCRIPT_RECORD_MISSING_RAN_LINE","detail":{"command":"python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued"},"file":"../index-generator/captured_output.txt","line":427,"severity":"error","text":"=== $ python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued ==="},{"code":"TRANSCRIPT_RECORD_MISSING_VERDICT","detail":{"command":"python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued"},"file":"../index-generator/captured_output.txt","line":427,"severity":"error","text":"=== $ python3 -m unittest test_indexgen -v 2>&1 | grep stale_catalogued ==="}],"schema_version":1,"stats":{"../index-generator/captured_output.txt":{"records":51,"test_records":3}},"status":"invalid","tool":"transcript-schema","transcript_schema_version":1}
+exit=1
+
+--- Finding 3: the same original file contradicts itself on the test
+    count. Reproduced by grepping the committed file directly (this grep
+    is over a static committed file for illustration only; it is not
+    part of any evidence-generation pipeline, so no exit-masking concern
+    applies to it).
+=== $ grep -n 'Ran [0-9]* tests' /tmp/GO2/index-generator/captured_output.txt ===
+150:Ran 138 tests in 0.266s
+433:Ran 140 tests in 0.280s
+exit=0
+
+--- Finding 2, live demo: a purpose-built suite (one passing test whose
+    name grep matches, one genuinely failing test) proves the exit=0
+    recorded above is grep's, not unittest's, and that a FAILING suite
+    can be recorded as exit=0 by the repo's shared rec() convention.
+
+=== $ python3 -m unittest test_demo -v 2>&1 | grep stale_catalogued_demo ===
+test_stale_catalogued_demo_passes (test_demo.DemoTests.test_stale_catalogued_demo_passes) ... ok
+exit=0  <-- grep's exit status (0: it found a match) -- NOT unittest's
+
+=== $ python3 -m unittest test_demo -v  (same suite, run directly, no pipe) ===
+test_something_else_fails (test_demo.DemoTests.test_something_else_fails) ... FAIL
+test_stale_catalogued_demo_passes (test_demo.DemoTests.test_stale_catalogued_demo_passes) ... ok
+
+======================================================================
+FAIL: test_something_else_fails (test_demo.DemoTests.test_something_else_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/build_7/repro_work/demo/test_demo.py", line 8, in test_something_else_fails
+    self.assertEqual(1, 2)
+AssertionError: 1 != 2
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+FAILED (failures=1)
+exit=1  <-- the TRUTH: this suite FAILED
+
+=== $ bash -c 'set -o pipefail; python3 -m unittest test_demo -v 2>&1 | grep stale_catalogued_demo'  (the fix) ===
+test_stale_catalogued_demo_passes (test_demo.DemoTests.test_stale_catalogued_demo_passes) ... ok
+exit=1  <-- pipefail surfaces the real (nonzero) status
