@@ -17,7 +17,7 @@
 
 === $ cd .. && python3 shebang-mode/shebangmode.py --root . --quiet -o shebang-mode/selfscan_work/self.json; python3 -c "import json;d=json.load(open('shebang-mode/selfscan_work/self.json'));print('status',d['status']);print('counts',json.dumps(d['counts'],sort_keys=True));print('by_code',json.dumps(d['findings_by_code'],sort_keys=True));print('first five findings:');[print('   ',f['path'],'|',f['first_line']) for f in d['findings'][:5]]" ===
 status mismatches
-counts {"checked": 556, "executable": 0, "skipped_binary": 0, "skipped_excluded": 0, "skipped_not_a_regular_file": 0, "skipped_unmerged": 0, "tracked": 556, "with_shebang": 140}
+counts {"checked": 558, "executable": 0, "skipped_binary": 0, "skipped_excluded": 0, "skipped_not_a_regular_file": 0, "skipped_unmerged": 0, "tracked": 558, "with_shebang": 140}
 by_code {"SM002_SHEBANG_WITHOUT_EXEC": 140}
 first five findings:
     adversarial-suite/capture_counts.sh | #!/usr/bin/env bash
@@ -28,7 +28,7 @@ first five findings:
 exit=0
 
 === $ cd .. && git ls-files -s | awk '{print $1}' | sort | uniq -c ===
-    556 100644
+    558 100644
 exit=0
 
 === $ cd .. && git ls-files -z | xargs -0 -I{} sh -c 'head -c2 "{}" | grep -q "^#!" && head -1 "{}"' 2>/dev/null | sort | uniq -c | sort -rn ===
