@@ -1,0 +1,597 @@
+############################################################
+# REGENERABILITY_EVIDENCE.txt
+#
+# Subject: nondeterminism-scanner/self_scan_report.json -- a committed
+# current-state report that was written once, by the commit that added
+# this tool, and never touched again by any later commit.
+#
+# Every record below is a real run: a "=== $ command ===" header, the
+# verbatim output, and an exit= line. Commands are relative to
+# nondeterminism-scanner/ unless the header says otherwise.
+############################################################
+
+--- 0. the artifact, and the fact that nothing has touched it ---
+
+=== $ git -C .. log --oneline -- nondeterminism-scanner/self_scan_report.json ===
+16c85ed Add nondeterminism-scanner: AST scanner + committed self-scan of repo tools (221 tests)
+exit=0
+
+=== $ git -C .. log --oneline -1 ===
+364e739 weak-assertion-scanner: re-scan after the stdout-contract repair, WA001 14 to 13
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('self_scan_report.json'));print(json.dumps(d['summary'],indent=2,sort_keys=True))" ===
+{
+  "by_rule": {
+    "ND001_WALL_CLOCK": 0,
+    "ND002_UNSORTED_LISTDIR": 5,
+    "ND003_UNORDERED_ITERATION": 26,
+    "ND004_UNSAFE_REPR": 220,
+    "ND005_UNSEEDED_RANDOM": 0,
+    "ND006_FLOAT_IN_MONEY": 0
+  },
+  "by_severity": {
+    "high": 5,
+    "low": 220,
+    "medium": 26
+  },
+  "files_errored": 0,
+  "files_scanned": 87,
+  "findings_count": 251
+}
+exit=0
+
+--- 1. what the README documents as its rerun command ---
+
+=== $ grep -n 'ndscan.py --root' README.md ===
+8:python3 ndscan.py --root <directory> [-o report.json] [--rule RULE_ID ...] [--min-severity low|medium|high]
+343:python3 ndscan.py --root <path to the ~30 sibling tool directories> -o self_scan_report.json
+exit=0
+
+The committed report's own paths are repository-root relative
+("claim-checker/claimcheck.py"), so the root it was generated with
+was the repository root -- i.e. the command above, run from here,
+with --root .. -- and that is what this evidence re-runs.
+
+=== $ python3 -c "import json;d=json.load(open('self_scan_report.json'));print([f['path'] for f in d['findings'][:3]])" ===
+['bundle-index/bundle_index.py', 'claim-checker/claimcheck.py', 'consolidate/consolidate.py']
+exit=0
+
+--- 2. the committed report does not reproduce at ANY commit ---
+files_scanned is a plain count of the .py files under --root, with
+only .git/__pycache__/.venv/venv/node_modules/.mypy_cache/
+.pytest_cache/.tox/build/dist/.eggs pruned (IGNORED_DIR_NAMES in
+ndscan.py). So the count of tracked .py files at a commit is a
+necessary condition for that commit to reproduce the report. The
+committed report says 87. No commit in this repository's history
+has ever had 87 tracked .py files: the count steps 86 -> 88.
+
+=== $ grep -n 'IGNORED_DIR_NAMES = ' -A 4 ndscan.py ===
+63:IGNORED_DIR_NAMES = {
+64-    ".git", "__pycache__", ".venv", "venv", "node_modules",
+65-    ".mypy_cache", ".pytest_cache", ".tox", "build", "dist", ".eggs",
+66-}
+67-
+exit=0
+
+=== $ git -C .. rev-list --count HEAD ===
+195
+exit=0
+
+=== $ git -C .. rev-list --reverse HEAD | while read c; do git -C .. ls-tree -r --name-only $c | grep -c '[.]py$'; done | sort -n | uniq | paste -sd' ' - ===
+0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 53 55 57 59 61 63 65 67 69 71 77 84 86 88 90 91 93 94 95 96 99 100 102 103 104 105 106 107 110 113 114 117 119 122 124 125 128 130 132 135 138 140 142 144 147 149 152 153 154 155 156 157 158 159 160 162 163 167 169 172 174 176
+exit=0
+
+And the claim itself, as a command whose EXIT is the claim: every
+commit's tracked .py count is piped to "grep -x 87". grep exits 1
+when it matches nothing, so exit=1 below is the finding -- 87 never
+occurs -- and an exit=0 would mean the opposite. Nothing here is
+left for a trailing echo to report as success.
+
+=== $ git -C .. rev-list --reverse HEAD | while read c; do git -C .. ls-tree -r --name-only $c | grep -c '[.]py$'; done | grep -x 87 ===
+exit=1
+
+--- 3. it does not reproduce at the commit that wrote it, either ---
+That commit's tree has 71 tracked .py files, not 87, and its rerun
+differs in four of the six per-rule counts. The report was produced
+from a working tree that was never committed.
+
+=== $ git -C .. archive 16c85ed | tar -x -C ../../nd_evidence_scratch/birth && find ../../nd_evidence_scratch/birth -name '*.py' | wc -l ===
+71
+exit=0
+
+=== $ python3 ../../nd_evidence_scratch/birth/nondeterminism-scanner/ndscan.py --root ../../nd_evidence_scratch/birth -o ../../nd_evidence_scratch/at_birth.json ===
+exit=1
+
+=== $ python3 -c "import json;print(json.dumps(json.load(open('../../nd_evidence_scratch/at_birth.json'))['summary'],indent=2,sort_keys=True))" ===
+{
+  "by_rule": {
+    "ND001_WALL_CLOCK": 0,
+    "ND002_UNSORTED_LISTDIR": 6,
+    "ND003_UNORDERED_ITERATION": 18,
+    "ND004_UNSAFE_REPR": 180,
+    "ND005_UNSEEDED_RANDOM": 0,
+    "ND006_FLOAT_IN_MONEY": 0
+  },
+  "by_severity": {
+    "high": 6,
+    "low": 180,
+    "medium": 18
+  },
+  "files_errored": 0,
+  "files_scanned": 71,
+  "findings_count": 204
+}
+exit=0
+
+--- 4. the lock, BEFORE the repair ---
+report-freshness/manifest.json now carries a regenerable entry for
+this report. With the stale artifact still in place the checker
+reports it, which is the whole point of adding the entry: nothing
+in this repository was asking this question before.
+
+=== $ python3 -c "import json;e=[x for x in json.load(open('../report-freshness/manifest.json'))['entries'] if x['tool']=='nondeterminism-scanner'];print(json.dumps(e,indent=2,sort_keys=True))" ===
+[
+  {
+    "committed_report": "nondeterminism-scanner/self_scan_report.json",
+    "description": "AST self-scan for the six non-determinism rules (wall clock, unsorted listdir/walk, unordered iteration, unsafe repr, unseeded random, float money) across every .py file in the repository. A current-state snapshot: it is supposed to describe the repository as it exists right now, so it MUST regenerate byte-for-byte, and any commit that adds or edits Python is expected to refresh it. Added to this manifest during the repair recorded in nondeterminism-scanner/REGENERABILITY_EVIDENCE.txt, which found the committed report reproducible at no commit in the repository's history -- it reported 87 files scanned, a count the tracked tree has never had -- after sitting untouched, with no regenerator and no manifest entry, since the commit that wrote it.",
+    "expected_exit_code": 1,
+    "generation": {
+      "argv": [
+        "python3",
+        "ndscan.py",
+        "--root",
+        "..",
+        "-o",
+        "{OUT}"
+      ],
+      "cwd": "nondeterminism-scanner"
+    },
+    "id": "nondeterminism-scanner:self_scan_report.json",
+    "inputs": [],
+    "kind": "regenerable",
+    "tool": "nondeterminism-scanner"
+  }
+]
+exit=0
+
+freshness.py exits 1 when anything is stale, so the exit= line on
+the next record IS the finding, not decoration.
+
+=== $ cd ../report-freshness && python3 freshness.py --root .. -o ../nondeterminism-scanner/../../nd_evidence_scratch/before.json ===
+exit=1
+
+=== $ python3 -c "import json;[print('%-46s %s'%(e['id'],e['state'])) for e in json.load(open('../../nd_evidence_scratch/before.json'))['entries']]" ===
+claim-crosscheck:sample_run.json               match
+env-leak-scanner:leak_report_2026-08-04.json   pinned_present
+nondeterminism-scanner:self_scan_report.json   stale
+regression-checker:baseline_coverage_report.json match
+transcript-drift:drift_report_after_migration.json pinned_present
+transcript-schema:validation_report.json       match
+weak-assertion-scanner:self_scan_report.json   match
+exit=0
+
+--- 5. the repair: regenerate, in place, with the documented command ---
+
+=== $ python3 ndscan.py --root .. -o self_scan_report.json ===
+exit=1
+
+=== $ python3 -c "import json;d=json.load(open('self_scan_report.json'));print(json.dumps(d['summary'],indent=2,sort_keys=True))" ===
+{
+  "by_rule": {
+    "ND001_WALL_CLOCK": 7,
+    "ND002_UNSORTED_LISTDIR": 65,
+    "ND003_UNORDERED_ITERATION": 24,
+    "ND004_UNSAFE_REPR": 333,
+    "ND005_UNSEEDED_RANDOM": 7,
+    "ND006_FLOAT_IN_MONEY": 7
+  },
+  "by_severity": {
+    "high": 79,
+    "low": 333,
+    "medium": 31
+  },
+  "files_errored": 0,
+  "files_scanned": 177,
+  "findings_count": 443
+}
+exit=0
+
+=== $ python3 ndscan.py --root .. -o ../../nd_evidence_scratch/second.json ===
+exit=1
+
+=== $ cmp self_scan_report.json ../../nd_evidence_scratch/second.json && echo BYTE_IDENTICAL_ON_A_SECOND_RUN ===
+BYTE_IDENTICAL_ON_A_SECOND_RUN
+exit=0
+
+The two consecutive runs, hashed side by side. The committed file
+IS the first run -- it was written in place by the first command in
+this section, so this is run 1 vs run 2, not a file vs itself.
+
+=== $ sha256sum self_scan_report.json ../../nd_evidence_scratch/second.json ===
+a637cf88b3c4b69b2e3399a1e5d07f28df545ac4caaeb675bdfe31dd2d88cd53  self_scan_report.json
+a637cf88b3c4b69b2e3399a1e5d07f28df545ac4caaeb675bdfe31dd2d88cd53  ../../nd_evidence_scratch/second.json
+exit=0
+
+--- 6. the lock, AFTER the repair ---
+
+=== $ cd ../report-freshness && python3 freshness.py --root .. -o ../nondeterminism-scanner/../../nd_evidence_scratch/after.json ===
+exit=0
+
+=== $ python3 -c "import json;[print('%-46s %s'%(e['id'],e['state'])) for e in json.load(open('../../nd_evidence_scratch/after.json'))['entries']]" ===
+claim-crosscheck:sample_run.json               match
+env-leak-scanner:leak_report_2026-08-04.json   pinned_present
+nondeterminism-scanner:self_scan_report.json   match
+regression-checker:baseline_coverage_report.json match
+transcript-drift:drift_report_after_migration.json pinned_present
+transcript-schema:validation_report.json       match
+weak-assertion-scanner:self_scan_report.json   match
+exit=0
+
+--- 6b. report-freshness's own committed report ---
+freshness_report.json is a committed report of the checker's own
+run. It was already stale before this task: it lists 5 entries
+while manifest.json already had 6. It is regenerated here so that
+it reports the lock this task adds instead of a state two entries
+out of date. It is deliberately NOT given a manifest entry of its
+own -- report-freshness/README.md, "The irony: this tool's own
+report can go stale too", already sets out why a self-referential
+entry would be wrong in both directions.
+
+=== $ python3 -c "import json;print('committed entries:',[e['id'] for e in json.load(open('../report-freshness/freshness_report.json'))['entries']])" ===
+committed entries: ['claim-crosscheck:sample_run.json', 'env-leak-scanner:leak_report_2026-08-04.json', 'regression-checker:baseline_coverage_report.json', 'transcript-drift:drift_report_after_migration.json', 'transcript-schema:validation_report.json']
+exit=0
+
+=== $ cd ../report-freshness && python3 freshness.py -o freshness_report.json ===
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('../report-freshness/freshness_report.json'));print(len(d['entries']),'entries now');[print('  %-46s %s'%(e['id'],e['state'])) for e in d['entries']]" ===
+7 entries now
+  claim-crosscheck:sample_run.json               match
+  env-leak-scanner:leak_report_2026-08-04.json   pinned_present
+  nondeterminism-scanner:self_scan_report.json   match
+  regression-checker:baseline_coverage_report.json match
+  transcript-drift:drift_report_after_migration.json pinned_present
+  transcript-schema:validation_report.json       match
+  weak-assertion-scanner:self_scan_report.json   match
+exit=0
+
+NOT REPAIRED, and disclosed rather than left for a reviewer to
+find: report-freshness/captured_output.txt records a sha256 for
+freshness_report.json that already did not match the committed
+file before this task touched anything. That transcript has no
+regenerator in the repository, and hand-editing a recorded run is
+exactly what EVIDENCE_STANDARD.md forbids, so it is left alone.
+
+Quoted from the other transcript with a "| " prefix on every
+line: its own "=== $ ..." header and exit= line would otherwise
+parse as records of THIS transcript.
+
+=== $ grep -A 2 'sha256sum freshness_report.json' ../report-freshness/captured_output.txt | sed 's/^/| /' ===
+| === $ sha256sum freshness_report.json ===
+| e0b76a90ee1144b72715a3e88ed094672613b14d7be59d7b8620425e9a2ec89d  freshness_report.json
+| exit=0
+exit=0
+
+=== $ git -C .. show HEAD:report-freshness/freshness_report.json | sha256sum ===
+cb2eec1ed207850059cf8daaf6bbcb234b57b9400011beab8187539e10fced1e  -
+exit=0
+
+--- 7. positive control: the lock actually fires ---
+A lock that has only ever been observed saying "match" is not
+evidence. One byte of the committed report is perturbed in a
+throwaway copy of the tree -- never in this checkout -- and the
+checker is re-run there. It must say stale and exit nonzero.
+
+The script the next record runs, in full. It is written to a
+scratch file outside the repository so that the record header
+below can be a single line; copy it back out to re-run it.
+    import json, os, shutil, subprocess, sys
+    here = os.path.abspath('.')
+    root = os.path.abspath('..')
+    scratch = os.path.abspath(sys.argv[1])
+    dest = os.path.join(scratch, 'perturbed')
+    shutil.copytree(root, dest, ignore=shutil.ignore_patterns('.git', '__pycache__'))
+    p = os.path.join(dest, 'nondeterminism-scanner', 'self_scan_report.json')
+    d = json.load(open(p))
+    before = d['summary']['findings_count']
+    d['summary']['findings_count'] = before + 1        # one field, one digit
+    with open(p, 'w', encoding='utf-8') as fh:
+        fh.write(json.dumps(d, sort_keys=True, separators=(',', ':'), ensure_ascii=True) + '\n')
+    print('perturbed findings_count %d -> %d in the COPY only' % (before, before + 1))
+    out = os.path.join(scratch, 'perturbed.json')
+    proc = subprocess.run([sys.executable, 'freshness.py', '--root', '..', '-o', out],
+                          cwd=os.path.join(dest, 'report-freshness'),
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print('freshness.py exit =', proc.returncode)
+    states = {e['id']: e['state'] for e in json.load(open(out))['entries']}
+    for i in sorted(states):
+        print('%-46s %s' % (i, states[i]))
+    # This record's own exit is the control's verdict, not this script's
+    # success at running it: 0 only if the checker both flagged the
+    # perturbed report and exited nonzero for it.
+    ok = (proc.returncode == 1
+          and states['nondeterminism-scanner:self_scan_report.json'] == 'stale')
+    print('CONTROL FIRED' if ok else 'CONTROL DID NOT FIRE')
+    sys.exit(0 if ok else 1)
+
+=== $ python3 ../../nd_evidence_scratch/control_freshness.py ../../nd_evidence_scratch ===
+perturbed findings_count 443 -> 444 in the COPY only
+freshness.py exit = 1
+claim-crosscheck:sample_run.json               match
+env-leak-scanner:leak_report_2026-08-04.json   pinned_present
+nondeterminism-scanner:self_scan_report.json   stale
+regression-checker:baseline_coverage_report.json match
+transcript-drift:drift_report_after_migration.json pinned_present
+transcript-schema:validation_report.json       match
+weak-assertion-scanner:self_scan_report.json   match
+CONTROL FIRED
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('self_scan_report.json'));print('this checkout is untouched by the control:',d['summary']['findings_count'],'findings')" ===
+this checkout is untouched by the control: 443 findings
+exit=0
+
+--- 7b. the focused check, and a positive control on it ---
+test_selfscan_freshness.py regenerates the report with the
+documented command and compares bytes. It runs green here, and the
+run below shows it going RED against a perturbed copy -- a check
+only ever seen passing is not evidence that it can fail.
+
+=== $ python3 -m unittest test_selfscan_freshness 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 6 tests in 11.006s
+
+OK
+exit=0
+
+The script the next record runs, in full. It is written to a
+scratch file outside the repository so that the record header
+below can be a single line; copy it back out to re-run it.
+    import json, os, shutil, subprocess, sys, tempfile
+    here = os.path.abspath('.')
+    root = os.path.abspath('..')
+    scratch = os.path.abspath(sys.argv[1])
+    dest = os.path.join(scratch, 'perturbed_check')
+    shutil.copytree(root, dest, ignore=shutil.ignore_patterns('.git', '__pycache__'))
+    p = os.path.join(dest, 'nondeterminism-scanner', 'self_scan_report.json')
+    d = json.load(open(p))
+    before = d['summary']['files_scanned']
+    d['summary']['files_scanned'] = before + 1        # one field, one digit
+    with open(p, 'w', encoding='utf-8') as fh:
+        fh.write(json.dumps(d, sort_keys=True, separators=(',', ':'), ensure_ascii=True) + '\n')
+    print('perturbed files_scanned %d -> %d in the COPY only' % (before, before + 1))
+    proc = subprocess.run(
+        [sys.executable, '-m', 'unittest', 'test_selfscan_freshness'],
+        cwd=os.path.join(dest, 'nondeterminism-scanner'),
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        env=dict(os.environ, PYTHONDONTWRITEBYTECODE='1'))
+    text = proc.stdout.decode('utf-8', 'replace')
+    # Prefixed, not echoed raw: an unprefixed "FAIL:" line from a
+    # deliberately-red control run reads to transcript-drift as this
+    # transcript recording a real test failure.
+    for line in text.splitlines():
+        if ('FAIL' in line or 'stale' in line or 'Ran ' in line
+                or 'committed=' in line or line.startswith('OK')):
+            print('  [control] ' + line)
+    print('unittest exit =', proc.returncode)
+    ok = proc.returncode != 0 and 'is stale' in text
+    print('CHECK WENT RED' if ok else 'CHECK DID NOT GO RED')
+    sys.exit(0 if ok else 1)
+
+=== $ python3 ../../nd_evidence_scratch/control_check.py ../../nd_evidence_scratch ===
+perturbed files_scanned 177 -> 178 in the COPY only
+  [control] FAIL: test_regeneration_is_byte_identical_to_the_committed_report (test_selfscan_freshness.TestCommittedSelfScanStillReproduces.test_regeneration_is_byte_identical_to_the_committed_report)
+  [control] AssertionError: self_scan_report.json is stale: a fresh run differs from the committed bytes.
+  [control]   files_scanned              committed=178  now=177
+  [control] Ran 6 tests in 10.920s
+  [control] FAILED (failures=1)
+unittest exit = 1
+CHECK WENT RED
+exit=0
+
+=== $ python3 -c "import json;print('this checkout is untouched by the control:',json.load(open('self_scan_report.json'))['summary']['files_scanned'],'files scanned')" ===
+this checkout is untouched by the control: 177 files scanned
+exit=0
+
+--- 8. what the new numbers are made of ---
+Read this before concluding that the repository got worse. The
+committed report predates this tool's own samples_risky/ fixtures
+(added at 466fd22, AFTER the report was written). Those files exist
+to be flagged, and they account for every ND001 and every ND006
+finding in the new report: among the sibling tools those two counts
+are still zero, exactly as the old report said.
+
+ND005 is the one rule where that is NOT the whole story, so it is
+spelled out rather than rounded off: 7 findings, 5 planted and 2 in
+sibling tools. Both of those two are shown in full below. Both are
+false positives of a kind the rule cannot avoid as written -- see
+section 8b.
+
+The script the next record runs, in full. It is written to a
+scratch file outside the repository so that the record header
+below can be a single line; copy it back out to re-run it.
+    import collections, json
+    d = json.load(open('self_scan_report.json'))
+    f = d['findings']
+    own = [x for x in f if x['path'].startswith('nondeterminism-scanner/')]
+    other = [x for x in f if not x['path'].startswith('nondeterminism-scanner/')]
+    print('findings total                      %4d' % len(f))
+    print('  in this tool\'s own fixtures       %4d' % len(own))
+    print('  in the %2d sibling tool directories %4d'
+          % (len({x['path'].split('/')[0] for x in other}), len(other)))
+    print()
+    print('%-24s %6s %6s %6s' % ('rule', 'total', 'own', 'others'))
+    for rule in sorted(d['summary']['by_rule']):
+        print('%-24s %6d %6d %6d'
+              % (rule,
+                 d['summary']['by_rule'][rule],
+                 sum(1 for x in own if x['rule_id'] == rule),
+                 sum(1 for x in other if x['rule_id'] == rule)))
+    print()
+    print('detail breakdown, sibling tools only:')
+    by = collections.defaultdict(collections.Counter)
+    for x in other:
+        by[x['rule_id']][x['detail']] += 1
+    for rule in sorted(by):
+        for detail, n in sorted(by[rule].items(), key=lambda kv: (-kv[1], kv[0])):
+            print('  %-24s %4d  %s' % (rule, n, detail))
+
+=== $ python3 ../../nd_evidence_scratch/composition.py ../../nd_evidence_scratch ===
+findings total                       443
+  in this tool's own fixtures         37
+  in the 47 sibling tool directories  406
+
+rule                      total    own others
+ND001_WALL_CLOCK              7      7      0
+ND002_UNSORTED_LISTDIR       65     10     55
+ND003_UNORDERED_ITERATION     24      3     21
+ND004_UNSAFE_REPR           333      5    328
+ND005_UNSEEDED_RANDOM         7      5      2
+ND006_FLOAT_IN_MONEY          7      7      0
+
+detail breakdown, sibling tools only:
+  ND002_UNSORTED_LISTDIR     33  os.listdir() result is not immediately wrapped in sorted()
+  ND002_UNSORTED_LISTDIR     22  os.walk() result is not immediately wrapped in sorted()
+  ND003_UNORDERED_ITERATION   19  for-loop iterates a .items() call (assumed dict-like) without sorted() and the body accumulates into another collection
+  ND003_UNORDERED_ITERATION    1  for-loop iterates a .values() call (assumed dict-like) without sorted() and the body accumulates into another collection
+  ND003_UNORDERED_ITERATION    1  for-loop iterates a set() call without sorted() and the body accumulates into another collection
+  ND004_UNSAFE_REPR         219  %r format applied to a value that may fall back to default object.__repr__ (format string contains %r)
+  ND004_UNSAFE_REPR         100  f-string !r conversion applied to a non-literal expression that may fall back to default object.__repr__
+  ND004_UNSAFE_REPR           9  repr() applied to a non-literal expression that may fall back to default object.__repr__
+  ND005_UNSEEDED_RANDOM       2  call to random.Random() with no random.seed() call found in this module
+exit=0
+
+--- 8b. the two ND005 findings that are not planted fixtures ---
+Both pass a literal seed to the random.Random(...) CONSTRUCTOR.
+ND005 asks a narrower question -- "is there a random.seed() call
+anywhere in this module" -- so a generator seeded through the
+constructor reads to it as unseeded. Both sites are, in fact,
+tests that exist to prove a sort is deterministic.
+
+The script the next record runs, in full. It is written to a
+scratch file outside the repository so that the record header
+below can be a single line; copy it back out to re-run it.
+    import json
+    d = json.load(open('self_scan_report.json'))
+    hits = [f for f in d['findings']
+            if f['rule_id'] == 'ND005_UNSEEDED_RANDOM'
+            and not f['path'].startswith('nondeterminism-scanner/')]
+    for f in sorted(hits, key=lambda x: (x['path'], x['line'])):
+        # Prefixed with a bullet, not just indented: transcript-schema
+        # strips leading whitespace before testing a line for the exit=
+        # shape, and 'exit-harness/...' is one of the two paths printed here.
+        print('* %s:%d' % (f['path'], f['line']))
+        with open('../' + f['path'], encoding='utf-8') as fh:
+            lines = fh.readlines()
+        for n in range(f['line'] - 2, f['line'] + 1):
+            print('  %4d | %s' % (n, lines[n - 1].rstrip()))
+        print()
+
+=== $ python3 ../../nd_evidence_scratch/nd005_sites.py ../../nd_evidence_scratch ===
+* exit-harness/test_exitharness.py:495
+   493 |         first = eh.sort_results(list(items))
+   494 |         shuffled = list(items)
+   495 |         random.Random(1234).shuffle(shuffled)
+
+* index-generator/test_indexgen.py:774
+   772 |                 codes[i % 3], tools[i % 3], "loc%d" % (i % 5), "msg%d" % (i % 4)))
+   773 |         rnd = list(findings)
+   774 |         random.Random(42).shuffle(rnd)
+
+exit=0
+
+--- 9. the tree at the moment this transcript was written ---
+This script runs before README.md is updated, because sections 4
+and 5 need the STALE report still in place. So the listing below
+shows self_scan_report.json and manifest.json already changed and
+README.md not yet -- README.md is then edited from the numbers
+recorded above, and this transcript is not regenerated afterwards
+(regenerating it would replace the "stale" record in section 4
+with a "match", which is the one thing it exists to show).
+
+=== $ cd .. && git status --porcelain --ignored=matching | grep -v __pycache__ ===
+ M nondeterminism-scanner/self_scan_report.json
+ M report-freshness/README.md
+ M report-freshness/freshness_report.json
+ M report-freshness/manifest.json
+ M weak-assertion-scanner/README.md
+ M weak-assertion-scanner/self_scan_report.json
+?? nondeterminism-scanner/REGENERABILITY_EVIDENCE.txt
+?? nondeterminism-scanner/test_selfscan_freshness.py
+exit=0
+
+--- 10. two consecutive regenerations, clean tree, no diff ---
+Section 9 lists this deliverable's own uncommitted files, which is
+not the same claim as "regenerating leaves nothing behind". This
+section makes that claim properly and independently: the repaired
+tree is copied into a throwaway Git repository, committed once, and
+the generator is then run TWICE. Byte hashes of both runs and of
+the committed file, then git status and git diff, are printed. The
+throwaway repository is created under the scratch directory that
+the generator of this transcript creates and deletes; nothing in
+the checkout is written to, which section 9 shows.
+
+The script the next record runs, in full. It is written to a
+scratch file outside the repository so that the record header
+below can be a single line; copy it back out to re-run it.
+    import hashlib, os, shutil, subprocess, sys
+    here = os.path.abspath('.')
+    root = os.path.abspath('..')
+    scratch = os.path.abspath(sys.argv[1])
+    dest = os.path.join(scratch, 'cleanroom')
+    shutil.copytree(root, dest, ignore=shutil.ignore_patterns('.git', '__pycache__'))
+    env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1',
+               GIT_AUTHOR_NAME='evidence', GIT_AUTHOR_EMAIL='evidence@invalid',
+               GIT_COMMITTER_NAME='evidence', GIT_COMMITTER_EMAIL='evidence@invalid',
+               GIT_AUTHOR_DATE='2000-01-01T00:00:00Z',
+               GIT_COMMITTER_DATE='2000-01-01T00:00:00Z')
+    
+    def git(*args):
+        return subprocess.run(['git'] + list(args), cwd=dest, env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    
+    for argv in (['init', '-q', '-b', 'main'], ['add', '-A'],
+                 ['commit', '-q', '-m', 'the tree as this deliverable commits it']):
+        r = git(*argv)
+        if r.returncode != 0:
+            print(r.stdout.decode('utf-8', 'replace'))
+            sys.exit('git %s failed' % argv[0])
+    
+    tool = os.path.join(dest, 'nondeterminism-scanner')
+    report = os.path.join(tool, 'self_scan_report.json')
+    
+    def sha(path):
+        with open(path, 'rb') as fh:
+            return hashlib.sha256(fh.read()).hexdigest()
+    
+    print('committed  %s' % sha(report))
+    for n in (1, 2):
+        proc = subprocess.run([sys.executable, 'ndscan.py', '--root', '..',
+                               '-o', 'self_scan_report.json'],
+                              cwd=tool, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, env=env)
+        print('run %d      %s   (ndscan exit %d)' % (n, sha(report), proc.returncode))
+    
+    status = git('status', '--porcelain').stdout.decode('utf-8', 'replace')
+    diff = git('diff').stdout.decode('utf-8', 'replace')
+    print('git status --porcelain: %s'
+          % (repr(status) if status.strip() else '(empty)'))
+    print('git diff:               %s'
+          % (repr(diff) if diff.strip() else '(empty)'))
+    clean = not status.strip() and not diff.strip()
+    print('TWO REGENERATIONS, CLEAN TREE' if clean else 'TREE NOT CLEAN')
+    sys.exit(0 if clean else 1)
+
+=== $ python3 ../../nd_evidence_scratch/cleanroom.py ../../nd_evidence_scratch ===
+committed  a637cf88b3c4b69b2e3399a1e5d07f28df545ac4caaeb675bdfe31dd2d88cd53
+run 1      a637cf88b3c4b69b2e3399a1e5d07f28df545ac4caaeb675bdfe31dd2d88cd53   (ndscan exit 1)
+run 2      a637cf88b3c4b69b2e3399a1e5d07f28df545ac4caaeb675bdfe31dd2d88cd53   (ndscan exit 1)
+git status --porcelain: (empty)
+git diff:               (empty)
+TWO REGENERATIONS, CLEAN TREE
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################

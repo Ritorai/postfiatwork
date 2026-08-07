@@ -128,8 +128,9 @@ way to make a directory walk deterministic (it also fixes the *recursion
 order*, which merely calling `sorted(os.walk(root))` would not — sorting
 the yielded 3-tuples does not reorder the *walk itself*). ndscan does not
 recognize this idiom at all; every one of the 5 ND002 findings in the
-self-scan is this shape or the "sorted one statement later" shape. See
-"Self-scan results" below.
+*original* self-scan was this shape or the "sorted one statement later"
+shape. See "Self-scan results" below, including what that qualifier
+means.
 
 **False negatives:** `sorted` reassigned to something that is not the
 builtin (ndscan trusts any `Call` whose `func` is literally `Name('sorted')`);
@@ -155,7 +156,7 @@ list (e.g. records loaded from a JSON array, which preserves file order),
 has no data-flow analysis, so it cannot tell "this dict's insertion order
 traces back to a JSON array" from "this dict's insertion order traces back
 to a set" — it flags *all* un-sorted dict iteration whose body accumulates,
-uniformly. In the self-scanned repository, 24 of 26 ND003 findings are this
+uniformly. In the original self-scan, 24 of 26 ND003 findings were this
 dict shape, and on manual inspection every dict in question was built from
 deterministically-ordered input. This is the rule's dominant, and largely
 unavoidable without real data-flow analysis, false-positive source.
@@ -200,7 +201,7 @@ flagged, even when the underlying runtime value is a plain `str`/`int` held
 in a variable — e.g. `n = 3; repr(n)` flags, because ndscan cannot see that
 `n` is an `int`. **This is by a wide margin the dominant false-positive
 source found in the self-scan** — see below: essentially every one of the
-220 ND004 findings in the 30 sibling tools is `%r`/`!r` applied to a plain
+220 ND004 findings in the original scan was `%r`/`!r` applied to a plain
 string pulled straight out of a parsed JSON record or an argparse value,
 which is guaranteed to have a deterministic `str` `repr`, but which ndscan
 cannot know is a `str` without type inference.
@@ -287,7 +288,7 @@ the whole run. `scan_file()` catches `OSError` (unreadable),
 per file and records `{"path": ..., "message": ...}` in the report's
 top-level `"errors"` array — the scan continues to the next file. **Why**:
 one unreadable or unparseable file among many (samples_risky/ has 7 files;
-the self-scan target has 87) should not make the whole run's exit code and
+the self-scan target has 177) should not make the whole run's exit code and
 report indistinguishable from "the caller passed a garbage `--root`".
 Exit-`2` is reserved for usage problems the *caller* can fix by changing
 their command line (bad `--root`, bad `--rule`, unwritable `-o`); a
@@ -339,33 +340,88 @@ encoded the correct, documented semantics of ND003 from the start.
 
 ## Self-scan results (MANDATORY — run against the repository's own tools)
 
-```
-python3 ndscan.py --root <path to the ~30 sibling tool directories> -o self_scan_report.json
-```
-
-`self_scan_report.json` in this deliverable is the **real, unedited output**
-of that command run against this repository's 30 sibling tool directories
-(`budget-forecaster`, `bundle-index`, `claim-checker`, ..., `xrpl-auditor`,
-plus `repo-root`, which contains no `.py` files). Exit code: **1**.
+From this directory, exactly:
 
 ```
-files_scanned: 87
-files_errored: 0
-findings_count: 251
-by_rule:
-  ND001_WALL_CLOCK:          0
-  ND002_UNSORTED_LISTDIR:    5
-  ND003_UNORDERED_ITERATION: 26
-  ND004_UNSAFE_REPR:         220
-  ND005_UNSEEDED_RANDOM:     0
-  ND006_FLOAT_IN_MONEY:      0
+python3 ndscan.py --root .. -o self_scan_report.json
 ```
+
+`self_scan_report.json` is the **real, unedited output** of that command,
+run against the whole repository. Exit code: **1** (findings exist).
+It is a *current-state* snapshot, so it is expected to change whenever
+the repository's Python does, and `report-freshness/manifest.json` now
+carries a `regenerable` entry that fails if it stops matching — see
+"Regeneration is locked" below.
+
+```
+files_scanned:   177
+files_errored:   0
+findings_count:  443
+
+                             total    own others
+  ND001_WALL_CLOCK:             7      7      0
+  ND002_UNSORTED_LISTDIR:      65     10     55
+  ND003_UNORDERED_ITERATION:   24      3     21
+  ND004_UNSAFE_REPR:          333      5    328
+  ND005_UNSEEDED_RANDOM:        7      5      2
+  ND006_FLOAT_IN_MONEY:         7      7      0
+```
+
+"own" is every finding under `nondeterminism-scanner/` — the column is a
+path prefix, not a synonym for "fixture". 33 of the 37 are in
+`samples_risky/`, which exists to be flagged; the other 4 are real
+findings in this tool's own code and tests (1 in `ndscan.py`, 3 in `test_selfscan_freshness.py`). "others" is
+every other directory in the repository — 47 of them have at least
+one finding. Read the split before concluding anything about the
+repository: **every** ND001 and ND006 finding is a planted fixture, so
+among the sibling tools those two counts are still zero. ND005 is not quite that clean — 2 of
+its findings are in sibling tools, and both are
+`random.Random(<literal seed>)`, a generator seeded through the
+constructor that this rule's "is there a `random.seed()` call in this
+module" heuristic cannot see. Both are reproduced in full in
+`REGENERABILITY_EVIDENCE.txt` §8b.
+
+### What the previous report said, and why it was replaced
+
+The report committed with this tool reported `files_scanned: 87`,
+`findings_count: 251`, and zero for ND001/ND005/ND006. No commit was ever
+made against that tree: the repository's tracked `.py` count steps
+86 -> 88 and has never been 87, so that report reproduced at **no commit
+in this repository's history** — not even at the commit that added it,
+whose tree has 71 `.py` files and yields 204 findings. It was written
+once and never touched again while the repository roughly doubled.
+`REGENERABILITY_EVIDENCE.txt` §0–§3 is the transcript of that check.
+
+### How to read the finding-by-finding analysis below
+
+The triage below was written by hand against that original scan. It is
+kept, rather than deleted, because its judgements are about *rule
+behaviour* at named call sites that a reader can still open and check --
+and because deleting the only honest account of what this scanner
+over-fires on would be a worse outcome than dating it. But it is dated:
+
+  * Its counts ("5 ND002 findings", "24 of 26", "220") are counts **from
+    the 87-file scan**, not from the committed report. The current
+    per-rule counts are the table above.
+  * The current report has **not** been re-triaged finding by finding.
+    Nothing below should be read as a judgement about the 406
+    sibling-tool findings in it.
+  * The `path:line` citations below were re-checked mechanically against
+    the current report, after two of them were corrected in place
+    (`claim-checker/claimcheck.py` 139 -> 199,
+    `schema-checker/schema_check.py` 427 -> 436): 22 of 24 now
+    resolve to a finding at exactly that path and line. The remaining
+    2 are cited as things that are *not* findings — a documented
+    false negative and a `grep` hit inside an assertion — which is still
+    true.
 
 **A scanner that reports its author's target as clean is not credible, so
 here is the honest breakdown, finding by finding, with a true/false
 positive judgement for every group and why:**
 
-**ND001_WALL_CLOCK — 0 findings.** Verified by hand with
+**ND001_WALL_CLOCK — 0 findings in the original scan** (and still 0
+across the sibling tools today; the 7 in the committed report are all
+planted fixtures)**.** Verified by hand with
 `grep -rnE "datetime\.(now|utcnow)\(|date\.today\(|time\.time\(|time\.monotonic\("`
 across all 30 tools: the only matches are inside comments/test assertions
 that explicitly check the pattern is *absent*
@@ -373,11 +429,15 @@ that explicitly check the pattern is *absent*
 This codebase visibly self-audits for wall-clock reads already — 0 is a
 plausible true negative, not a scanner blind spot.
 
-**ND005_UNSEEDED_RANDOM — 0 findings.** Verified the same way:
-`grep -rl "random\.\|secrets\."` across all 30 tools returns nothing. True
-negative.
+**ND005_UNSEEDED_RANDOM — 0 findings in the original scan.** Verified
+the same way at the time: `grep -rl "random\.\|secrets\."` across all 30
+tools returned nothing. That is no longer true of the repository: the
+committed report has 7, of which 2 are in sibling tools, and both of
+those are constructor-seeded `random.Random(<literal>)` — see the table
+above and `REGENERABILITY_EVIDENCE.txt` §8b.
 
-**ND006_FLOAT_IN_MONEY — 0 findings.** Consistent with `reward-anomaly`'s
+**ND006_FLOAT_IN_MONEY — 0 findings in the original scan** (and still 0
+across the sibling tools today)**.** Consistent with `reward-anomaly`'s
 own committed README, which states as a design principle: "Decimal-only
 money parsing (`decimal.Decimal`, never `float`)". True negative — and also
 where the one documented false-negative gap above
@@ -386,10 +446,10 @@ argument) was actually found, by grepping for the money-regex independently
 of ndscan itself, precisely because ndscan does not check keyword
 arguments.
 
-**ND002_UNSORTED_LISTDIR — 5 findings, all 5 judged FALSE POSITIVE for
+**ND002_UNSORTED_LISTDIR — 5 findings in the original scan, all 5 judged FALSE POSITIVE for
 real non-determinism** (true positive only against ndscan's narrow,
 documented "immediately wrapped" pattern):
-  - `bundle-index/bundle_index.py:102`, `claim-checker/claimcheck.py:139` —
+  - `bundle-index/bundle_index.py:102`, `claim-checker/claimcheck.py:199` —
     both walk with `os.walk()`, append relative paths to a list inside the
     loop, then call `relpaths.sort()` immediately after the loop. Sorted
     before use; not sorted at the call site.
@@ -403,8 +463,8 @@ documented "immediately wrapped" pattern):
     filtered into a list across a `for` loop, then `return sorted(names)`.
     Same "sorted one statement later" shape as the first two.
 
-**ND003_UNORDERED_ITERATION — 26 findings: 24 dict-iteration, 2
-set-iteration.**
+**ND003_UNORDERED_ITERATION — 26 findings in the original scan: 24
+dict-iteration, 2 set-iteration.**
   - The **24 dict findings** (`bundle-index/bundle_index.py:276`,
     `contradiction-detector/contradict.py:632`, both copies of
     `link-integrity/link_integrity.py:260,334`, both copies of
@@ -441,8 +501,8 @@ set-iteration.**
     hash-order-dependent) that does not currently cause an observable bug
     in this specific call site.
 
-**ND004_UNSAFE_REPR — 220 findings, by far the largest group (88% of all
-findings) — and, on inspection, essentially all FALSE POSITIVE for real
+**ND004_UNSAFE_REPR — 220 findings in the original scan, by far the
+largest group there (88% of all findings) — and, on inspection, essentially all FALSE POSITIVE for real
 non-determinism.** A random sample of 15 of the 220 (`random.seed(7)`,
 listed in the development transcript) was read by hand; every single one
 was `%r`/`!r` applied to a plain `str` — a JSON record field
@@ -464,11 +524,66 @@ hundreds of times. Concrete sample (full list of files/line numbers is in
 ```
 thread-check/thread_check.py:170   raise ValueError("unparseable ISO-8601 timestamp: %r" % raw)
 scorecard/scorecard.py:453         f"task {task_id!r} event at index {j} is missing required key: at"
-schema-checker/schema_check.py:427 "key %r is not declared and additional_properties is false" % name
+schema-checker/schema_check.py:436 "key %r is not declared and additional_properties is false" % name
 ```
 No custom-`__repr__`-less object being repr()'d was found in the sample;
 if one exists elsewhere in the 220, it is indistinguishable, from the
 outside of this exercise, from the 15/15 false positives actually read.
+
+## Regeneration is locked
+
+The failure this section documents is not "a number went out of date". It
+is that **nothing in the repository was asking the question.** The report
+was a current-state claim with no regenerator, no transcript record, and
+no manifest entry, so it drifted silently for the tool's entire lifetime.
+
+`report-freshness/manifest.json` now carries:
+
+```
+id:                nondeterminism-scanner:self_scan_report.json
+kind:              regenerable
+generation.argv:   python3 ndscan.py --root .. -o {OUT}
+generation.cwd:    nondeterminism-scanner
+committed_report:  nondeterminism-scanner/self_scan_report.json
+expected_exit_code: 1
+```
+
+and this directory carries the local half, `test_selfscan_freshness.py`:
+
+```
+python3 -m unittest test_selfscan_freshness
+```
+
+Six tests. They regenerate the report with the documented command and
+fail — not skip, not warn — when the committed bytes differ, naming the
+summary fields that moved; they assert two consecutive runs hash the
+same; they assert the report's absence is a failure rather than a shrug;
+and they pin the manifest entry itself, so deleting the repository-wide
+half breaks this suite. The one permitted skip is a directory extracted
+without its repository root, where there is nothing to scan, and a test
+asserts that condition is false inside a real checkout so the check
+cannot quietly become vacuous — in a standalone extraction the
+comparisons skip and that guard then fails, so the suite exits nonzero
+rather than printing `OK` for a directory that verified nothing.
+
+`report-freshness/freshness.py` re-runs the same command and compares
+bytes, and `regen-preflight` re-derives every manifest entry in a clean
+copy of the tree, so this report now fails a repository-wide check as
+well as this directory's own suite the moment it stops reproducing. `REGENERABILITY_EVIDENCE.txt` §4 records the checker
+reporting `stale` with the old artifact still in place, §6 records it
+reporting `match` after the repair, §7 and §7b are positive controls —
+one digit of the committed report is changed in a throwaway copy, and
+both the repository-wide checker and this directory's own suite are shown
+going red on it — and §10 runs the generator twice inside a throwaway Git
+repository and prints both byte hashes, `git status` and `git diff`.
+
+There is deliberately **no `capture.sh` here.** `regen-preflight`
+discovers regenerators by that exact filename and re-runs each one inside
+a copy of the tree made without `.git`; this tool's evidence reads Git
+history, so a `capture.sh` would be a permanently-erroring inventory
+entry. The manifest entry needs no `.git` and is the mechanism this
+repository already uses for exactly this artifact shape (see
+`weak-assertion-scanner/self_scan_report.json`, locked the same way).
 
 **Bottom line:** the self-scan is genuinely useful for two of six rules on
 this particular, disciplined codebase (ND002 surfaces two real determinism
@@ -484,8 +599,8 @@ because ND004 cannot be decided statically — exactly as documented above.
    what is directly visible in the AST at the point of use. ND003's dict
    sub-check and ND004 in general are the rules most exposed by this — see
    the self-scan section above for concrete, measured impact (24/26 and
-   220/220 respective false-positive rates on the one real codebase this
-   was tested against).
+   220/220 respective false-positive rates, measured on the original
+   87-file scan; the current report has not been re-triaged).
 2. **Alias resolution is file-wide, not scope-aware, and import-based
    only.** A local variable that shadows an imported module name is
    indistinguishable from the module itself (ND001 false positive
