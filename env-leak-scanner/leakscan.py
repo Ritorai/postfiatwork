@@ -182,13 +182,28 @@ RULES = (
 # Deliberately over-broad superset of every RULES pattern. A line that matches
 # no rule may still match this; a line that matches ANY rule MUST match this.
 # Tested both ways -- see test_leakscan.py TestPrefilterIsSuperset.
+#
+# TWO BRANCHES HERE EXIST BECAUSE THE INVARIANT WAS FALSE, NOT BECAUSE IT
+# LOOKED RISKY. `/home/|/Users/` and the widened UNC character class were
+# added after a generative check found real counterexamples that the
+# hand-written test list did not contain -- 457 of the 582 rule-firing
+# lines it generated. No count is repeated in this comment beyond that
+# one; the numbers live in PREFILTER_SUPERSET_EVIDENCE.txt, which is
+# regenerated from real runs.
+#
+# The general shape of the bug is worth naming: the first POSIX branch
+# requires the leading "/" to be at start-of-line or preceded by a
+# delimiter, but EL-USER-PATH has no such anchor and matches anywhere in
+# a line. A prefilter branch that is stricter than the rule it is meant
+# to cover is not a superset. Any NEW rule must be checked the same way.
 PREFILTER_RE = re.compile(
     r"(?:^|[\s\"'`(\[<=,;:])/[A-Za-z0-9._-]"   # a POSIX absolute path start
+    r"|/home/|/Users/"                          # EL-USER-PATH: unanchored
     r"|~/"
     r"|\$HOME|\$\{HOME\}|\$TMPDIR"
     r"|%USERPROFILE%|%TEMP%|%TMP%"
     r"|[A-Za-z]:\\"                             # a drive-letter path
-    r"|\\\\[A-Za-z0-9]"                         # a UNC path
+    r"|\\\\[A-Za-z0-9._-]"                      # a UNC path
     r"|AppData\\"
     r"|localhost|127\.0\.0\.1|\.local\b"
     r"|\bip-\d{1,3}-\d{1,3}"

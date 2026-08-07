@@ -2,6 +2,7 @@
 
 import json
 import os
+import string
 import subprocess
 import sys
 import tempfile
@@ -197,7 +198,139 @@ class TestNegatives(unittest.TestCase):
 class TestPrefilterIsSuperset(unittest.TestCase):
     """The candidate pipeline only transfers lines matching PREFILTER_RE.
     If any rule could match a line the prefilter rejects, the repository-wide
-    scan would silently miss it."""
+    scan would silently miss it.
+
+    THIS CLASS USED TO PROVE LESS THAN ITS NAME AND THE README CLAIMED.
+
+    `README.md` says: "The soundness of this rests on one claim: the
+    prefilter can never drop a line a rule would match." `leakscan.py`
+    says the same thing in a comment above PREFILTER_RE, and points here:
+    "Tested both ways -- see test_leakscan.py TestPrefilterIsSuperset."
+
+    What was actually tested was a hand-written list of 22 example lines.
+    A list cannot establish a claim of the form "no line, ever" -- it can
+    only fail to find one -- and the invariant was in fact FALSE. Every
+    entry in POSITIVES happened to put the interesting text at a start of
+    line or after a space, which is precisely the shape the prefilter's
+    POSIX branch requires; EL-USER-PATH has no such anchor. So a real
+    finding like `ls foo/home/alice/bin` was dropped before any rule ran,
+    and this class passed.
+
+    The list is kept (it is a fine smoke test and it pins the intent of
+    each rule), and a GENERATIVE check is added beside it:
+    test_prefilter_covers_every_placement_of_every_core wraps each core
+    string in every printable single-character prefix AND every printable
+    single-character suffix, keeps the combinations that genuinely fire a
+    rule, and requires the prefilter to match all of them.
+
+    Two limits of that, stated rather than glossed:
+
+      * It is not a proof over all strings. It is a check whose passing
+        depends on the invariant rather than on the author's imagination,
+        and it fails on the parent commit. That is the whole claim.
+      * `EL-USER-PROMPT` is `^`-anchored, so ANY non-empty prefix kills
+        it and no prefix matrix can cover it. It is covered by the
+        suffix-only half and by an explicit case below instead.
+    """
+
+    #: Cores that between them exercise every rule in RULES. The
+    #: PLACEMENT matrix below is what is generated; these are minimal
+    #: representatives, and every one is asserted to fire a rule.
+    #: test_every_rule_is_exercised_by_some_core pins the coverage, so
+    #: adding a rule without adding a core fails loudly instead of
+    #: silently shrinking what this class proves.
+    CORES = [
+        "/sessions/sharp-stoic-knuth/mnt/outputs",
+        "rito@buildbox:~$ ls",
+        "/home/rito/out.json",
+        "/Users/rito/out.json",
+        "/opt/build/out.json",
+        "/tmp/a.json",
+        "~/bin/tool.py",
+        "$HOME/work",
+        "${HOME}/work",
+        "$TMPDIR",
+        "%USERPROFILE%\\work",
+        "%TEMP%\\x",
+        "D:\\builds\\out.json",
+        "C:\\Users\\Rito\\out.json",
+        "C:\\Users\\x\\AppData\\Local\\Temp\\y",
+        "\\\\fileserv\\share\\x",
+        "\\\\_fileserv\\share\\x",
+        "\\\\.fileserv\\share\\x",
+        "\\\\-fileserv\\share\\x",
+        "localhost:8080",
+        "127.0.0.1:5000",
+        "buildbox.local",
+        "ip-10-0-3-17",
+        "node-7.compute.internal",
+    ]
+
+    #: Every printable character except the line terminators, which cannot
+    #: appear inside a line by construction.
+    AFFIXES = [""] + [c for c in string.printable
+                      if c not in "\n\r\x0b\x0c"]
+
+    def test_every_core_fires_at_least_one_rule(self):
+        """Guards the generative test from passing vacuously."""
+        dead = [c for c in self.CORES if not L.scan_line("f.md", 1, c)]
+        self.assertEqual(dead, [])
+
+    def test_every_rule_is_exercised_by_some_core(self):
+        """CORES must reach every rule, or the matrix silently shrinks."""
+        reached = set()
+        for core in self.CORES:
+            for hit in L.scan_line("f.md", 1, core):
+                reached.add(hit["rule"])
+        all_rules = {r["id"] for r in L.RULES}
+        self.assertEqual(sorted(all_rules - reached), [],
+                         "no core exercises these rules")
+
+    def test_prefilter_covers_every_placement_of_every_core(self):
+        """The real invariant: rule matched => prefilter matched.
+
+        Only combinations that actually fire a rule are checked; the
+        prefilter is allowed to be over-broad, never under-broad.
+        """
+        checked = 0
+        missed = []
+        for core in self.CORES:
+            for affix in self.AFFIXES:
+                for line in (affix + core, core + affix):
+                    if not L.scan_line("f.md", 1, line):
+                        continue
+                    checked += 1
+                    if not L.PREFILTER_RE.search(line):
+                        missed.append(line)
+        self.assertEqual(missed, [], "prefilter dropped %d line(s) a rule "
+                                     "matches, e.g. %r"
+                                     % (len(missed), missed[:3]))
+        self.assertGreater(checked, 3000,
+                           "the matrix collapsed; it is no longer checking "
+                           "what it claims to check")
+
+    def test_prefilter_covers_cores_embedded_mid_line(self):
+        """The specific shape the old list never produced."""
+        missed = []
+        for core in self.CORES:
+            line = "the build wrote its log to ." + core + " last night."
+            if not L.scan_line("f.md", 1, line):
+                continue
+            if not L.PREFILTER_RE.search(line):
+                missed.append(line)
+        self.assertEqual(missed, [])
+
+    def test_the_specific_counterexamples_that_were_being_dropped(self):
+        """Named, so a future prefilter edit cannot quietly undo this."""
+        for line in ("ls foo/home/alice/bin",
+                     "see ../Users/rito/x",
+                     "The build wrote its log to ../home/rito/out.json.",
+                     "copy from \\\\_fileserv\\share\\x"):
+            with self.subTest(line=line):
+                self.assertTrue(L.scan_line("f.md", 1, line),
+                                "this line must fire a rule for the test to "
+                                "mean anything")
+                self.assertTrue(L.PREFILTER_RE.search(line))
 
     POSITIVES = [
         "output went to /opt/build/out.json",

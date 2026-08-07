@@ -110,9 +110,22 @@ That is a real limitation of the tool and it is recorded as 66 individual
 review entries rather than patched away by excluding `/root` or `/records`,
 which would have made the scanner blind to a genuine `/root/x` leak.
 
-`username` is zero with no review entries at all: no login name is recoverable
-from any tracked document. The positive control below is what makes that worth
-saying.
+`username` is zero with no review entries at all in
+`leak_report_2026-08-04.json`: no login name was recoverable from any
+tracked document at the time of that snapshot. The positive control below
+is what makes that worth saying.
+
+(A scan of the tree as it stands today does report `username` findings.
+Twelve of them predate this commit -- the rule/example table above and
+the positive-control transcript have always quoted `/home/rito/x` and
+`C:\Users\Rito\x`, and the parent commit's own scan reports them; they
+are absent from the snapshot only because it was taken with the
+`--candidates` pipeline, which is what the "known lower bound" note
+below is about. The rest are this commit's new prose, which quotes
+`/home/rito/...` as the counterexample that used to be dropped. See
+"The superset test that proved less than its name". The distinction
+matters in both cases: these are documentation of a leak pattern, not a
+leaked login name, and they are reported rather than hidden.)
 
 ## Positive control
 
@@ -145,12 +158,25 @@ locally. Rather than scope the task down, the scan was split:
 2. `--scan-candidates` classifies that set with the identical rules.
 
 The soundness of this rests on one claim: **the prefilter can never drop a
-line a rule would match.** Two tests hold it up, and neither is an assertion
-about intent:
+line a rule would match.**
 
-- `TestPrefilterIsSuperset` runs all 22 rule-positive fixtures through
-  `PREFILTER_RE` and requires every one to match — plus a second test that
-  every fixture actually fires a rule, so the first cannot pass vacuously.
+**That claim used to be false, and the test named after it did not
+notice.** See "The superset test that proved less than its name" below.
+It is now held up by three things:
+
+- `TestPrefilterIsSuperset.test_prefilter_covers_every_placement_of_every_core`
+  takes a set of core strings that between them exercise **all 15 rules**,
+  wraps each in every printable single-character prefix and every
+  printable single-character suffix, keeps the combinations that genuinely
+  fire a rule, and requires `PREFILTER_RE` to match all of them. **3,847
+  lines per run**, generated rather than listed, and the test's own floor
+  is `assertGreater(checked, 3000)` so the matrix cannot quietly collapse.
+- `test_every_rule_is_exercised_by_some_core` pins the coverage: adding a
+  rule without adding a core fails loudly instead of silently shrinking
+  what the class proves.
+- The original 22-line `POSITIVES` list is kept as a smoke test, together
+  with the assertion that every entry actually fires a rule — so it still
+  cannot pass vacuously.
 - `TestFullScanEqualsCandidateScan` writes a document mixing leaks, URLs,
   relative paths and clean prose to disk, scans the full text, scans the
   prefiltered candidates, and requires the two finding lists to be
@@ -161,17 +187,124 @@ without a clone. A reviewer *with* a clone should ignore all of this and run
 `python3 leakscan.py --root . --review env-leak-scanner/review.json`, which
 reads every byte directly.
 
+## The superset test that proved less than its name
+
+`README.md` said the whole candidate pipeline's soundness rested on one
+claim -- "the prefilter can never drop a line a rule would match" -- and
+pointed at `TestPrefilterIsSuperset` as holding it up. `leakscan.py`'s
+comment above `PREFILTER_RE` said the same: "a line that matches ANY rule
+MUST match this. Tested both ways."
+
+What the test did was run a hand-written list of 22 example lines through
+`PREFILTER_RE`. A list cannot establish "no line, ever"; it can only fail
+to find a counterexample. And there were counterexamples.
+
+**The bug.** `PREFILTER_RE`'s POSIX branch requires the leading `/` to sit
+at start-of-line or after one of `[\s"'`(\[<=,;:]`. `EL-USER-PATH` --
+`(?:/home|/Users)/([A-Za-z][A-Za-z0-9._-]{1,31})\b` -- has no such anchor
+and matches anywhere in a line. Every entry in `POSITIVES` happened to put
+the path at a start of line or after a space, so the gap was invisible.
+`EL-ABS-UNC` allows `._-` as the first character after `\\`; the
+prefilter's UNC branch allowed only `[A-Za-z0-9]`.
+
+**What was dropped.** A generative sweep over the two affected rule
+families -- six core strings, every printable single-character prefix --
+produced 582 lines that genuinely fire a rule. The parent commit's
+prefilter rejected **457** of them. (The committed test's matrix is
+wider: 24 cores covering all 15 rules, prefixes *and* suffixes, 3,847
+lines. It is the evidence file's smaller sweep that is quoted here,
+because that is the one whose exact output is recorded.) Illustrative
+examples:
+
+```
+ls foo/home/alice/bin                                  EL-USER-PATH: alice
+see ../Users/rito/x                                    EL-USER-PATH: rito
+The build wrote its log to ../home/rito/out.json.      EL-USER-PATH: rito
+copy from \\_fileserv\share\x                          EL-ABS-UNC
+```
+
+This is not confined to `--scan-candidates`: `scan_text` applies the same
+prefilter, so the README's advice that a reviewer with a clone should
+"ignore all of this and run `leakscan.py --root .`, which reads every
+byte directly" did **not** restore the missed findings either.
+
+**The fix.** `/home/|/Users/` is added to `PREFILTER_RE` and the UNC
+branch is widened to `[A-Za-z0-9._-]`. Both are one-line changes; the
+work was in finding them.
+
+**The repair to the test is the point of this change.** The list is kept
+-- it is a good smoke test and it pins the intent of each rule -- and a
+generative check is added beside it: one core string per rule family,
+every printable single-character prefix, keep the combinations that
+genuinely fire a rule, require the prefilter to match all of them. That
+check fails on the parent commit and passes here, and it does not depend
+on anyone thinking of `foo/home/alice` in advance.
+
+**Impact, measured rather than asserted.** A full re-scan
+(`leakscan.py --root .. --review review.json`) is compared before and
+after, per file:
+
+```
+files outside env-leak-scanner/ with a changed count: 0
+confirmed findings outside env-leak-scanner/: 432 -> 432
+```
+
+**Not one pre-existing finding changes.** The counterexamples do not occur
+in the repository's prior text, so on the corpus as it stood this fix is
+behaviour-preserving. The defect was latent; the value of fixing it is the
+next `/home/` someone writes mid-line.
+
+Inside this directory the count *does* go up, because this README section
+and `PREFILTER_SUPERSET_EVIDENCE.txt` quote `/home/rito/...` and
+`../home/alice/...` at the reader on purpose. That is limitation 4 below
+-- "this directory will report itself" -- doing exactly what it says, and
+it is left visible rather than worked around by mangling the examples
+until the scanner stops seeing them. An example a scanner cannot see is
+not an example.
+
+No exact figure is given for those two files, deliberately: the evidence
+file is part of what the scan reads, so any number printed in it would
+change the next time it is regenerated. A self-referential count is not a
+fact about the repository, and quoting one would be the same category of
+error this whole section is about.
+
+`leak_report_2026-08-04.json` is a dated, pinned snapshot -- `pinned` in
+`report-freshness/manifest.json`, so nothing requires it to equal a fresh
+scan -- and it is not regenerated by this change. `freshness.py` still
+exits `0`. The counts table above under "What it found" still describes
+that file accurately.
+
+**But its zeros are now a known lower bound, and that is a soundness
+point, not a freshness one.** That snapshot was harvested through
+`candidates_repo.json`, which was produced by the *broken* prefilter. Its
+`username: 0`, `absolute_path: 0` and `home_directory: 0` are therefore
+derived through exactly the branch this section proves was under-broad
+for `EL-USER-PATH` and `EL-ABS-UNC`. Re-running the direct
+`--root .` scan on the parent tree with the fixed prefilter finds no new
+findings there, so the snapshot's zeros are not known to be wrong -- but
+they are no longer known to be right either, and "no login name was
+recoverable" above should be read as "none was found by a pipeline we now
+know could have missed one". The report's own `coverage.note` still says
+"the prefilter is a proven superset of every rule, so no rule match can be
+lost"; that string is generated by `leakscan.py` and is not corrected
+here, because doing so would mean rewriting a dated snapshot's contents.
+Anyone relying on those zeros should re-run the direct scan.
+
+`PREFILTER_SUPERSET_EVIDENCE.txt` records both scans, the per-file
+comparison, the generative sweep on both trees, and a one-line document
+that demonstrates the drop end to end.
+
 ## Tests
 
-**65 tests, `OK`, exit 0.** CPython 3.10.12, Linux x86_64.
+**70 tests, `OK`, exit 0.** CPython 3.11.15, Linux x86_64.
 
 ```
 python3 -m unittest test_leakscan
 ```
 
 Positive cases for all five categories and every rule, nine negative cases
-(URLs, relative paths, markdown tables, prose, mid-line `@`), the prefilter
-superset proof, full-vs-candidate equality, fail-closed review semantics,
+(URLs, relative paths, markdown tables, prose, mid-line `@`), the generative prefilter
+superset check, full-vs-candidate equality, fail-closed review semantics,
 setup errors, determinism, and the stdlib-only import assertion.
 
 ## Determinism
@@ -197,12 +330,18 @@ dab40f0b653132521be15efa35ff84bb4d535517f264a529e4821898c013480b`.
    to tell the two apart except by opening the file.
 
 3. **This run classified 287 prefiltered lines, not 1.49 MB of prose.** The
-   prefilter is proven to be a superset of the *current* rule set by the two
-   tests above. Add a rule that can match a line containing none of the
-   prefilter's trigger substrings and that proof lapses silently — the
-   superset test will still pass unless a fixture for the new rule is added to
-   `TestPrefilterIsSuperset.POSITIVES`. That coupling is a maintenance hazard,
-   not a guarantee.
+   superset property is now checked generatively rather than from a list,
+   which closes the placement gap that made it false, but it is still not a
+   proof over all strings. Adding a rule without adding a core would shrink
+   what the check proves — so `test_every_rule_is_exercised_by_some_core`
+   fails in that case rather than passing quietly. What it still cannot
+   catch is a rule that matches a line containing none of the prefilter's
+   trigger substrings *and* whose core happens to be covered by another
+   rule. `EL-USER-PROMPT` is also `^`-anchored, so no prefix can reach it;
+   it is covered by the suffix half and by a named case. That residue is a
+   maintenance hazard, not a guarantee, and it is why `leakscan.py`'s
+   comment above `PREFILTER_RE` says a new rule must be checked the same
+   way.
 
 4. **This directory will report itself.** A leak report has to quote the
    leaked strings or the findings are unreadable, so `leak_report_2026-08-04.json`,

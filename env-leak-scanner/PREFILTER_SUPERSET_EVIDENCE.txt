@@ -1,0 +1,298 @@
+############################################################
+# PREFILTER_SUPERSET_EVIDENCE.txt
+#
+# Before/after evidence for one misleading test:
+#   env-leak-scanner/test_leakscan.py :: TestPrefilterIsSuperset
+#
+# Its name, leakscan.py's comment above PREFILTER_RE, and README.md all
+# claim the prefilter can never drop a line a rule would match. What the
+# class actually did was run 22 hand-written example lines through the
+# prefilter. The invariant was false and the test could not see it.
+#
+# Every record below is a real run: header, real output, and the real
+# exit code of the command in the header.
+############################################################
+
+--- 0. what the two trees are ---
+
+=== $ git -C /tmp/BEFORE rev-parse HEAD ===
+abb479fb6e1044c598708e000ad2bd9ff8d068d8
+exit=0
+
+=== $ git -C /tmp/BEFORE status --porcelain | wc -l ===
+0
+exit=0
+
+--- 1. what the code and the README claimed ---
+
+=== $ grep -n 'MUST match this' /tmp/BEFORE/env-leak-scanner/leakscan.py ===
+183:# no rule may still match this; a line that matches ANY rule MUST match this.
+exit=0
+
+=== $ grep -n 'The soundness of this rests on one claim' /tmp/BEFORE/env-leak-scanner/README.md ===
+147:The soundness of this rests on one claim: **the prefilter can never drop a
+exit=0
+
+=== $ sed -n '197,203p' /tmp/BEFORE/env-leak-scanner/test_leakscan.py ===
+class TestPrefilterIsSuperset(unittest.TestCase):
+    """The candidate pipeline only transfers lines matching PREFILTER_RE.
+    If any rule could match a line the prefilter rejects, the repository-wide
+    scan would silently miss it."""
+
+    POSITIVES = [
+        "output went to /opt/build/out.json",
+exit=0
+
+--- 2. BEFORE: a generative sweep finds real counterexamples ---
+Six core strings covering the two rules the bug affects, every printable
+single-character prefix. A combination counts only if it genuinely fires
+a rule; the prefilter is allowed to be over-broad, never under-broad.
+(The committed test's matrix is wider -- 24 cores covering all 15 rules,
+prefixes and suffixes, 3,847 lines. This smaller sweep is the one quoted
+in README.md, because it is the one whose exact output is recorded here.)
+The script is written out first so the exact code that produced the
+numbers is part of the record.
+
+=== $ cat /tmp/leakevidence_lTKhw1/sweep.py ===
+"""Count lines that fire a rule but that PREFILTER_RE rejects."""
+import string
+import sys
+
+sys.path.insert(0, sys.argv[1])
+import leakscan as L
+
+CORES = [
+    "/home/rito/out.json", "/Users/rito/out.json",
+    "\\\\fileserv\\share\\x", "\\\\_fileserv\\share\\x",
+    "\\\\.fileserv\\share\\x", "\\\\-fileserv\\share\\x",
+]
+AFFIXES = [""] + [c for c in string.printable if c not in "\n\r\x0b\x0c"]
+
+checked = 0
+missed = []
+for core in CORES:
+    for pre in AFFIXES:
+        line = pre + core
+        hits = L.scan_line("f.md", 1, line)
+        if not hits:
+            continue
+        checked += 1
+        if not L.PREFILTER_RE.search(line):
+            missed.append((line, sorted({h["rule"] for h in hits})))
+
+print("lines that fire a rule: %d" % checked)
+print("of those, dropped by the prefilter: %d" % len(missed))
+for line, rules in missed[:8]:
+    print("  DROPPED %-40r %s" % (line, rules))
+if len(missed) > 8:
+    print("  ... and %d more" % (len(missed) - 8))
+sys.exit(1 if missed else 0)
+exit=0
+
+=== $ python3 /tmp/leakevidence_lTKhw1/sweep.py /tmp/BEFORE/env-leak-scanner ===
+lines that fire a rule: 582
+of those, dropped by the prefilter: 457
+  DROPPED '0/home/rito/out.json'                   ['EL-USER-PATH']
+  DROPPED '1/home/rito/out.json'                   ['EL-USER-PATH']
+  DROPPED '2/home/rito/out.json'                   ['EL-USER-PATH']
+  DROPPED '3/home/rito/out.json'                   ['EL-USER-PATH']
+  DROPPED '4/home/rito/out.json'                   ['EL-USER-PATH']
+  DROPPED '5/home/rito/out.json'                   ['EL-USER-PATH']
+  DROPPED '6/home/rito/out.json'                   ['EL-USER-PATH']
+  DROPPED '7/home/rito/out.json'                   ['EL-USER-PATH']
+  ... and 449 more
+exit=1
+
+--- 3. and the old test class passed anyway ---
+
+=== $ cd /tmp/BEFORE/env-leak-scanner && python3 -m unittest test_leakscan.TestPrefilterIsSuperset 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
+exit=0
+
+--- 4. the dropped findings are real: the rule engine disagrees with the CLI ---
+One of the counterexamples, run through scan_line directly and then
+through the tool. The rule fires; the tool reports nothing.
+
+=== $ cat /tmp/leakevidence_lTKhw1/doc/doc.md ===
+The build wrote its log to ../home/rito/out.json last night.
+exit=0
+
+=== $ cd /tmp/BEFORE/env-leak-scanner && python3 -c "import sys;sys.path.insert(0,'.');import leakscan,json;line=open('/tmp/leakevidence_lTKhw1/doc/doc.md').read().rstrip();print('PREFILTER matches?',bool(leakscan.PREFILTER_RE.search(line)));print('rule fires  ?',[h['rule']+':'+h['matched'] for h in leakscan.scan_line('doc.md',1,line)])" ===
+PREFILTER matches? False
+rule fires  ? ['EL-USER-PATH:rito']
+exit=0
+
+=== $ cd /tmp/BEFORE/env-leak-scanner && python3 leakscan.py --root /tmp/leakevidence_lTKhw1/doc ===
+{"confirmed_leaks":[],"counts":{"benign":0,"by_category":{"absolute_path":0,"home_directory":0,"hostname":0,"temp_directory":0,"username":0},"confirmed":0},"coverage":{"files":["doc.md"],"files_scanned":1,"mode":"full"},"reviewed_benign":[],"schema_version":1,"stale_review_entries":[],"status":"clean","tool":"env-leak-scanner"}
+exit=0
+
+--- 5. AFTER: the same sweep, the same tool, the same document ---
+
+=== $ python3 /tmp/leakevidence_lTKhw1/sweep.py /tmp/WORKB2/env-leak-scanner ===
+lines that fire a rule: 582
+of those, dropped by the prefilter: 0
+exit=0
+
+=== $ cd /tmp/WORKB2/env-leak-scanner && python3 leakscan.py --root /tmp/leakevidence_lTKhw1/doc ===
+{"confirmed_leaks":[{"category":"username","column":36,"file":"doc.md","harms_reproducibility":"the author's login name, recoverable from a path in a public document.","line":1,"matched":"rito","review_key":"doc.md:1:rito","rule":"EL-USER-PATH","verdict":"leak"}],"counts":{"benign":0,"by_category":{"absolute_path":0,"home_directory":0,"hostname":0,"temp_directory":0,"username":1},"confirmed":1},"coverage":{"files":["doc.md"],"files_scanned":1,"mode":"full"},"reviewed_benign":[],"schema_version":1,"stale_review_entries":[],"status":"leaks","tool":"env-leak-scanner"}
+exit=1
+
+--- 6. the new test class fails against the parent commit ---
+The new test file is placed in a throwaway COPY of the parent commit's
+env-leak-scanner/ under a different module name, so the parent commit's
+own leakscan.py is the code under test.
+
+=== $ cd /tmp/WORKB2/env-leak-scanner && python3 -m unittest test_leakscan.TestPrefilterIsSuperset 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 9 tests in 0.055s
+
+OK
+exit=0
+
+=== $ cd /tmp/leakevidence_lTKhw1/before_els && python3 -m unittest test_probe_leak.TestPrefilterIsSuperset 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 9 tests in 0.060s
+
+FAILED (failures=6)
+exit=1
+
+--- 7. impact on this repository, measured per file ---
+A full re-scan does move, and the honest way to report that is per file
+rather than as one total. Outside env-leak-scanner/ NOT ONE finding
+changes: the counterexamples do not occur in the repository's prior text,
+so on the pre-existing corpus this fix is behaviour-preserving.
+
+Inside env-leak-scanner/ the count does go up, because this commit's own
+README section and this evidence file quote `/home/rito/...` and
+`../home/alice/...` at the reader on purpose. That is limitation 4 --
+"this directory will report itself" -- doing what it says. No exact
+figure is quoted for those two files, and the reason is worth stating:
+this file's content is part of what is being scanned, so any number
+printed here would change the next time it is regenerated. A
+self-referential count is not a fact about the repository.
+
+=== $ cd /tmp/BEFORE/env-leak-scanner && python3 leakscan.py --root .. --review review.json -o /tmp/leakevidence_lTKhw1/leak_before.json ===
+exit=1
+
+=== $ cd /tmp/WORKB2/env-leak-scanner && python3 leakscan.py --root .. --review review.json -o /tmp/leakevidence_lTKhw1/leak_after.json ===
+exit=1
+
+=== $ cat /tmp/leakevidence_lTKhw1/impact.py ===
+"""Per-file confirmed-finding counts, before vs after, outside this dir."""
+import collections
+import json
+import sys
+
+SELF = "env-leak-scanner/"
+
+
+def counts(path):
+    with open(path, encoding="utf-8") as fh:
+        rep = json.load(fh)
+    return collections.Counter(f["file"] for f in rep["confirmed_leaks"])
+
+
+before, after = counts(sys.argv[1]), counts(sys.argv[2])
+outside = sorted({f for f in set(before) | set(after)
+                  if not f.startswith(SELF)})
+changed = [f for f in outside if before.get(f, 0) != after.get(f, 0)]
+print("files outside %s with a changed count: %d" % (SELF, len(changed)))
+for f in changed:
+    print("  %-55s %3d -> %3d" % (f, before.get(f, 0), after.get(f, 0)))
+tb = sum(before[f] for f in outside)
+ta = sum(after[f] for f in outside)
+print("confirmed findings outside %s: %d -> %d" % (SELF, tb, ta))
+print("inside %s: count is self-referential, see the note above" % SELF)
+sys.exit(0 if not changed else 1)
+exit=0
+
+=== $ python3 /tmp/leakevidence_lTKhw1/impact.py /tmp/leakevidence_lTKhw1/leak_before.json /tmp/leakevidence_lTKhw1/leak_after.json ===
+files outside env-leak-scanner/ with a changed count: 0
+confirmed findings outside env-leak-scanner/: 432 -> 432
+inside env-leak-scanner/: count is self-referential, see the note above
+exit=0
+
+--- 8. the committed dated report is pinned, not regenerated ---
+leak_report_2026-08-04.json is a snapshot with a date in its name and is
+a `pinned` entry in report-freshness/manifest.json, so nothing requires
+it to equal a fresh scan. Recorded here so the difference is not mistaken
+for drift.
+
+=== $ python3 -c "import json;m=json.load(open('/tmp/WORKB2/report-freshness/manifest.json'));print([ (e['id'],e['kind']) for e in m['entries'] if 'env-leak' in e['id'] ])" ===
+[('env-leak-scanner:leak_report_2026-08-04.json', 'pinned')]
+exit=0
+
+=== $ cd /tmp/WORKB2/report-freshness && python3 freshness.py --root .. -o /tmp/leakevidence_lTKhw1/fr.json ===
+exit=0
+
+=== $ python3 -c "import json;print(json.load(open('/tmp/leakevidence_lTKhw1/fr.json'))['counts'])" ===
+{'generation_failed': 0, 'match': 4, 'missing': 0, 'pinned_missing': 0, 'pinned_present': 2, 'stale': 0, 'tool_missing': 0, 'total': 6}
+exit=0
+
+--- 8b. the isolating run: new code, OLD corpus ---
+Section 7 varies two things at once -- the regex AND the tree, since this
+commit also edits files outside env-leak-scanner/. The clean experiment is
+the fixed leakscan.py pointed at the UNCHANGED parent checkout. If the
+widening introduced a single false positive anywhere in the repository as
+it stood, this is where it would show.
+
+=== $ cd /tmp/WORKB2/env-leak-scanner && python3 leakscan.py --root /tmp/BEFORE --review review.json -o /tmp/leakevidence_lTKhw1/newcode_oldtree.json ===
+exit=1
+
+=== $ python3 -c "import json;a=json.load(open('/tmp/leakevidence_lTKhw1/leak_before.json'));b=json.load(open('/tmp/leakevidence_lTKhw1/newcode_oldtree.json'));ka={(f['file'],f['line'],f['rule'],f['matched']) for f in a['confirmed_leaks']};kb={(f['file'],f['line'],f['rule'],f['matched']) for f in b['confirmed_leaks']};print('same corpus, old code confirmed:',a['counts']['confirmed']);print('same corpus, new code confirmed:',b['counts']['confirmed']);print('introduced:',len(kb-ka),' lost:',len(ka-kb))" ===
+same corpus, old code confirmed: 528
+same corpus, new code confirmed: 528
+introduced: 0  lost: 0
+exit=0
+
+--- 8c. and the candidate set the prefilter emits is unchanged ---
+The prefilter exists to cut the corpus down. A widening that emitted far
+more candidate lines would be a performance and noise regression even if
+every finding stayed the same.
+
+=== $ cd /tmp/BEFORE/env-leak-scanner && python3 leakscan.py --root /tmp/BEFORE --candidates -o /tmp/leakevidence_lTKhw1/cand_before.json ===
+exit=0
+
+=== $ cd /tmp/WORKB2/env-leak-scanner && python3 leakscan.py --root /tmp/BEFORE --candidates -o /tmp/leakevidence_lTKhw1/cand_after.json ===
+exit=0
+
+=== $ python3 -c "import json;a=json.load(open('/tmp/leakevidence_lTKhw1/cand_before.json'));b=json.load(open('/tmp/leakevidence_lTKhw1/cand_after.json'));la=sum(len(v) for v in a.values());lb=sum(len(v) for v in b.values());print('candidate FILES over the parent corpus:',len(a),'->',len(b));print('candidate LINES over the parent corpus:',la,'->',lb);d=sorted(f for f in set(a)|set(b) if len(a.get(f,[]))!=len(b.get(f,[])));print('files whose candidate count changed:',len(d),d[:10])" ===
+candidate FILES over the parent corpus: 104 -> 104
+candidate LINES over the parent corpus: 654 -> 654
+files whose candidate count changed: 0 []
+exit=0
+
+--- 9. full suite on the fixed tree ---
+
+=== $ cd /tmp/WORKB2/env-leak-scanner && python3 -m unittest test_leakscan 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 70 tests in 0.586s
+
+OK
+exit=0
+
+=== $ cd /tmp/WORKB2/env-leak-scanner && python3 -c "import sys;sys.path.insert(0,'.');import test_leakscan as T,leakscan as L;c=T.TestPrefilterIsSuperset;n=sum(1 for core in c.CORES for a in c.AFFIXES for line in (a+core,core+a) if L.scan_line('f.md',1,line));r=set();[r.add(h['rule']) for core in c.CORES for h in L.scan_line('f.md',1,core)];print('committed matrix size:',n);print('rules exercised:',len(r),'of',len({x['id'] for x in L.RULES}))" ===
+committed matrix size: 3847
+rules exercised: 15 of 15
+exit=0
+
+--- 10. the reference tree was not written to ---
+--ignored=matching is used deliberately: plain --porcelain is blind to
+__pycache__, which is in .gitignore, so it would report a clean tree even
+after something had imported a module inside it. This script also sets
+PYTHONDONTWRITEBYTECODE=1 so the write does not happen in the first place.
+
+=== $ git -C /tmp/BEFORE status --porcelain --ignored=matching | wc -l ===
+0
+exit=0
+
+=== $ git -C /tmp/BEFORE status --porcelain | wc -l ===
+0
+exit=0
+
+############################################################
+# END OF EVIDENCE
+############################################################

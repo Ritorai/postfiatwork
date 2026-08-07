@@ -14,7 +14,7 @@ finding. Re-running the scanner after this commit therefore reports
 env-leak-scanner's own files. That is expected and is stated in README.md.
 
 === $ python3 --version ===
-Python 3.10.12
+Python 3.11.15
 exit=0
 
 === $ uname -sm ===
@@ -22,9 +22,9 @@ Linux x86_64
 exit=0
 
 === $ python3 -m unittest test_leakscan ===
-.................................................................
+......................................................................
 ----------------------------------------------------------------------
-Ran 65 tests in 0.247s
+Ran 70 tests in 0.595s
 
 OK
 exit=0
@@ -54,11 +54,11 @@ exit=1
 exit=2
 
 === $ python3 -m unittest test_leakscan.TestFullScanEqualsCandidateScan -v ===
-test_candidates_drop_the_clean_lines (test_leakscan.TestFullScanEqualsCandidateScan) ... ok
-test_identical_findings (test_leakscan.TestFullScanEqualsCandidateScan) ... ok
+test_candidates_drop_the_clean_lines (test_leakscan.TestFullScanEqualsCandidateScan.test_candidates_drop_the_clean_lines) ... ok
+test_identical_findings (test_leakscan.TestFullScanEqualsCandidateScan.test_identical_findings) ... ok
 
 ----------------------------------------------------------------------
-Ran 2 tests in 0.001s
+Ran 2 tests in 0.002s
 
 OK
 exit=0
