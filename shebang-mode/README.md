@@ -194,13 +194,13 @@ and exits 1**. That is a real result, printed in `selfscan_output.txt`
 rather than hidden:
 
 ```
-counts   {"checked": 559, "executable": 0, "skipped_binary": 0,
+counts   {"checked": 561, "executable": 0, "skipped_binary": 0,
           "skipped_excluded": 0, "skipped_not_a_regular_file": 0,
-          "skipped_unmerged": 0, "tracked": 559, "with_shebang": 140}
+          "skipped_unmerged": 0, "tracked": 561, "with_shebang": 140}
 by_code  {"SM002_SHEBANG_WITHOUT_EXEC": 140}
 ```
 
-`git ls-files -s | awk '{print $1}' | sort | uniq -c` returns `559 100644`:
+`git ls-files -s | awk '{print $1}' | sort | uniq -c` returns `561 100644`:
 **no file in this repository is tracked as executable**, while 140 carry a
 shebang. The first half of the rule has zero violations for the same
 reason — there is nothing executable to violate it, which is why
