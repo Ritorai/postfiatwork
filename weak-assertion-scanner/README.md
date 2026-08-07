@@ -288,7 +288,7 @@ that is the tool's documented "findings present" status, not a failure.
 
 ```
 files_scanned: 77
-tests_scanned: 6155
+tests_scanned: 6176
 findings_total: 242
   WA001_NO_ASSERTION: 14
   WA002_CALL_ONLY: 3
@@ -315,7 +315,13 @@ drifted apart with nothing to catch them:
 |---|---|---|---|
 | what this README claimed | 35 | 3198 | 92 |
 | what `self_scan_report.json` actually contained | 39 | 3430 | 112 |
-| what the current tree produces | 77 | 6155 | 242 |
+| what the tree produced when this drift was repaired | 77 | 6155 | 242 |
+
+All three rows are a snapshot of the moment the drift was found; the
+third is labelled that way rather than "the current tree" because it is
+not re-measured when the tree changes. The live numbers are the fenced
+block above, which `test_weakassert_regen.py` checks against
+`self_scan_report.json` on every run.
 
 The README was not describing its own committed artifact, and the artifact
 was not describing the repository. The unedited before/after runs are in
