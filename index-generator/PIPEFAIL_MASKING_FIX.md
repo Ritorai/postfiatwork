@@ -65,7 +65,7 @@ delivery fixes:
 | 4 | `queue-auditor` | 200 | `cat snapshot_dirty.json \| python3 queue_audit.py - ; echo "exit=$?"` |
 | 5 | `queue-auditor` | 208 | `echo '{not json' \| python3 queue_audit.py - ; echo "exit=$?"` |
 | 6 | `transcript-schema` | 13 | `python3 -m unittest test_validate_transcript -v 2>&1 \| tail -6` |
-| 7 | `wallet-reconciler` | 171 | `echo '{...NaN...}' \| python3 wallet_reconcile.py - ; echo "exit=$?"` |
+| 7 | `wallet-reconciler` | 197 | `echo '{...NaN...}' \| python3 wallet_reconcile.py - ; echo "exit=$?"` |
 
 ## 2. Scoping check: which directories ship a `capture.sh`
 
@@ -293,7 +293,7 @@ README-documented command string. `wallet-reconciler` carries 4
 pre-existing `driftcheck.py` findings and 2 `TRANSCRIPT_RECORD_HAS_NO_EXIT`
 + 1 `TRANSCRIPT_RECORD_DUPLICATE_EXIT` `validate_transcript.py` findings —
 all pre-existing, all unrelated to the record this delivery touched (line
-171; the pre-existing findings are at lines 160/164, untouched), all
+197; the pre-existing findings are at lines 186/190, untouched), all
 belonging to the separate missing-exit migration and deliberately left
 alone here.
 
