@@ -1197,6 +1197,392 @@ class SplitRowTests(unittest.TestCase):
         self.assertEqual(cells[0], "")
 
 
+class ForeignCheckIndexTests(unittest.TestCase):
+    """--check-index must be non-fatal, and must not go silent instead.
+
+    THE DEFECT. parse_index called int() on the fifth cell of every
+    five-column markdown table row whose first cell was not "Tool". Any
+    markdown file containing a five-column table was therefore parsed as
+    if it were an index, and one whose fifth column held a word raised an
+    uncaught ValueError out of run(). A file committed in this repository
+    did exactly that: commit-claim-auditor/README.md documents its own
+    output with the header
+    "| source_file | line | claim_type | status | reason |", and "reason"
+    is not an integer. The interpreter then exited 1 -- which this tool's
+    exit table defines as "scan completed, one or more findings were
+    produced" -- and no report was written.
+
+    THE FIX, IN TWO PARTS, AND WHY IT IS TWO.
+
+    (a) Only rows under this tool's own `_TABLE_HEADER` are index rows.
+        That removes the whole class of foreign tables, including ones
+        whose fifth column happens to be numeric -- those used to be
+        parsed into phantom tools and produce spurious INDEX_DRIFT.
+
+    (b) A row INSIDE a real index table whose count cell is unparseable
+        is reported as MALFORMED_INDEX_ROW with its line number, not
+        skipped. Skipping would be worse than the crash: a stale row
+        naming a deleted tool would drop out of old_rows and its
+        INDEX_DRIFT "(removed)" finding would disappear, so a corrupt
+        index would be certified drift-free. CONTRIBUTING.md: "One
+        malformed record must not abort the run. Report it and keep
+        going."
+
+    Both halves are pinned below, including the silent-pass case (b)
+    exists to prevent.
+    """
+
+    #: The exact row from commit-claim-auditor/README.md that crashed it.
+    FOREIGN_HEADER = "| source_file | line | claim_type | status | reason |"
+
+    def _foreign_doc(self):
+        return (
+            "# Some other tool\n\n"
+            + self.FOREIGN_HEADER + "\n"
+            "|---|---|---|---|---|\n"
+            "| a.py | 12 | count | ok | matched |\n"
+        )
+
+    def _index_doc(self, *rows):
+        return (
+            indexgen._TABLE_HEADER + "\n"
+            "| --- | --- | --- | --- | --- |\n"
+            + "".join(r + "\n" for r in rows)
+        )
+
+    # -- (a) foreign tables are not index tables --------------------------
+
+    def test_foreign_table_with_a_word_count_yields_no_rows(self):
+        rows, problems = indexgen.parse_index_rows(self._foreign_doc())
+        self.assertEqual(rows, {})
+        self.assertEqual(problems, [],
+                         "a table that never claimed to be an index should "
+                         "not be reported as a malformed one")
+
+    def test_foreign_table_with_a_numeric_count_yields_no_phantom_tools(self):
+        """The case a count-cell guard alone would have missed."""
+        doc = (
+            "# Some results table\n\n"
+            "| rule | severity | file | line | count |\n"
+            "|---|---|---|---|---|\n"
+            "| WA001 | high | foo.py | 12 | 3 |\n"
+            "| WA002 | low | bar.py | 44 | 7 |\n"
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(rows, {})
+        self.assertEqual(problems, [])
+
+    def test_the_committed_file_that_triggered_it_no_longer_crashes(self):
+        """Guards the specific real file, so re-introducing this is caught.
+
+        Skipped rather than failed when the sibling directory is absent,
+        so the suite still runs from a partial checkout.
+        """
+        real = os.path.join(os.path.dirname(THIS_DIR),
+                            "commit-claim-auditor", "README.md")
+        if not os.path.isfile(real):
+            self.skipTest("commit-claim-auditor/README.md not present")
+        with open(real, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn(self.FOREIGN_HEADER, text,
+                      "the row this test guards has moved; update it")
+        rows, problems = indexgen.parse_index_rows(text)
+        self.assertEqual(rows, {})
+        self.assertEqual(problems, [])
+
+    def test_cli_exits_1_and_writes_a_report_instead_of_a_traceback(self):
+        """A real subprocess: no traceback on stderr, report on disk."""
+        with TempRepo() as root:
+            make_tool_dir(root, "alpha", readme="Alpha tool.\n5 tests.\n")
+            foreign = os.path.join(root, "foreign.md")
+            write(foreign, self._foreign_doc())
+            out = os.path.join(root, "r.json")
+            proc = subprocess.run(
+                [sys.executable, INDEXGEN_PATH, "--root", root,
+                 "--check-index", foreign, "-o", out],
+                capture_output=True, text=True,
+            )
+            self.assertNotIn("Traceback", proc.stderr)
+            self.assertNotIn("ValueError", proc.stderr)
+            self.assertEqual(proc.returncode, 1)
+            self.assertTrue(os.path.isfile(out))
+
+    # -- the control: a real index still parses ---------------------------
+
+    def test_a_real_index_table_still_parses(self):
+        doc = self._index_doc(
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+            "| beta | Beta tool. | beta.py | test_beta.py | ? |",
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(sorted(rows), ["alpha", "beta"])
+        self.assertEqual(rows["alpha"][3], 5)
+        self.assertIsNone(rows["beta"][3])
+        self.assertEqual(problems, [])
+
+    # -- (b) a malformed row inside a real index is REPORTED --------------
+
+    def test_bad_count_cell_inside_an_index_table_is_reported(self):
+        doc = self._index_doc(
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+            "| ghost | Ghost tool. | ghost.py | test_ghost.py | many |",
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(sorted(rows), ["alpha"])
+        self.assertEqual(len(problems), 1)
+        self.assertEqual(problems[0]["line"], 4)
+        self.assertIn("many", problems[0]["reason"])
+
+    def test_wrong_cell_count_inside_an_index_table_is_reported(self):
+        doc = self._index_doc(
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+            "| short | only three |",
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(sorted(rows), ["alpha"])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("cells", problems[0]["reason"])
+
+    def test_a_malformed_row_does_not_silence_a_stale_entry(self):
+        """The regression the naive fix would have introduced.
+
+        A row naming a tool that no longer exists must be surfaced. With
+        a valid count it is INDEX_DRIFT "(removed)". With an unparseable
+        count it must still produce SOMETHING -- silently dropping it
+        would certify a corrupt index as drift-free.
+        """
+        with TempRepo() as root:
+            make_tool_dir(root, "alpha", readme="Alpha tool.\n5 tests.\n")
+            good = os.path.join(root, "good.md")
+            bad = os.path.join(root, "bad.md")
+            write(good, self._index_doc(
+                "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+                "| ghost | Ghost tool. | ghost.py | test_ghost.py | 7 |"))
+            write(bad, self._index_doc(
+                "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+                "| ghost | Ghost tool. | ghost.py | test_ghost.py | many |"))
+
+            out_good = os.path.join(root, "g.json")
+            self.assertEqual(
+                indexgen.run(["--root", root, "--check-index", good,
+                              "-o", out_good]), 1)
+            with open(out_good, encoding="utf-8") as fh:
+                codes_good = [f["code"] for f in json.load(fh)["findings"]]
+            self.assertIn("INDEX_DRIFT", codes_good)
+
+            out_bad = os.path.join(root, "b.json")
+            self.assertEqual(
+                indexgen.run(["--root", root, "--check-index", bad,
+                              "-o", out_bad]), 1)
+            with open(out_bad, encoding="utf-8") as fh:
+                findings_bad = json.load(fh)["findings"]
+            codes_bad = [f["code"] for f in findings_bad]
+            self.assertIn("MALFORMED_INDEX_ROW", codes_bad)
+            self.assertNotEqual(findings_bad, [],
+                                "a corrupt index must not be certified clean")
+
+    def test_malformed_row_finding_carries_the_file_and_line(self):
+        with TempRepo() as root:
+            make_tool_dir(root, "alpha", readme="Alpha tool.\n5 tests.\n")
+            bad = os.path.join(root, "bad_index.md")
+            write(bad, self._index_doc(
+                "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+                "| ghost | Ghost tool. | ghost.py | test_ghost.py | many |"))
+            out = os.path.join(root, "r.json")
+            indexgen.run(["--root", root, "--check-index", bad, "-o", out])
+            with open(out, encoding="utf-8") as fh:
+                findings = json.load(fh)["findings"]
+            mal = [f for f in findings if f["code"] == "MALFORMED_INDEX_ROW"]
+            self.assertEqual(len(mal), 1)
+            self.assertEqual(mal[0]["location"], "bad_index.md:4")
+
+    def test_parse_index_wrapper_returns_rows_and_drops_problems(self):
+        """Not `parse_index(d) == parse_index_rows(d)[0]`.
+
+        That comparison is a tautology -- the wrapper is literally that
+        expression -- and this repository's own weak-assertion scanner
+        classifies it WA003, "both sides call the subject module". So the
+        expectation below is written out instead of derived, on a document
+        that has BOTH a good row and a bad one.
+        """
+        doc = self._index_doc(
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+            "| ghost | Ghost tool. | ghost.py | test_ghost.py | many |")
+        self.assertEqual(
+            indexgen.parse_index(doc),
+            {"alpha": ("Alpha tool.", ("alpha.py",), ("test_alpha.py",), 5)})
+
+    # -- the header is matched on cells, not bytes ------------------------
+
+    def test_a_column_aligned_index_is_still_an_index(self):
+        """What every markdown formatter produces.
+
+        Requiring byte equality with `_TABLE_HEADER` meant a prettier-run
+        index stopped being recognised and every tool in it came back as
+        INDEX_DRIFT "(added)" -- a message that was false, since the row
+        was one line below.
+        """
+        doc = (
+            "| Tool  | Description | Entrypoint(s) | Test Module(s) "
+            "| Claimed Tests |\n"
+            "|-------|-------------|---------------|----------------"
+            "|---------------|\n"
+            "| alpha | Alpha tool. | alpha.py      | test_alpha.py  "
+            "| 5             |\n"
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(sorted(rows), ["alpha"])
+        self.assertEqual(rows["alpha"][3], 5)
+        self.assertEqual(problems, [])
+
+    def test_a_header_with_different_column_names_is_not_an_index(self):
+        doc = (
+            "| Tool | Description | Entrypoint(s) | Test Module(s) | Tests |\n"
+            "|---|---|---|---|---|\n"
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |\n"
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(rows, {})
+        self.assertEqual(problems, [])
+
+    # -- a row that fell out of the table is reported ---------------------
+
+    def test_a_row_pushed_out_of_the_table_is_reported(self):
+        """The silent pass the header gate would otherwise have created.
+
+        A table ends at a blank line or a non-table line, so a stale row
+        below a merge-conflict marker is no longer in the table. Ignoring
+        it would drop it from old_rows and the run would report zero
+        findings on a corrupt index -- the exact outcome the malformed-row
+        rule exists to prevent, reached by a different route.
+        """
+        doc = (
+            indexgen._TABLE_HEADER + "\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |\n"
+            "<<<<<<< HEAD\n"
+            "| ghost | Ghost tool. | ghost.py | test_ghost.py | 7 |\n"
+            "=======\n"
+            ">>>>>>> other\n"
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(sorted(rows), ["alpha"])
+        self.assertEqual(len(problems), 1)
+        self.assertEqual(problems[0]["line"], 5)
+        self.assertIn("not inside an index table", problems[0]["reason"])
+
+    def test_a_blank_line_inside_the_table_is_reported_not_ignored(self):
+        doc = (
+            indexgen._TABLE_HEADER + "\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |\n"
+            "\n"
+            "| ghost | Ghost tool. | ghost.py | test_ghost.py | 7 |\n"
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(sorted(rows), ["alpha"])
+        self.assertEqual([p["line"] for p in problems], [5])
+
+    def test_a_stray_row_in_a_file_with_no_index_table_is_not_reported(self):
+        """The other half of the rule: silence about a non-index file."""
+        rows, problems = indexgen.parse_index_rows(self._foreign_doc())
+        self.assertEqual(rows, {})
+        self.assertEqual(problems, [])
+
+    def test_the_conflict_case_end_to_end_does_not_come_back_clean(self):
+        with TempRepo() as root:
+            make_tool_dir(root, "alpha", readme="Alpha tool.\n5 tests.\n")
+            idx = os.path.join(root, "conflict.md")
+            write(idx,
+                  indexgen._TABLE_HEADER + "\n"
+                  "| --- | --- | --- | --- | --- |\n"
+                  "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |\n"
+                  "<<<<<<< HEAD\n"
+                  "| ghost | Ghost tool. | ghost.py | test_ghost.py | 7 |\n"
+                  ">>>>>>> other\n")
+            out = os.path.join(root, "r.json")
+            code = indexgen.run(["--root", root, "--check-index", idx,
+                                 "-o", out])
+            self.assertEqual(code, 1, "a corrupt index must not exit 0")
+            with open(out, encoding="utf-8") as fh:
+                findings = json.load(fh)["findings"]
+            self.assertNotEqual(findings, [])
+            self.assertIn("MALFORMED_INDEX_ROW",
+                          [f["code"] for f in findings])
+
+    # -- a file with no index table says so -------------------------------
+
+    def test_no_index_table_is_its_own_finding(self):
+        with TempRepo() as root:
+            make_tool_dir(root, "alpha", readme="Alpha tool.\n5 tests.\n")
+            foreign = os.path.join(root, "foreign.md")
+            write(foreign, self._foreign_doc())
+            out = os.path.join(root, "r.json")
+            self.assertEqual(
+                indexgen.run(["--root", root, "--check-index", foreign,
+                              "-o", out]), 1)
+            with open(out, encoding="utf-8") as fh:
+                findings = json.load(fh)["findings"]
+            codes = [f["code"] for f in findings]
+            self.assertIn("NO_INDEX_TABLE", codes)
+            self.assertEqual(codes.count("NO_INDEX_TABLE"), 1)
+
+    def test_a_real_index_produces_no_no_index_table_finding(self):
+        with TempRepo() as root:
+            make_tool_dir(root, "alpha", readme="Alpha tool.\n5 tests.\n")
+            idx = os.path.join(root, "INDEX.md")
+            indexgen.run(["--root", root, "--write-index", idx,
+                          "-o", os.path.join(root, "w.json")])
+            out = os.path.join(root, "r.json")
+            self.assertEqual(
+                indexgen.run(["--root", root, "--check-index", idx,
+                              "-o", out]), 0)
+            with open(out, encoding="utf-8") as fh:
+                self.assertEqual(json.load(fh)["findings"], [])
+
+    # -- line numbers and report labels -----------------------------------
+
+    def test_line_numbers_count_newlines_only(self):
+        """splitlines() also splits on form feed and U+2028; split() does not."""
+        doc = (
+            indexgen._TABLE_HEADER + "\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "prose with a \x0c form feed and a \u2028 separator\n"
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | many |\n"
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual([p["line"] for p in problems], [4])
+
+    def test_crlf_index_still_parses(self):
+        doc = (
+            indexgen._TABLE_HEADER + "\r\n"
+            "| --- | --- | --- | --- | --- |\r\n"
+            "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |\r\n"
+        )
+        rows, problems = indexgen.parse_index_rows(doc)
+        self.assertEqual(sorted(rows), ["alpha"])
+        self.assertEqual(problems, [])
+
+    def test_report_label_is_repo_relative_never_absolute(self):
+        with TempRepo() as root:
+            make_tool_dir(root, "alpha", readme="Alpha tool.\n5 tests.\n")
+            sub = os.path.join(root, "docs")
+            os.makedirs(sub)
+            bad = os.path.join(sub, "bad_index.md")
+            write(bad, self._index_doc(
+                "| alpha | Alpha tool. | alpha.py | test_alpha.py | 5 |",
+                "| ghost | Ghost tool. | ghost.py | test_ghost.py | many |"))
+            out = os.path.join(root, "r.json")
+            indexgen.run(["--root", root, "--check-index", bad, "-o", out])
+            with open(out, encoding="utf-8") as fh:
+                text = fh.read()
+            self.assertNotIn(root, text, "an absolute path reached the report")
+            mal = [f for f in json.loads(text)["findings"]
+                   if f["code"] == "MALFORMED_INDEX_ROW"]
+            self.assertEqual(len(mal), 1)
+            self.assertEqual(mal[0]["location"], "docs/bad_index.md:4")
+
+
 class ToolToRowTests(unittest.TestCase):
 
     def test_tool_to_row_sorts_lists(self):

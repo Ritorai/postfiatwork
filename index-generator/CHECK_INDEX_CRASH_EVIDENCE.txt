@@ -1,0 +1,319 @@
+############################################################
+# CHECK_INDEX_CRASH_EVIDENCE.txt
+#
+# Before/after evidence for one behaviour defect in indexgen.py:
+# --check-index raised an uncaught ValueError on a five-column
+# markdown table that is not an index table.
+#
+# BEFORE is a clean clone of the parent commit; AFTER is the fixed
+# tree. Every record is a real run: header, real output, and the real
+# exit code OF THE COMMAND IN THE HEADER. Neither tree is written to;
+# anything that generates files runs in a throwaway copy.
+############################################################
+
+--- 0. what the two trees are ---
+
+=== $ git -C /tmp/BEFORE rev-parse HEAD ===
+abb479fb6e1044c598708e000ad2bd9ff8d068d8
+exit=0
+
+=== $ git -C /tmp/BEFORE status --porcelain | wc -l ===
+0
+exit=0
+
+=== $ git -C /tmp/WORK rev-parse HEAD ===
+abb479fb6e1044c598708e000ad2bd9ff8d068d8
+exit=0
+
+--- 1. the trigger is a file committed in this repository ---
+commit-claim-auditor/README.md documents its own output with a
+five-column table whose fifth column header is the word "reason".
+parse_index called int() on the fifth cell of every five-column row
+whose first cell was not "Tool".
+
+=== $ grep -n 'source_file | line | claim_type' /tmp/BEFORE/commit-claim-auditor/README.md ===
+142:| source_file | line | claim_type | status | reason |
+exit=0
+
+--- 2. BEFORE: an uncaught ValueError escapes run() ---
+The process exits 1. This tool's own exit table defines 1 as "scan
+completed, one or more findings were produced", so a caller reading exit
+codes cannot tell this crash apart from an ordinary drift result. No
+report file is written.
+
+=== $ cd /tmp/BEFORE/index-generator && python3 indexgen.py --root /tmp/BEFORE --check-index /tmp/BEFORE/commit-claim-auditor/README.md -o /tmp/igevidence_MfKypC/ci_before.json ===
+Traceback (most recent call last):
+  File "/tmp/BEFORE/index-generator/indexgen.py", line 631, in <module>
+    main()
+  File "/tmp/BEFORE/index-generator/indexgen.py", line 627, in main
+    sys.exit(run(sys.argv[1:]))
+             ^^^^^^^^^^^^^^^^^
+  File "/tmp/BEFORE/index-generator/indexgen.py", line 582, in run
+    old_rows = parse_index(old_text)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/BEFORE/index-generator/indexgen.py", line 468, in parse_index
+    count = None if cells[4] == "?" else int(cells[4])
+                                         ^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'reason'
+exit=1
+
+=== $ test -e /tmp/igevidence_MfKypC/ci_before.json && echo REPORT_WRITTEN || echo NO_REPORT_WRITTEN ===
+NO_REPORT_WRITTEN
+exit=0
+
+--- 3. AFTER: a report, and no phantom rows ---
+The foreign table is not an index table, so none of its rows are parsed
+as tools. The 50 INDEX_DRIFT findings are the real ones: every tool in
+the fresh index is missing from a "checked index" that contains no index
+table at all.
+
+=== $ cd /tmp/WORK/index-generator && python3 indexgen.py --root /tmp/WORK --check-index /tmp/WORK/commit-claim-auditor/README.md -o /tmp/igevidence_MfKypC/ci_after.json ===
+exit=1
+
+=== $ test -e /tmp/igevidence_MfKypC/ci_after.json && echo REPORT_WRITTEN || echo NO_REPORT_WRITTEN ===
+REPORT_WRITTEN
+exit=0
+
+=== $ python3 -c "import json,collections;r=json.load(open('/tmp/igevidence_MfKypC/ci_after.json'));c=collections.Counter(f['code'] for f in r['findings']);print('findings',len(r['findings']));print(sorted(c.items()))" ===
+findings 76
+[('ENTRYPOINT_TEST_MISMATCH', 17), ('INDEX_DRIFT', 50), ('MISSING_TEST_MODULE', 1), ('NO_CLAIMED_TEST_COUNT', 7), ('NO_INDEX_TABLE', 1)]
+exit=0
+
+--- 4. the case the OBVIOUS one-line fix would have got wrong ---
+Skipping an unparseable row instead of reporting it looks equivalent and
+is not. A row naming a tool that no longer exists must still be
+surfaced. Below: a two-tool index for a one-tool repository, first with
+a valid count on the stale row, then with an unparseable one. The second
+must not come back clean.
+
+=== $ cd /tmp/WORK/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/idx_stale_valid.md -o /tmp/igevidence_MfKypC/sv.json ===
+exit=1
+
+=== $ python3 -c "import json;[print(' ',f['code'],f['location'],f['message'][:80]) for f in json.load(open('/tmp/igevidence_MfKypC/sv.json'))['findings']]" ===
+  INDEX_DRIFT row:ghost tool 'ghost' is present in the checked index but was not discovered in the fresh
+exit=0
+
+=== $ cd /tmp/WORK/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/idx_stale_bad.md -o /tmp/igevidence_MfKypC/sb.json ===
+exit=1
+
+=== $ python3 -c "import json;[print(' ',f['code'],f['location'],f['message'][:90]) for f in json.load(open('/tmp/igevidence_MfKypC/sb.json'))['findings']]" ===
+  MALFORMED_INDEX_ROW idx_stale_bad.md:4 index table row could not be parsed and was not compared: claimed-test-count cell is 'many
+exit=0
+
+--- 4b. why a count-cell guard ALONE was not enough ---
+An ordinary results table with a numeric last column. Three variants of
+indexgen.py are run against it, in this order:
+
+  BEFORE          the parent commit -- crashes, on the header row this
+                  time ("count" is not an integer)
+  GUARD-ONLY      the obvious minimal fix, applied here to a throwaway
+                  copy of the parent commit: skip a row whose count cell
+                  will not parse. No crash -- and the two DATA rows,
+                  whose fifth cells ARE integers, become tools named
+                  WA001 and WA002 with spurious INDEX_DRIFT findings.
+  AFTER           the committed fix. Not an index table, so no rows at
+                  all; the only finding is the real one about alpha.
+
+=== $ cd /tmp/BEFORE/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/numeric_foreign.md -o /tmp/igevidence_MfKypC/nf_before.json 2>&1 | tail -3 ===
+    count = None if cells[4] == "?" else int(cells[4])
+                                         ^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'count'
+exit=1
+
+=== $ cd /tmp/igevidence_MfKypC/guard_only/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/numeric_foreign.md -o /tmp/igevidence_MfKypC/nf_guard.json ===
+exit=1
+
+=== $ python3 -c "import json;[print(' GUARD-ONLY',f['code'],f['location']) for f in json.load(open('/tmp/igevidence_MfKypC/nf_guard.json'))['findings']]" ===
+ GUARD-ONLY INDEX_DRIFT row:WA001
+ GUARD-ONLY INDEX_DRIFT row:WA002
+ GUARD-ONLY INDEX_DRIFT row:alpha
+exit=0
+
+=== $ cd /tmp/WORK/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/numeric_foreign.md -o /tmp/igevidence_MfKypC/nf_after.json ===
+exit=1
+
+=== $ python3 -c "import json;[print(' AFTER',f['code'],f['location']) for f in json.load(open('/tmp/igevidence_MfKypC/nf_after.json'))['findings']]" ===
+ AFTER INDEX_DRIFT row:alpha
+ AFTER NO_INDEX_TABLE numeric_foreign.md
+exit=0
+
+And the same guard-only variant on the stale-row case from section 4:
+the malformed row is skipped, the stale 'ghost' entry disappears from
+old_rows with it, and the run reports ZERO findings -- a corrupt index
+certified clean. That silent pass is the reason the committed fix
+reports the row instead of skipping it.
+
+=== $ cd /tmp/igevidence_MfKypC/guard_only/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/idx_stale_bad.md -o /tmp/igevidence_MfKypC/sb_guard.json ===
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('/tmp/igevidence_MfKypC/sb_guard.json'));print('GUARD-ONLY findings:',len(r['findings']),r['findings'])" ===
+GUARD-ONLY findings: 0 []
+exit=0
+
+--- 4c. and the case the HEADER GATE alone would have got wrong ---
+Found by an adversarial review of the first two parts, not by writing
+them. A markdown table ends at a blank line or any non-table line, so a
+stale row below a merge-conflict marker is no longer inside the table.
+Ignoring it drops it from old_rows and the run comes back clean.
+
+  GATE-ONLY   parts 1+2 only, built here from the parent commit: exit 0,
+              ZERO findings, on a visibly corrupt index.
+  AFTER       the committed fix, which reports the stray row.
+
+=== $ cd /tmp/igevidence_MfKypC/gate_only/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/idx_conflict.md -o /tmp/igevidence_MfKypC/cf_gate.json ===
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('/tmp/igevidence_MfKypC/cf_gate.json'));print('GATE-ONLY findings:',len(r['findings']),r['findings'])" ===
+GATE-ONLY findings: 0 []
+exit=0
+
+=== $ cd /tmp/WORK/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/idx_conflict.md -o /tmp/igevidence_MfKypC/cf_after.json ===
+exit=1
+
+=== $ python3 -c "import json;[print(' AFTER',f['code'],f['location'],f['message'][:80]) for f in json.load(open('/tmp/igevidence_MfKypC/cf_after.json'))['findings']]" ===
+ AFTER MALFORMED_INDEX_ROW idx_conflict.md:5 index table row could not be parsed and was not compared: five-column row is not
+exit=0
+
+--- 4d. a column-aligned index is still an index ---
+The header is matched on stripped cells, not bytes. Requiring byte
+equality meant a formatter-run index stopped being recognised and every
+tool in it was reported as INDEX_DRIFT "(added)".
+
+=== $ cat /tmp/igevidence_MfKypC/idx_aligned.md ===
+| Tool  | Description | Entrypoint(s) | Test Module(s) | Claimed Tests |
+|-------|-------------|---------------|----------------|---------------|
+| alpha | Alpha tool. | alpha.py      | test_alpha.py  | 5             |
+exit=0
+
+=== $ cd /tmp/WORK/index-generator && python3 indexgen.py --root /tmp/igevidence_MfKypC/fixrepo --check-index /tmp/igevidence_MfKypC/idx_aligned.md -o /tmp/igevidence_MfKypC/al.json ===
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('/tmp/igevidence_MfKypC/al.json'));print('findings:',len(r['findings']),r['findings'])" ===
+findings: 0 []
+exit=0
+
+--- 5. the fix changes nothing for a real index file ---
+parse_index over the committed sample_INDEX.md, both trees. Same rows,
+same parsed values, byte-identical repr.
+
+=== $ cd /tmp/BEFORE/index-generator && python3 -c "import sys;sys.path.insert(0,'.');import indexgen;print(repr(sorted(indexgen.parse_index(open('sample_INDEX.md',encoding='utf-8').read()).items())))" > /tmp/igevidence_MfKypC/pi_before.txt ===
+exit=0
+
+=== $ cd /tmp/WORK/index-generator && python3 -c "import sys;sys.path.insert(0,'.');import indexgen;print(repr(sorted(indexgen.parse_index(open('sample_INDEX.md',encoding='utf-8').read()).items())))" > /tmp/igevidence_MfKypC/pi_after.txt ===
+exit=0
+
+=== $ cmp /tmp/igevidence_MfKypC/pi_before.txt /tmp/igevidence_MfKypC/pi_after.txt && echo BYTE_IDENTICAL_parse_index_on_real_index ===
+BYTE_IDENTICAL_parse_index_on_real_index
+exit=0
+
+=== $ sha256sum /tmp/igevidence_MfKypC/pi_before.txt /tmp/igevidence_MfKypC/pi_after.txt ===
+6b49cb131f62b5dd402f5e807b8491cc8908037231ce558ef80111a3341cd920  /tmp/igevidence_MfKypC/pi_before.txt
+6b49cb131f62b5dd402f5e807b8491cc8908037231ce558ef80111a3341cd920  /tmp/igevidence_MfKypC/pi_after.txt
+exit=0
+
+--- 6. and nothing for the committed report and index ---
+Full runs over the fixture repo on both trees, byte-compared. These run
+in throwaway COPIES of each tree, because make_fixture_repo.py writes a
+fixture_repo/ directory. indexgen.py's real exit code is 1 on this
+fixture (findings present, as documented) and that is what is recorded
+below -- not a trailing echo's status.
+
+=== $ cd /tmp/igevidence_MfKypC/before_copy/index-generator && python3 make_fixture_repo.py fixture_repo ===
+wrote 23 files to fixture_repo
+exit=0
+
+=== $ cd /tmp/igevidence_MfKypC/before_copy/index-generator && python3 indexgen.py --root fixture_repo --write-index /tmp/igevidence_MfKypC/idx_before.md -o /tmp/igevidence_MfKypC/rep_before.json ===
+exit=1
+
+=== $ cd /tmp/igevidence_MfKypC/after_copy/index-generator && python3 make_fixture_repo.py fixture_repo ===
+wrote 23 files to fixture_repo
+exit=0
+
+=== $ cd /tmp/igevidence_MfKypC/after_copy/index-generator && python3 indexgen.py --root fixture_repo --write-index /tmp/igevidence_MfKypC/idx_after.md -o /tmp/igevidence_MfKypC/rep_after.json ===
+exit=1
+
+=== $ cmp /tmp/igevidence_MfKypC/idx_before.md /tmp/igevidence_MfKypC/idx_after.md && echo BYTE_IDENTICAL_INDEX_md ===
+BYTE_IDENTICAL_INDEX_md
+exit=0
+
+=== $ cmp /tmp/igevidence_MfKypC/rep_before.json /tmp/igevidence_MfKypC/rep_after.json && echo BYTE_IDENTICAL_report_json ===
+BYTE_IDENTICAL_report_json
+exit=0
+
+=== $ sha256sum /tmp/igevidence_MfKypC/idx_after.md /tmp/igevidence_MfKypC/rep_after.json ===
+026b2dacf895e98d0f6433adc2523abddb9bbc23e97e0c1a6915c585c09a606f  /tmp/igevidence_MfKypC/idx_after.md
+4d60f5c38e328d1f3af57a35f4e17ce531df8b8a7e61dcd05325f56e78463b2d  /tmp/igevidence_MfKypC/rep_after.json
+exit=0
+
+--- 7. the regression tests, run against BOTH trees ---
+The new class is ForeignCheckIndexTests. Against the fixed tree it
+passes; against the parent commit every one of its tests fails or
+errors. The test file is copied into a COPY of the BEFORE tree under a
+different module name, so the parent commit's own indexgen.py is the
+code under test and the reference checkout is not written to.
+
+=== $ cd /tmp/WORK/index-generator && python3 -m unittest test_indexgen.ForeignCheckIndexTests 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 21 tests in 0.056s
+
+OK
+exit=0
+
+=== $ cd /tmp/igevidence_MfKypC/before_copy/index-generator && python3 -m unittest test_regression_probe.ForeignCheckIndexTests 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 21 tests in 0.073s
+
+FAILED (failures=2, errors=18)
+exit=1
+
+--- 8. the full suites on the fixed tree ---
+
+=== $ cd /tmp/WORK/index-generator && python3 -m unittest test_indexgen 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 161 tests in 0.439s
+
+OK
+exit=0
+
+=== $ cd /tmp/WORK/index-generator && python3 -m unittest test_capture 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 37 tests in 1.078s
+
+OK
+exit=0
+
+=== $ cd /tmp/WORK/index-generator && python3 -m unittest test_pipe_classify 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 72 tests in 0.687s
+
+OK
+exit=0
+
+--- 9. the reference tree was not written to, and the change is scoped ---
+BEFORE must still be clean: every step above that generates files ran in
+a throwaway copy. --ignored=matching is used deliberately: plain
+--porcelain is blind to __pycache__ (it is in .gitignore), so it would
+report a clean tree even after something had run Python inside it.
+AFTER is the change, so it is expected to be dirty -- the list below is
+exactly what this commit touches in this directory.
+
+=== $ git -C /tmp/BEFORE status --porcelain --ignored=matching | wc -l ===
+0
+exit=0
+
+=== $ git -C /tmp/BEFORE status --porcelain | wc -l ===
+0
+exit=0
+
+=== $ cd /tmp/WORK && git status --porcelain --untracked-files=all -- index-generator ===
+ M index-generator/README.md
+ M index-generator/captured_output.txt
+ M index-generator/indexgen.py
+ M index-generator/pipe_classification_report.json
+ M index-generator/test_indexgen.py
+?? index-generator/CHECK_INDEX_CRASH_EVIDENCE.txt
+exit=0
+
+############################################################
+# END OF EVIDENCE
+############################################################

@@ -24,7 +24,7 @@ silently baked into a pretty-looking index.
 
 ```
 indexgen.py           entrypoint / implementation
-test_indexgen.py      test suite (140 tests)
+test_indexgen.py      test suite (161 tests)
 test_capture.py       regression tests for the transcript-generation path (capture.sh)
 capture.sh            regenerates captured_output.txt; every record is a real run
 pipe_scan.py          Finding 4 disclosure utility (repo-wide, read-only)
@@ -33,6 +33,7 @@ test_pipe_classify.py test suite for pipe_classify.py (72 tests)
 pipe_classification_report.json  committed pipe_classify.py output for the current tree
 compare_relocation.py normalises + hashes captured_output.txt for the relocation proof
 repro_findings.txt    live reproduction of Findings 1-3 against the ORIGINAL transcript
+CHECK_INDEX_CRASH_EVIDENCE.txt  before/after runs for the --check-index crash (see below)
 README.md             this file
 fixture_repo/         6-tool fixture repo used for the demo + proof runs (generated, not committed)
 root_readme_sample.md sample root README used to demonstrate ROOT_README_COUNT_DRIFT
@@ -132,6 +133,8 @@ Only `--root` and the two output paths are usage-fatal (exit 2).
 | `ENTRYPOINT_TEST_MISMATCH` | A specific `foo.py` entrypoint has no matching `test_foo.py` (fires per missing pairing, even if the tool has other test modules). |
 | `UNREADABLE_FILE` | A file that should be read (a tool's `README.md`, `--check-index` path, or `--root-readme` path) could not be opened or decoded; skipped, not fatal. |
 | `INDEX_DRIFT` | `--check-index PATH` was given and a row in that existing index is missing, extra, or different vs. the freshly computed index. |
+| `MALFORMED_INDEX_ROW` | `--check-index PATH` was given and a five-column row was not compared: either it is **inside** the index table and could not be parsed (wrong cell count, or a claimed-test-count cell that is neither an integer nor `?`), or it has fallen **out** of the table (a blank line or non-table line ended it) in a file that does contain an index table. The finding carries the repo-relative path and 1-based line number so it cannot be mistaken for silence. |
+| `NO_INDEX_TABLE` | `--check-index PATH` was given and the file contains no row matching the index header at all. Without this, pointing the flag at the wrong file looks identical to pointing it at an empty index: every tool comes back as `INDEX_DRIFT` "(added)" and nothing says why. |
 | `ROOT_README_COUNT_DRIFT` | `--root-readme PATH` was given and its claimed tool count and/or test total disagree with what was actually discovered. This is the check that catches a "13 tools" claim when 33 exist. |
 
 ## Determinism contract
@@ -185,6 +188,145 @@ equal the sentinel, while the true "no description" case remains the bare
 - `test_none_marker_collision_causes_no_false_index_drift_end_to_end`
   (full end-to-end repro of the false-positive `INDEX_DRIFT`, asserting it
   no longer occurs)
+
+
+## Second bug: `--check-index` was fatal on a foreign five-column table
+
+**Bug.** `parse_index` treated *any* five-column markdown table as an
+index: for every row whose first cell was not the literal `Tool`, it
+called `int()` on the fifth cell. A markdown file containing a
+five-column table whose last column holds a word therefore raised an
+uncaught `ValueError` out of `run()`.
+
+**Triggering input: a file committed in this repository.**
+`commit-claim-auditor/README.md` documents its own output with the table
+header `| source_file | line | claim_type | status | reason |`, and
+`reason` is not an integer. Every `*.md` in the tree was swept through
+`--check-index`; that one file, and only that file, crashed it.
+
+**What the README did and did not already say, stated precisely.** It is
+tempting to present this as a violation of an existing written contract,
+and two sentences nearly say so, but neither actually covers this case
+and it would be wrong to claim otherwise:
+
+- "Exit codes" says an "unreadable/missing `--check-index` or
+  `--root-readme` **path** is *not* a usage error". That is about a path
+  that cannot be opened. This file opened fine; its *content* was the
+  problem.
+- Limitation 3 mentions a "hand-edited or foreign `--check-index` file",
+  but it is about **comma-splitting in the Entrypoint(s)/Test Module(s)
+  columns**, not about the count column and not about crashing.
+
+So the defect does not need a quoted contract to stand on. An uncaught
+`ValueError` escaping `run()` is a defect on its own terms: the exit
+table promises exactly three exit codes, and CPython's exit-on-exception
+is `1`, which this tool defines as "scan completed, one or more findings
+were produced". A caller branching on the status could not tell the crash
+apart from an ordinary drift result -- and no report file was written at
+all, so nothing downstream could tell either.
+
+**Fix, in three parts.** The obvious one-line guard (skip a row whose
+count cell will not parse) is wrong on its own, and so is the header gate
+on its own. Both would have traded a loud failure for a silent one, by
+different routes, and the second route was found only by having the change
+adversarially reviewed after the first two parts were written.
+
+1. **Only rows under this file's own table header are index rows.** The
+   header is matched on its **stripped cells**, not its bytes, so a
+   column-aligned or trailing-space variant still counts -- requiring byte
+   equality was itself a regression, because a formatter-run index stopped
+   being recognised and every tool in it came back as `INDEX_DRIFT`
+   "(added)", a message that was false. What the gate removes is the whole
+   class of foreign tables, including ones whose fifth column happens to
+   be *numeric*: those used to be parsed into phantom tools, which a
+   count-cell guard alone would not have touched.
+
+2. **A malformed row inside a real index table is reported, not
+   dropped.** It becomes a `MALFORMED_INDEX_ROW` finding carrying the
+   repo-relative path and 1-based line number. Silently skipping it would
+   be worse than the crash: the row would vanish from `old_rows`, so a
+   stale entry naming a tool that no longer exists would stop producing
+   its `INDEX_DRIFT` "(removed)" finding, and the run would certify a
+   corrupt index as drift-free. `CONTRIBUTING.md` states the rule this
+   follows: "One malformed record must not abort the run. Report it and
+   keep going." Reporting *and* continuing is the whole rule; the first
+   half alone is not a fix.
+
+3. **A five-column row that has fallen OUT of the table is reported
+   too.** This is the part the review caught, and it is the same silent
+   pass as part 2 reached sideways. A markdown table ends at a blank line
+   or any non-table line, so a stale row below a merge-conflict marker --
+   which is how this actually shows up -- is not in the table any more.
+   Ignoring it dropped it from `old_rows` and the run came back **exit 0,
+   zero findings** on a visibly corrupt index. Now, *if the file contains
+   an index table at all*, a stray five-column row after it is reported.
+   If the file contains no index table anywhere, nothing is reported: a
+   document that never claimed to be an index is not a broken index.
+
+   That second clause is what keeps part 1 honest, and it is why
+   `NO_INDEX_TABLE` exists as a separate finding -- otherwise pointing
+   `--check-index` at the wrong file would look exactly like pointing it
+   at an empty index.
+
+**Pinning tests** (`test_indexgen.py`, class `ForeignCheckIndexTests`, 21
+tests). Twenty of the twenty-one fail against the parent commit; the
+twenty-first is `test_a_real_index_table_still_parses`, the control that
+must pass on both.
+
+Part 1 -- foreign tables are not index tables:
+
+- `test_foreign_table_with_a_word_count_yields_no_rows`
+- `test_foreign_table_with_a_numeric_count_yields_no_phantom_tools` --
+  the case a count-cell guard alone would have missed
+- `test_the_committed_file_that_triggered_it_no_longer_crashes` -- guards
+  the specific real file, and asserts the row it guards is still there
+- `test_cli_exits_1_and_writes_a_report_instead_of_a_traceback` -- a real
+  subprocess: no `Traceback` on stderr, and the report exists on disk
+- `test_a_column_aligned_index_is_still_an_index`
+- `test_a_header_with_different_column_names_is_not_an_index`
+- `test_a_real_index_table_still_parses` -- the control
+
+Part 2 -- a malformed row inside the table:
+
+- `test_bad_count_cell_inside_an_index_table_is_reported`
+- `test_wrong_cell_count_inside_an_index_table_is_reported`
+- `test_a_malformed_row_does_not_silence_a_stale_entry` -- the regression
+  the naive fix would have introduced, pinned directly
+- `test_malformed_row_finding_carries_the_file_and_line`
+- `test_parse_index_wrapper_returns_rows_and_drops_problems` -- written
+  out rather than derived; comparing the wrapper to
+  `parse_index_rows(d)[0]` is a tautology, and this repository's own
+  weak-assertion scanner classifies that shape `WA003`
+
+Part 3 -- a row that fell out of the table:
+
+- `test_a_row_pushed_out_of_the_table_is_reported`
+- `test_a_blank_line_inside_the_table_is_reported_not_ignored`
+- `test_a_stray_row_in_a_file_with_no_index_table_is_not_reported` -- the
+  other half of the rule
+- `test_the_conflict_case_end_to_end_does_not_come_back_clean`
+- `test_no_index_table_is_its_own_finding`
+- `test_a_real_index_produces_no_no_index_table_finding`
+
+Line numbers and labels:
+
+- `test_line_numbers_count_newlines_only` -- `str.splitlines()` also
+  splits on form feed and `U+2028`, which no editor counts as a line and
+  which put the reported number out by one
+- `test_crlf_index_still_parses`
+- `test_report_label_is_repo_relative_never_absolute` -- the determinism
+  contract at the top of `indexgen.py` forbids an absolute path in any
+  output
+
+**Evidence:** `CHECK_INDEX_CRASH_EVIDENCE.txt` -- real runs on a clean
+clone of the parent commit and on the fixed tree, side by side. It builds
+the guard-only variant mechanically from the parent commit and runs it,
+so the "the obvious fix is worse" claim is a measurement rather than an
+assertion; it does the same for the merge-conflict case that part 3
+exists to catch. It also byte-compares both trees on the things that must
+NOT change: `parse_index` over the committed `sample_INDEX.md`, and a
+full run over `fixture_repo` (`INDEX.md` and `report.json` both
+`cmp`-identical).
 
 
 ## Regenerating the fixture
@@ -380,9 +522,11 @@ byte-identical output files. That is unaffected by this task.
 This task adds a SECOND, harder relocation proof: that regenerating
 `captured_output.txt` ITSELF -- by running `capture.sh` -- is
 location-independent. This is hard honestly, not trivially: a transcript
-records real durations, e.g. `Ran 140 tests in 0.268s`, and that number
-is never the same twice, by design (it is a real wall-clock measurement
-of a real `unittest` run). There is a SECOND, less obvious volatile
+records real durations -- a line of the shape `Ran <N> tests in
+<duration>s` -- and that duration is never the same twice, by design (it
+is a real wall-clock measurement of a real `unittest` run). No
+illustrative duration is quoted here on purpose: any literal printed in
+this README would be a number no particular run produced. There is a SECOND, less obvious volatile
 field, found only by actually diffing real runs rather than assuming one
 field was the only problem: two of `test_indexgen.py`'s own tests
 (`test_unwritable_output_exit_2`, `test_unwritable_write_index_exit_2`)
@@ -416,29 +560,32 @@ real content difference also survives normalisation, so the function
 cannot be accused of masking too much).
 
 Three independent, real `bash capture.sh` runs were made -- twice in
-place, once from a full copy of the repository relocated to
-`/tmp/build_7/relocated_xyz` (a differently-named absolute path) -- and
-each resulting `captured_output.txt` was copied out unmodified, then
-compared with `python3 compare_relocation.py run1.txt run2.txt run3.txt`
-(shown inline, not fenced: `compare_relocation.py` takes arbitrary
+place, once from a full copy of the repository relocated to a
+differently-named absolute path (`/tmp/build_relocated_xyz`) -- and each
+resulting `captured_output.txt` was copied out unmodified, then compared
+with `python3 compare_relocation.py run1.txt run2.txt run3.txt` (shown
+inline, not fenced: `compare_relocation.py` takes arbitrary
 caller-supplied paths, so there is no single canonical invocation for
 `capture.sh`'s own transcript to record).
 
-Actual result from that exact run (all three files 43715 bytes):
+Actual result from that exact run (all three files 51445 bytes):
 
 | File | raw sha256 | normalised sha256 |
 |---|---|---|
-| run 1 (in place) | `aa80f14593089eb17c23f353c5987d5636724e3122f292bc9f72dd1713abdb1e` | `4a7fdda93325e0005ed95df795b8560790c388af57cbbb43c46218eedea3be6d` |
-| run 2 (in place) | `8236db3f411288b086d248892d8f278205fd0e077733e881b70c1f34a0e60f08` | `4a7fdda93325e0005ed95df795b8560790c388af57cbbb43c46218eedea3be6d` |
-| run 3 (relocated) | `c237da3b78210880190f9afdf99b26028ca8ca3d643880d7e65e539a0639ec10` | `4a7fdda93325e0005ed95df795b8560790c388af57cbbb43c46218eedea3be6d` |
+| run 1 (in place) | `0cc286cec9cfff4bdb60442966901baf110306012910b068cf9861b2288151ec` | `04279f8b6d2ec24108abfe7be611c826653d2620401a841b13fa1884d0be97de` |
+| run 2 (in place) | `ed295368371bc71848372eb1ddd2ca59b8ea7619938f5fdfc55e6766aa2256e6` | `04279f8b6d2ec24108abfe7be611c826653d2620401a841b13fa1884d0be97de` |
+| run 3 (relocated) | `90be2b0208fcfe2d87cebe1c789332f8f237399694b1e920a5206d7c826877ee` | `04279f8b6d2ec24108abfe7be611c826653d2620401a841b13fa1884d0be97de` |
 
 `raw_byte_identical: false` (as expected -- the two volatile fields
 really do differ every run), **`normalised_byte_identical: true`** across
-all three, including the relocated one. `diff`ing the three raw files
-directly (not shown here for length) confirms the ONLY lines that differ
-are `Ran N tests in <duration>s` lines and lines containing an
-`indexgen_test_<random>` path -- nothing else, on any of the three
-comparisons.
+all three, including the relocated one.
+
+These numbers are re-measured whenever this transcript changes, rather
+than left as a record of some earlier run. They were stale before this
+commit: the table used to report 43715 bytes and normalised
+`4a7fdda9...`, which no longer matched the committed transcript. A
+relocation proof that quotes hashes of a file that has since changed
+proves nothing, so it is re-run instead of carried forward.
 
 **Why the whole repository is relocated, not just `index-generator/`:**
 `capture.sh` embeds two self-check records that read sibling tool
@@ -494,20 +641,38 @@ of `capture.sh`'s own relative-path records).
 3. **The Entrypoint(s)/Test Module(s) index columns are comma-joined and
    comma-split, with no comma-escaping.** A real filename containing a
    literal comma (legal on Linux, if unusual for a `.py` module) would be
-   incorrectly split into two names when a hand-edited or foreign
-   `--check-index` file is reparsed, and could produce a spurious
-   `INDEX_DRIFT` or merge two unrelated names. (The Description column has
-   an analogous escaping mechanism for `|` plus a disambiguation guard for
-   the `_(none)_` sentinel -- see "Bug found" above -- the list columns do
-   not have an equivalent guard.)
-4. **Discovery is exactly one level deep and never recurses.** A tool
+   incorrectly split into two names when a hand-edited `--check-index`
+   file is reparsed, and could produce a spurious `INDEX_DRIFT` or merge
+   two unrelated names. (The Description column has an analogous escaping
+   mechanism for `|` plus a disambiguation guard for the `_(none)_`
+   sentinel -- see "Bug found" above -- the list columns do not have an
+   equivalent guard.) *This item used to say "hand-edited **or foreign**";
+   the word "foreign" no longer applies, because a file with no index
+   table is no longer reparsed at all -- see "Second bug" above.*
+4. **The index header is matched on its stripped cell text, not on its
+   bytes -- and a table whose header does not match is not an index.** A
+   column-aligned or trailing-space variant is recognised; a header that
+   renames a column is not, and its rows are simply not index rows. The
+   symptom, if that happens, is `NO_INDEX_TABLE` plus one `INDEX_DRIFT`
+   "(added)" per tool. That is deliberate -- guessing which
+   five-column table is an index is what caused the crash this delivery
+   repairs -- but it is a real narrowing and it is stated here rather than
+   left to be discovered.
+5. **A markdown table ends at a blank line, so an index row below one is
+   out of the table.** Such a row is reported as `MALFORMED_INDEX_ROW`
+   rather than parsed, and only when the file contains an index table
+   somewhere. It is not merged back in.
+6. **`MALFORMED_INDEX_ROW` locations sort as strings, so line 10 orders
+   before line 9.** The ordering is total and deterministic, which is what
+   the determinism contract requires, but it is not numeric.
+7. **Discovery is exactly one level deep and never recurses.** A tool
    whose real entrypoint, `README.md`, or `captured_output.txt` lives in a
    nested subdirectory rather than directly inside its top-level tool
    directory is invisible to indexgen: the directory won't even be
    recognized as a "tool" (no top-level `*.py` of its own), so no
    `MISSING_*` finding is produced either -- it is simply absent from the
    index, with no diagnostic pointing at why.
-5. **`capture.sh`'s two self-check records (`validate_transcript.py`,
+8. **`capture.sh`'s two self-check records (`validate_transcript.py`,
    `driftcheck.py` run against this very file) cannot check the FINISHED
    file, because the record that would report the result is itself part
    of the file being written.** The `validate_transcript.py` record works
@@ -522,7 +687,7 @@ of `capture.sh`'s own relative-path records).
    above, from a separate run made after `capture.sh` exits -- this
    limitation is exactly why that separate run is necessary and is not
    redundant with the embedded ones.
-6. **The relocation proof requires relocating the whole repository, not
+9. **The relocation proof requires relocating the whole repository, not
    just this directory**, because of the same two self-check records:
    they reference `../transcript-schema` and `../transcript-drift` by
    relative path. Given only a standalone copy of `index-generator/`
@@ -533,7 +698,7 @@ of `capture.sh`'s own relative-path records).
    in-place ones, not because relocation broke anything indexgen-related,
    but because the evidence-generation script has a real, undisclosed-
    until-now dependency on sibling tooling.
-7. **`pipe_scan.py` (Finding 4) does substring matching on header text
+10. **`pipe_scan.py` (Finding 4) does substring matching on header text
    (`"|" in command`), not shell-quote-aware parsing, so it cannot tell a
    real pipe operator from a literal `|` inside a quoted argument.**
    Observed directly, not hypothesised: this directory's OWN regenerated

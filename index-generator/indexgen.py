@@ -39,6 +39,10 @@ FINDING CODES
     ENTRYPOINT_TEST_MISMATCH  foo.py present but no matching test_foo.py
     UNREADABLE_FILE           a file existed but could not be decoded/read
     INDEX_DRIFT               --check-index differs from the freshly computed index
+    MALFORMED_INDEX_ROW       a row inside a --check-index index table could not
+                              be parsed, or fell out of the table, so it was
+                              not compared
+    NO_INDEX_TABLE            the --check-index file contains no index table
     ROOT_README_COUNT_DRIFT   --root-readme claims counts that disagree with reality
 """
 
@@ -438,26 +442,109 @@ def _split_row(line):
     return cells
 
 
-def parse_index(text):
-    """Parse a markdown index file into {tool_dir: row_tuple}.
+def _is_separator_row(s):
+    stripped = s.replace("|", "").replace("-", "").replace(" ", "").replace(":", "")
+    return set(stripped) == set()
 
-    row_tuple = (description_or_None, entrypoints_tuple, test_modules_tuple,
-                 claimed_count_or_None)
-    Returns an empty dict for text with no recognizable table rows.
+
+#: The header's cells, compared after stripping each cell. An index
+#: written by `render_index` matches byte for byte; one that has been
+#: through a markdown formatter (column-aligned padding) or that picked up
+#: a trailing space matches too. Requiring byte equality here was a real
+#: regression: a prettier-formatted index stopped being recognised and
+#: every tool in it was reported as INDEX_DRIFT "(added)" -- a message
+#: that was simply false, since the row was one line further down.
+_TABLE_HEADER_CELLS = tuple(c.strip() for c in _split_row(_TABLE_HEADER))
+
+
+def _is_index_header(cells):
+    return tuple(c.strip() for c in cells) == _TABLE_HEADER_CELLS
+
+
+def parse_index_rows(text):
+    """Parse a markdown index file. -> (rows, problems).
+
+    rows     {tool_dir: (description, entrypoints, test_modules, count)}
+    problems [{"line": 1-based int, "cells": [...], "reason": str}]
+
+    THREE THINGS THIS DELIBERATELY GETS RIGHT, ALL LEARNED THE HARD WAY.
+
+    1. **Only rows under this tool's own table header are index rows.**
+       Any five-column markdown table used to be parsed as if it were an
+       index, which meant a foreign `--check-index` file -- a README with
+       an ordinary results table, say -- produced phantom tools, and a
+       header row whose fifth cell was a word (`| ... | status | reason |`)
+       reached `int()` and raised `ValueError` out of `run()`. A committed
+       file in this repository did exactly that. The header is matched on
+       its stripped cells, not on its bytes; see `_TABLE_HEADER_CELLS`.
+
+    2. **A malformed row INSIDE an index table is reported, not dropped.**
+       Skipping it silently would be worse than the crash it replaced: the
+       row would vanish from `old_rows`, and a stale entry naming a tool
+       that no longer exists would stop producing its `INDEX_DRIFT
+       (removed)` finding. The run would then certify a corrupt index as
+       drift-free. CONTRIBUTING.md states the rule this follows: "One
+       malformed record must not abort the run. Report it and keep going."
+
+    3. **A five-column row that has fallen OUT of the index table is
+       reported too, once the file has been established as an index.** A
+       table ends at a blank line or any non-table line, so a row pushed
+       below a blank line -- or below a merge-conflict marker, which is
+       how this shows up in practice -- is no longer in the table. Simply
+       ignoring it would reintroduce exactly the silent pass point 2
+       exists to prevent, by a different route: the stale row disappears
+       from `old_rows` and the run reports zero findings on a corrupt
+       index. So: if the file contains an index table at all, a stray
+       five-column row after it is a `problem`. If the file contains no
+       index table anywhere, nothing is reported -- a document that never
+       claimed to be an index is not a broken index.
+
+    Line numbers count `\\n` only. `str.splitlines()` also splits on form
+    feed, `\\x85`, `\\u2028` and `\\u2029`, none of which any editor counts
+    as a line, which put the reported number one or more lines out.
     """
     rows = {}
-    for line in text.splitlines():
-        s = line.strip()
+    problems = []
+    in_table = False
+    seen_index_table = False
+    stray = []
+    for lineno, raw in enumerate(text.split("\n"), start=1):
+        s = raw.strip()
         if not s.startswith("|"):
+            in_table = False
             continue
-        if set(s.replace("|", "").replace("-", "").replace(" ", "").replace(":", "")) == set():
-            continue  # separator row like | --- | --- |
         cells = _split_row(s)
-        if len(cells) != 5:
+        if _is_index_header(cells):
+            in_table = True
+            seen_index_table = True
             continue
-        if cells[0] == "Tool":
-            continue  # header row
+        if _is_separator_row(s):
+            continue                      # separator row like | --- | --- |
+        if not in_table:
+            if len(cells) == 5:
+                stray.append({"line": lineno, "cells": cells,
+                              "reason": "five-column row is not inside an "
+                                        "index table (a blank line or a "
+                                        "non-table line ended it), so it "
+                                        "was not compared"})
+            continue
+        if len(cells) != 5:
+            problems.append({"line": lineno, "cells": cells,
+                             "reason": "row has %d cells, expected 5"
+                                       % len(cells)})
+            continue
         name = cells[0]
+        if cells[4] == "?":
+            count = None
+        else:
+            try:
+                count = int(cells[4])
+            except ValueError:
+                problems.append({
+                    "line": lineno, "cells": cells,
+                    "reason": "claimed-test-count cell is %r, expected an "
+                              "integer or '?'" % cells[4]})
+                continue
         desc = _decode_description_cell(cells[1])
         entrypoints = tuple() if cells[2] == "_(none)_" else tuple(
             sorted(x.strip() for x in cells[2].split(",") if x.strip())
@@ -465,9 +552,59 @@ def parse_index(text):
         test_modules = tuple() if cells[3] == "_(none)_" else tuple(
             sorted(x.strip() for x in cells[3].split(",") if x.strip())
         )
-        count = None if cells[4] == "?" else int(cells[4])
         rows[name] = (desc, entrypoints, test_modules, count)
-    return rows
+
+    if seen_index_table:
+        problems.extend(stray)
+        problems.sort(key=lambda p: p["line"])
+    return rows, problems
+
+
+def _report_label(path, root):
+    """A path safe to write into a report: repo-relative, else basename."""
+    try:
+        rel = os.path.relpath(os.path.abspath(path), os.path.abspath(root))
+    except ValueError:                                   # pragma: no cover
+        return os.path.basename(path)
+    if rel.startswith(os.pardir + os.sep) or rel == os.pardir:
+        return os.path.basename(path)
+    return rel.replace(os.sep, "/")
+
+
+def has_index_table(text):
+    """True when `text` contains at least one index table header."""
+    for raw in text.split("\n"):
+        s = raw.strip()
+        if s.startswith("|") and _is_index_header(_split_row(s)):
+            return True
+    return False
+
+
+def parse_index(text):
+    """Backwards-compatible wrapper: the rows only.
+
+    Callers that need to know a row was rejected use parse_index_rows.
+    """
+    return parse_index_rows(text)[0]
+
+
+def malformed_row_findings(problems, source):
+    """-> one MALFORMED_INDEX_ROW finding per rejected row.
+
+    `location` carries the path as the caller gave it plus the 1-based
+    line number. Findings sort on `location` as a string, so 10 orders
+    before 9; that is deterministic, which is the contract, but it is not
+    numeric and the README says so rather than leaving a reader to
+    discover it.
+    """
+    out = []
+    for p in problems:
+        out.append(make_finding(
+            "MALFORMED_INDEX_ROW", None, "%s:%d" % (source, p["line"]),
+            "index table row could not be parsed and was not compared: %s"
+            % p["reason"],
+        ))
+    return out
 
 
 def tool_to_row(tool):
@@ -579,7 +716,28 @@ def run(argv):
         else:
             old_text = _safe_read_text(args.check_index, findings, None)
             if old_text is not None:
-                old_rows = parse_index(old_text)
+                old_rows, problems = parse_index_rows(old_text)
+                # Repo-relative when it is under --root, basename otherwise.
+                # Never the absolute path: the determinism contract at the
+                # top of this file forbids --root's absolute value in any
+                # output, and a report that changes when the checkout moves
+                # is not byte-reproducible.
+                index_label = _report_label(args.check_index, root)
+                findings.extend(malformed_row_findings(
+                    problems, index_label))
+                if not has_index_table(old_text):
+                    # Without this, a --check-index file that is simply the
+                    # wrong file is indistinguishable from an empty index:
+                    # every tool comes back as INDEX_DRIFT "(added)" and
+                    # nothing says why. This is the symmetric counterpart
+                    # to MALFORMED_INDEX_ROW.
+                    findings.append(make_finding(
+                        "NO_INDEX_TABLE", None, index_label,
+                        "--check-index file contains no index table (no row "
+                        "matching the header %r), so every discovered tool "
+                        "is reported as missing from it"
+                        % _TABLE_HEADER,
+                    ))
                 new_rows = {t["dir"]: tool_to_row(t) for t in tools}
                 findings.extend(diff_index(old_rows, new_rows))
 

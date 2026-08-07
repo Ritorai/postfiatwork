@@ -147,6 +147,36 @@ test_sort_by_tool_second (test_indexgen.FindingOrderTests.test_sort_by_tool_seco
 test_sort_is_total_order_for_many_items (test_indexgen.FindingOrderTests.test_sort_is_total_order_for_many_items) ... ok
 test_tiebreak_actually_distinguishes_extra_field (test_indexgen.FindingOrderTests.test_tiebreak_actually_distinguishes_extra_field) ... ok
 test_tiebreak_by_canonical_json_breaks_true_tie (test_indexgen.FindingOrderTests.test_tiebreak_by_canonical_json_breaks_true_tie) ... ok
+test_a_blank_line_inside_the_table_is_reported_not_ignored (test_indexgen.ForeignCheckIndexTests.test_a_blank_line_inside_the_table_is_reported_not_ignored) ... ok
+test_a_column_aligned_index_is_still_an_index (test_indexgen.ForeignCheckIndexTests.test_a_column_aligned_index_is_still_an_index)
+What every markdown formatter produces. ... ok
+test_a_header_with_different_column_names_is_not_an_index (test_indexgen.ForeignCheckIndexTests.test_a_header_with_different_column_names_is_not_an_index) ... ok
+test_a_malformed_row_does_not_silence_a_stale_entry (test_indexgen.ForeignCheckIndexTests.test_a_malformed_row_does_not_silence_a_stale_entry)
+The regression the naive fix would have introduced. ... ok
+test_a_real_index_produces_no_no_index_table_finding (test_indexgen.ForeignCheckIndexTests.test_a_real_index_produces_no_no_index_table_finding) ... ok
+test_a_real_index_table_still_parses (test_indexgen.ForeignCheckIndexTests.test_a_real_index_table_still_parses) ... ok
+test_a_row_pushed_out_of_the_table_is_reported (test_indexgen.ForeignCheckIndexTests.test_a_row_pushed_out_of_the_table_is_reported)
+The silent pass the header gate would otherwise have created. ... ok
+test_a_stray_row_in_a_file_with_no_index_table_is_not_reported (test_indexgen.ForeignCheckIndexTests.test_a_stray_row_in_a_file_with_no_index_table_is_not_reported)
+The other half of the rule: silence about a non-index file. ... ok
+test_bad_count_cell_inside_an_index_table_is_reported (test_indexgen.ForeignCheckIndexTests.test_bad_count_cell_inside_an_index_table_is_reported) ... ok
+test_cli_exits_1_and_writes_a_report_instead_of_a_traceback (test_indexgen.ForeignCheckIndexTests.test_cli_exits_1_and_writes_a_report_instead_of_a_traceback)
+A real subprocess: no traceback on stderr, report on disk. ... ok
+test_crlf_index_still_parses (test_indexgen.ForeignCheckIndexTests.test_crlf_index_still_parses) ... ok
+test_foreign_table_with_a_numeric_count_yields_no_phantom_tools (test_indexgen.ForeignCheckIndexTests.test_foreign_table_with_a_numeric_count_yields_no_phantom_tools)
+The case a count-cell guard alone would have missed. ... ok
+test_foreign_table_with_a_word_count_yields_no_rows (test_indexgen.ForeignCheckIndexTests.test_foreign_table_with_a_word_count_yields_no_rows) ... ok
+test_line_numbers_count_newlines_only (test_indexgen.ForeignCheckIndexTests.test_line_numbers_count_newlines_only)
+splitlines() also splits on form feed and U+2028; split() does not. ... ok
+test_malformed_row_finding_carries_the_file_and_line (test_indexgen.ForeignCheckIndexTests.test_malformed_row_finding_carries_the_file_and_line) ... ok
+test_no_index_table_is_its_own_finding (test_indexgen.ForeignCheckIndexTests.test_no_index_table_is_its_own_finding) ... ok
+test_parse_index_wrapper_returns_rows_and_drops_problems (test_indexgen.ForeignCheckIndexTests.test_parse_index_wrapper_returns_rows_and_drops_problems)
+Not `parse_index(d) == parse_index_rows(d)[0]`. ... ok
+test_report_label_is_repo_relative_never_absolute (test_indexgen.ForeignCheckIndexTests.test_report_label_is_repo_relative_never_absolute) ... ok
+test_the_committed_file_that_triggered_it_no_longer_crashes (test_indexgen.ForeignCheckIndexTests.test_the_committed_file_that_triggered_it_no_longer_crashes)
+Guards the specific real file, so re-introducing this is caught. ... ok
+test_the_conflict_case_end_to_end_does_not_come_back_clean (test_indexgen.ForeignCheckIndexTests.test_the_conflict_case_end_to_end_does_not_come_back_clean) ... ok
+test_wrong_cell_count_inside_an_index_table_is_reported (test_indexgen.ForeignCheckIndexTests.test_wrong_cell_count_inside_an_index_table_is_reported) ... ok
 test_added_row (test_indexgen.IndexDiffTests.test_added_row) ... ok
 test_changed_row (test_indexgen.IndexDiffTests.test_changed_row) ... ok
 test_identical_no_findings (test_indexgen.IndexDiffTests.test_identical_no_findings) ... ok
@@ -194,9 +224,9 @@ A catalogued TEST COUNT going stale must exit 1, tool count held correct. ... ok
 test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess)
 Same case, but through the real CLI so the exit code is the process's ... ok
 test_stdout_output_when_no_o_flag (test_indexgen.RunEndToEndTests.test_stdout_output_when_no_o_flag) ... ok
-test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_agw53wny/no_such_subdir/report.json'
+test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_tzquxa5u/no_such_subdir/report.json'
 ok
-test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_r6ivc0qy/no_such_subdir/INDEX.md'
+test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_qfozo9bf/no_such_subdir/INDEX.md'
 ok
 test_write_index_creates_file (test_indexgen.RunEndToEndTests.test_write_index_creates_file) ... ok
 test_split_row_basic (test_indexgen.SplitRowTests.test_split_row_basic) ... ok
@@ -220,7 +250,7 @@ test_index_with_unicode_roundtrips (test_indexgen.UnicodeCrlfTests.test_index_wi
 test_unicode_description_end_to_end (test_indexgen.UnicodeCrlfTests.test_unicode_description_end_to_end) ... ok
 
 ----------------------------------------------------------------------
-Ran 140 tests in 0.413s
+Ran 161 tests in 0.496s
 
 OK
 exit=0
@@ -517,18 +547,18 @@ test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToE
 Same case, but through the real CLI so the exit code is the process's ... ok
 
 ----------------------------------------------------------------------
-Ran 2 tests in 0.034s
+Ran 2 tests in 0.057s
 
 OK
 exit=0
 
 === $ python3 -m unittest test_indexgen ===
-.........................................................................................................indexgen.py: error: --root '/no/such/dir/at/all' is not a directory
-.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_jx_x5maq/no_such_subdir/report.json'
-.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_328d_u1w/no_such_subdir/INDEX.md'
+..............................................................................................................................indexgen.py: error: --root '/no/such/dir/at/all' is not a directory
+.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_qvrtj56u/no_such_subdir/report.json'
+.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_hjr3bp8f/no_such_subdir/INDEX.md'
 .....................
 ----------------------------------------------------------------------
-Ran 140 tests in 0.285s
+Ran 161 tests in 0.399s
 
 OK
 exit=0
@@ -569,7 +599,7 @@ test_ignores_unpiped_records (test_capture.PipeScanTests.test_ignores_unpiped_re
 test_report_is_json_serializable_and_deterministic (test_capture.PipeScanTests.test_report_is_json_serializable_and_deterministic) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 0.547s
+Ran 18 tests in 0.732s
 
 OK
 exit=0
@@ -629,13 +659,13 @@ dropped.
 === $ python3 -m unittest test_pipe_classify.TestUnquotedPipelines test_pipe_classify.TestOrOperator test_pipe_classify.TestSingleQuotes test_pipe_classify.TestDoubleQuotes test_pipe_classify.TestEscapedOutsideQuotes test_pipe_classify.TestReconciliation test_pipe_classify.TestAgreementWithPipeScan test_pipe_classify.TestLiveRecordClassification test_pipe_classify.TestShellGroundTruth test_pipe_classify.TestDeterminismAndRelocation test_pipe_classify.TestCli ===
 ......................................................................
 ----------------------------------------------------------------------
-Ran 70 tests in 0.855s
+Ran 70 tests in 0.889s
 
 OK
 exit=0
 
 === $ python3 pipe_classify.py --repo-root .. ===
-{"bar_character_counts_by_kind":{"escaped":0,"or_operator":2,"pipeline":4,"quoted":10},"tools":[{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/sessions\\|/tmp\\|/home\" r1.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":258}],"records_with_a_bar":1,"tool":"bundle-index"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":310}],"records_with_a_bar":1,"tool":"claim-checker"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -cE 'time\\.time|utcnow|now\\(\\)' claimhist.py","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":53}],"records_with_a_bar":1,"tool":"commit-claim-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"test -f out_bad.json && echo EXISTS || echo NOT_CREATED","counts":{"escaped":0,"or_operator":2,"pipeline":0,"quoted":0},"is_pipeline":false,"line":184}],"records_with_a_bar":1,"tool":"exit-harness"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -n 'time\\.time\\|utcnow\\|now()' indexgen.py; echo grep_exit=$?","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":453}],"records_with_a_bar":1,"tool":"index-generator"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"cat payloads_bad.json | python3 payload_validate.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":211}],"records_with_a_bar":1,"tool":"payload-validator"},{"pipeline_records":2,"records":[{"bar_count":1,"command":"cat snapshot_dirty.json | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":200},{"bar_count":1,"command":"echo '{not json' | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":208}],"records_with_a_bar":2,"tool":"queue-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/root\\|/home\" freshness_report.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":29}],"records_with_a_bar":1,"tool":"report-freshness"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"echo '{\"opening_balance\":\"0\",\"closing_balance\":\"0\",\"events\":[{\"event_id\":\"e1\",\"type\":\"reward\",\"amount\":NaN,\"at\":\"2026-01-01T00:00:00Z\"}]}' | python3 wallet_reconcile.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":171}],"records_with_a_bar":1,"tool":"wallet-reconciler"}],"total_command_records":522,"total_files_with_a_bar_record":9,"total_files_with_a_pipeline_record":3,"total_non_pipeline_bar_records":6,"total_pipeline_records":4,"total_records_with_a_bar":10,"transcript_files_scanned":50}
+{"bar_character_counts_by_kind":{"escaped":0,"or_operator":2,"pipeline":4,"quoted":10},"tools":[{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/sessions\\|/tmp\\|/home\" r1.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":258}],"records_with_a_bar":1,"tool":"bundle-index"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":310}],"records_with_a_bar":1,"tool":"claim-checker"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -cE 'time\\.time|utcnow|now\\(\\)' claimhist.py","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":53}],"records_with_a_bar":1,"tool":"commit-claim-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"test -f out_bad.json && echo EXISTS || echo NOT_CREATED","counts":{"escaped":0,"or_operator":2,"pipeline":0,"quoted":0},"is_pipeline":false,"line":184}],"records_with_a_bar":1,"tool":"exit-harness"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -n 'time\\.time\\|utcnow\\|now()' indexgen.py; echo grep_exit=$?","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":483}],"records_with_a_bar":1,"tool":"index-generator"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"cat payloads_bad.json | python3 payload_validate.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":211}],"records_with_a_bar":1,"tool":"payload-validator"},{"pipeline_records":2,"records":[{"bar_count":1,"command":"cat snapshot_dirty.json | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":200},{"bar_count":1,"command":"echo '{not json' | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":208}],"records_with_a_bar":2,"tool":"queue-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/root\\|/home\" freshness_report.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":29}],"records_with_a_bar":1,"tool":"report-freshness"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"echo '{\"opening_balance\":\"0\",\"closing_balance\":\"0\",\"events\":[{\"event_id\":\"e1\",\"type\":\"reward\",\"amount\":NaN,\"at\":\"2026-01-01T00:00:00Z\"}]}' | python3 wallet_reconcile.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":171}],"records_with_a_bar":1,"tool":"wallet-reconciler"}],"total_command_records":522,"total_files_with_a_bar_record":9,"total_files_with_a_pipeline_record":3,"total_non_pipeline_bar_records":6,"total_pipeline_records":4,"total_records_with_a_bar":10,"transcript_files_scanned":50}
 exit=0
 
 === $ python3 pipe_classify.py --command 'grep -c "a|b" f.json' ===
@@ -664,7 +694,7 @@ compares many directories at once and none of the others need freezing).
 exit=1
 
 === $ python3 -c "import json; r=json.load(open('_drift_snapshot.json')); print([f for f in r['findings'] if f['tool']=='index-generator'])" ===
-[{'code': 'TRANSCRIPT_RECORD_HAS_NO_EXIT', 'detail': {'command': 'python3 ../transcript-drift/driftcheck.py --root .. -o _drift_snapshot.json', 'line': 663}, 'tool': 'index-generator'}]
+[{'code': 'TRANSCRIPT_RECORD_HAS_NO_EXIT', 'detail': {'command': 'python3 ../transcript-drift/driftcheck.py --root .. -o _drift_snapshot.json', 'line': 693}, 'tool': 'index-generator'}]
 exit=0
 
 ############################################################
