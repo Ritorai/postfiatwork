@@ -29,7 +29,8 @@ Finding codes:
 Exit codes:
   0 - reconciled (no findings)
   1 - findings (one or more issues found; ledger did not reconcile cleanly)
-  2 - invalid input / usage error (malformed JSON, missing fields, bad file)
+  2 - invalid input / usage error (malformed JSON, a JSON object
+      with the same key twice, missing fields, bad file)
 """
 import argparse
 import json
@@ -196,6 +197,56 @@ def _coerce_timestamp(raw):
     return dt, None
 
 
+class _DuplicateKey(Exception):
+    """A JSON object had the same key twice. Carries context for the message."""
+
+    def __init__(self, key, pairs):
+        Exception.__init__(self, key)
+        self.key = key
+        self.pairs = pairs
+
+
+def _object_pairs_no_duplicates(pairs):
+    """dict(pairs), but a repeated key is an error rather than a silent win.
+
+    json.load() builds objects with dict(pairs), so `{"amount": "50",
+    "amount": "5000"}` parses without complaint and the LAST value wins.
+    Nothing downstream can see that it happened: by the time any check
+    runs there is one amount, and it is whichever one the document
+    happened to put second. On a ledger that is not a formatting quibble.
+    Put the wrong value second and this tool reports a balance
+    discrepancy that is really an ambiguous document, sending a reader
+    after a number that no event actually claims; put it first and the
+    tool certifies a document containing two contradictory amounts as
+    "reconciled" and exits 0.
+
+    There is no correct value to pick -- RFC 8259 says object member
+    names SHOULD be unique and leaves duplicates to the implementation --
+    so this refuses to pick one. It is a setup error (exit 2), not a
+    finding (exit 1): the input could not be read unambiguously, which is
+    a fact about the caller's file, not about the ledger it describes.
+    """
+    seen = {}
+    for key, value in pairs:
+        if key in seen:
+            raise _DuplicateKey(key, seen)
+        seen[key] = value
+    return seen
+
+
+def _duplicate_key_message(exc):
+    """Point at WHICH object, using whatever identifies it in this schema."""
+    where = ""
+    for hint in ("event_id", "ledger_version"):
+        if hint in exc.pairs and isinstance(exc.pairs[hint], str):
+            where = " (in the object with %s %r)" % (hint, exc.pairs[hint])
+            break
+    return ("duplicate key %r in a JSON object%s. JSON allows this and "
+            "Python keeps the LAST value, so the document does not say "
+            "what it appears to say; fix the input rather than letting a "
+            "parser choose for you." % (exc.key, where))
+
+
 def _load_json(path):
     try:
         if path == "-":
@@ -210,7 +261,11 @@ def _load_json(path):
     except OSError as exc:
         raise InputError(f"could not read file: {path}: {exc}")
     try:
-        return json.loads(text, parse_float=Decimal, parse_constant=_NonFinite)
+        return json.loads(text, parse_float=Decimal,
+                          parse_constant=_NonFinite,
+                          object_pairs_hook=_object_pairs_no_duplicates)
+    except _DuplicateKey as exc:
+        raise InputError(_duplicate_key_message(exc))
     except json.JSONDecodeError as exc:
         raise InputError(f"invalid JSON: {exc}")
 

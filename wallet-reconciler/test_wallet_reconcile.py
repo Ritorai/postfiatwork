@@ -840,6 +840,181 @@ class TestCliExitCodes(unittest.TestCase):
         self.assertEqual(p.returncode, 0)
 
 
+class TestDuplicateJsonKeysAreRejected(unittest.TestCase):
+    """A repeated object key used to be resolved silently by the parser.
+
+    json.load() builds objects with dict(pairs), so a document may state
+    two different amounts for one event and the tool sees only the second.
+    Two shapes, both bad, and the second is the worse one:
+
+      wrong value LAST  -> the tool reports a balance discrepancy that is
+                           really an ambiguous file, sending a reader
+                           after a number no event claims;
+      wrong value FIRST -> the tool exits 0 and calls the document
+                           "reconciled".
+
+    ledger_duplicate_key.json is the committed reproducer, in the second
+    orientation.
+    """
+
+    def _write(self, text):
+        fh = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
+        fh.write(text)
+        fh.close()
+        self.addCleanup(os.unlink, fh.name)
+        return fh.name
+
+    def _run(self, args, stdin_text=None):
+        return subprocess.run(
+            [sys.executable, os.path.join(HERE, "wallet_reconcile.py")] + args,
+            capture_output=True, text=True, input=stdin_text)
+
+    # ---- the committed fixture -------------------------------------
+    def test_the_committed_fixture_is_rejected(self):
+        p = self._run([os.path.join(HERE, "ledger_duplicate_key.json")])
+        self.assertEqual(p.returncode, 2, p.stdout[:300])
+        self.assertIn("INVALID_INPUT", p.stderr)
+        self.assertIn("duplicate key", p.stderr)
+
+    def test_the_committed_fixture_really_does_contain_a_duplicate(self):
+        """Pins the fixture itself, so it cannot rot into a clean file."""
+        with open(os.path.join(HERE, "ledger_duplicate_key.json"),
+                  encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertEqual(text.count('"amount"'), 2)
+        # and the stdlib silently resolves it, which is the whole point
+        self.assertEqual(
+            json.loads(text)["events"][0]["amount"], "10",
+            "the stdlib no longer keeps the last duplicate; this fixture "
+            "and the rule it demonstrates need re-examining")
+
+    def test_the_fixture_produces_no_report_at_all(self):
+        p = self._run([os.path.join(HERE, "ledger_duplicate_key.json")])
+        self.assertEqual(p.stdout, "")
+
+    # ---- both orientations, built here so the harm is explicit ------
+    def _ledger_with(self, first, second):
+        return ('{"opening_balance": "0", "closing_balance": "10", "events": ['
+                '{"event_id": "e1", "type": "reward", "amount": "%s", '
+                '"amount": "%s", "at": "2026-01-01T00:00:00Z"}]}'
+                % (first, second))
+
+    def test_wrong_value_last_is_rejected(self):
+        path = self._write(self._ledger_with("10", "9999"))
+        p = self._run([path])
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("duplicate key 'amount'", p.stderr)
+
+    def test_wrong_value_first_is_rejected(self):
+        path = self._write(self._ledger_with("9999", "10"))
+        p = self._run([path])
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("duplicate key 'amount'", p.stderr)
+
+    def test_a_duplicate_whose_values_agree_is_still_rejected(self):
+        """Same value twice is still a document that says a thing twice.
+
+        Accepting it would mean the rule depends on the values, so a
+        reader could not tell from the exit code whether the parser had
+        chosen for them.
+        """
+        path = self._write(self._ledger_with("10", "10"))
+        p = self._run([path])
+        self.assertEqual(p.returncode, 2)
+
+    # ---- where the duplicate sits ----------------------------------
+    def test_duplicate_at_the_top_level_is_rejected(self):
+        path = self._write('{"opening_balance": "0", "opening_balance": "5", '
+                           '"closing_balance": "0", "events": []}')
+        p = self._run([path])
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("duplicate key 'opening_balance'", p.stderr)
+
+    def test_duplicate_of_a_key_the_tool_does_not_read_is_rejected(self):
+        """The rule is about the document, not about the fields we use."""
+        path = self._write('{"opening_balance": "0", "closing_balance": "0", '
+                           '"events": [], "note": "a", "note": "b"}')
+        p = self._run([path])
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("duplicate key 'note'", p.stderr)
+
+    def test_the_message_names_the_event_it_is_in(self):
+        path = self._write(
+            '{"opening_balance": "0", "closing_balance": "0", "events": ['
+            '{"event_id": "first", "type": "reward", "amount": "1", '
+            '"at": "2026-01-01T00:00:00Z"},'
+            '{"event_id": "second", "type": "reward", "amount": "1", '
+            '"amount": "2", "at": "2026-01-02T00:00:00Z"}]}')
+        p = self._run([path])
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("second", p.stderr)
+        self.assertNotIn("event_id 'first'", p.stderr)
+
+    def test_the_stdin_path_rejects_it_too(self):
+        """Both entry points share one loader; this pins that they do."""
+        p = self._run(["-"], stdin_text=self._ledger_with("9999", "10"))
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("duplicate key", p.stderr)
+
+    # ---- valid input is untouched ----------------------------------
+    def test_the_clean_fixture_is_unaffected(self):
+        p = self._run([os.path.join(HERE, "ledger_ok.json")])
+        self.assertEqual(p.returncode, 0, p.stderr[:300])
+        self.assertEqual(json.loads(p.stdout)["status"], "reconciled")
+
+    def test_the_findings_fixture_still_exits_1(self):
+        """A setup-error change must not touch the findings path."""
+        p = self._run([os.path.join(HERE, "ledger_bad.json")])
+        self.assertEqual(p.returncode, 1)
+        self.assertEqual(json.loads(p.stdout)["status"], "findings")
+
+    def test_repeated_keys_in_DIFFERENT_objects_are_fine(self):
+        """Every event has an "amount"; that is not a duplicate."""
+        path = self._write(
+            '{"opening_balance": "0", "closing_balance": "3", "events": ['
+            '{"event_id": "e1", "type": "reward", "amount": "1", '
+            '"at": "2026-01-01T00:00:00Z"},'
+            '{"event_id": "e2", "type": "reward", "amount": "2", '
+            '"at": "2026-01-02T00:00:00Z"}]}')
+        p = self._run([path])
+        self.assertEqual(p.returncode, 0, p.stderr[:300])
+
+    def test_decimal_and_non_finite_handling_survive_the_new_hook(self):
+        """object_pairs_hook composes with parse_float/parse_constant."""
+        path = self._write('{"opening_balance": 1.5, "closing_balance": 1.5, '
+                           '"events": []}')
+        opening, closing, events = wr._load_ledger(path)
+        self.assertIsInstance(opening, Decimal)
+        self.assertEqual(opening, Decimal("1.5"))
+
+    def test_a_nan_literal_is_still_the_sentinel_not_a_float(self):
+        path = self._write('{"opening_balance": "0", "closing_balance": "0", '
+                           '"events": [{"event_id": "e1", "type": "reward", '
+                           '"amount": NaN, "at": "2026-01-01T00:00:00Z"}]}')
+        p = self._run([path])
+        self.assertEqual(p.returncode, 1, p.stderr[:300])
+        codes = {f["code"] for f in json.loads(p.stdout)["findings"]}
+        self.assertIn("INVALID_AMOUNT", codes)
+
+    # ---- the hook itself -------------------------------------------
+    def test_the_hook_builds_an_ordinary_dict_when_keys_are_unique(self):
+        self.assertEqual(
+            wr._object_pairs_no_duplicates([("a", 1), ("b", 2)]),
+            {"a": 1, "b": 2})
+
+    def test_the_hook_raises_on_the_first_repeat(self):
+        with self.assertRaises(wr._DuplicateKey) as caught:
+            wr._object_pairs_no_duplicates([("a", 1), ("b", 2), ("a", 3),
+                                            ("b", 4)])
+        self.assertEqual(caught.exception.key, "a")
+
+    def test_the_hook_reports_it_as_input_error_not_a_finding(self):
+        """Exit 2, never exit 1: the file could not be read, full stop."""
+        path = self._write(self._ledger_with("1", "2"))
+        with self.assertRaises(wr.InputError):
+            wr._load_ledger(path)
+
+
 class TestSafeRepr(unittest.TestCase):
     def test_string_passthrough(self):
         self.assertEqual(wr._safe_repr("hi"), "hi")

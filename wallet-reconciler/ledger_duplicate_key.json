@@ -1,0 +1,15 @@
+{
+  "ledger_version": "1.0",
+  "opening_balance": "0",
+  "closing_balance": "10",
+  "events": [
+    {
+      "event_id": "e1",
+      "type": "reward",
+      "_comment": "Two amounts. RFC 8259 says member names SHOULD be unique; it does not say what to do when they are not. Python's json keeps the LAST, so this document reconciles to 10 and every check downstream sees one amount. Before this tool rejected duplicates, that made it exit 0 and report status reconciled on a file that states two different rewards for the same event.",
+      "amount": "9999",
+      "amount": "10",
+      "at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}

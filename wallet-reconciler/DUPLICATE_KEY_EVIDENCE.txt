@@ -1,0 +1,294 @@
+############################################################
+# DUPLICATE_KEY_EVIDENCE.txt
+#
+# Subject: wallet_reconcile.py's JSON input path, which accepted an
+# object containing the same key twice and let the parser decide which
+# value counted. Python's json keeps the LAST one.
+#
+# Every record below is a real run: a "=== $ command ===" header, the
+# verbatim output, and an exit= line. Commands are relative to
+# wallet-reconciler/ unless the header says otherwise.
+############################################################
+
+--- 0. the fixture, and what a JSON parser does with it ---
+ledger_duplicate_key.json states two different amounts for one event.
+
+=== $ cat ledger_duplicate_key.json ===
+{
+  "ledger_version": "1.0",
+  "opening_balance": "0",
+  "closing_balance": "10",
+  "events": [
+    {
+      "event_id": "e1",
+      "type": "reward",
+      "_comment": "Two amounts. RFC 8259 says member names SHOULD be unique; it does not say what to do when they are not. Python's json keeps the LAST, so this document reconciles to 10 and every check downstream sees one amount. Before this tool rejected duplicates, that made it exit 0 and report status reconciled on a file that states two different rewards for the same event.",
+      "amount": "9999",
+      "amount": "10",
+      "at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}
+exit=0
+
+=== $ sha256sum ledger_duplicate_key.json ledger_ok.json ledger_bad.json ===
+b872f1d40fc20b002e9cf7a61b580832e8fb9016a3dd95daf0a79f73f3585fc2  ledger_duplicate_key.json
+50e5ab4b965cad2c11c9a76b1bf31dec071332d670823572e1a535faa0498cbc  ledger_ok.json
+67dc152de06d7bf20b1a01fe39dc49c6add863cdc9a1339cefc5a8e5b5e64914  ledger_bad.json
+exit=0
+
+The stdlib resolves it silently and keeps the second value, so
+every check downstream sees one amount and cannot know a choice
+was made. RFC 8259 says member names SHOULD be unique; it does not
+say what to do when they are not.
+
+=== $ python3 -c "import json;d=json.load(open('ledger_duplicate_key.json'));print('parsed amount:',d['events'][0]['amount'])" ===
+parsed amount: 10
+exit=0
+
+--- 1. BEFORE: the parent commit certifies it as reconciled ---
+wallet_reconcile.py is extracted from the parent commit into a
+scratch directory outside the checkout and run on the fixture.
+
+=== $ mkdir -p ../../dup_evidence_scratch/parent && git -C .. archive de1861ab6d456fce2a559b62f2d76f6cc7b516bb wallet-reconciler | tar -x -C ../../dup_evidence_scratch/parent ===
+exit=0
+
+=== $ python3 ../../dup_evidence_scratch/parent/wallet-reconciler/wallet_reconcile.py ledger_duplicate_key.json > ../../dup_evidence_scratch/parent_dup.json ===
+exit=0
+
+exit=0. Here is the report it produced for a file that says the
+event is worth both 9999 and 10:
+
+=== $ python3 -c "import json;d=json.load(open('../../dup_evidence_scratch/parent_dup.json'));print('status:',d['status']);print('findings:',d['findings']);print('computed_closing_balance:',d['computed_closing_balance'])" ===
+status: reconciled
+findings: []
+computed_closing_balance: 10
+exit=0
+
+=== $ sha256sum ../../dup_evidence_scratch/parent_dup.json ===
+0acd2e079630ffe86020e3ca54745c20fda3b06adfd4e333d49c66b4dd274c49  ../../dup_evidence_scratch/parent_dup.json
+exit=0
+
+--- 2. BEFORE: the other orientation is just as bad, differently ---
+Put the wrong value SECOND and the tool does not go quiet -- it
+reports a balance discrepancy. The discrepancy is not in the
+ledger's arithmetic, it is in the file being ambiguous, so a
+reader is sent after a number that no event actually claims.
+
+=== $ python3 -c "import json,io;t=open('ledger_duplicate_key.json',encoding='utf-8').read();open('../../dup_evidence_scratch/flipped.json','w',encoding='utf-8').write(t.replace('\"amount\": \"9999\",','<<A>>').replace('\"amount\": \"10\",','\"amount\": \"9999\",').replace('<<A>>','\"amount\": \"10\",'));print('wrote the flipped fixture')" ===
+wrote the flipped fixture
+exit=0
+
+=== $ grep -n 'amount' ../../dup_evidence_scratch/flipped.json ===
+9:      "_comment": "Two amounts. RFC 8259 says member names SHOULD be unique; it does not say what to do when they are not. Python's json keeps the LAST, so this document reconciles to 10 and every check downstream sees one amount. Before this tool rejected duplicates, that made it exit 0 and report status reconciled on a file that states two different rewards for the same event.",
+10:      "amount": "10",
+11:      "amount": "9999",
+exit=0
+
+=== $ python3 ../../dup_evidence_scratch/parent/wallet-reconciler/wallet_reconcile.py ../../dup_evidence_scratch/flipped.json > ../../dup_evidence_scratch/parent_flipped.json ===
+exit=1
+
+=== $ python3 -c "import json;d=json.load(open('../../dup_evidence_scratch/parent_flipped.json'));print('status:',d['status']);print('computed_closing_balance:',d['computed_closing_balance']);print('closing_delta:',d['closing_delta'])" ===
+status: findings
+computed_closing_balance: 9999
+closing_delta: 9989
+exit=0
+
+--- 3. AFTER: both are refused, with the exit code for a setup error ---
+Exit 2, not 1. The file could not be read unambiguously, which is
+a fact about the caller's input, not a finding about the ledger it
+describes; conflating the two is how a parse problem gets filed as
+an accounting problem. Nothing is written to stdout.
+
+=== $ python3 wallet_reconcile.py ledger_duplicate_key.json ===
+{"detail":"duplicate key 'amount' in a JSON object (in the object with event_id 'e1'). JSON allows this and Python keeps the LAST value, so the document does not say what it appears to say; fix the input rather than letting a parser choose for you.","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 wallet_reconcile.py ../../dup_evidence_scratch/flipped.json ===
+{"detail":"duplicate key 'amount' in a JSON object (in the object with event_id 'e1'). JSON allows this and Python keeps the LAST value, so the document does not say what it appears to say; fix the input rather than letting a parser choose for you.","error":"INVALID_INPUT"}
+exit=2
+
+stdout is empty in both cases -- the report is not produced at all:
+
+=== $ python3 wallet_reconcile.py ledger_duplicate_key.json 2>/dev/null > ../../dup_evidence_scratch/after_stdout.txt ===
+exit=2
+
+=== $ wc -c < ../../dup_evidence_scratch/after_stdout.txt ===
+0
+exit=0
+
+--- 3b. the stdin path goes through the same loader ---
+
+=== $ cat ledger_duplicate_key.json | python3 wallet_reconcile.py - ===
+{"detail":"duplicate key 'amount' in a JSON object (in the object with event_id 'e1'). JSON allows this and Python keeps the LAST value, so the document does not say what it appears to say; fix the input rather than letting a parser choose for you.","error":"INVALID_INPUT"}
+exit=2
+
+--- 4. where the duplicate is does not matter, and neither do the values ---
+A duplicate at the top level, a duplicate of a key this tool never
+reads, and a duplicate whose two values agree. All refused: the
+rule is about whether the document said a thing once, not about
+which value a reader would have preferred.
+
+=== $ printf '%s' '{"opening_balance": "0", "opening_balance": "5", "closing_balance": "0", "events": []}' > ../../dup_evidence_scratch/top.json ===
+exit=0
+
+=== $ python3 wallet_reconcile.py ../../dup_evidence_scratch/top.json ===
+{"detail":"duplicate key 'opening_balance' in a JSON object. JSON allows this and Python keeps the LAST value, so the document does not say what it appears to say; fix the input rather than letting a parser choose for you.","error":"INVALID_INPUT"}
+exit=2
+
+=== $ printf '%s' '{"opening_balance": "0", "closing_balance": "0", "events": [], "note": "a", "note": "b"}' > ../../dup_evidence_scratch/note.json ===
+exit=0
+
+=== $ python3 wallet_reconcile.py ../../dup_evidence_scratch/note.json ===
+{"detail":"duplicate key 'note' in a JSON object. JSON allows this and Python keeps the LAST value, so the document does not say what it appears to say; fix the input rather than letting a parser choose for you.","error":"INVALID_INPUT"}
+exit=2
+
+=== $ printf '%s' '{"opening_balance": "0", "closing_balance": "10", "events": [{"event_id": "e1", "type": "reward", "amount": "10", "amount": "10", "at": "2026-01-01T00:00:00Z"}]}' > ../../dup_evidence_scratch/same.json ===
+exit=0
+
+=== $ python3 wallet_reconcile.py ../../dup_evidence_scratch/same.json ===
+{"detail":"duplicate key 'amount' in a JSON object (in the object with event_id 'e1'). JSON allows this and Python keeps the LAST value, so the document does not say what it appears to say; fix the input rather than letting a parser choose for you.","error":"INVALID_INPUT"}
+exit=2
+
+--- 5. valid input is untouched, byte for byte ---
+The clean fixture's report from the PARENT and from the repaired
+tool are compared as bytes, not eyeballed.
+
+=== $ python3 ../../dup_evidence_scratch/parent/wallet-reconciler/wallet_reconcile.py ledger_ok.json > ../../dup_evidence_scratch/parent_ok.json ===
+exit=0
+
+=== $ python3 wallet_reconcile.py ledger_ok.json > ../../dup_evidence_scratch/after_ok.json ===
+exit=0
+
+=== $ cmp ../../dup_evidence_scratch/parent_ok.json ../../dup_evidence_scratch/after_ok.json && echo BYTE_IDENTICAL ===
+BYTE_IDENTICAL
+exit=0
+
+=== $ sha256sum ../../dup_evidence_scratch/parent_ok.json ../../dup_evidence_scratch/after_ok.json ===
+79c2c69ca9e2f8e76b00b868c785ffbcdec16b4ee8874c76339867d25223df51  ../../dup_evidence_scratch/parent_ok.json
+79c2c69ca9e2f8e76b00b868c785ffbcdec16b4ee8874c76339867d25223df51  ../../dup_evidence_scratch/after_ok.json
+exit=0
+
+And the findings path -- exit 1 -- is equally untouched:
+
+=== $ python3 ../../dup_evidence_scratch/parent/wallet-reconciler/wallet_reconcile.py ledger_bad.json > ../../dup_evidence_scratch/parent_bad.json ===
+exit=1
+
+=== $ python3 wallet_reconcile.py ledger_bad.json > ../../dup_evidence_scratch/after_bad.json ===
+exit=1
+
+=== $ cmp ../../dup_evidence_scratch/parent_bad.json ../../dup_evidence_scratch/after_bad.json && echo BYTE_IDENTICAL ===
+BYTE_IDENTICAL
+exit=0
+
+=== $ sha256sum ../../dup_evidence_scratch/parent_bad.json ../../dup_evidence_scratch/after_bad.json ===
+76b74d9a61902ede1b54de72539eb1aed7146a371774ee45aaf61d9c7ea74aee  ../../dup_evidence_scratch/parent_bad.json
+76b74d9a61902ede1b54de72539eb1aed7146a371774ee45aaf61d9c7ea74aee  ../../dup_evidence_scratch/after_bad.json
+exit=0
+
+Two events may of course each carry their own "amount" -- that is
+not a duplicate, and the rule does not touch it:
+
+=== $ printf '%s' '{"opening_balance": "0", "closing_balance": "3", "events": [{"event_id": "e1", "type": "reward", "amount": "1", "at": "2026-01-01T00:00:00Z"}, {"event_id": "e2", "type": "reward", "amount": "2", "at": "2026-01-02T00:00:00Z"}]}' > ../../dup_evidence_scratch/two.json ===
+exit=0
+
+=== $ python3 wallet_reconcile.py ../../dup_evidence_scratch/two.json ===
+{"closing_delta":"0","computed_closing_balance":"3","event_count":2,"finding_counts":{},"findings":[],"ledger_version":"1.0","opening_balance":"0","sign_convention":{"airdrop":"+","chat_spend":"-","grant":"+","reward":"+"},"stated_closing_balance":"3","status":"reconciled","trace":[{"amount":"1","applied":true,"at":"2026-01-01T00:00:00Z","codes":[],"event_id":"e1","index":0,"running_balance":"1","signed_amount":"1","type":"reward"},{"amount":"2","applied":true,"at":"2026-01-02T00:00:00Z","codes":[],"event_id":"e2","index":1,"running_balance":"3","signed_amount":"2","type":"reward"}]}
+exit=0
+
+--- 6. the tests ---
+The new class is run against the PARENT copy from section 1 with
+only the test file and the fixture added, so what fails there is
+the old behaviour and not a missing file.
+
+=== $ cp test_wallet_reconcile.py ledger_duplicate_key.json ../../dup_evidence_scratch/parent/wallet-reconciler/ ===
+exit=0
+
+THE NEXT RECORD IS DELIBERATELY RED and is left verbatim.
+transcript-schema/validate_transcript.py on this file reports
+exactly one finding for it, TRANSCRIPT_SHOWS_TEST_FAILURE, and
+that finding is correct: a repair whose tests do not fail against
+the parent has demonstrated nothing. Prefixing the output to keep
+the validator quiet would hide the "Ran N tests" and verdict
+lines, which is the worse of the two. The repository-wide run
+reads <tool>/captured_output.txt by that exact name and never
+sees this file.
+
+=== $ cd ../../dup_evidence_scratch/parent/wallet-reconciler && python3 -m unittest test_wallet_reconcile.TestDuplicateJsonKeysAreRejected 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 18 tests in 0.412s
+
+FAILED (failures=10, errors=2)
+exit=1
+
+Six of the eighteen pass at the parent: the valid-input tests and
+the two that pin the fixture's own contents. They must pass on
+both sides or this would be a behaviour change rather than a
+rejection of input that was never unambiguous.
+
+=== $ python3 -m unittest test_wallet_reconcile.TestDuplicateJsonKeysAreRejected 2>&1 | tail -3 ===
+Ran 18 tests in 0.413s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_wallet_reconcile 2>&1 | tail -3 ===
+Ran 159 tests in 0.867s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_capture_fix 2>&1 | tail -3 ===
+Ran 11 tests in 0.216s
+
+OK
+exit=0
+
+--- 7. hashes of everything this transcript produced ---
+
+=== $ sha256sum ledger_duplicate_key.json ledger_ok.json ledger_bad.json wallet_reconcile.py ===
+b872f1d40fc20b002e9cf7a61b580832e8fb9016a3dd95daf0a79f73f3585fc2  ledger_duplicate_key.json
+50e5ab4b965cad2c11c9a76b1bf31dec071332d670823572e1a535faa0498cbc  ledger_ok.json
+67dc152de06d7bf20b1a01fe39dc49c6add863cdc9a1339cefc5a8e5b5e64914  ledger_bad.json
+e048eebd8bfed809c4cefef2bc2e67f7e3478bfdbb28608ef093649c21fb1aa2  wallet_reconcile.py
+exit=0
+
+=== $ sha256sum ../../dup_evidence_scratch/parent_dup.json ../../dup_evidence_scratch/parent_ok.json ../../dup_evidence_scratch/after_ok.json ../../dup_evidence_scratch/parent_bad.json ../../dup_evidence_scratch/after_bad.json ===
+0acd2e079630ffe86020e3ca54745c20fda3b06adfd4e333d49c66b4dd274c49  ../../dup_evidence_scratch/parent_dup.json
+79c2c69ca9e2f8e76b00b868c785ffbcdec16b4ee8874c76339867d25223df51  ../../dup_evidence_scratch/parent_ok.json
+79c2c69ca9e2f8e76b00b868c785ffbcdec16b4ee8874c76339867d25223df51  ../../dup_evidence_scratch/after_ok.json
+76b74d9a61902ede1b54de72539eb1aed7146a371774ee45aaf61d9c7ea74aee  ../../dup_evidence_scratch/parent_bad.json
+76b74d9a61902ede1b54de72539eb1aed7146a371774ee45aaf61d9c7ea74aee  ../../dup_evidence_scratch/after_bad.json
+exit=0
+
+--- 8. everything this commit changes ---
+Generated last, against the fully staged tree. The directories
+beyond wallet-reconciler are mechanical consequences of adding two
+tracked files and eighteen tests: shebang-mode counts tracked
+files, weak-assertion-scanner counts tests, nondeterminism-scanner
+scans .py content. This file appears in the listing as itself,
+which is what generating it last means.
+
+=== $ cd .. && git status --porcelain --ignored=matching ===
+M  claim-crosscheck/sample_run.json
+M  index-generator/PIPEFAIL_MASKING_FIX.md
+M  index-generator/captured_output.txt
+M  index-generator/pipe_classification_report.json
+M  nondeterminism-scanner/README.md
+M  nondeterminism-scanner/self_scan_report.json
+M  shebang-mode/README.md
+M  shebang-mode/selfscan_output.txt
+M  transcript-schema/validation_report.json
+AM wallet-reconciler/DUPLICATE_KEY_EVIDENCE.txt
+M  wallet-reconciler/README.md
+M  wallet-reconciler/captured_output.txt
+A  wallet-reconciler/ledger_duplicate_key.json
+M  wallet-reconciler/test_wallet_reconcile.py
+M  wallet-reconciler/wallet_reconcile.py
+M  weak-assertion-scanner/README.md
+M  weak-assertion-scanner/self_scan_report.json
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################

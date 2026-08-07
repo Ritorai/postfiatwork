@@ -242,9 +242,45 @@ shipped in this package.)
 Full real captured output of every command above, plus the precision
 demonstration, is in `captured_output.txt`.
 
+## Duplicate object keys are refused
+
+A JSON object may legally contain the same member name twice. RFC 8259
+says names SHOULD be unique and leaves the rest to the implementation;
+Python's `json` keeps the **last** value. So a ledger could say
+
+```
+{"event_id": "e1", "type": "reward", "amount": "9999", "amount": "10", ...}
+```
+
+and this tool would see one amount, chosen by the parser, with nothing
+downstream able to know a choice had been made. Both orientations were
+bad and the quiet one was worse: with the wrong value second the tool
+reported a balance discrepancy that was really an ambiguous file, and
+with the wrong value first it exited `0` and called the document
+`reconciled`.
+
+Any repeated key now exits **2** with a message naming the key and, when
+the object has one, its `event_id` — anywhere in the document, for keys
+this tool never reads, and even when the two values agree, because the
+question is whether the file said a thing once, not which value a reader
+would have preferred. Two *different* events each carrying an `amount`
+is not a duplicate and is unaffected.
+
+Exit `2` and not `1`: the input could not be read unambiguously, which
+is a fact about the caller's file rather than a finding about the ledger
+it describes. Valid input is untouched — `ledger_ok.json` and
+`ledger_bad.json` produce byte-identical reports and the same exit codes
+as before.
+
+- `ledger_duplicate_key.json` — the minimal reproducer, in the quiet
+  orientation.
+- `DUPLICATE_KEY_EVIDENCE.txt` — the parent commit accepting it, this
+  version refusing it, valid input byte-compared across both, and
+  SHA-256 hashes of every fixture and captured output.
+
 ## Test suite
 
-`test_wallet_reconcile.py`: **141 tests**, `Ran 141 tests ... OK`. Covers
+`test_wallet_reconcile.py`: **159 tests**, `Ran 159 tests ... OK`. Covers
 amount coercion (all type/edge cases), timestamp coercion, each finding
 code individually and in combination, structural input errors, canonical
 JSON properties (sorted keys, trailing newline, byte-identical repeats,
