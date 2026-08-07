@@ -118,11 +118,11 @@ here rather than deleted, because "we found it and it was then fixed" is
 more useful to a reader than silence.
 
 **3. The rest of the repository is in better shape than the absence of any
-checker would suggest.** The full run at HEAD is 39 items:
+checker would suggest.** The full run at HEAD is 40 items:
 
 | Phase | items | match | volatile_only | environment | error |
 |---|---|---|---|---|---|
-| `manifest` | 4 | 4 | 0 | 0 | 0 |
+| `manifest` | 5 | 5 | 0 | 0 | 0 |
 | `baselines` | 23 | 22 | 0 | 0 | 1 |
 | `transcripts` | 12 | 8 | 4 | 0 | 0 |
 
