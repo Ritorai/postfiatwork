@@ -1,0 +1,160 @@
+############################################################
+# stdout_contract_evidence.txt
+#
+# Subject: test_cli_stdout_has_no_extraneous_output_on_success in
+# test_coverage_audit.py, a test whose whole body was
+#
+#     json.loads(proc.stdout.decode("utf-8"))
+#
+# with no assertion and the result discarded.
+#
+# Every record below is a real run: header, real output, real exit.
+# Commands are relative to regression-checker/.
+############################################################
+
+--- 0. the test as it stood at the parent commit ---
+
+=== $ git show f9cdcd913a5e9530788f31e4db26f325f2fdaa08:regression-checker/test_coverage_audit.py | sed -n '/def test_cli_stdout_has_no_extraneous_output_on_success/,/^$/p' ===
+    def test_cli_stdout_has_no_extraneous_output_on_success(self):
+        make_script(self.tool_dir("only-tool"), "run.py", {"ok": True}, 0)
+        write_baselines(self.baselines_path, {"only-tool": baseline_entry("run.py", {"ok": True}, 0)})
+        proc = self.run_cli(["--root", self.root, "--baselines", self.baselines_path])
+        # stdout must be exactly one JSON document + trailing newline
+        json.loads(proc.stdout.decode("utf-8"))
+
+exit=0
+
+--- 1. what its name and its comment claim ---
+  "no extraneous output"  -> nothing before it, nothing after it,
+                             and nothing on the other stream
+  "on success"            -> the run exited 0
+  the inline comment      -> "exactly one JSON document + trailing
+                             newline"
+json.loads() establishes none of those. It returns a value that is
+thrown away, and it tolerates leading and trailing whitespace.
+
+--- 2. the five mutations, and why each is realistic ---
+
+=== $ python3 stdout_contract_mutations.py --list ===
+banner_before_json       a human-readable banner printed before the report
+leading_blank_line       a blank line before the report -- json.loads skips leading whitespace, so parsing alone cannot see this
+no_trailing_newline      the trailing newline dropped
+nonzero_exit_on_success  a nonzero exit code on a fully reproducing run
+chatter_on_stderr        progress chatter written to stderr
+exit=0
+
+--- 3. the ONE test, measured against the parent commit ---
+This is the claim under repair: the test named after the property
+catches one of the five regressions that property covers.
+
+=== $ python3 stdout_contract_mutations.py --rev f9cdcd913a5e9530788f31e4db26f325f2fdaa08 --target test_coverage_audit.TestCLI.test_cli_stdout_has_no_extraneous_output_on_success ===
+subject: f9cdcd913a5e9530788f31e4db26f325f2fdaa08
+tests:   test_coverage_audit.TestCLI.test_cli_stdout_has_no_extraneous_output_on_success
+
+(unmutated control)      passed, as it must
+banner_before_json       CAUGHT by test_cli_stdout_has_no_extraneous_output_on_success
+leading_blank_line       MISSED -- no test noticed
+no_trailing_newline      MISSED -- no test noticed
+nonzero_exit_on_success  MISSED -- no test noticed
+chatter_on_stderr        MISSED -- no test noticed
+
+caught 1 of 5 mutations
+exit=1
+
+--- 4. the WHOLE TestCLI class, against the parent commit ---
+Stated because it is the more honest number and it is worse for
+this submission than the one above: the exit-code property was
+already covered by test_cli_exit_zero_all_reproducing and two
+siblings. It was not unprotected -- it was just not protected by
+the test whose name claimed it. The other three genuinely were.
+
+=== $ python3 stdout_contract_mutations.py --rev f9cdcd913a5e9530788f31e4db26f325f2fdaa08 ===
+subject: f9cdcd913a5e9530788f31e4db26f325f2fdaa08
+tests:   test_coverage_audit.TestCLI
+
+(unmutated control)      passed, as it must
+banner_before_json       CAUGHT by test_cli_stdout_has_no_extraneous_output_on_success
+leading_blank_line       MISSED -- no test noticed
+no_trailing_newline      MISSED -- no test noticed
+nonzero_exit_on_success  CAUGHT by test_cli_default_timeout_flag_accepted, test_cli_exit_zero_all_reproducing, test_cli_writes_output_file
+chatter_on_stderr        MISSED -- no test noticed
+
+caught 2 of 5 mutations
+exit=1
+
+--- 5. the same class after the repair ---
+
+=== $ python3 stdout_contract_mutations.py ===
+subject: the working tree
+tests:   test_coverage_audit.TestCLI
+
+(unmutated control)      passed, as it must
+banner_before_json       CAUGHT by test_cli_stdout_is_exactly_one_json_document_and_nothing_else, test_cli_stdout_is_the_report_not_merely_valid_json
+leading_blank_line       CAUGHT by test_cli_stdout_is_exactly_one_json_document_and_nothing_else
+no_trailing_newline      CAUGHT by test_cli_stdout_ends_with_exactly_one_newline, test_cli_stdout_is_exactly_one_json_document_and_nothing_else
+nonzero_exit_on_success  CAUGHT by test_cli_default_timeout_flag_accepted, test_cli_exit_zero_all_reproducing, test_cli_exits_zero_on_a_fully_reproducing_run, test_cli_writes_output_file
+chatter_on_stderr        CAUGHT by test_cli_writes_nothing_to_stderr_on_success
+
+caught 5 of 5 mutations
+exit=0
+
+--- 6. the replacement tests, run normally ---
+
+=== $ python3 -m unittest -v test_coverage_audit.TestCLI 2>&1 | grep -E 'stdout|exits_zero|stderr'  ===
+test_cli_exits_zero_on_a_fully_reproducing_run (test_coverage_audit.TestCLI.test_cli_exits_zero_on_a_fully_reproducing_run)
+test_cli_help_exits_zero (test_coverage_audit.TestCLI.test_cli_help_exits_zero) ... ok
+test_cli_stdout_ends_with_exactly_one_newline (test_coverage_audit.TestCLI.test_cli_stdout_ends_with_exactly_one_newline)
+test_cli_stdout_is_exactly_one_json_document_and_nothing_else (test_coverage_audit.TestCLI.test_cli_stdout_is_exactly_one_json_document_and_nothing_else)
+test_cli_stdout_is_the_report_not_merely_valid_json (test_coverage_audit.TestCLI.test_cli_stdout_is_the_report_not_merely_valid_json)
+test_cli_writes_nothing_to_stderr_on_success (test_coverage_audit.TestCLI.test_cli_writes_nothing_to_stderr_on_success)
+exit=0
+
+=== $ python3 -m unittest test_coverage_audit 2>&1 | tail -3 ===
+Ran 152 tests in 16.973s
+
+OK (skipped=1)
+exit=0
+
+--- 7. the new tests PASS against the parent, and that is the point ---
+coverage_audit.py already emitted exactly one JSON document with one
+trailing newline, nothing on stderr, and exit 0. The tests never
+checked any of it. So the five replacements are green at the parent
+too -- the only way to make them red there would be to break the tool
+first, and the brief says to change production code only if needed.
+Every exit=1 in sections 3 and 4 above is the HARNESS reporting
+uncaught mutations, not the new tests failing.
+
+=== $ git show f9cdcd913a5e9530788f31e4db26f325f2fdaa08:regression-checker/coverage_audit.py | cmp -s - coverage_audit.py && echo coverage_audit.py_IS_BYTE_IDENTICAL_to_the_parent ===
+coverage_audit.py_IS_BYTE_IDENTICAL_to_the_parent
+exit=0
+
+=== $ git show f9cdcd913a5e9530788f31e4db26f325f2fdaa08:regression-checker/test_coverage_audit.py | cmp -s - test_coverage_audit.py && echo tests_unchanged || echo tests_DIFFER_as_expected ===
+tests_DIFFER_as_expected
+exit=0
+
+--- 8. production code is untouched ---
+The repair is entirely in the test file: coverage_audit.py already
+satisfied the contract, the tests just never checked it.
+
+=== $ git diff --stat -- regression-checker/coverage_audit.py; echo '(empty diffstat above = unchanged)' ===
+(empty diffstat above = unchanged)
+exit=0
+
+=== $ cd .. && git status --porcelain --ignored=matching | grep -v __pycache__ || echo '(no output above means a clean tree)' ===
+M  index-generator/captured_output.txt
+M  regression-checker/README.md
+MM regression-checker/coverage_audit_captured_output.txt
+AM regression-checker/stdout_contract_evidence.txt
+A  regression-checker/stdout_contract_mutations.py
+M  regression-checker/test_coverage_audit.py
+A  regression-checker/test_stdout_contract_mutations.py
+M  shebang-mode/README.md
+MM shebang-mode/captured_output.txt
+M  shebang-mode/selfscan_output.txt
+M  weak-assertion-scanner/README.md
+M  weak-assertion-scanner/self_scan_report.json
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################

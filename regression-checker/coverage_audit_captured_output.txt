@@ -5,44 +5,4 @@ Scratch paths under /tmp are this run's only absolute paths, and none of
 them reach the committed report.
 
 === $ python3 -m unittest test_coverage_audit ===
-..................................................................................................................s.................................
-----------------------------------------------------------------------
-Ran 148 tests in 16.885s
-
-OK (skipped=1)
-exit=0
-
-=== $ python3 coverage_audit.py -o baseline_coverage_report.json ===
-exit=1
-baseline_entries           23
-discovered_directories     46
-not_baselined              23
-orphaned_baseline          0
-reproducing                22
-source_missing             0
-stale                      1
-total_records              46
-unrunnable                 0
-status                     issues_found
-derived from results[]:
-  not_baselined            23
-  reproducing              22
-  stale                    1
-len(results) 46
-
-=== $ sha256sum baseline_coverage_report.json ===
-689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b  baseline_coverage_report.json
-exit=0
-
-=== $ python3 coverage_audit.py -o /tmp/run2.json ===
-exit=1
-689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b  /tmp/run2.json
-
-=== $ cp -r <clone> /tmp/reloc_cov_7q && cd /tmp/reloc_cov_7q/regression-checker && python3 coverage_audit.py -o /tmp/run3.json ===
-exit=1
-689aa68675c0842d6895581b2725aa21d46b5495764aa42d2da2b1aedd76c14b  /tmp/run3.json
-
-=== $ python3 -c 'set expected_exit_code to JSON false in an isolated copy of baselines.json' ===
-coverage_audit: setup error: baselines file <tmp>/b.json: entry for 'budget-forecaster' has a JSON boolean (false) as 'expected_exit_code'. A boolean is not an exit code -- Python would compare it equal to 0 and silently treat a real exit code as a match. Rejected, not coerced.
-rc=2
-exit=2
+......

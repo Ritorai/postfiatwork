@@ -1077,12 +1077,99 @@ class TestCLI(TempRepoTestCase):
             data = json.load(fh)
         self.assertEqual(data["counts"]["reproducing"], 1)
 
-    def test_cli_stdout_has_no_extraneous_output_on_success(self):
+    # ----------------------------------------------------------------
+    # The stdout contract on success.
+    #
+    # This block replaces a single test named
+    # test_cli_stdout_has_no_extraneous_output_on_success whose entire
+    # body was:
+    #
+    #     proc = self.run_cli([...])
+    #     # stdout must be exactly one JSON document + trailing newline
+    #     json.loads(proc.stdout.decode("utf-8"))
+    #
+    # No assertion, and the result thrown away. It passed if stdout
+    # happened to parse, which is a weaker claim than any of the three
+    # its name and comment make.
+    #
+    # stdout_contract_mutations.py measures this rather than asserting
+    # it: five realistic regressions are applied to a copy of
+    # coverage_audit.py one at a time. Run against the parent commit,
+    # that ONE test caught 1 of 5 --
+    #
+    #   banner line before the JSON     caught
+    #   leading blank line on stdout    MISSED -- json.loads skips
+    #                                             leading whitespace
+    #   no trailing newline             MISSED -- the comment claims
+    #                                             this is checked
+    #   exit code 3 instead of 0        MISSED -- "on success" was
+    #                                             never verified here
+    #   chatter written to stderr       MISSED -- "no extraneous
+    #                                             output" was only ever
+    #                                             about stdout
+    #
+    # -- and the whole TestCLI class caught 2 of 5, because
+    # test_cli_exit_zero_all_reproducing and two siblings already
+    # covered the exit code. That distinction matters: the exit-code
+    # property was not unprotected, it was just not protected by the
+    # test whose name claimed it. The other three were unprotected.
+    # After this change the class catches 5 of 5.
+    #
+    # The properties are split into named tests so a future regression
+    # reports which one broke rather than "that JSON test".
+    # ----------------------------------------------------------------
+
+    def _successful_run(self):
+        """One reproducing tool, audited, exit 0 expected."""
         make_script(self.tool_dir("only-tool"), "run.py", {"ok": True}, 0)
-        write_baselines(self.baselines_path, {"only-tool": baseline_entry("run.py", {"ok": True}, 0)})
-        proc = self.run_cli(["--root", self.root, "--baselines", self.baselines_path])
-        # stdout must be exactly one JSON document + trailing newline
-        json.loads(proc.stdout.decode("utf-8"))
+        write_baselines(self.baselines_path,
+                        {"only-tool": baseline_entry("run.py", {"ok": True}, 0)})
+        return self.run_cli(["--root", self.root, "--baselines", self.baselines_path])
+
+    def test_cli_exits_zero_on_a_fully_reproducing_run(self):
+        """The 'on success' half of the old name, actually checked."""
+        proc = self._successful_run()
+        self.assertEqual(proc.returncode, 0,
+                         "stderr was: %r" % proc.stderr[:400])
+
+    def test_cli_stdout_is_exactly_one_json_document_and_nothing_else(self):
+        """Not 'parses as JSON' -- nothing before it, nothing after it.
+
+        ``json.loads`` tolerates surrounding whitespace, so it cannot
+        distinguish a clean report from one preceded by a blank line.
+        ``raw_decode`` reports where the document ended, which turns
+        "and nothing else" into something checkable.
+        """
+        proc = self._successful_run()
+        text = proc.stdout.decode("utf-8")
+        self.assertTrue(text, "stdout was empty")
+        self.assertFalse(text[:1].isspace(),
+                         "stdout begins with whitespace: %r" % text[:20])
+        _, end = json.JSONDecoder().raw_decode(text)
+        self.assertEqual(text[end:], "\n",
+                         "trailing bytes after the JSON document: %r"
+                         % text[end:][:60])
+
+    def test_cli_stdout_ends_with_exactly_one_newline(self):
+        """The half of the old comment that was never verified."""
+        proc = self._successful_run()
+        text = proc.stdout.decode("utf-8")
+        self.assertTrue(text.endswith("\n"), "stdout has no trailing newline")
+        self.assertFalse(text.endswith("\n\n"),
+                         "stdout ends with more than one newline")
+
+    def test_cli_writes_nothing_to_stderr_on_success(self):
+        """'No extraneous output' has to include the other stream."""
+        proc = self._successful_run()
+        self.assertEqual(proc.stderr, b"",
+                         "stderr on a successful run: %r" % proc.stderr[:400])
+
+    def test_cli_stdout_is_the_report_not_merely_valid_json(self):
+        """A tool that printed `{}` would satisfy every test above."""
+        proc = self._successful_run()
+        report = json.loads(proc.stdout.decode("utf-8"))
+        self.assertEqual(report["tool"], coverage_audit.TOOL_NAME)
+        self.assertEqual(report["counts"]["reproducing"], 1)
 
     def test_cli_unwritable_output_is_setup_error(self):
         write_baselines(self.baselines_path, {})
