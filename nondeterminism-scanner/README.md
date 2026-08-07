@@ -356,13 +356,13 @@ carries a `regenerable` entry that fails if it stops matching — see
 ```
 files_scanned:   177
 files_errored:   0
-findings_count:  443
+findings_count:  445
 
                              total    own others
   ND001_WALL_CLOCK:             7      7      0
   ND002_UNSORTED_LISTDIR:      65     10     55
   ND003_UNORDERED_ITERATION:   24      3     21
-  ND004_UNSAFE_REPR:          333      5    328
+  ND004_UNSAFE_REPR:          335      5    330
   ND005_UNSEEDED_RANDOM:        7      5      2
   ND006_FLOAT_IN_MONEY:         7      7      0
 ```
@@ -404,7 +404,7 @@ over-fires on would be a worse outcome than dating it. But it is dated:
     the 87-file scan**, not from the committed report. The current
     per-rule counts are the table above.
   * The current report has **not** been re-triaged finding by finding.
-    Nothing below should be read as a judgement about the 406
+    Nothing below should be read as a judgement about the 408
     sibling-tool findings in it.
   * The `path:line` citations below were re-checked mechanically against
     the current report, after two of them were corrected in place
