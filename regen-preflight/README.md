@@ -101,12 +101,21 @@ reproduce on a clean checkout — it is not stale, it is unrunnable, and
 the distinction that tells you it is a missing fixture and not a changed
 output.
 
-**2. `env-leak-scanner`'s transcript is interpreter-locked.** Its committed
-`captured_output.txt` records `Python 3.10.12`, and unittest changed its
-test-id rendering in 3.11 (`test_x (mod.C)` became `test_x (mod.C.test_x)`),
-so the transcript cannot reproduce on a 3.11 interpreter no matter what the
-repository does. That is a real reproducibility limit of the committed
-evidence and it had never been stated anywhere.
+**2. `env-leak-scanner`'s transcript was interpreter-locked -- and has since
+been unlocked.** Its committed `captured_output.txt` used to record
+`Python 3.10.12`, and unittest changed its test-id rendering in 3.11
+(`test_x (mod.C)` became `test_x (mod.C.test_x)`), so that transcript could
+not reproduce on a 3.11 interpreter no matter what the repository did. This
+tool is what surfaced that; it had never been stated anywhere.
+
+It was regenerated on CPython 3.11.15 as a side effect of an unrelated
+repair to that directory, and the item now classifies `volatile_only`
+rather than `environment`. The underlying property has not gone away -- the
+transcript is now pinned to 3.11 instead of 3.10 -- but the lock now points
+at the interpreter the repository is actually being run on, and the
+`transcripts` phase has no `environment` items left. The finding is kept
+here rather than deleted, because "we found it and it was then fixed" is
+more useful to a reader than silence.
 
 **3. The rest of the repository is in better shape than the absence of any
 checker would suggest.** The full run at HEAD is 38 items:
@@ -115,28 +124,31 @@ checker would suggest.** The full run at HEAD is 38 items:
 |---|---|---|---|---|---|
 | `manifest` | 4 | 4 | 0 | 0 | 0 |
 | `baselines` | 23 | 22 | 0 | 0 | 1 |
-| `transcripts` | 11 | 8 | 2 | 1 | 0 |
+| `transcripts` | 11 | 8 | 3 | 0 | 0 |
 
-Eight of the eleven transcripts reproduce **byte for byte**; `index-generator`
-and `readme-index` differ only in masked durations and temp-directory names.
-One of those eight is this directory's own, which is reported as a skip with
-its reason rather than counted as a real regeneration — see Limits. That
-leaves exactly the two findings above as the things anyone needs to act on,
-and they are now checkable claims rather than assumptions.
+Eight of the eleven transcripts reproduce **byte for byte**;
+`env-leak-scanner`, `index-generator` and `readme-index` differ only in
+masked durations and temp-directory names. One of those eight is this
+directory's own, which is reported as a skip with its reason rather than
+counted as a real regeneration — see Limits. That leaves finding 1 above
+as the only thing anyone needs to act on, and it is a checkable claim
+rather than an assumption.
 
 ## `preflight_report.json` is committed as evidence, not as a regenerable report
 
 It is deliberately **not** added to `report-freshness/manifest.json`, because
 it would not survive the check honestly: the `environment` classification
-depends on the interpreter the run happened on. On CPython 3.10 the
-`env-leak-scanner` item would come back `match`; on 3.11 it comes back
-`environment`. A report whose content is a function of the machine cannot be
-a byte-for-byte regenerable artifact, and pretending otherwise would make
-`freshness.py` fail for a reason that has nothing to do with the repository.
+depends on the interpreter the run happened on. That is not hypothetical --
+the `env-leak-scanner` item has now been on both sides of it, `environment`
+while its transcript recorded 3.10 and `volatile_only` since it was
+regenerated on 3.11. A report whose content is a function of the machine
+cannot be a byte-for-byte regenerable artifact, and pretending otherwise
+would make `freshness.py` fail for a reason that has nothing to do with the
+repository.
 
 The committed report was produced on **CPython 3.11.15**. Anyone re-running
-it on a different minor version should expect the `env-leak-scanner` item to
-change state, and nothing else to.
+it on a different minor version should expect transcript items whose
+recorded interpreter differs to come back `environment`.
 
 ## Files
 
