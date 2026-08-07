@@ -20,7 +20,15 @@ import json
 import re
 import sys
 
-TXHASH_RE = re.compile(r"^[0-9A-F]{64}$")
+# \A and \Z, not ^ and $. In Python `$` also matches immediately before a
+# trailing newline, so `^[0-9A-F]{64}$` accepted a 65-character tx_hash whose
+# 65th character was "\n". That value was reported well-formed, and because
+# by_hash keys on the raw string it no longer collided with the same hash
+# written without the newline, so the reuse checks missed it as well -- one
+# appended byte turned a REUSED_ACROSS_TASKS finding into "status":"clean".
+# \Z matches only at the true end of the string, so this regex now means what
+# the docstring above and the README have always claimed: exactly 64.
+TXHASH_RE = re.compile(r"\A[0-9A-F]{64}\Z")
 REQUIRED = ("payout_id", "task_id", "wallet", "tx_hash")
 
 MALFORMED_TX_HASH = "MALFORMED_TX_HASH"

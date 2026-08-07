@@ -1,0 +1,320 @@
+############################################################
+# TRAILING_NEWLINE_EVIDENCE.txt
+#
+# Subject: TXHASH_RE in payout_audit.py was ^[0-9A-F]{64}$ and is now
+# \A[0-9A-F]{64}\Z. Every record below is a real run: header line, real
+# output, real exit status. Nothing here is typed by hand.
+#
+# Absolute paths appear in the command headers because the point of the
+# transcript is that two DIFFERENT checkouts were run: a pristine clone of
+# the parent commit, and the fixed tree. The revisions are printed first.
+############################################################
+
+--- 0. revisions under test ---
+
+=== $ cd /tmp/PARENT_X && git rev-parse HEAD ===
+f69416dad5eb1a033320102529f40b2d71c39d36
+exit=0
+
+=== $ cd /tmp/PARENT_X && git status --porcelain; echo '(nothing above = pristine parent checkout)' ===
+(nothing above = pristine parent checkout)
+exit=0
+
+=== $ cd /tmp/WORK_XRPL && git rev-parse HEAD; echo '(plus the working-tree change below)' ===
+f69416dad5eb1a033320102529f40b2d71c39d36
+(plus the working-tree change below)
+exit=0
+
+=== $ cd /tmp/WORK_XRPL && git diff --stat ===
+ transcript-schema/validation_report.json     |   2 +-
+ weak-assertion-scanner/README.md             |   2 +-
+ weak-assertion-scanner/self_scan_report.json |   2 +-
+ xrpl-auditor/README.md                       |  99 +++++++++++++++++-
+ xrpl-auditor/captured_output.txt             |  75 ++++++++------
+ xrpl-auditor/payout_audit.py                 |  10 +-
+ xrpl-auditor/test_output.txt                 |  67 +++++++-----
+ xrpl-auditor/test_payout_audit.py            | 149 ++++++++++++++++++++++++++-
+ 8 files changed, 342 insertions(+), 64 deletions(-)
+exit=0
+
+--- 1. the change itself ---
+
+=== $ cd /tmp/WORK_XRPL && git diff -U0 -- xrpl-auditor/payout_audit.py | grep -E '^[-+]TXHASH_RE' ===
+-TXHASH_RE = re.compile(r"^[0-9A-F]{64}$")
++TXHASH_RE = re.compile(r"\A[0-9A-F]{64}\Z")
+exit=0
+
+--- 2. what the two patterns accept, measured side by side ---
+One input separates them. Both anchors reject a LEADING newline, so
+the gap was one-ended: the tail of the value, never the head. That is
+why a hand-written list of malformed examples never caught it.
+
+=== $ cat /tmp/xrpl_probe/compare_patterns.py ===
+"""Side-by-side: what ^...$ accepts vs what \A...\Z accepts."""
+import re
+
+OLD = re.compile(r"^[0-9A-F]{64}$")
+NEW = re.compile(r"\A[0-9A-F]{64}\Z")
+H = "A" * 64
+
+CASES = [
+    ("exactly 64", H),
+    ("64 + trailing LF", H + "\n"),
+    ("64 + CR LF", H + "\r\n"),
+    ("64 + CR", H + "\r"),
+    ("64 + space", H + " "),
+    ("64 + two LF", H + "\n\n"),
+    ("64 + LF + X", H + "\nX"),
+    ("leading LF + 64", "\n" + H),
+    ("63 hex", "A" * 63),
+    ("65 hex", "A" * 65),
+]
+
+print("%-22s %-9s %-9s %s" % ("input", "^...$", "\\A...\\Z", "differs"))
+differ = 0
+for name, value in CASES:
+    o = bool(OLD.match(value))
+    n = bool(NEW.match(value))
+    if o != n:
+        differ += 1
+    print("%-22s %-9s %-9s %s" % (name, o, n, "<== YES" if o != n else ""))
+print()
+print("inputs where the two patterns disagree: %d" % differ)
+exit=0
+
+=== $ python3 /tmp/xrpl_probe/compare_patterns.py ===
+input                  ^...$     \A...\Z   differs
+exactly 64             True      True      
+64 + trailing LF       True      False     <== YES
+64 + CR LF             False     False     
+64 + CR                False     False     
+64 + space             False     False     
+64 + two LF            False     False     
+64 + LF + X            False     False     
+leading LF + 64        False     False     
+63 hex                 False     False     
+65 hex                 False     False     
+
+inputs where the two patterns disagree: 1
+exit=0
+
+--- 3. the structural finding, through the real CLI ---
+The three probe programs are printed in full before they are run, so
+every fixture in this transcript can be rebuilt from the transcript
+alone. They live outside the checkout because they are scaffolding for
+this one investigation, not a tool the repository ships.
+One payout whose tx_hash is 64 hex characters plus a newline. The
+README calls the contract 'exactly 64 uppercase hex characters' and
+the module docstring says the same.
+
+=== $ cat /tmp/xrpl_probe/mk_one.py ===
+"""Writes a one-payout fixture whose tx_hash is 64 hex characters + LF."""
+import json, sys
+
+H = "9F2BE303A1C4D5E6F708192A3B4C5D6E7F8091A2B3C4D5E6F708192A3B4C5D6E"
+recs = [{"payout_id": "p1", "task_id": "task_one", "wallet": "rW",
+         "tx_hash": H + "\n"}]
+with open(sys.argv[1], "w", encoding="utf-8") as fh:
+    json.dump(recs, fh)
+with open(sys.argv[2], "w", encoding="utf-8") as fh:
+    json.dump(["task_one"], fh)
+print("len(tx_hash) = %d   ends with LF = %s"
+      % (len(recs[0]["tx_hash"]), recs[0]["tx_hash"].endswith("\n")))
+exit=0
+
+=== $ python3 /tmp/xrpl_probe/mk_one.py /tmp/xrpl_ev_gM7ZYp/one.json /tmp/xrpl_ev_gM7ZYp/roster1.json ===
+len(tx_hash) = 65   ends with LF = True
+exit=0
+
+=== $ cd /tmp/PARENT_X/xrpl-auditor && python3 payout_audit.py /tmp/xrpl_ev_gM7ZYp/one.json /tmp/xrpl_ev_gM7ZYp/roster1.json ===
+{"issue_counts":{},"issues":[],"report_version":"1.0","status":"clean","totals":{"distinct_tx_hashes":1,"issues":0,"payouts":1,"roster_tasks":1,"well_formed_payouts":1}}
+exit=0
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 payout_audit.py /tmp/xrpl_ev_gM7ZYp/one.json /tmp/xrpl_ev_gM7ZYp/roster1.json ===
+{"issue_counts":{"MALFORMED_TX_HASH":1},"issues":[{"detail":"tx_hash must be exactly 64 uppercase hex characters","index":0,"issue":"MALFORMED_TX_HASH","payout_id":"p1","task_id":"task_one"}],"report_version":"1.0","status":"issues","totals":{"distinct_tx_hashes":1,"issues":1,"payouts":1,"roster_tasks":1,"well_formed_payouts":1}}
+exit=1
+
+--- 4. THE PART THAT MATTERS: reuse detection was bypassed ---
+audit() groups payouts by the RAW tx_hash string, so <hash> and
+<hash>+LF land in different buckets. Two payouts under two different
+task_ids sharing one hash is exactly the REUSED_ACROSS_TASKS case
+this tool exists to report. On the PARENT, one appended byte removes
+every finding and the report comes back clean. See 4d for exactly how
+far the repair goes -- it is narrower than "reuse detection restored".
+
+=== $ cat /tmp/xrpl_probe/mk_dup.py ===
+"""Writes the duplicate-hash fixtures: plain, and with one LF appended.
+
+argv: <plain.json> <evaded.json> <roster.json>
+"""
+import json, sys
+
+H = "9F2BE303A1C4D5E6F708192A3B4C5D6E7F8091A2B3C4D5E6F708192A3B4C5D6E"
+
+
+def rec(pid, tid, tx):
+    return {"payout_id": pid, "task_id": tid, "wallet": "rW", "tx_hash": tx}
+
+
+plain = [rec("p1", "task_one", H), rec("p2", "task_two", H)]
+evaded = [rec("p1", "task_one", H), rec("p2", "task_two", H + "\n")]
+for path, data in ((sys.argv[1], plain), (sys.argv[2], evaded)):
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(data, fh)
+with open(sys.argv[3], "w", encoding="utf-8") as fh:
+    json.dump(["task_one", "task_two"], fh)
+print("plain:  p1 and p2 share one hash under two task_ids")
+print("evaded: identical, except p2's hash has one LF appended")
+exit=0
+
+=== $ python3 /tmp/xrpl_probe/mk_dup.py /tmp/xrpl_ev_gM7ZYp/dup_plain.json /tmp/xrpl_ev_gM7ZYp/dup_evaded.json /tmp/xrpl_ev_gM7ZYp/roster2.json ===
+plain:  p1 and p2 share one hash under two task_ids
+evaded: identical, except p2's hash has one LF appended
+exit=0
+
+4a. control, on the PARENT: the same duplicate with no newline.
+    Reported correctly. This is why the hole went unnoticed.
+
+=== $ cd /tmp/PARENT_X/xrpl-auditor && python3 payout_audit.py /tmp/xrpl_ev_gM7ZYp/dup_plain.json /tmp/xrpl_ev_gM7ZYp/roster2.json ===
+{"issue_counts":{"REUSED_ACROSS_TASKS":2},"issues":[{"detail":"tx_hash shared by task_ids: task_one,task_two","index":0,"issue":"REUSED_ACROSS_TASKS","payout_id":"p1","task_id":"task_one"},{"detail":"tx_hash shared by task_ids: task_one,task_two","index":1,"issue":"REUSED_ACROSS_TASKS","payout_id":"p2","task_id":"task_two"}],"report_version":"1.0","status":"issues","totals":{"distinct_tx_hashes":1,"issues":2,"payouts":2,"roster_tasks":2,"well_formed_payouts":2}}
+exit=1
+
+4b. on the PARENT: identical, except p2's hash has one LF appended.
+
+=== $ cd /tmp/PARENT_X/xrpl-auditor && python3 payout_audit.py /tmp/xrpl_ev_gM7ZYp/dup_evaded.json /tmp/xrpl_ev_gM7ZYp/roster2.json ===
+{"issue_counts":{},"issues":[],"report_version":"1.0","status":"clean","totals":{"distinct_tx_hashes":2,"issues":0,"payouts":2,"roster_tasks":2,"well_formed_payouts":2}}
+exit=0
+
+4c. the same file and command on the FIXED tree.
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 payout_audit.py /tmp/xrpl_ev_gM7ZYp/dup_evaded.json /tmp/xrpl_ev_gM7ZYp/roster2.json ===
+{"issue_counts":{"MALFORMED_TX_HASH":1},"issues":[{"detail":"tx_hash must be exactly 64 uppercase hex characters","index":1,"issue":"MALFORMED_TX_HASH","payout_id":"p2","task_id":"task_two"}],"report_version":"1.0","status":"issues","totals":{"distinct_tx_hashes":2,"issues":1,"payouts":2,"roster_tasks":2,"well_formed_payouts":2}}
+exit=1
+
+4d. read 4c carefully -- it is NOT a restored reuse finding.
+The pair is now caught, but it is caught as MALFORMED_TX_HASH, and
+distinct_tx_hashes is still 2. by_hash keys on the raw string and a
+malformed hash is deliberately not normalised before grouping, so
+REUSED_ACROSS_TASKS is still absent for this pair. What changed is
+that the run no longer reports clean and no longer exits 0. That
+limit is pinned by a test rather than left to be discovered:
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 -m unittest -v test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_the_evaded_duplicate_is_reported_as_malformed_not_as_reuse test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_an_unevaded_duplicate_is_still_reported_as_reuse 2>&1 | grep -E '\.\.\. (ok|FAIL)|^(Ran|OK|FAILED)' ===
+Pins the limit of this change rather than papering over it. ... ok
+Control: the reuse path itself is untouched by this change. ... ok
+Ran 2 tests in 0.000s
+OK
+exit=0
+
+--- 5. the regression tests, run against the PARENT source ---
+The new file is copied into the pristine parent checkout under
+another module name, so it imports the PARENT's payout_audit.py.
+
+=== $ cp /tmp/WORK_XRPL/xrpl-auditor/test_payout_audit.py /tmp/PARENT_X/xrpl-auditor/regr_check.py && echo copied ===
+copied
+exit=0
+
+=== $ cd /tmp/PARENT_X/xrpl-auditor && python3 -m unittest regr_check.TestTrailingNewlineIsNotAValidHash regr_check.TestTrailingNewlineEndToEnd 2>&1 | tail -5 ===
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.029s
+
+FAILED (failures=6)
+exit=1
+
+=== $ cd /tmp/PARENT_X/xrpl-auditor && python3 -m unittest -v regr_check.TestTrailingNewlineIsNotAValidHash regr_check.TestTrailingNewlineEndToEnd 2>&1 | grep -E '\.\.\. (ok|FAIL|ERROR)' ===
+test_a_leading_newline_was_already_rejected (regr_check.TestTrailingNewlineIsNotAValidHash.test_a_leading_newline_was_already_rejected) ... ok
+test_a_trailing_newline_is_malformed (regr_check.TestTrailingNewlineIsNotAValidHash.test_a_trailing_newline_is_malformed) ... FAIL
+test_an_evaded_cross_task_duplicate_no_longer_audits_clean (regr_check.TestTrailingNewlineIsNotAValidHash.test_an_evaded_cross_task_duplicate_no_longer_audits_clean) ... FAIL
+test_an_evaded_within_task_duplicate_no_longer_audits_clean (regr_check.TestTrailingNewlineIsNotAValidHash.test_an_evaded_within_task_duplicate_no_longer_audits_clean) ... FAIL
+Control: the reuse path itself is untouched by this change. ... ok
+test_no_single_character_affix_makes_a_valid_hash (regr_check.TestTrailingNewlineIsNotAValidHash.test_no_single_character_affix_makes_a_valid_hash) ... FAIL
+Pins the limit of this change rather than papering over it. ... FAIL
+test_the_exact_64_character_hash_is_still_accepted (regr_check.TestTrailingNewlineIsNotAValidHash.test_the_exact_64_character_hash_is_still_accepted) ... ok
+test_the_cli_does_not_report_clean_on_the_evaded_duplicate (regr_check.TestTrailingNewlineEndToEnd.test_the_cli_does_not_report_clean_on_the_evaded_duplicate) ... FAIL
+exit=1
+
+=== $ rm -f /tmp/PARENT_X/xrpl-auditor/regr_check.py; echo removed_the_copy_this_script_made ===
+removed_the_copy_this_script_made
+exit=0
+
+--- 6. the same two classes on the FIXED tree ---
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 -m unittest -v test_payout_audit.TestTrailingNewlineIsNotAValidHash test_payout_audit.TestTrailingNewlineEndToEnd 2>&1 | grep -E '\.\.\. (ok|FAIL|ERROR)|^(Ran|OK|FAILED)' ===
+test_a_leading_newline_was_already_rejected (test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_a_leading_newline_was_already_rejected) ... ok
+test_a_trailing_newline_is_malformed (test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_a_trailing_newline_is_malformed) ... ok
+test_an_evaded_cross_task_duplicate_no_longer_audits_clean (test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_an_evaded_cross_task_duplicate_no_longer_audits_clean) ... ok
+test_an_evaded_within_task_duplicate_no_longer_audits_clean (test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_an_evaded_within_task_duplicate_no_longer_audits_clean) ... ok
+Control: the reuse path itself is untouched by this change. ... ok
+test_no_single_character_affix_makes_a_valid_hash (test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_no_single_character_affix_makes_a_valid_hash) ... ok
+Pins the limit of this change rather than papering over it. ... ok
+test_the_exact_64_character_hash_is_still_accepted (test_payout_audit.TestTrailingNewlineIsNotAValidHash.test_the_exact_64_character_hash_is_still_accepted) ... ok
+test_the_cli_does_not_report_clean_on_the_evaded_duplicate (test_payout_audit.TestTrailingNewlineEndToEnd.test_the_cli_does_not_report_clean_on_the_evaded_duplicate) ... ok
+Ran 9 tests in 0.027s
+OK
+exit=0
+
+--- 7. the whole suite, both trees ---
+
+=== $ cd /tmp/PARENT_X/xrpl-auditor && python3 -m unittest test_payout_audit 2>&1 | tail -3 ===
+Ran 27 tests in 0.154s
+
+OK
+exit=0
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 -m unittest test_payout_audit 2>&1 | tail -3 ===
+Ran 36 tests in 0.191s
+
+OK
+exit=0
+
+--- 8. nothing else moves: the committed reports still reproduce ---
+The three commands the README documents, run on the FIXED tree, then
+byte-compared against the artifacts committed at the parent.
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 payout_audit.py payouts_clean.json roster.json -o /tmp/xrpl_ev_gM7ZYp/clean.json ===
+status=clean issues=0
+exit=0
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 payout_audit.py payouts_dirty.json roster.json -o /tmp/xrpl_ev_gM7ZYp/d1.json ===
+status=issues issues=9
+exit=1
+
+=== $ cd /tmp/WORK_XRPL/xrpl-auditor && python3 payout_audit.py payouts_dirty.json roster.json -o /tmp/xrpl_ev_gM7ZYp/d2.json ===
+status=issues issues=9
+exit=1
+
+=== $ cmp /tmp/xrpl_ev_gM7ZYp/d1.json /tmp/xrpl_ev_gM7ZYp/d2.json && echo BYTE-IDENTICAL_two_runs ===
+BYTE-IDENTICAL_two_runs
+exit=0
+
+=== $ cmp /tmp/xrpl_ev_gM7ZYp/clean.json /tmp/PARENT_X/xrpl-auditor/audit_clean.json && echo clean_report_unchanged_vs_parent ===
+clean_report_unchanged_vs_parent
+exit=0
+
+=== $ cmp /tmp/xrpl_ev_gM7ZYp/d1.json /tmp/PARENT_X/xrpl-auditor/audit_dirty_run1.json && echo dirty_report_unchanged_vs_parent ===
+dirty_report_unchanged_vs_parent
+exit=0
+
+=== $ cd /tmp/xrpl_ev_gM7ZYp && sha256sum d1.json d2.json ===
+0f4a873696761cf94b9b1da8b7d18fe2ddb01f0ac32c3c21b71aa5f2e9c195b6  d1.json
+0f4a873696761cf94b9b1da8b7d18fe2ddb01f0ac32c3c21b71aa5f2e9c195b6  d2.json
+exit=0
+
+--- 9. the working tree of the fixed checkout ---
+
+=== $ cd /tmp/WORK_XRPL && git status --porcelain --ignored=matching | grep -v __pycache__ ===
+ M transcript-schema/validation_report.json
+ M weak-assertion-scanner/README.md
+ M weak-assertion-scanner/self_scan_report.json
+ M xrpl-auditor/README.md
+ M xrpl-auditor/captured_output.txt
+ M xrpl-auditor/payout_audit.py
+ M xrpl-auditor/test_output.txt
+ M xrpl-auditor/test_payout_audit.py
+?? xrpl-auditor/TRAILING_NEWLINE_EVIDENCE.txt
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################
