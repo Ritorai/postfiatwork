@@ -136,8 +136,7 @@ For every entry in `manifest.json`, branch on `kind`:
      from evidence that has (correctly, expectedly) never changed.
 
 An `expected_exit_code` of `1` on a regenerable entry is not a failure.
-Three of the manifest's regenerable entries (`regression-checker`,
-`claim-crosscheck`, `transcript-schema`) exit `1` by design because their
+Five of the manifest's regenerable entries (`claim-crosscheck`, `nondeterminism-scanner`, `regression-checker`, `transcript-schema` and `weak-assertion-scanner`) exit `1` by design because their
 generators report real, expected findings against this repository
 (un-baselined directories; one intentional discrepancy; real transcript
 findings). The manifest records that expectation per entry, so "the
@@ -372,9 +371,9 @@ audit. Two deliberate choices limit the damage:
 In practice, adding `report-freshness/` to this repository -- and, in the
 same commit, `transcript-schema/` and `adversarial-suite/` -- is itself an
 instance of motivating cases #1/#2 above: they are new tool directories,
-and `regression-checker`, `claim-crosscheck`, and `transcript-schema`
-(the three *regenerable* entries) all enumerate every tool directory or
-every README/report pair in the repository as part of what they check.
+and the five *regenerable* entries (`claim-crosscheck`, `nondeterminism-scanner`, `regression-checker`, `transcript-schema`, and `weak-assertion-scanner`) all enumerate every tool
+directory, every README/report pair, or every `.py` file in the
+repository as part of what they check.
 The committed `freshness_report.json` in this directory reports their
 *actual* state as of this commit, including wherever that self-effect
 shows up -- see "Two-location proof" for the real, observed states
@@ -390,8 +389,8 @@ These are concrete failure modes, not "may produce false positives":
    run-varying value will always read as `stale`, forever, even when
    nothing meaningful changed.** This checker has no concept of "expected
    to differ in this one field" -- it compares whole files byte-for-byte.
-   None of the three regenerable tools in the shipped manifest do this
-   (all three were spot-checked by running them twice and hashing both
+   None of the five regenerable tools in the shipped manifest do this
+   (each was spot-checked by running it twice and hashing both
    outputs), but a manifest entry added later for a tool that does would
    need that tool fixed first (or would simply, correctly, never show
    `match`). Note that this is exactly the failure mode `kind: "pinned"`
@@ -443,7 +442,7 @@ These are concrete failure modes, not "may produce false positives":
    command redirects with `> file` instead of `-o file` (shell
    redirection) is not directly expressible in `generation.argv` (a real
    `execve` argv list, no shell) and would need a small wrapper script,
-   which none of the three regenerable manifest entries here require.
+   which none of the five regenerable manifest entries here require.
 6. **`kind` is a manual, human judgement call, and this checker cannot
    verify it is the right one.** Nothing stops a manifest author from
    marking a genuinely time-varying, should-be-regenerable report as
@@ -505,8 +504,8 @@ is `generation_failed`/`tool_missing`/`pinned_missing`, so it is not `3`).
 This is an honest result, not a placeholder -- adding `report-freshness/`,
 `transcript-schema/`, and `adversarial-suite/` to the repository in the
 same commit is itself a live instance of the motivating cases above: all
-three regenerable entries' generators enumerate tool directories or
-scan README/report/transcript files across the whole repository, and
+five regenerable entries' generators enumerate tool directories or scan
+README/report/transcript/source files across the whole repository, and
 now see three new directories that did not exist when their committed
 reports were generated. The two *pinned* entries are, correctly,
 completely unaffected -- `pinned_present` in both cases, exactly as

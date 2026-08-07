@@ -129,6 +129,26 @@
       "committed_report": "weak-assertion-scanner/self_scan_report.json",
       "expected_exit_code": 1,
       "inputs": []
+    },
+    {
+      "id": "nondeterminism-scanner:self_scan_report.json",
+      "tool": "nondeterminism-scanner",
+      "kind": "regenerable",
+      "description": "AST self-scan for the six non-determinism rules (wall clock, unsorted listdir/walk, unordered iteration, unsafe repr, unseeded random, float money) across every .py file in the repository. A current-state snapshot: it is supposed to describe the repository as it exists right now, so it MUST regenerate byte-for-byte, and any commit that adds or edits Python is expected to refresh it. Added to this manifest during the repair recorded in nondeterminism-scanner/REGENERABILITY_EVIDENCE.txt, which found the committed report reproducible at no commit in the repository's history -- it reported 87 files scanned, a count the tracked tree has never had -- after sitting untouched, with no regenerator and no manifest entry, since the commit that wrote it.",
+      "generation": {
+        "argv": [
+          "python3",
+          "ndscan.py",
+          "--root",
+          "..",
+          "-o",
+          "{OUT}"
+        ],
+        "cwd": "nondeterminism-scanner"
+      },
+      "committed_report": "nondeterminism-scanner/self_scan_report.json",
+      "expected_exit_code": 1,
+      "inputs": []
     }
   ]
 }
