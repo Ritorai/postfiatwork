@@ -350,6 +350,239 @@ class TestCli(unittest.TestCase):
                          [i["name"] for i in b["items"]])
 
 
+class TestOnlyMustSelectSomething(unittest.TestCase):
+    """The repaired defect: --only used to accept anything.
+
+    `--phase` was validated from the start; `--only` was not. An unknown
+    name simply filtered every item away, and the run then wrote a report
+    with total 0, failing 0, every count zero, and exited 0 -- an
+    authoritative green result from a run that checked nothing. A typo of
+    a real directory name ("shebangmode" for "shebang-mode") was enough,
+    and nothing was printed to say so.
+
+    build_report() keeps its old library-level behaviour of returning an
+    empty item list for an unmatched filter (TestFixtureRuns.
+    test_only_filter_restricts_items still pins that); the rejection is at
+    the CLI boundary, which is where a human's typo arrives.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix="regenpre_only_")   # created here
+        self.addCleanup(shutil.rmtree, self.tmp)               # created above
+        self.fx = FixtureRepo(self.tmp)
+
+    def run_cli(self, *args):
+        return subprocess.run(
+            [sys.executable, os.path.join(THIS_DIR, "regenpre.py"),
+             "--root", self.fx.root] + list(args),
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=THIS_DIR)
+
+    def test_unknown_only_name_exits_2_and_says_so(self):
+        p = self.run_cli("--only", "no-such-tool")
+        self.assertEqual(p.returncode, 2, p.stdout.decode()[:300])
+        self.assertIn(b"unknown --only", p.stderr)
+        self.assertIn(b"no-such-tool", p.stderr)
+
+    def test_unknown_only_name_writes_no_green_report(self):
+        """The failure this repair exists to stop.
+
+        Before: stdout carried a full report with total 0 / failing 0 and
+        the process exited 0.
+        """
+        p = self.run_cli("--only", "no-such-tool")
+        self.assertEqual(p.stdout, b"")
+        self.assertNotEqual(p.returncode, 0)
+
+    def test_a_typo_of_a_real_name_is_rejected(self):
+        p = self.run_cli("--only", "gentool")          # real name: gen-tool
+        self.assertEqual(p.returncode, 2)
+        self.assertIn(b"gentool", p.stderr)
+
+    def test_the_error_lists_the_names_that_do_work(self):
+        p = self.run_cli("--only", "no-such-tool")
+        for name in (b"gen-tool", b"base-tool", b"tx-tool"):
+            self.assertIn(name, p.stderr)
+
+    def test_one_bad_name_among_good_ones_is_still_rejected(self):
+        p = self.run_cli("--only", "gen-tool,no-such-tool")
+        self.assertEqual(p.returncode, 2)
+        self.assertIn(b"no-such-tool", p.stderr)
+        self.assertNotIn(b"unknown --only: gen-tool", p.stderr)
+
+    def test_an_empty_only_still_means_no_filter(self):
+        """`--only ""` was falsy at every previous commit.
+
+        It therefore meant "no filter" and the run checked everything.
+        Rejecting it would change the findings path, not repair it -- an
+        earlier draft of this repair did exactly that, and a drifting
+        repository stopped exiting 1.
+        """
+        p = self.run_cli("--only", "")
+        self.assertEqual(p.returncode, 0, p.stderr.decode()[:400])
+        self.assertEqual(json.loads(p.stdout.decode())["total"], 3)
+
+    def test_an_empty_only_on_a_drifting_repository_still_exits_1(self):
+        tmp = tempfile.mkdtemp(prefix="regenpre_empty_bad_")   # created here
+        self.addCleanup(shutil.rmtree, tmp)                    # created above
+        bad = FixtureRepo(tmp, good=False)
+        p = subprocess.run(
+            [sys.executable, os.path.join(THIS_DIR, "regenpre.py"),
+             "--root", bad.root, "--only", ""],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=THIS_DIR)
+        self.assertEqual(p.returncode, 1, p.stderr.decode()[:400])
+        self.assertGreater(json.loads(p.stdout.decode())["failing"], 0)
+
+    def test_a_non_empty_only_that_names_nothing_is_rejected(self):
+        """The shape that really did produce a green empty report.
+
+        `--only ","` parsed to {""} at the parent: a filter that matches
+        no tool, so every item was dropped and the run exited 0.
+        """
+        for value in (",", "  ", " , , "):
+            p = self.run_cli("--only", value)
+            self.assertEqual(p.returncode, 2, "%r was accepted" % value)
+            self.assertIn(b"names nothing", p.stderr)
+            self.assertEqual(p.stdout, b"")
+
+    def test_a_real_name_in_the_wrong_phase_is_rejected_distinctly(self):
+        """Also a run that would check nothing, but a different mistake.
+
+        gen-tool is a manifest entry; asking for it in the transcripts
+        phase is not a typo, it is a combination that selects no items.
+        The message has to say which, or the fix just moves the confusion.
+        """
+        p = self.run_cli("--only", "gen-tool", "--phase", "transcripts")
+        self.assertEqual(p.returncode, 2)
+        self.assertIn(b"selects nothing in phase", p.stderr)
+        self.assertNotIn(b"unknown --only", p.stderr)
+
+    def test_valid_only_still_runs_and_exits_0(self):
+        p = self.run_cli("--only", "gen-tool")
+        self.assertEqual(p.returncode, 0, p.stderr.decode()[:400])
+        report = json.loads(p.stdout.decode())
+        self.assertEqual([i["name"] for i in report["items"]],
+                         ["gen-tool:report.json"])
+
+    def test_valid_only_with_a_matching_phase_still_runs(self):
+        p = self.run_cli("--only", "gen-tool", "--phase", "manifest")
+        self.assertEqual(p.returncode, 0, p.stderr.decode()[:400])
+        self.assertEqual(json.loads(p.stdout.decode())["total"], 1)
+
+    def test_valid_only_still_reports_a_real_failure_as_exit_1(self):
+        """The findings path must be untouched by a usage-error change."""
+        tmp = tempfile.mkdtemp(prefix="regenpre_only_bad_")   # created here
+        self.addCleanup(shutil.rmtree, tmp)                   # created above
+        bad = FixtureRepo(tmp, good=False)
+        p = subprocess.run(
+            [sys.executable, os.path.join(THIS_DIR, "regenpre.py"),
+             "--root", bad.root, "--only", "base-tool"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=THIS_DIR)
+        self.assertEqual(p.returncode, 1, p.stderr.decode()[:400])
+
+    def test_no_only_flag_at_all_is_unaffected(self):
+        p = self.run_cli()
+        self.assertEqual(p.returncode, 0, p.stderr.decode()[:400])
+        self.assertEqual(json.loads(p.stdout.decode())["total"], 3)
+
+
+class TestSelectableTargets(unittest.TestCase):
+    """The discovery the rejection rests on. It must run nothing."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix="regenpre_sel_")    # created here
+        self.addCleanup(shutil.rmtree, self.tmp)               # created above
+        self.fx = FixtureRepo(self.tmp)
+
+    def test_each_phase_reports_its_own_names(self):
+        found = rp.selectable_targets(self.fx.root, set(rp.PHASES))
+        self.assertEqual(found["manifest"], {"gen-tool"})
+        self.assertEqual(found["baselines"], {"base-tool"})
+        self.assertEqual(found["transcripts"], {"tx-tool"})
+
+    def test_only_the_requested_phases_are_discovered(self):
+        found = rp.selectable_targets(self.fx.root, {"baselines"})
+        self.assertEqual(set(found), {"baselines"})
+
+    def test_a_missing_inventory_is_an_empty_set_not_a_crash(self):
+        os.remove(os.path.join(self.fx.root, "regression-checker",
+                               "baselines.json"))
+        found = rp.selectable_targets(self.fx.root, set(rp.PHASES))
+        self.assertEqual(found["baselines"], set())
+
+    #: Every way an inventory can be wrong. The first is the only one an
+    #: earlier version survived: the rest parse as JSON and then fail on
+    #: shape, which escaped as TypeError/AttributeError and aborted the
+    #: run with exit 1 -- indistinguishable from a real finding.
+    BROKEN_MANIFESTS = [
+        ("not json", "{not json at all"),
+        ("a json list", "[1, 2, 3]"),
+        ("a json string", '"entries"'),
+        ("a json number", "7"),
+        ("entries is a string", '{"entries": "nope"}'),
+        ("entries is an object", '{"entries": {"a": 1}}'),
+        ("entries key missing", '{"schema_version": 2}'),
+        ("entries holds strings", '{"entries": ["a", "b"]}'),
+        ("entry has no tool", '{"entries": [{"kind": "regenerable"}]}'),
+        ("tool is not a string",
+         '{"entries": [{"kind": "regenerable", "tool": 7}]}'),
+        ("empty file", ""),
+    ]
+
+    def test_no_shape_of_broken_manifest_raises(self):
+        for label, body in self.BROKEN_MANIFESTS:
+            write(os.path.join(self.fx.root, "report-freshness",
+                               "manifest.json"), body)
+            with self.subTest(label):
+                found = rp.selectable_targets(self.fx.root, set(rp.PHASES))
+                self.assertEqual(found["manifest"], set())
+                # the other phases must still be discovered
+                self.assertEqual(found["baselines"], {"base-tool"})
+
+    def test_no_shape_of_broken_baselines_raises(self):
+        for label, body in [("not json", "{nope"), ("a list", "[]"),
+                            ("tools is a list", '{"tools": []}'),
+                            ("tools missing", "{}"),
+                            ("tools is a string", '{"tools": "x"}')]:
+            write(os.path.join(self.fx.root, "regression-checker",
+                               "baselines.json"), body)
+            with self.subTest(label):
+                found = rp.selectable_targets(self.fx.root, set(rp.PHASES))
+                self.assertEqual(found["baselines"], set())
+
+    def test_a_broken_inventory_in_an_unselected_phase_does_not_abort(self):
+        """The regression this pins, end to end through the CLI.
+
+        `--phase baselines` never reads manifest.json in the phase
+        functions. Validation reads all three inventories so it can tell
+        "no such name" from "wrong phase", so a broken manifest.json now
+        reaches code it did not reach before -- and must not turn a
+        working run into a traceback.
+        """
+        write(os.path.join(self.fx.root, "report-freshness", "manifest.json"),
+              '{"entries": [1, 2, 3]}')
+        p = subprocess.run(
+            [sys.executable, os.path.join(THIS_DIR, "regenpre.py"),
+             "--root", self.fx.root, "--phase", "baselines",
+             "--only", "base-tool"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=THIS_DIR)
+        self.assertNotIn(b"Traceback", p.stderr)
+        self.assertEqual(p.returncode, 0, p.stderr.decode()[:400])
+        self.assertEqual(json.loads(p.stdout.decode())["total"], 1)
+
+    def test_discovery_does_not_regenerate_anything(self):
+        """It reads inventories; it must not run a generator.
+
+        Pinned by breaking every generator first: if discovery executed
+        any of them this would raise or hang, and the names would still
+        have to come back.
+        """
+        for rel in ("gen-tool/gen.py", "base-tool/b.py", "tx-tool/capture.sh"):
+            write(os.path.join(self.fx.root, rel), "exit 1\n")
+        found = rp.selectable_targets(self.fx.root, set(rp.PHASES))
+        self.assertEqual(found["manifest"], {"gen-tool"})
+        self.assertEqual(found["transcripts"], {"tx-tool"})
+
+
 class TestReportShape(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp(prefix="regenpre_shape_")

@@ -6,9 +6,9 @@
 --- unit suite ---
 
 === $ python3 -m unittest test_regenpre ===
-.........................................
+.............................................................
 ----------------------------------------------------------------------
-Ran 41 tests in 0.911s
+Ran 61 tests in 1.693s
 
 OK
 exit=0
@@ -46,9 +46,9 @@ exit=0
 --- the three inventories this tool unifies, counted from the tree ---
 
 === $ python3 inventory_counts.py .. ===
-manifest regenerable entries: 4
+manifest regenerable entries: 5
 regression-checker baselines: 23
-capture.sh scripts:           11
+capture.sh scripts:           12
 capture.sh scripts run by any other single command: 0
 exit=0
 

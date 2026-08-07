@@ -1,0 +1,284 @@
+############################################################
+# ONLY_REJECTION_EVIDENCE.txt
+#
+# Subject: regenpre.py's --only filter, which accepted any string at
+# all. An unknown name filtered every item away and the run then wrote a
+# report saying total 0, failing 0, every count zero -- and exited 0.
+#
+# Every record below is a real run: a "=== $ command ===" header, the
+# verbatim output, and an exit= line. Commands are relative to
+# regen-preflight/ unless the header says otherwise.
+############################################################
+
+--- 0. the inconsistency inside one file ---
+The same main() validates --phase and does not validate --only. That is
+visible in the source and in the documented exit-code table.
+
+=== $ git -C .. show a9007001e474217365e33dc65b8ded6ab81eecb3:regen-preflight/regenpre.py | grep -n 'unknown --phase' -B 3 -A 3 ===
+59-Exit codes:
+60-    0  every item is match or volatile_only
+61-    1  at least one item is environment, drift or error
+62:    2  usage error (bad --root, unknown --phase)
+63-"""
+64-import argparse
+65-import hashlib
+--
+341-    phases = args.phase or sorted(PHASES)
+342-    unknown = [p for p in phases if p not in PHASES]
+343-    if unknown:
+344:        sys.stderr.write("regenpre.py: unknown --phase: %s\n"
+345-                         % ", ".join(unknown))
+346-        return 2
+347-    only = set(x.strip() for x in args.only.split(",")) if args.only else None
+exit=0
+
+=== $ git -C .. show a9007001e474217365e33dc65b8ded6ab81eecb3:regen-preflight/regenpre.py | grep -n 'args.only' -A 1 ===
+347:    only = set(x.strip() for x in args.only.split(",")) if args.only else None
+348-
+exit=0
+
+=== $ git -C .. show a9007001e474217365e33dc65b8ded6ab81eecb3:regen-preflight/regenpre.py | grep -n '2  usage error' ===
+62:    2  usage error (bad --root, unknown --phase)
+exit=0
+
+--- 1. the defect, at the parent commit, against the real repository ---
+regenpre.py is extracted from the parent commit into a scratch
+directory outside the checkout and pointed at this repository. The
+name is not a tool; the run has nothing to do and says so by
+exiting 0 with a clean report.
+
+=== $ mkdir -p ../../cli_evidence_scratch/parent && git -C .. archive a9007001e474217365e33dc65b8ded6ab81eecb3 regen-preflight | tar -x -C ../../cli_evidence_scratch/parent ===
+exit=0
+
+=== $ python3 ../../cli_evidence_scratch/parent/regen-preflight/regenpre.py --root .. --only no-such-tool -o ../../cli_evidence_scratch/parent_unknown.json ===
+exit=0
+
+That exit=0 is the finding. Here is what it wrote:
+
+=== $ cat ../../cli_evidence_scratch/parent_unknown.json ===
+{"counts":{"drift":0,"environment":0,"error":0,"match":0,"volatile_only":0},"environment_patterns":["python_version","unittest_test_id"],"failing":0,"items":[],"phases":["baselines","manifest","transcripts"],"schema_version":1,"tool":"regenpre","total":0,"volatile_patterns":["unittest_duration","tempdir_name"]}
+exit=0
+
+--- 2. the same thing from a plausible typo ---
+shebang-mode is a real directory with a real capture.sh. Dropping
+the hyphen is the kind of mistake a person makes in a pre-commit
+hook, and at the parent commit it is indistinguishable from a
+successful check.
+
+=== $ ls -d ../shebang-mode ===
+../shebang-mode
+exit=0
+
+=== $ python3 ../../cli_evidence_scratch/parent/regen-preflight/regenpre.py --root .. --only shebangmode -o ../../cli_evidence_scratch/parent_typo.json ===
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('../../cli_evidence_scratch/parent_typo.json'));print('total',d['total'],'failing',d['failing'],'items',len(d['items']),'counts',d['counts'])" ===
+total 0 failing 0 items 0 counts {'drift': 0, 'environment': 0, 'error': 0, 'match': 0, 'volatile_only': 0}
+exit=0
+
+--- 3. after the repair: the same commands ---
+Exit 2, the report is not written, and the message names both the
+value that was wrong and the values that would have worked.
+
+=== $ python3 regenpre.py --root .. --only no-such-tool -o ../../cli_evidence_scratch/after_unknown.json ===
+regenpre.py: unknown --only: no-such-tool
+  --only filters the names this repository actually offers; a name that matches none of them selects no items, and a run that checked nothing must not exit 0.
+  known names: budget-forecaster, bundle-index, claim-crosscheck, commit-claim-auditor, consolidate, dup-detector, env-leak-scanner, event-linter, evidence-harness, evidence-manifest, evidence-scorer, index-generator, lifecycle-linter, link-integrity, loop-health, nondeterminism-scanner, payload-validator, preflight, queue-auditor, readme-index, regen-preflight, regression-checker, reward-anomaly, reward-reconciler, schema-checker, shebang-mode, staleness-monitor, sybil-detector, throughput-reporter, transcript-drift, transcript-schema, wallet-reconciler, weak-assertion-scanner, xrpl-address, xrpl-auditor
+exit=2
+
+The -o file is not created at all.  exits 1 when the path
+is absent, so exit=1 on the next record IS the claim -- there is no
+trailing echo whose own success could stand in for it.
+
+=== $ test -e ../../cli_evidence_scratch/after_unknown.json ===
+exit=1
+
+=== $ python3 regenpre.py --root .. --only shebangmode -o ../../cli_evidence_scratch/after_typo.json ===
+regenpre.py: unknown --only: shebangmode
+  --only filters the names this repository actually offers; a name that matches none of them selects no items, and a run that checked nothing must not exit 0.
+  known names: budget-forecaster, bundle-index, claim-crosscheck, commit-claim-auditor, consolidate, dup-detector, env-leak-scanner, event-linter, evidence-harness, evidence-manifest, evidence-scorer, index-generator, lifecycle-linter, link-integrity, loop-health, nondeterminism-scanner, payload-validator, preflight, queue-auditor, readme-index, regen-preflight, regression-checker, reward-anomaly, reward-reconciler, schema-checker, shebang-mode, staleness-monitor, sybil-detector, throughput-reporter, transcript-drift, transcript-schema, wallet-reconciler, weak-assertion-scanner, xrpl-address, xrpl-auditor
+exit=2
+
+--- 4. two more ways a run could check nothing, before and after ---
+A value that splits into no names at all, and a real name asked
+for in a phase that cannot select it. Both produced the same green
+empty report at the parent; they are different mistakes, so they
+get different messages rather than one blanket error.
+
+First, at the parent:
+
+=== $ python3 ../../cli_evidence_scratch/parent/regen-preflight/regenpre.py --root .. --only ',' -o ../../cli_evidence_scratch/parent_commas.json ===
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('../../cli_evidence_scratch/parent_commas.json'));print('total',d['total'],'failing',d['failing'])" ===
+total 0 failing 0
+exit=0
+
+=== $ python3 ../../cli_evidence_scratch/parent/regen-preflight/regenpre.py --root .. --only shebang-mode --phase manifest -o ../../cli_evidence_scratch/parent_phase.json ===
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('../../cli_evidence_scratch/parent_phase.json'));print('total',d['total'],'failing',d['failing'])" ===
+total 0 failing 0
+exit=0
+
+And after:
+
+=== $ python3 regenpre.py --root .. --only ',' -o ../../cli_evidence_scratch/after_commas.json ===
+regenpre.py: --only ',' names nothing after splitting on commas; it would select no items and the run would report success having checked nothing. Omit --only to check everything.
+exit=2
+
+=== $ python3 regenpre.py --root .. --only shebang-mode --phase manifest -o ../../cli_evidence_scratch/after_phase.json ===
+regenpre.py: --only shebang-mode selects nothing in phase(s) manifest
+  those names exist, but not in the phases requested, so this run would check nothing and report success.
+  selectable there: claim-crosscheck, nondeterminism-scanner, regression-checker, transcript-schema, weak-assertion-scanner
+exit=2
+
+--- 4b. what is NOT rejected, and why ---
+An EMPTY --only is left alone. At the parent an empty string was
+falsy at the point the filter is built, so it meant "no filter"
+and the run checked everything -- it was never a run that checked
+nothing. An earlier draft of this repair rejected it, which turned
+a drifting repository from exit 1 with findings into exit 2 with
+no report. That is a behaviour change on the findings path, which
+is the one thing this task forbids. Both sides are recorded.
+
+=== $ python3 ../../cli_evidence_scratch/parent/regen-preflight/regenpre.py --root .. --only '' -o ../../cli_evidence_scratch/parent_empty.json ===
+exit=1
+
+=== $ python3 regenpre.py --root .. --only '' -o ../../cli_evidence_scratch/after_empty.json ===
+exit=1
+
+=== $ python3 -c "import json,hashlib;a=open('../../cli_evidence_scratch/parent_empty.json','rb').read();b=open('../../cli_evidence_scratch/after_empty.json','rb').read();pa,pb=json.loads(a),json.loads(b);print('parent total',pa['total'],'after total',pb['total']);print('same item names:',[i['name'] for i in pa['items']]==[i['name'] for i in pb['items']])" ===
+parent total 40 after total 40
+same item names: True
+exit=0
+
+--- 5. valid input is untouched ---
+A name that selects something still runs, still exits 0, and still
+produces the same items. --phase validation is unchanged.
+
+=== $ python3 regenpre.py --root .. --only shebang-mode -o ../../cli_evidence_scratch/valid_one.json ===
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('../../cli_evidence_scratch/valid_one.json'));print('items',[i['name'] for i in d['items']]);print('counts',d['counts'])" ===
+items ['shebang-mode']
+counts {'drift': 0, 'environment': 0, 'error': 0, 'match': 0, 'volatile_only': 1}
+exit=0
+
+=== $ python3 regenpre.py --root .. --only claim-crosscheck,shebang-mode -o ../../cli_evidence_scratch/valid_two.json ===
+exit=0
+
+=== $ python3 -c "import json;d=json.load(open('../../cli_evidence_scratch/valid_two.json'));print('items',[i['name'] for i in d['items']])" ===
+items ['claim-crosscheck:sample_run.json', 'shebang-mode']
+exit=0
+
+=== $ python3 regenpre.py --root .. --phase no-such-phase -o ../../cli_evidence_scratch/badphase.json ===
+regenpre.py: unknown --phase: no-such-phase
+exit=2
+
+--- 6. the findings path still exits 1 ---
+A usage-error change must not touch the result path. The fixture
+repository the test suite builds is used here, in its deliberately
+drifting variant, with a valid --only.
+
+The script the next record runs, in full. It is written to a
+scratch file outside the repository so the header below can be a
+single line; copy it back out to re-run it.
+    import json, os, subprocess, sys
+    sys.path.insert(0, os.path.abspath("."))
+    sys.dont_write_bytecode = True
+    import test_regenpre as T                       # its FixtureRepo builds the tree
+    
+    scratch = os.path.abspath(sys.argv[1])
+    base = os.path.join(scratch, "fixture_drifting")   # created here
+    os.makedirs(base, exist_ok=True)
+    fx = T.FixtureRepo(base, good=False)
+    proc = subprocess.run(
+        [sys.executable, "regenpre.py", "--root", fx.root, "--only", "base-tool"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+    print("regenpre --only base-tool on a drifting fixture: exit", proc.returncode)
+    report = json.loads(proc.stdout.decode("utf-8"))
+    print("items:", [(i["name"], i["state"]) for i in report["items"]])
+    print("failing:", report["failing"])
+    ok = proc.returncode == 1 and report["failing"] == 1
+    print("FINDINGS PATH UNCHANGED" if ok else "FINDINGS PATH CHANGED")
+    sys.exit(0 if ok else 1)
+
+=== $ python3 ../../cli_evidence_scratch/findings_path.py ../../cli_evidence_scratch ===
+regenpre --only base-tool on a drifting fixture: exit 1
+items: [('base-tool', 'drift')]
+failing: 1
+FINDINGS PATH UNCHANGED
+exit=0
+
+--- 7. the tests ---
+The new tests are run against the PARENT copy extracted in section
+1, with only the test file replaced, so what fails there is the
+old behaviour and not a missing fixture.
+
+=== $ cp test_regenpre.py ../../cli_evidence_scratch/parent/regen-preflight/test_regenpre.py ===
+exit=0
+
+THE NEXT RECORD IS DELIBERATELY RED, and is left verbatim.
+transcript-schema/validate_transcript.py, pointed at this file,
+reports exactly one finding for it -- TRANSCRIPT_SHOWS_TEST_FAILURE
+-- and that finding is correct: this transcript does show a test
+run failing. It has to. A repair whose tests do not fail against the
+parent commit has not demonstrated anything. An earlier draft
+prefixed the output to keep the validator quiet and was reverted:
+the prefix hid the "Ran N tests" and verdict lines, so the file
+then failed validation for CONCEALING a test result, which is the
+worse of the two. Nothing repository-wide moves either way --
+validate_transcript --root .. reads <tool>/captured_output.txt by
+that exact name and never sees this file.
+
+=== $ cd ../../cli_evidence_scratch/parent/regen-preflight && python3 -m unittest test_regenpre.TestOnlyMustSelectSomething test_regenpre.TestSelectableTargets 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 20 tests in 0.790s
+
+FAILED (failures=7, errors=20)
+exit=1
+
+Four of those sixteen pass at the parent: they are the valid-input
+tests, which must pass on both sides or the repair would be a
+behaviour change rather than a rejection. The rest are the defect.
+
+=== $ python3 -m unittest test_regenpre.TestOnlyMustSelectSomething test_regenpre.TestSelectableTargets 2>&1 | tail -3 ===
+Ran 20 tests in 0.907s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_regenpre 2>&1 | tail -3 ===
+Ran 61 tests in 2.077s
+
+OK
+exit=0
+
+--- 8. everything this commit changes ---
+Generated last, against the fully staged tree, so this is the whole
+commit and not just the source fix. The three directories beyond
+regen-preflight are mechanical consequences of adding one tracked
+file and 20 tests: shebang-mode counts tracked files, weak-
+assertion-scanner counts tests, and nondeterminism-scanner records
+one finding whose line number moved. This file appears in the
+listing as itself, which is what generating it last means.
+
+=== $ cd .. && git status --porcelain --ignored=matching ===
+M  nondeterminism-scanner/README.md
+M  nondeterminism-scanner/self_scan_report.json
+AM regen-preflight/ONLY_REJECTION_EVIDENCE.txt
+M  regen-preflight/README.md
+M  regen-preflight/captured_output.txt
+M  regen-preflight/regenpre.py
+M  regen-preflight/test_regenpre.py
+M  shebang-mode/README.md
+M  shebang-mode/selfscan_output.txt
+M  weak-assertion-scanner/README.md
+M  weak-assertion-scanner/self_scan_report.json
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################

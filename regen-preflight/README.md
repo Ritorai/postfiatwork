@@ -39,12 +39,27 @@ end-to-end run over the fixture repository.
 - `python3 regenpre.py --root .. --phase transcripts` — one family.
   Repeatable; the phases are `manifest`, `baselines`, `transcripts`.
 - `python3 regenpre.py --root .. --only index-generator,readme-index` — one
-  or more named tools.
+  or more named tools. A name that selects nothing is refused: see below.
 - `python3 regenpre.py --root .. -o preflight_report.json` — write the JSON
   report to a file instead of stdout.
 
 Exit `0` when every item is `match` or `volatile_only`; `1` when anything is
 `environment`, `drift` or `error`; `2` on a usage error.
+
+**`--only` has to select something.** A name this repository does not offer
+(a typo of a real directory is the common case), or a value that splits
+into no names at all, exits `2` and names both the mistake and the names
+that would have worked; so does a real name asked for in a `--phase` that
+cannot select it. Until this was repaired any string was accepted, the
+filter dropped every item, and the run wrote a report saying `total: 0`,
+`failing: 0` and exited `0` — an authoritative green result from a run
+that checked nothing. `ONLY_REJECTION_EVIDENCE.txt` records that
+behaviour at the parent commit and the exit codes now.
+
+An **empty** `--only` is deliberately not refused: it was falsy where the
+filter is built, so it has always meant "no filter" and checked
+everything. Rejecting it would change the findings path rather than
+repair it.
 
 ## Nothing runs in your working tree
 
@@ -154,7 +169,7 @@ recorded interpreter differs to come back `environment`.
 
 ```
 regenpre.py            entrypoint / implementation
-test_regenpre.py       test suite (41 tests)
+test_regenpre.py       test suite (61 tests)
 capture.sh             regenerates captured_output.txt; every record is a real run
 captured_output.txt    real transcript: unit suite, CLI contract, fixture end-to-end
 preflight_report.json  a full run over this repository (see the caveat above)

@@ -59,7 +59,9 @@ Usage:
 Exit codes:
     0  every item is match or volatile_only
     1  at least one item is environment, drift or error
-    2  usage error (bad --root, unknown --phase)
+    2  usage error (bad --root, unknown --phase, or an --only
+       name that selects nothing -- a run that checked nothing
+       must never exit 0)
 """
 import argparse
 import hashlib
@@ -165,6 +167,70 @@ def item(phase, name, command, state, reason, **extra):
          "state": state, "reason": reason}
     d.update(extra)
     return d
+
+
+def _load(path, key, want):
+    """Read `key` out of a JSON object, or return an empty `want`.
+
+    Discovery is a lookup, not a validation pass: the phase functions
+    below are what report a broken inventory, with a state and a reason.
+    So every way this can fail -- unreadable, not JSON, not an object,
+    key absent, key of the wrong type -- has to come back as "no names
+    here" rather than as an exception. An earlier version caught only
+    (ValueError, KeyError, OSError), which let a manifest.json that
+    parsed but held a list escape as a TypeError and abort the whole run
+    with exit 1: the code this tool documents as "at least one item is
+    environment, drift or error". A crash that looks like a finding is
+    the exact defect class this file was repaired for.
+    """
+    try:
+        with open(path, encoding="utf-8") as fh:
+            doc = json.load(fh)
+    except (OSError, ValueError):
+        return want()
+    if not isinstance(doc, dict):
+        return want()
+    value = doc.get(key)
+    return value if isinstance(value, want) else want()
+
+
+def selectable_targets(root, phases):
+    """-> {phase: {name, ...}} of every --only value that selects something.
+
+    Discovery only: reads the same three inventories the phase functions
+    read and runs nothing. `--only` is a filter over these names, so a
+    name that appears in none of them can never select an item -- which is
+    why it has to be a usage error rather than an empty, green report.
+    """
+    found = {}
+    if "manifest" in phases:
+        path = os.path.join(root, "report-freshness", "manifest.json")
+        names = set()
+        if os.path.isfile(path):
+            entries = _load(path, "entries", list)
+            names = {e["tool"] for e in entries
+                     if isinstance(e, dict) and e.get("kind") == "regenerable"
+                     and isinstance(e.get("tool"), str)}
+        found["manifest"] = names
+    if "baselines" in phases:
+        path = os.path.join(root, "regression-checker", "baselines.json")
+        names = set()
+        if os.path.isfile(path):
+            names = {t for t in _load(path, "tools", dict) if isinstance(t, str)}
+        found["baselines"] = names
+    if "transcripts" in phases:
+        try:
+            # sorted() only for tidiness -- the result is a set, so
+            # listdir order cannot reach the output. Written this way so
+            # this line does not add an ND002 finding to the repository's
+            # own nondeterminism self-scan for a difference that has no
+            # observable effect.
+            names = {d for d in sorted(os.listdir(root))
+                     if os.path.isfile(os.path.join(root, d, "capture.sh"))}
+        except OSError:
+            names = set()
+        found["transcripts"] = names
+    return found
 
 
 def check_manifest(root, only):
@@ -344,7 +410,53 @@ def main(argv=None):
         sys.stderr.write("regenpre.py: unknown --phase: %s\n"
                          % ", ".join(unknown))
         return 2
-    only = set(x.strip() for x in args.only.split(",")) if args.only else None
+    only = None
+    if args.only:
+        # `--only ""` is NOT rejected: at every previous commit an empty
+        # string was falsy here, so it meant "no filter" and the run
+        # checked everything. Turning that into an error would change the
+        # findings path -- a drifting repository would stop exiting 1 --
+        # which is a different bug, not a fix. `--only ","` or `--only
+        # "  "` are a different matter: they are non-empty strings that
+        # name nothing, they DID produce the silent green report, and
+        # they are rejected below.
+        only = set(x.strip() for x in args.only.split(",") if x.strip())
+        root_abs = os.path.abspath(args.root)
+        # Validated against EVERY phase, not just the selected ones, so
+        # that the two failure modes get different messages: a name this
+        # repository has never heard of, versus a real name that the
+        # chosen --phase cannot select.
+        everywhere = selectable_targets(root_abs, set(PHASES))
+        known_all = set().union(*everywhere.values()) if everywhere else set()
+        if not only:
+            sys.stderr.write(
+                "regenpre.py: --only %r names nothing after splitting on "
+                "commas; it would select no items and the run would report "
+                "success having checked nothing. Omit --only to check "
+                "everything.\n" % args.only)
+            return 2
+        unknown = sorted(only - known_all)
+        if unknown:
+            sys.stderr.write(
+                "regenpre.py: unknown --only: %s\n"
+                "  --only filters the names this repository actually "
+                "offers; a name that matches none of them selects no "
+                "items, and a run that checked nothing must not exit 0.\n"
+                "  known names: %s\n"
+                % (", ".join(unknown),
+                   ", ".join(sorted(known_all)) or "(none discovered)"))
+            return 2
+        here = selectable_targets(root_abs, set(phases))
+        selectable = set().union(*here.values()) if here else set()
+        if not (only & selectable):
+            sys.stderr.write(
+                "regenpre.py: --only %s selects nothing in phase(s) %s\n"
+                "  those names exist, but not in the phases requested, so "
+                "this run would check nothing and report success.\n"
+                "  selectable there: %s\n"
+                % (", ".join(sorted(only)), ", ".join(sorted(phases)),
+                   ", ".join(sorted(selectable)) or "(none)"))
+            return 2
 
     report = build_report(os.path.abspath(args.root), phases, only)
     text = canonical_json(report)
