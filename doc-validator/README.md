@@ -9,6 +9,7 @@ document, and reports three kinds of "undocumented reality":
 1. **missing documented flags** -- argparse defines a flag the README never mentions, or vice versa
 2. **unreachable / undocumented exit codes** -- the README and the code disagree about what `sys.exit()` values are possible
 3. **command blocks that do not run** -- the exact commands shown in the README either fail when actually executed, or cannot be safely executed at all
+4. **broken entrypoints** -- a command line names a repository-local script or module that is not there, or that the shell cannot start
 
 ## Why AST, never `import`
 
@@ -158,14 +159,16 @@ the whole document for them produced exactly this kind of false positive
 during development (see "one real bug I found and fixed," below).
 
 ### DOC005_COMMAND_BLOCK_FAILED
-**Rule:** a command line that passes the safety gate (see below) but does
-not run as written: the target script does not exist inside the tool
-directory (static check, fires even under `--no-run`), the process times
-out after 60s, fails to start, or -- the main signal -- prints
+**Rule:** a command line that passes the safety gate (see below) and then
+does not run as written: the process times out after 60s, fails to start,
+or -- the main signal -- prints
 `Traceback (most recent call last):` to stderr, indicating an uncaught
 Python exception. A clean nonzero exit code (e.g. a tool correctly
 reporting "findings present" via `sys.exit(1)`) is **not** a failure; only
-a genuine crash is.
+a genuine crash is. **"The target file is not there" is no longer DOC005**
+-- it moved to DOC009, which asks that question once, the same way, for
+every launcher form. DOC005 now means only what its name says: docval ran
+the command and the run failed.
 **False-positive risk:** a tool that legitimately prints the literal string
 "Traceback (most recent call last):" as *data* (e.g. while testing an
 error-formatting feature) would be misclassified as a crash. Converse risk
@@ -206,6 +209,103 @@ CLI (e.g. a repository's top-level `README.md` + `LICENSE`, no tool) will
 trigger DOC008 even though it was never meant to be a "tool" in this
 convention. See the self-scan for a concrete instance (`repo-root`).
 
+### DOC009_BROKEN_ENTRYPOINT
+**Rule:** a command line in a fenced command-bearing block names a
+repository-local file that either does not exist, or exists and cannot be
+started. Purely static -- nothing is executed, so DOC009 is byte-identical
+with and without `--no-run`.
+
+Recognized launcher forms, and the file each one names:
+
+| Written in the README | Entrypoint it names |
+|---|---|
+| `python3 x.py`, `python x.py` | `x.py` |
+| `bash x.sh`, `sh x.sh` (flags skipped) | `x.sh` |
+| `./x.sh` | `x.sh`, **and** its executable bit |
+| `python3 -m unittest test_x.TestY.test_z` | `test_x.py` |
+
+Anything else names no file and is left entirely to the safety gate:
+`sha256sum`, `cmp`, `git`, a bare `python3`, and three cases that review
+proved are not paths and were being reported as though they were:
+
+- **`-c` anywhere** (`bash -c 'echo hello'`, `python3 -c "print(1)"`). It
+  consumes the next word as an inline program. Treating `echo hello` as a
+  filename turns a shell one-liner into a phantom finding, and this
+  repository writes that shape in four READMEs.
+- **`python3 -m <anything but unittest>`** (`-m pip`, `-m venv`,
+  `-m json.tool`, `-m http.server`). A module name says nothing about
+  where the module lives, and there is no way to tell a typo'd local
+  module from an installed one without importing -- which this tool never
+  does. So nothing is claimed either way.
+- **`python3 -m unittest discover`**. `discover` is a subcommand, not a
+  module, and it is the most common test invocation in this tree. Only a
+  target matching `^test[_A-Za-z0-9]*$` is treated as naming a local file.
+
+**Two working directories, because this repository uses both.** A target
+counts as present if it resolves under the tool's own directory *or*
+under the directory containing it. `python3 driftcheck.py --root .` and
+`python3 transcript-drift/driftcheck.py --root .` are both correct
+READMEs; the second is written to be run from the repository root. Before
+this check existed the resolver knew only the first convention, and the
+repository-wide sweep below shows what that cost: **13 of the 15 DOC005
+findings in this tree were that false positive**, in four tools whose
+READMEs are correct as written.
+
+**Blocks that `cd` are exempt.** A block containing a `cd` sets a
+working directory this checker cannot know -- the repository's own top
+README runs `git clone`, then `cd postfiatwork/schema-checker`, then
+`python3 -m unittest test_schema_check`, which is correct and names a
+directory that does not exist until the clone finishes. The whole block
+is skipped for DOC009 rather than guessed at. The safety gate is
+unaffected: DOC005 and DOC006 still apply inside such blocks.
+
+Whether a line *is* a `cd` is decided by tokenizing it and looking at its
+first word, not by searching the block text. A regex over the body did
+both wrong things at once, and review found both: it matched the `cd`
+inside `python3 -c "import os; cd nowhere"` and exempted that whole block,
+hiding a real broken entrypoint; and it missed an indented `  cd
+somewhere`, so the lines after it were checked against a directory the
+block had already left. `cdrom_mount` is not a `cd`.
+
+**Not filenames.** Absolute paths, `..` escapes, and placeholder text
+(`{REPORT}`, `path/to/FILE`, anything containing `{ } < > * ? $` or a bare
+`FILE`/`PATH`/`DIR` word) are never reported. The first two are the safety
+gate's business; the third is not a path at all. `FILE`/`PATH`/`DIR` are
+matched on word boundaries, so `FILEMAKER.py` and `PATHOLOGY.py` are still
+checked -- suppressing those would be a false negative hiding a real
+defect.
+
+This is asked as a separate question (`is_repo_local_spec`) from "does the
+file exist", and the two must not be collapsed, because `resolve_entrypoint`
+returns the same "no" for both. A review found that folding them together
+made the whole guard a no-op: every absolute path and every `{REPORT}` was
+reported as a broken entrypoint, including absolute paths naming files that
+were really there. The three tests that were supposed to cover it asserted
+`resolve_entrypoint(...) == (None, None)`, which a plain missing file
+returns too -- so they passed either way. They now assert
+`is_repo_local_spec` directly, and `TestCheckEntrypointLine` asserts the
+end-to-end silence, which is what actually failed.
+
+**Why a refused line can carry both DOC006 and DOC009.** They answer
+different questions. DOC006 says "docval will not run this line", which
+stays true whether or not the file exists. DOC009 says "this file is not
+there". Before DOC009, `bash capture.sh` and `bash capture_typo.sh`
+produced the *same* single finding -- one more `refused: not a python3
+invocation`, indistinguishable from the 225 other refusals this tree
+already had. The typo was invisible. That is the blind spot this code closes, and it is why the
+refusal is left in place rather than replaced.
+
+**False-positive risk:** the `cd` exemption is the honest weak point -- a
+genuinely broken entrypoint inside a `cd` block is silently not checked,
+which is a false *negative* chosen deliberately over a guess. On the
+false-positive side, a README that documents a file the reader is
+expected to create (`python3 my_config.py`) would be reported; no such
+line exists in this tree, but the pattern is plausible. The
+executable-bit half fires zero times in this repository for a structural
+reason worth knowing: no README here uses the `./script` form, and if one
+did it would be correct to flag it, because every file this repository
+can commit lands at mode `100644` (see `shebang-mode`).
+
 ## Command execution safety
 
 docval runs text taken directly out of README files. This is the single
@@ -234,9 +334,11 @@ rather than clever:
    surface for a tool that runs untrusted README text by design.
 5. The first token must be exactly `python3` (not `python`, not
    `python3.11`, not a path to an interpreter). The second token must be a
-   relative path to a file that exists inside the tool directory (no
-   leading `-`, so `-m`/`-c` invocations are refused; no absolute path; no
-   `..` escape).
+   relative path inside the tool directory (no leading `-`, so `-m`/`-c`
+   invocations are refused; no absolute path; no `..` escape). Whether
+   that file *exists* is no longer decided here -- the gate's only job is
+   "will docval run this?", and there is nothing to run either way. See
+   DOC009.
 6. Only if all of the above pass does docval actually execute the command
    (unless `--no-run` is given, in which case it stops here -- the command
    is known to be safe-to-run but is not run).
@@ -244,14 +346,140 @@ rather than clever:
 ## `--no-run` changes the finding count -- how, exactly
 
 Everything in the safety gate above (steps 1-6) is static: it never needs
-to run the command to decide whether to refuse it, or to notice a missing
-target script. Only the **crash/traceback detection** in DOC005 requires
-actually running the process. So `--no-run` removes exactly the subset of
-DOC005 findings that come from real execution (crashes, timeouts, failure
-to start) while leaving DOC006 refusals and the "missing script" flavor of
-DOC005 unchanged. `samples_inconsistent/` is built so this is directly
-observable: 12 findings with a normal run, 11 with `--no-run` (see
-`captured_output.txt`).
+to run the command to decide whether to refuse it. Only the
+**crash/traceback detection** in DOC005 requires actually running the
+process, and after this change that is *all* DOC005 means. So `--no-run`
+removes exactly the DOC005 findings and nothing else: DOC006 refusals and
+DOC009 entrypoint findings are untouched, because neither ever runs
+anything. `samples_inconsistent/` is built so this is directly observable:
+12 findings with a normal run, 11 with `--no-run` (see
+`captured_output.txt`). Those two totals are unchanged by this change --
+the one DOC005 "missing script" finding in `bad_pair/README.md:30` became
+a DOC009 finding on the same line, one for one.
+
+## Fixtures
+
+- `samples_consistent/` -- a README and CLI that agree. Zero findings, exit 0.
+- `samples_inconsistent/` -- one defect per code across three directories.
+- `samples_entrypoints/valid/` -- every command line names a file that is
+  really there. **Zero DOC009 findings**; the `bash` and `-m` lines are
+  still refused as DOC006, which is the control's whole point.
+- `samples_entrypoints/broken/` -- **three DOC009 findings**, one per
+  failure mode: a missing `bash` script, a missing `-m unittest` module,
+  and a `./run.sh` that exists but is not executable. Its fourth command
+  line is correct and must stay silent, so a check that flagged
+  everything would fail here.
+
+Both fixture directories have to be pointed at directly. Tool discovery
+stops at the first qualifying directory on a descent path, and
+`doc-validator/` qualifies, so a scan of `doc-validator` never descends
+into its own samples -- which is why the repository-wide numbers below do
+not include the fixtures' three findings.
+
+## Test suites
+
+`test_docval.py`: **262 tests**, `Ran 262 tests ... OK`.
+`test_optioncheck.py`: **48 tests**, `Ran 48 tests ... OK`.
+Both runs are recorded in `captured_output.txt` under
+`=== $ ... ===` headers, so `transcript-drift` compares these two numbers
+against what the transcript actually shows instead of taking the prose on
+trust. Before this change the main suite's record used a bare `$ ` header,
+which that checker does not read, and the count went unchecked.
+
+## A pre-existing staleness this commit also repairs
+
+`option_report.json` was already stale at the parent commit, and not
+because of anything here: running the parent's own `optioncheck.py`
+against the parent tree gives `options 91 / usages 193 /
+unsupported_dynamic 6` while the committed report said `85 / 181 / 5`.
+Tools landing in this repository had moved it and nobody re-ran it, so
+`test_optioncheck.py::test_committed_report_matches_a_live_rescan` was
+failing at HEAD.
+
+It is regenerated here because this change had to touch it anyway -- the
+README edits below move three `line:` fields inside it -- and shipping it
+half-updated would have been worse than either leaving it or fixing it.
+The prose figures in "What it found" are updated to match. Flagged rather
+than buried: it is a real defect that predates this delivery, it was found
+by review rather than volunteered, and it deserved its own commit.
+
+## Scanning the whole repository
+
+`docval.py --root <repo>` does **not** scan a repository. Discovery stops
+at the first qualifying directory, and this repository's root qualifies
+(it has a `README.md` and no argparse CLI), so that command reports one
+tool and one finding -- the `DOC008_NO_CLI: 1` the repository's other
+gates use as a baseline. Sweeping the tree means one run per top-level
+directory:
+
+```
+python3 entrypoint_baseline.py <repo-root>
+```
+
+`entrypoint_baseline.py` builds no argparse parser and takes no options,
+so it adds nothing to `option_report.json` and is not itself a "tool" for
+docval to scan. It passes `--no-run` to every child run: this is a census
+of which files README command lines *name*, and executing 51 tools'
+documented commands to answer that would be slow and beside the point.
+Exit `0` when no entrypoint is broken, `1` when one is, `2` on a bad
+argument. It writes no committed report -- a baseline JSON would go stale
+the moment anyone edited a README.
+
+Against this repository, before and after this change. DOC006 gains one:
+this section documents `entrypoint_baseline.py` in a fenced block, docval
+scans its own README like any other, and `<repo-root>` contains a shell
+metacharacter, so the line is refused. A first draft of this table said
+225 and 493 because it was derived before that block was written; review
+caught it against the delivery's own transcript.
+
+| Code | Before | After |
+|---|---|---|
+| `DOC001_UNDOCUMENTED_FLAG` | 26 | 26 |
+| `DOC002_PHANTOM_FLAG` | 226 | 226 |
+| `DOC003_EXIT_CODE_UNREACHABLE` | 10 | 10 |
+| `DOC004_EXIT_CODE_UNDOCUMENTED` | 4 | 4 |
+| `DOC005_COMMAND_BLOCK_FAILED` | 15 | **0** |
+| `DOC006_COMMAND_BLOCK_UNPARSEABLE` | 225 | **226** |
+| `DOC009_BROKEN_ENTRYPOINT` | -- | **2** |
+| **TOTAL** | **506** | **494** |
+
+Every one of the 15 DOC005 findings was the missing-target flavor, and 13
+of them were the repo-root-convention false positive described under
+DOC009 -- `transcript-schema` (7), `transcript-drift` (3),
+`limitations-probe` (2), `crosspath-runner` (1), all of whose command
+blocks are correct as written.
+
+### The two DOC009 findings, read by hand
+
+Both were read against their source before anything was claimed about
+them, and **both are false positives.** DOC009's true-positive count on
+this repository today is **zero**. Stating that plainly is worth more
+than a headline:
+
+- `env-leak-scanner/README.md:87` is `python3 weakassert.py --root
+  /sessions/... -o self_scan_report.json`. It sits under the sentence
+  "The `weak-assertion-scanner` case named in the task brief **is
+  present**, at `weak-assertion-scanner/README.md` line 281:". It is
+  env-leak-scanner *quoting another file's leaked line as its finding* --
+  the tool's entire job -- not an instruction to run anything from
+  `env-leak-scanner/`.
+- `regression-checker/README.md:665` is `python3 bundle_index.py
+  bundle_bad -o {REPORT}`, under "Its baseline entry runs:", in a section
+  titled "A real bug hunt finding: `bundle-index`'s baseline does not
+  reproduce". It quotes `baselines.json`'s command for a different tool.
+  Eight lines further down the same README shows the runnable form,
+  `cd bundle-index && python3 bundle_index.py`.
+
+A fenced block that quotes another file's command is indistinguishable,
+to a static checker, from one that documents its own entrypoint. That is
+the honest limit of this rule and it is the reason the fixtures, not the
+repository sweep, are what demonstrate the check works: three findings in
+`samples_entrypoints/broken/`, zero in `samples_entrypoints/valid/`, and
+`TestCommittedEntrypointFixtures` asserts both counts against the
+committed directories so they cannot quietly drift.
+
+Neither README is edited here: this delivery changes the validator, not
+the forty-odd READMEs it validates.
 
 ## Two real bugs this validator caught in itself during development
 
@@ -361,8 +589,8 @@ python3 optioncheck.py --root ..
 ```
 
 ```
-options compared: 85   conflict: 1   match: 15   single_use: 69
-usages: 181   unsupported_dynamic: 5
+options compared: 91   conflict: 1   match: 17   single_use: 73
+usages: 193   unsupported_dynamic: 6
 ```
 
 **The finding: `--timeout` is not one option, it is two.**
@@ -387,7 +615,7 @@ being able to go quietly stale.
 executing code. Those are collected into `unsupported_dynamic` **with the
 reason** and are excluded from comparison entirely, rather than compared on
 their resolvable half -- a half-resolved option compared against a fully
-resolved one produces confident nonsense. 5 such definitions exist
+resolved one produces confident nonsense. 6 such definitions exist
 today, all of them `choices=` referencing a module constant.
 
 Short flags are reported as `aliases` but are never the grouping key: `-o`

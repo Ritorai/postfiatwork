@@ -413,6 +413,200 @@ def extract_readme_info(readme_path):
 
 
 # ---------------------------------------------------------------------------
+# Repository-local entrypoint resolution (DOC005 target check + DOC009)
+# ---------------------------------------------------------------------------
+#
+# A README command line names a file this repository is supposed to contain:
+# `python3 docval.py ...`, `bash capture.sh`, `python3 -m unittest test_docval`.
+# Whether that file EXISTS is a static question, and it is a different
+# question from whether docval is willing to RUN the line. The safety gate
+# below refuses most launchers outright, and before this resolver existed a
+# refusal was all a broken entrypoint ever produced: `bash capture.sh` and
+# `bash capture_typo.sh` were reported identically, as one more DOC006
+# "not a python3 invocation". That is the blind spot DOC009 closes.
+#
+# Two working directories, because this repository's READMEs genuinely use
+# both:
+#
+#   * the tool's own directory      -- `python3 driftcheck.py --root .`
+#   * the directory containing it   -- `python3 transcript-drift/driftcheck.py`
+#     (i.e. the repository root)
+#
+# A target that exists under either one is not broken. Resolving against only
+# the tool directory is what made DOC005 report three non-existent defects in
+# transcript-drift/README.md, whose command block is written to be run from
+# the repository root and is correct as written.
+
+# Characters that mean "fill this in yourself", not a real filename.
+PLACEHOLDER_RE = re.compile(r"[{}<>*?$]|\bFILE\b|\bPATH\b|\bDIR\b")
+
+# Launchers whose next non-flag word is a repository-local script.
+SCRIPT_LAUNCHERS = ("bash", "sh")
+PYTHON_LAUNCHERS = ("python3", "python")
+
+# `python3 -m unittest <this>` is treated as naming a local module only when
+# it looks like one of this repository's test modules. It deliberately does
+# not match `discover`.
+TEST_MODULE_RE = re.compile(r"^test[_A-Za-z0-9]*$")
+
+
+class EntrypointRef:
+    """A repository-local file that a README command line says it will run.
+
+    `spec` is the path relative to whichever working directory the line
+    assumes, exactly as it must resolve on disk (a `-m` module has already
+    been turned into a `.py` path). `needs_exec` is true only for the
+    `./script` form, where the shell requires the executable bit."""
+
+    def __init__(self, spec, form, needs_exec):
+        self.spec = spec
+        self.form = form            # "script" | "module"
+        self.needs_exec = needs_exec
+
+
+def _module_to_relpath(module):
+    """`a.b.c` -> `a/b/c.py`. Only the leading dotted path is a module; a
+    unittest target like `test_x.TestY.test_z` is reduced by the caller."""
+    return os.path.join(*module.split(".")) + ".py"
+
+
+def _first_non_flag(tokens):
+    """The first word that is not a flag, or None.
+
+    `-c` is not skipped like an ordinary flag: it consumes the next word as
+    an inline program, so `bash -c 'echo hello'` names no file at all.
+    Treating `echo hello` as a path is how a shell one-liner in a README
+    turns into a phantom broken entrypoint."""
+    for tok in tokens:
+        if tok == "-c":
+            return None
+        if tok.startswith("-"):
+            continue
+        return tok
+    return None
+
+
+def entrypoint_of(argv):
+    """The repository-local entrypoint `argv` references, or None.
+
+    Deliberately small. It recognizes only the launcher forms that actually
+    occur in this repository's READMEs; anything unrecognized returns None
+    and is left entirely to the safety gate, so DOC009 can never invent a
+    finding for a command shape nobody writes."""
+    if not argv:
+        return None
+    head = argv[0]
+
+    if head.startswith("./"):
+        return EntrypointRef(head[2:], "script", True)
+
+    if head in SCRIPT_LAUNCHERS:
+        target = _first_non_flag(argv[1:])
+        return EntrypointRef(target, "script", False) if target else None
+
+    if head in PYTHON_LAUNCHERS:
+        rest = argv[1:]
+        if not rest:
+            return None
+        if rest[0] == "-m":
+            if len(rest) < 2:
+                return None
+            if rest[1] != "unittest":
+                # `-m pip`, `-m venv`, `-m json.tool`, `-m http.server`: a
+                # module name says nothing about where the module lives, and
+                # an installed one is not a file in this repository. There is
+                # no way to tell a typo'd local module from a stdlib one
+                # without importing, so nothing is claimed. Reporting these
+                # was five false positives on shapes this repository writes.
+                return None
+            target = _first_non_flag(rest[2:])
+            if target is None:
+                return None
+            # `test_x.TestY.test_z` -- only `test_x` is the module.
+            module = target.split(".")[0]
+            if not TEST_MODULE_RE.match(module):
+                # `python3 -m unittest discover` -- `discover` is a
+                # subcommand, not a module, and it is the most common
+                # invocation in this repository. Anything that is not
+                # obviously a local test module is left alone.
+                return None
+            return EntrypointRef(_module_to_relpath(module), "module", False)
+        if rest[0].startswith("-"):
+            return None             # -c, --version, ... : no file named
+        return EntrypointRef(rest[0], "script", False)
+
+    return None
+
+
+def entrypoint_bases(tool_dir):
+    """The working directories a README line may assume, most specific
+    first: the tool directory, then the directory containing it."""
+    tool_abs = os.path.abspath(tool_dir)
+    parent = os.path.dirname(tool_abs)
+    return [tool_abs] if parent == tool_abs else [tool_abs, parent]
+
+
+def is_repo_local_spec(spec):
+    """Is `spec` a plain repository-local relative path?
+
+    False for an absolute path, a `..` escape, and placeholder text such as
+    `{REPORT}` or `path/to/FILE`. Those are the safety gate's business or
+    are not filenames at all, and reporting them as broken entrypoints
+    would be wrong.
+
+    This is a SEPARATE question from "does the file exist", and the two
+    must not be collapsed. `resolve_entrypoint` returns (None, None) for
+    both, which is why callers ask this first: a review found that folding
+    them together turned every one of these specs into a phantom finding,
+    including absolute paths naming files that were really there."""
+    if not spec or os.path.isabs(spec):
+        return False
+    if PLACEHOLDER_RE.search(spec):
+        return False
+    parts = spec.replace("\\", "/").split("/")
+    return os.pardir not in parts
+
+
+def resolve_entrypoint(spec, tool_dir):
+    """Return (abs_path, base) for the first working directory under which
+    `spec` names an existing file, else (None, None). Specs that are not
+    repository-local paths at all never reach the disk."""
+    if not is_repo_local_spec(spec):
+        return None, None
+    for base in entrypoint_bases(tool_dir):
+        candidate = os.path.normpath(os.path.join(base, spec))
+        if os.path.isfile(candidate):
+            return candidate, base
+    return None, None
+
+
+def entrypoint_finding_detail(ref, tool_dir):
+    """The DOC009 detail for `ref`, or None if the entrypoint is fine.
+
+    Two distinct defects share the code because they are the same mistake
+    from a reader's point of view -- the documented command cannot start:
+
+      * the file does not exist under either working directory;
+      * the file exists but the `./` form was used and it is not executable,
+        so the shell will refuse it with "Permission denied".
+    """
+    if not is_repo_local_spec(ref.spec):
+        return None
+    resolved, _base = resolve_entrypoint(ref.spec, tool_dir)
+    if resolved is None:
+        if ref.form == "module":
+            return ("references module %r, but %s exists neither in this tool "
+                    "directory nor in the directory containing it"
+                    % (ref.spec[:-3].replace(os.sep, "."), ref.spec))
+        return ("references %r, which exists neither in this tool directory "
+                "nor in the directory containing it" % ref.spec)
+    if ref.needs_exec and not os.access(resolved, os.X_OK):
+        return ("runs './%s', but that file is not executable, so the shell "
+                "cannot start it" % ref.spec)
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Command block safety gate + execution (DOC005 / DOC006)
 # ---------------------------------------------------------------------------
 
@@ -512,7 +706,22 @@ def evaluate_command_line(raw_line, tool_dir, no_run):
         return CommandOutcome("DOC006_COMMAND_BLOCK_UNPARSEABLE", "refused: target path %r escapes the tool directory" % target)
 
     if not os.path.isfile(target_path):
-        return CommandOutcome("DOC005_COMMAND_BLOCK_FAILED", "does not run as written: target script %r not found" % target)
+        # Whether the target exists is now one question with one answer, asked
+        # by the entrypoint resolver for every launcher form and reported as
+        # DOC009. Two cases arrive here and both stop here rather than
+        # producing a DOC005:
+        #
+        #   * the file is genuinely absent -- DOC009 says so, and says it in
+        #     the same words whether the line was `python3 x.py` or
+        #     `bash x.sh`, which is the point of having one code;
+        #   * the file exists relative to the directory CONTAINING the tool,
+        #     because the line is written to be run from the repository root
+        #     (`python3 transcript-drift/driftcheck.py --root .`). That line
+        #     is correct as written, so it is not a finding at all.
+        #
+        # Either way there is nothing to execute, so return before the
+        # subprocess call below.
+        return None
 
     if no_run:
         return None  # static-only mode: safety gate already passed, do not execute
@@ -547,23 +756,90 @@ def is_command_bearing_block(lang, body):
     return False
 
 
+def line_changes_directory(raw_line):
+    """Is this logical line a `cd`?
+
+    Decided by tokenizing the line and looking at its first word, not by
+    searching the block text for `cd`. A regex over the body both
+    over-matched -- `python3 -c "import os; cd nowhere"` exempted a whole
+    block on a `cd` inside a quoted Python string -- and under-matched, on
+    an indented `  cd somewhere`. Both were found by review."""
+    line = raw_line.strip()
+    if not line or line.startswith("#"):
+        return False
+    try:
+        argv = shlex.split(line, comments=False, posix=True)
+    except ValueError:
+        # Unparseable: the working directory after it is anyone's guess, so
+        # treat it as a change rather than assume it is not one.
+        return True
+    return bool(argv) and argv[0] == "cd"
+
+
+def check_entrypoint_line(raw_line, tool_dir):
+    """DOC009 for one logical command line, or None.
+
+    Runs beside the safety gate rather than inside it. A refused line still
+    produces its DOC006 -- docval still will not execute it, and that fact is
+    unchanged -- but if the line also names a repository-local file that is
+    not there, that is a second, more specific fact and it gets its own
+    finding. Purely static: nothing here executes anything, so DOC009 is
+    identical with and without --no-run."""
+    line = raw_line.strip()
+    if not line or line.startswith("#"):
+        return None
+    core, _stripped = _split_echo_trailer(line)
+    core = core.strip()
+    if not core:
+        return None
+    try:
+        argv = shlex.split(core, comments=False, posix=True)
+    except ValueError:
+        return None                 # unparseable: DOC006's business
+    ref = entrypoint_of(argv)
+    if ref is None:
+        return None
+    detail = entrypoint_finding_detail(ref, tool_dir)
+    if detail is None:
+        return None
+    return "%s (%r)" % (detail, core)
+
+
 def check_command_blocks(readme_info, tool_dir, readme_rel_path, no_run):
     findings = []
     for lang, body, start_line in readme_info.code_blocks:
         if not is_command_bearing_block(lang, body):
             continue
-        for offset, logical_line in _join_continuations(body):
-            outcome = evaluate_command_line(logical_line, tool_dir, no_run)
-            if outcome is None:
-                continue
+        # A block that changes directory sets a working directory this
+        # checker cannot know (`cd postfiatwork/schema-checker` after a
+        # `git clone` names a directory that does not exist yet). Entrypoint
+        # resolution is skipped for the whole block rather than guessed at.
+        # The safety gate is unaffected: DOC005/DOC006 still apply.
+        lines = _join_continuations(body)
+        block_changes_directory = any(
+            line_changes_directory(text) for _off, text in lines)
+        for offset, logical_line in lines:
             lineno = start_line + offset
-            findings.append(
-                Finding(
-                    outcome.kind,
-                    readme_rel_path,
-                    "%s:%d: %s" % (readme_rel_path, lineno, outcome.detail),
+            outcome = evaluate_command_line(logical_line, tool_dir, no_run)
+            if outcome is not None:
+                findings.append(
+                    Finding(
+                        outcome.kind,
+                        readme_rel_path,
+                        "%s:%d: %s" % (readme_rel_path, lineno, outcome.detail),
+                    )
                 )
-            )
+            if block_changes_directory:
+                continue
+            entry_detail = check_entrypoint_line(logical_line, tool_dir)
+            if entry_detail is not None:
+                findings.append(
+                    Finding(
+                        "DOC009_BROKEN_ENTRYPOINT",
+                        readme_rel_path,
+                        "%s:%d: %s" % (readme_rel_path, lineno, entry_detail),
+                    )
+                )
     return findings
 
 

@@ -1,0 +1,1215 @@
+############################################################
+# BROKEN_ENTRYPOINT_EVIDENCE.txt
+#
+# Subject: docval.py's model of the files a README command line names.
+# Before this change the question "does that file exist?" was asked only
+# for `python3 <file>`, and only against the tool's own directory. Every
+# other launcher -- bash, sh, ./script, python3 -m -- was refused by the
+# safety gate with existence never checked, and the one working directory
+# it knew was the wrong one for four tools in this repository.
+#
+# Every record below is a real run: a "=== $ command ===" header, the
+# verbatim output, and an exit= line. Commands are relative to
+# doc-validator/ unless the header says otherwise.
+############################################################
+
+--- 0. the two trees ---
+The parent commit is extracted into a scratch directory OUTSIDE the
+checkout, so nothing below can accidentally measure the repaired tree
+while claiming to measure the parent.
+
+=== $ git -C .. rev-parse HEAD ===
+d7efd21d5edb3d7c32e14451a2cbe1286e320d21
+exit=0
+
+=== $ mkdir -p ../../dv_evidence_scratch/parent && git -C .. archive d7efd21d5edb3d7c32e14451a2cbe1286e320d21 | tar -x -C ../../dv_evidence_scratch/parent ===
+exit=0
+
+=== $ test -f ../../dv_evidence_scratch/parent/doc-validator/docval.py && echo PARENT_TREE_EXTRACTED ===
+PARENT_TREE_EXTRACTED
+exit=0
+
+--- 1. BEFORE: a broken bash entrypoint is invisible ---
+The fixture directory samples_entrypoints/broken/ names three files
+that cannot start. Run the PARENT validator against it. Note that the
+fixture is copied in, because it does not exist at the parent.
+
+=== $ cp -r samples_entrypoints ../../dv_evidence_scratch/parent/doc-validator/ ===
+exit=0
+
+=== $ cd ../../dv_evidence_scratch/parent/doc-validator && python3 docval.py --root samples_entrypoints/broken --no-run ===
+{"counts":{"DOC002_PHANTOM_FLAG":1,"DOC006_COMMAND_BLOCK_UNPARSEABLE":3},"finding_count":4,"findings":[{"code":"DOC002_PHANTOM_FLAG","detail":"./README.md: documents flag '-m' which ./entry.py does not define via argparse","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:27: refused: not a python3 invocation (got 'bash')","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:28: refused: python3 invoked with '-m' (module/flag form, not a file inside the tool directory) -- e.g. '-m unittest' is refused under the hard contract","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:29: refused: not a python3 invocation (got './run.sh')","path":"./README.md"}],"ok":false,"tool_count":1}
+exit=1
+
+Three DOC006 refusals, and that is all. 'bash capture.sh' where
+capture.sh is missing produced the same single line it would have
+produced if capture.sh were present: 'refused: not a python3
+invocation'. The same run against the valid control, whose files all
+exist, is below -- compare them.
+
+=== $ cd ../../dv_evidence_scratch/parent/doc-validator && python3 docval.py --root samples_entrypoints/valid --no-run ===
+{"counts":{"DOC002_PHANTOM_FLAG":1,"DOC006_COMMAND_BLOCK_UNPARSEABLE":2},"finding_count":3,"findings":[{"code":"DOC002_PHANTOM_FLAG","detail":"./README.md: documents flag '-m' which ./entry.py does not define via argparse","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:25: refused: not a python3 invocation (got 'bash')","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:26: refused: python3 invoked with '-m' (module/flag form, not a file inside the tool directory) -- e.g. '-m unittest' is refused under the hard contract","path":"./README.md"}],"ok":false,"tool_count":1}
+exit=1
+
+The two outputs differ only in a line number. That is the defect.
+
+--- 2. AFTER: three findings, one per failure mode ---
+
+=== $ python3 docval.py --root samples_entrypoints/broken --no-run ===
+{"counts":{"DOC002_PHANTOM_FLAG":1,"DOC006_COMMAND_BLOCK_UNPARSEABLE":3,"DOC009_BROKEN_ENTRYPOINT":3},"finding_count":7,"findings":[{"code":"DOC002_PHANTOM_FLAG","detail":"./README.md: documents flag '-m' which ./entry.py does not define via argparse","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:27: refused: not a python3 invocation (got 'bash')","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:28: refused: python3 invoked with '-m' (module/flag form, not a file inside the tool directory) -- e.g. '-m unittest' is refused under the hard contract","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:29: refused: not a python3 invocation (got './run.sh')","path":"./README.md"},{"code":"DOC009_BROKEN_ENTRYPOINT","detail":"./README.md:27: references 'capture.sh', which exists neither in this tool directory nor in the directory containing it ('bash capture.sh')","path":"./README.md"},{"code":"DOC009_BROKEN_ENTRYPOINT","detail":"./README.md:28: references module 'test_entry', but test_entry.py exists neither in this tool directory nor in the directory containing it ('python3 -m unittest test_entry')","path":"./README.md"},{"code":"DOC009_BROKEN_ENTRYPOINT","detail":"./README.md:29: runs './run.sh', but that file is not executable, so the shell cannot start it ('./run.sh')","path":"./README.md"}],"ok":false,"tool_count":1}
+exit=1
+
+and the valid control stays silent on DOC009 while still producing
+the DOC006 refusals it always produced:
+
+=== $ python3 docval.py --root samples_entrypoints/valid --no-run ===
+{"counts":{"DOC002_PHANTOM_FLAG":1,"DOC006_COMMAND_BLOCK_UNPARSEABLE":2},"finding_count":3,"findings":[{"code":"DOC002_PHANTOM_FLAG","detail":"./README.md: documents flag '-m' which ./entry.py does not define via argparse","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:25: refused: not a python3 invocation (got 'bash')","path":"./README.md"},{"code":"DOC006_COMMAND_BLOCK_UNPARSEABLE","detail":"./README.md:26: refused: python3 invoked with '-m' (module/flag form, not a file inside the tool directory) -- e.g. '-m unittest' is refused under the hard contract","path":"./README.md"}],"ok":false,"tool_count":1}
+exit=1
+
+=== $ python3 -c "import json,subprocess,sys;out=subprocess.run([sys.executable,'docval.py','--root','samples_entrypoints/valid','--no-run'],capture_output=True,text=True).stdout;print('valid DOC009 count:',json.loads(out)['counts'].get('DOC009_BROKEN_ENTRYPOINT',0))" ===
+valid DOC009 count: 0
+exit=0
+
+--- 3. the executable-bit half is not hypothetical ---
+samples_entrypoints/broken/run.sh exists. Every file this repository
+can commit lands at mode 100644, so './run.sh' cannot start.
+
+=== $ git -C .. ls-files -s doc-validator/samples_entrypoints/broken/run.sh ===
+100644 e64db0e8fe133499255ffc75db21833ff7a8b57d 0	doc-validator/samples_entrypoints/broken/run.sh
+exit=0
+
+=== $ test -x samples_entrypoints/broken/run.sh && echo EXECUTABLE || echo NOT_EXECUTABLE ===
+NOT_EXECUTABLE
+exit=0
+
+--- 4. the false positives this replaces ---
+DOC005's missing-target check resolved against the tool directory
+only. Four tools in this repository document commands meant to be run
+from the repository root, and every one of those lines was reported
+as a defect that was not there. Parent first, then this version.
+
+=== $ cd ../../dv_evidence_scratch/parent/doc-validator && python3 docval.py --root ../transcript-drift --no-run -o /tmp/dv_evidence_scratch/td_before.json ===
+exit=1
+
+=== $ python3 -c "import json;r=json.load(open('/tmp/dv_evidence_scratch/td_before.json'));print('parent DOC005:',r['counts'].get('DOC005_COMMAND_BLOCK_FAILED',0));[print('  ',f['detail']) for f in r['findings'] if f['code'].startswith('DOC005')]" ===
+parent DOC005: 3
+   ./README.md:26: does not run as written: target script 'transcript-drift/driftcheck.py' not found
+   ./README.md:27: does not run as written: target script 'transcript-drift/driftcheck.py' not found
+   ./README.md:28: does not run as written: target script 'transcript-drift/driftcheck.py' not found
+exit=0
+
+=== $ python3 docval.py --root ../transcript-drift --no-run -o /tmp/dv_evidence_scratch/td_after.json ===
+exit=1
+
+=== $ python3 -c "import json;r=json.load(open('/tmp/dv_evidence_scratch/td_after.json'));print('after  DOC005:',r['counts'].get('DOC005_COMMAND_BLOCK_FAILED',0));print('after  DOC009:',r['counts'].get('DOC009_BROKEN_ENTRYPOINT',0))" ===
+after  DOC005: 0
+after  DOC009: 0
+exit=0
+
+The file those three lines name really is there, one directory up:
+
+=== $ test -f ../transcript-drift/driftcheck.py && echo TARGET_EXISTS_AT_THE_REPOSITORY_ROOT ===
+TARGET_EXISTS_AT_THE_REPOSITORY_ROOT
+exit=0
+
+--- 5. the full-repository baseline, parent and after ---
+One docval run per top-level directory, aggregated. A single
+'docval.py --root ..' finds one tool -- the repository root, which
+has a README.md -- and stops there; that is where the repository's
+DOC008_NO_CLI baseline of 1 comes from, and it is shown last.
+
+=== $ cp entrypoint_baseline.py ../../dv_evidence_scratch/parent/doc-validator/ ===
+exit=0
+
+=== $ cd ../../dv_evidence_scratch/parent/doc-validator && python3 entrypoint_baseline.py .. ===
+tool directories swept: 51   docval tool_count total: 51
+
+DOC001_UNDOCUMENTED_FLAG             26
+DOC002_PHANTOM_FLAG                 226
+DOC003_EXIT_CODE_UNREACHABLE         10
+DOC004_EXIT_CODE_UNDOCUMENTED         4
+DOC005_COMMAND_BLOCK_FAILED          15
+DOC006_COMMAND_BLOCK_UNPARSEABLE    225
+TOTAL                               506
+
+DOC009_BROKEN_ENTRYPOINT: none in this tree.
+exit=0
+
+=== $ python3 entrypoint_baseline.py .. ===
+tool directories swept: 51   docval tool_count total: 51
+
+DOC001_UNDOCUMENTED_FLAG             26
+DOC002_PHANTOM_FLAG                 226
+DOC003_EXIT_CODE_UNREACHABLE         10
+DOC004_EXIT_CODE_UNDOCUMENTED         4
+DOC006_COMMAND_BLOCK_UNPARSEABLE    226
+DOC009_BROKEN_ENTRYPOINT              2
+TOTAL                               494
+
+DOC009_BROKEN_ENTRYPOINT, every finding:
+  env-leak-scanner/README.md:87: references 'weakassert.py', which exists neither in this tool directory nor in the directory containing it ('python3 weakassert.py --root /sessions/sharp-stoic-knuth/mnt/outputs -o self_scan_report.json')
+  regression-checker/README.md:665: references 'bundle_index.py', which exists neither in this tool directory nor in the directory containing it ('python3 bundle_index.py bundle_bad -o {REPORT}')
+exit=1
+
+506 findings before, 494 after: 15 DOC005 gone, 2 DOC009 arrived,
+and 1 DOC006 gained -- this delivery documents entrypoint_baseline.py
+in a fenced block, docval scans its own README like any other, and
+'<repo-root>' contains a shell metacharacter so the line is refused.
+13 of the 15 DOC005 findings were the repo-root false positive.
+
+The 2 DOC009 findings were read against their source by hand and BOTH
+ARE FALSE POSITIVES: env-leak-scanner quotes weak-assertion-scanner's
+leaked line as its own finding, and regression-checker quotes
+baselines.json's command for bundle-index inside a section about that
+tool's baseline not reproducing. Neither is an instruction to run
+anything from the directory it appears in. A fenced block that quotes
+another file's command is indistinguishable, statically, from one that
+documents its own entrypoint. DOC009's true-positive count on this
+repository today is zero, and the fixtures -- not the sweep -- are what
+demonstrate the check works.
+
+=== $ python3 docval.py --root .. --no-run ===
+{"counts":{"DOC008_NO_CLI":1},"finding_count":1,"findings":[{"code":"DOC008_NO_CLI","detail":".: directory contains README.md but no discoverable argparse CLI (.py file that builds an ArgumentParser and calls parse_args)","path":"."}],"ok":false,"tool_count":1}
+exit=1
+
+--- 6. the tests ---
+The new classes are run against the PARENT copy with only the test
+file and the fixtures added, so what fails there is the old behaviour.
+
+=== $ cp test_docval.py ../../dv_evidence_scratch/parent/doc-validator/ ===
+exit=0
+
+THE NEXT RECORD IS DELIBERATELY RED and is left verbatim.
+transcript-schema reports exactly one TRANSCRIPT_SHOWS_TEST_FAILURE
+for it, and that finding is correct: a repair whose tests do not fail
+against the parent has demonstrated nothing. The repository-wide run
+reads <tool>/captured_output.txt by that exact name and never sees
+this file.
+
+=== $ cd ../../dv_evidence_scratch/parent/doc-validator && python3 -m unittest test_docval.TestBrokenEntrypoints test_docval.TestCheckEntrypointLine test_docval.TestResolveEntrypoint test_docval.TestEntrypointOf 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 66 tests in 0.022s
+
+FAILED (failures=8, errors=53)
+exit=1
+
+The same four classes on this version:
+
+=== $ python3 -m unittest test_docval.TestBrokenEntrypoints test_docval.TestCheckEntrypointLine test_docval.TestResolveEntrypoint test_docval.TestEntrypointOf 2>&1 | tail -3 ===
+Ran 66 tests in 0.021s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_docval 2>&1 | tail -3 ===
+Ran 262 tests in 1.873s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_optioncheck 2>&1 | tail -3 ===
+Ran 48 tests in 11.017s
+
+OK
+exit=0
+
+--- 7. three existing tests were changed, and why ---
+'the target file is not there' moved from DOC005 to DOC009. Three
+tests pinned it under the old code. None lost coverage: each now
+asserts the same property AND that it does not double-report.
+
+=== $ git -C .. diff --stat d7efd21d5edb3d7c32e14451a2cbe1286e320d21 -- doc-validator/test_docval.py ===
+ doc-validator/test_docval.py | 527 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 517 insertions(+), 10 deletions(-)
+exit=0
+
+=== $ git -C .. diff d7efd21d5edb3d7c32e14451a2cbe1286e320d21 -- doc-validator/test_docval.py | grep -c '^+' ===
+518
+exit=0
+
+--- 8. repository gates, parent and after ---
+
+=== $ cd ../transcript-drift && python3 driftcheck.py --root .. -o /tmp/dv_evidence_scratch/drift.json ===
+exit=1
+
+=== $ python3 -c "import json;print('transcript-drift findings:',len(json.load(open('/tmp/dv_evidence_scratch/drift.json'))['findings']))" ===
+transcript-drift findings: 101
+exit=0
+
+=== $ cd ../report-freshness && python3 freshness.py --root .. -o /tmp/dv_evidence_scratch/fr.json ===
+exit=0
+
+=== $ python3 -c "import json;print('report-freshness counts:',json.load(open('/tmp/dv_evidence_scratch/fr.json'))['counts'])" ===
+report-freshness counts: {'generation_failed': 0, 'match': 5, 'missing': 0, 'pinned_missing': 0, 'pinned_present': 2, 'stale': 0, 'tool_missing': 0, 'total': 7}
+exit=0
+
+=== $ cd ../claim-crosscheck && python3 crosscheck.py --root .. --all -o /tmp/dv_evidence_scratch/cc.json ===
+== ../claim-crosscheck/README.md ==
+  report: ../claim-crosscheck/sample_run.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../crosspath-runner/README.md ==
+  report: ../crosspath-runner/crosspath_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../env-leak-scanner/README.md ==
+  report: ../env-leak-scanner/leak_report_2026-08-04.json
+  claims checked: 15
+  discrepancies: 1
+  ---
+  kind: PRESENCE
+  reason: README claims 'snapshot-diff/README.md' carries/is flagged/is present, but the only report entry (or entries) naming it are in the non-positive bucket 'reviewed_benign'.
+  readme: ../env-leak-scanner/README.md:93
+  readme_quote: '`LIMITATIONS.md`, `REVIEWERS_GUIDE.md`,\n`snapshot-diff/README.md`, `doc-validator/` and `bundle-index/` carry the\nrest.'
+  report: ../env-leak-scanner/leak_report_2026-08-04.json#/reviewed_benign/87
+  report_excerpt: {"category":"hostname","column":29,"file":"snapshot-diff/README.md","harms_reproducibility":"a sandbox session root. The session name identifies one ephemeral machine that no longer exists after the run.","line":14,"matched":"/sessions/.../outputs/queue-auditor/","review_key":"snapshot-diff/README.md:14:/sessions/.../outputs/queue-auditor/","review_reason":"Already redacted at the point of writing: the session name is literally '...'. Nothing identifying survives.","rule":"EL-HOST-SESSION","verdict":"benign"}
+
+== ../index-generator/README.md ==
+  report: ../index-generator/pipe_classification_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../nondeterminism-scanner/README.md ==
+  report: ../nondeterminism-scanner/self_scan_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../readme-index/README.md ==
+  report: ../readme-index/index_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../regen-preflight/README.md ==
+  report: ../regen-preflight/preflight_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../report-freshness/README.md ==
+  report: ../report-freshness/freshness_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../reward-reconciler/README.md ==
+  report: ../reward-reconciler/expected_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../transcript-drift/README.md ==
+  report: ../transcript-drift/drift_report_2026-08-04.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../transcript-schema/README.md ==
+  report: ../transcript-schema/validation_report.json
+  claims checked: 0
+  discrepancies: 0
+
+== ../weak-assertion-scanner/README.md ==
+  report: ../weak-assertion-scanner/self_scan_report.json
+  claims checked: 0
+  discrepancies: 0
+
+skipped (no discoverable report, no claims found):
+  ../adversarial-suite/README.md
+  ../budget-forecaster/README.md
+  ../bundle-index/README.md
+  ../bundle-verifier/README.md
+  ../claim-checker/README.md
+  ../commit-claim-auditor/README.md
+  ../consolidate/README.md
+  ../contradiction-detector/README.md
+  ../doc-validator/README.md
+  ../dup-detector/README.md
+  ../event-linter/README.md
+  ../evidence-harness/README.md
+  ../evidence-manifest/README.md
+  ../evidence-scorer/README.md
+  ../evidence-validator/README.md
+  ../exit-harness/README.md
+  ../lifecycle-linter/README.md
+  ../limitations-probe/README.md
+  ../link-integrity/README.md
+  ../loop-health/README.md
+  ../path-collision-scanner/README.md
+  ../payload-validator/README.md
+  ../preflight/README.md
+  ../queue-auditor/README.md
+  ../regression-checker/README.md
+  ../reward-anomaly/README.md
+  ../schema-checker/README.md
+  ../scorecard/README.md
+  ../shebang-mode/README.md
+  ../snapshot-diff/README.md
+  ../sortkey-detector/README.md
+  ../staleness-monitor/README.md
+  ../sybil-detector/README.md
+  ../tamper-runner/README.md
+  ../thread-check/README.md
+  ../throughput-reporter/README.md
+  ../wallet-reconciler/README.md
+  ../xrpl-address/README.md
+  ../xrpl-auditor/README.md
+
+TOTAL: 15 claim(s) checked, 1 discrepancy(ies), 0 error(s)
+exit=1
+
+=== $ python3 -c "import json;print('claim-crosscheck totals:',json.load(open('/tmp/dv_evidence_scratch/cc.json'))['totals'])" ===
+claim-crosscheck totals: {'claims_checked': 15, 'discrepancies': 1, 'errors': 0}
+exit=0
+
+=== $ cd ../readme-index && python3 readmeindex.py --root .. ===
+{
+  "index_differences": [],
+  "schema_version": 1,
+  "source": "root",
+  "tool": "readme-index",
+  "tools": [
+    {
+      "claimed_tests": 122,
+      "evidence": [
+        {
+          "line": 358,
+          "rule": "strong_summary",
+          "value": 122
+        },
+        {
+          "line": 359,
+          "rule": "strong_summary",
+          "value": 122
+        },
+        {
+          "line": 360,
+          "rule": "strong_summary",
+          "value": 122
+        }
+      ],
+      "readme_lines": 625,
+      "status": "claim",
+      "title": "adversarial-suite",
+      "tool": "adversarial-suite"
+    },
+    {
+      "claimed_tests": 36,
+      "evidence": [
+        {
+          "line": 24,
+          "rule": "strong_summary",
+          "value": 36
+        }
+      ],
+      "readme_lines": 84,
+      "status": "claim",
+      "title": "Deterministic Task-Reward Budget Forecaster",
+      "tool": "budget-forecaster"
+    },
+    {
+      "claimed_tests": 170,
+      "evidence": [
+        {
+          "file": "test_bundle_index.py",
+          "line": 357,
+          "rule": "self_report",
+          "value": 170
+        }
+      ],
+      "readme_lines": 363,
+      "status": "claim",
+      "title": "Bundle Index CLI",
+      "tool": "bundle-index"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 266,
+      "status": "missing",
+      "title": "bundle-verifier",
+      "tool": "bundle-verifier"
+    },
+    {
+      "claimed_tests": 224,
+      "evidence": [
+        {
+          "file": "test_claimcheck.py",
+          "line": 639,
+          "rule": "self_report",
+          "value": 224
+        }
+      ],
+      "readme_lines": 661,
+      "status": "claim",
+      "title": "claimcheck",
+      "tool": "claim-checker"
+    },
+    {
+      "claimed_tests": 243,
+      "evidence": [
+        {
+          "line": 399,
+          "rule": "strong_summary",
+          "value": 243
+        },
+        {
+          "line": 400,
+          "rule": "strong_summary",
+          "value": 243
+        }
+      ],
+      "readme_lines": 470,
+      "status": "claim",
+      "title": "claim-crosscheck (`crosscheck.py`)",
+      "tool": "claim-crosscheck"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [
+        {
+          "file": "test_example.py",
+          "line": 154,
+          "rule": "self_report",
+          "value": 3
+        },
+        {
+          "file": "test_claimhist.py",
+          "line": 248,
+          "rule": "self_report",
+          "value": 154
+        }
+      ],
+      "readme_lines": 258,
+      "status": "ambiguous",
+      "title": "commit-claim-auditor (`claimhist.py`)",
+      "tool": "commit-claim-auditor"
+    },
+    {
+      "claimed_tests": 152,
+      "evidence": [
+        {
+          "line": 353,
+          "rule": "bare",
+          "value": 152
+        }
+      ],
+      "readme_lines": 364,
+      "status": "claim",
+      "title": "consolidate.py",
+      "tool": "consolidate"
+    },
+    {
+      "claimed_tests": 168,
+      "evidence": [
+        {
+          "line": 223,
+          "rule": "strong_summary",
+          "value": 168
+        },
+        {
+          "line": 224,
+          "rule": "strong_summary",
+          "value": 168
+        }
+      ],
+      "readme_lines": 385,
+      "status": "claim",
+      "title": "contradict.py",
+      "tool": "contradiction-detector"
+    },
+    {
+      "claimed_tests": 72,
+      "evidence": [
+        {
+          "line": 217,
+          "rule": "strong_summary",
+          "value": 72
+        }
+      ],
+      "readme_lines": 334,
+      "status": "claim",
+      "title": "crosspath-runner",
+      "tool": "crosspath-runner"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [
+        {
+          "line": 381,
+          "rule": "strong_summary",
+          "value": 262
+        },
+        {
+          "line": 381,
+          "rule": "strong_summary",
+          "value": 262
+        },
+        {
+          "line": 382,
+          "rule": "strong_summary",
+          "value": 48
+        },
+        {
+          "line": 382,
+          "rule": "strong_summary",
+          "value": 48
+        }
+      ],
+      "readme_lines": 659,
+      "status": "ambiguous",
+      "title": "docval.py -- README-vs-argparse documentation validator",
+      "tool": "doc-validator"
+    },
+    {
+      "claimed_tests": 110,
+      "evidence": [
+        {
+          "file": "test_dupdetect.py",
+          "line": 357,
+          "rule": "self_report",
+          "value": 110
+        }
+      ],
+      "readme_lines": 362,
+      "status": "claim",
+      "title": "dupdetect",
+      "tool": "dup-detector"
+    },
+    {
+      "claimed_tests": 70,
+      "evidence": [
+        {
+          "line": 299,
+          "rule": "strong_summary",
+          "value": 70
+        }
+      ],
+      "readme_lines": 354,
+      "status": "claim",
+      "title": "env-leak-scanner",
+      "tool": "env-leak-scanner"
+    },
+    {
+      "claimed_tests": 26,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 26
+        }
+      ],
+      "readme_lines": 82,
+      "status": "claim",
+      "title": "Task Lifecycle Event Linter (JSON array input)",
+      "tool": "event-linter"
+    },
+    {
+      "claimed_tests": 63,
+      "evidence": [
+        {
+          "line": 71,
+          "rule": "strong_summary",
+          "value": 63
+        }
+      ],
+      "readme_lines": 233,
+      "status": "claim",
+      "title": "Evidence Verification Harness",
+      "tool": "evidence-harness"
+    },
+    {
+      "claimed_tests": 29,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 29
+        }
+      ],
+      "readme_lines": 130,
+      "status": "claim",
+      "title": "Deterministic Batch Evidence Manifest CLI",
+      "tool": "evidence-manifest"
+    },
+    {
+      "claimed_tests": 39,
+      "evidence": [
+        {
+          "line": 25,
+          "rule": "strong_summary",
+          "value": 39
+        }
+      ],
+      "readme_lines": 98,
+      "status": "claim",
+      "title": "Objective Evidence Quality Scorer",
+      "tool": "evidence-scorer"
+    },
+    {
+      "claimed_tests": 17,
+      "evidence": [
+        {
+          "line": 104,
+          "rule": "strong_summary",
+          "value": 17
+        }
+      ],
+      "readme_lines": 119,
+      "status": "claim",
+      "title": "Evidence Integrity Validator",
+      "tool": "evidence-validator"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 294,
+      "status": "missing",
+      "title": "exit-harness",
+      "tool": "exit-harness"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [
+        {
+          "file": "test_indexgen.py",
+          "line": 27,
+          "rule": "self_report",
+          "value": 161
+        },
+        {
+          "file": "test_pipe_classify.py",
+          "line": 32,
+          "rule": "self_report",
+          "value": 72
+        },
+        {
+          "file": "test_pipe_classify.py",
+          "line": 481,
+          "rule": "self_report",
+          "value": 72
+        }
+      ],
+      "readme_lines": 768,
+      "status": "ambiguous",
+      "title": "index-generator",
+      "tool": "index-generator"
+    },
+    {
+      "claimed_tests": 26,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 26
+        }
+      ],
+      "readme_lines": 81,
+      "status": "claim",
+      "title": "Task Lifecycle Event Linter",
+      "tool": "lifecycle-linter"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 104,
+      "status": "missing",
+      "title": "limitations-probe",
+      "tool": "limitations-probe"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 234,
+      "status": "missing",
+      "title": "link_integrity.py",
+      "tool": "link-integrity"
+    },
+    {
+      "claimed_tests": 202,
+      "evidence": [
+        {
+          "file": "test_loop_health.py",
+          "line": 432,
+          "rule": "self_report",
+          "value": 202
+        }
+      ],
+      "readme_lines": 460,
+      "status": "claim",
+      "title": "loop-health",
+      "tool": "loop-health"
+    },
+    {
+      "claimed_tests": 221,
+      "evidence": [
+        {
+          "line": 638,
+          "rule": "bare",
+          "value": 221
+        }
+      ],
+      "readme_lines": 640,
+      "status": "claim",
+      "title": "ndscan",
+      "tool": "nondeterminism-scanner"
+    },
+    {
+      "claimed_tests": 95,
+      "evidence": [
+        {
+          "line": 163,
+          "rule": "strong_summary",
+          "value": 95
+        }
+      ],
+      "readme_lines": 239,
+      "status": "claim",
+      "title": "path-collision-scanner",
+      "tool": "path-collision-scanner"
+    },
+    {
+      "claimed_tests": 179,
+      "evidence": [
+        {
+          "line": 146,
+          "rule": "strong_summary",
+          "value": 179
+        }
+      ],
+      "readme_lines": 255,
+      "status": "claim",
+      "title": "Post Fiat Payload / Memo Validator",
+      "tool": "payload-validator"
+    },
+    {
+      "claimed_tests": null,
+      "evidence": [],
+      "readme_lines": 230,
+      "status": "missing",
+      "title": "preflight",
+      "tool": "preflight"
+    },
+    {
+      "claimed_tests": 175,
+      "evidence": [
+        {
+          "line": 271,
+          "rule": "bare",
+          "value": 175
+        }
+      ],
+      "readme_lines": 284,
+      "status": "claim",
+      "title": "queue_audit.py",
+      "tool": "queue-auditor"
+    },
+    {
+      "claimed_tests": 41,
+      "evidence": [
+        {
+          "line": 208,
+          "rule": "strong_summary",
+          "value": 41
+        }
+      ],
+      "readme_lines": 221,
+      "status": "claim",
+      "title": "readme-index",
+      "tool": "readme-index"
+    },
+    {
+      "claimed_tests": 61,
+      "evidence": [
+        {
+          "file": "test_regenpre.py",
+          "line": 172,
+          "rule": "self_report",
+          "value": 61
+        }
+      ],
+      "readme_lines": 197,
+      "status": "claim",
+      "title": "regen-preflight",
+      "tool": "regen-preflight"
+    },
+    {
+      "claimed_tests": 174,
+      "evidence": [
+        {
+          "line": 279,
+          "rule": "strong_summary",
+          "value": 174
+        }
+      ],
+      "readme_lines": 777,
+      "status": "claim",
+      "title": "regression-checker",
+      "tool": "regression-checker"
+    },
+    {
+      "claimed_tests": 193,
+      "evidence": [
+        {
+          "file": "test_freshness.py",
+          "line": 22,
+          "rule": "self_report",
+          "value": 193
+        }
+      ],
+      "readme_lines": 517,
+      "status": "claim",
+      "title": "report-freshness",
+      "tool": "report-freshness"
+    },
+    {
+      "claimed_tests": 143,
+      "evidence": [
+        {
+          "line": 291,
+          "rule": "strong_summary",
+          "value": 143
+        },
+        {
+          "line": 291,
+          "rule": "strong_summary",
+          "value": 143
+        }
+      ],
+      "readme_lines": 385,
+      "status": "claim",
+      "title": "Reward Anomaly Detection CLI",
+      "tool": "reward-anomaly"
+    },
+    {
+      "claimed_tests": 23,
+      "evidence": [
+        {
+          "line": 82,
+          "rule": "strong_summary",
+          "value": 23
+        }
+      ],
+      "readme_lines": 145,
+      "status": "claim",
+      "title": "Deterministic Reward Reconciliation CLI",
+      "tool": "reward-reconciler"
+    },
+    {
+      "claimed_tests": 95,
+      "evidence": [
+        {
+          "line": 71,
+          "rule": "strong_summary",
+          "value": 95
+        }
+      ],
+      "readme_lines": 376,
+      "status": "claim",
+      "title": "schema-checker",
+      "tool": "schema-checker"
+    },
+    {
+      "claimed_tests": 188,
+      "evidence": [
+        {
+          "file": "test_scorecard.py",
+          "line": 552,
+          "rule": "self_report",
+          "value": 188
+        }
+      ],
+      "readme_lines": 584,
+      "status": "claim",
+      "title": "scorecard",
+      "tool": "scorecard"
+    },
+    {
+      "claimed_tests": 57,
+      "evidence": [
+        {
+          "line": 60,
+          "rule": "strong_summary",
+          "value": 57
+        }
+      ],
+      "readme_lines": 267,
+      "status": "claim",
+      "title": "Shebang / executable-bit consistency checker",
+      "tool": "shebang-mode"
+    },
+    {
+      "claimed_tests": 222,
+      "evidence": [
+        {
+          "line": 309,
+          "rule": "bare",
+          "value": 222
+        }
+      ],
+      "readme_lines": 334,
+      "status": "claim",
+      "title": "snapdiff.py",
+      "tool": "snapshot-diff"
+    },
+    {
+      "claimed_tests": 157,
+      "evidence": [
+        {
+          "line": 225,
+          "rule": "bare",
+          "value": 157
+        }
+      ],
+      "readme_lines": 348,
+      "status": "claim",
+      "title": "sortkey-detector",
+      "tool": "sortkey-detector"
+    },
+    {
+      "claimed_tests": 156,
+      "evidence": [
+        {
+          "file": "test_staleness.py",
+          "line": 239,
+          "rule": "self_report",
+          "value": 156
+        }
+      ],
+      "readme_lines": 247,
+      "status": "claim",
+      "title": "staleness-monitor",
+      "tool": "staleness-monitor"
+    },
+    {
+      "claimed_tests": 29,
+      "evidence": [
+        {
+          "line": 23,
+          "rule": "strong_summary",
+          "value": 29
+        }
+      ],
+      "readme_lines": 85,
+      "status": "claim",
+      "title": "Configurable Sybil Wallet-Cluster Detector",
+      "tool": "sybil-detector"
+    },
+    {
+      "claimed_tests": 144,
+      "evidence": [
+        {
+          "file": "test_tamperrun.py",
+          "line": 273,
+          "rule": "self_report",
+          "value": 144
+        }
+      ],
+      "readme_lines": 278,
+      "status": "claim",
+      "title": "tamper-runner",
+      "tool": "tamper-runner"
+    },
+    {
+      "claimed_tests": 229,
+      "evidence": [
+        {
+          "file": "test_thread_check.py",
+          "line": 553,
+          "rule": "self_report",
+          "value": 229
+        }
+      ],
+      "readme_lines": 581,
+      "status": "claim",
+      "title": "thread-check",
+      "tool": "thread-check"
+    },
+    {
+      "claimed_tests": 32,
+      "evidence": [
+        {
+          "line": 23,
+          "rule": "strong_summary",
+          "value": 32
+        }
+      ],
+      "readme_lines": 93,
+      "status": "claim",
+      "title": "Contributor Throughput and Reliability Reporter",
+      "tool": "throughput-reporter"
+    },
+    {
+      "claimed_tests": 57,
+      "evidence": [
+        {
+          "line": 159,
+          "rule": "strong_summary",
+          "value": 57
+        }
+      ],
+      "readme_lines": 249,
+      "status": "claim",
+      "title": "transcript-drift",
+      "tool": "transcript-drift"
+    },
+    {
+      "claimed_tests": 194,
+      "evidence": [
+        {
+          "line": 357,
+          "rule": "strong_summary",
+          "value": 194
+        }
+      ],
+      "readme_lines": 408,
+      "status": "claim",
+      "title": "transcript-schema",
+      "tool": "transcript-schema"
+    },
+    {
+      "claimed_tests": 159,
+      "evidence": [
+        {
+          "line": 283,
+          "rule": "strong_summary",
+          "value": 159
+        },
+        {
+          "line": 283,
+          "rule": "strong_summary",
+          "value": 159
+        }
+      ],
+      "readme_lines": 363,
+      "status": "claim",
+      "title": "Wallet Ledger Reconciliation CLI",
+      "tool": "wallet-reconciler"
+    },
+    {
+      "claimed_tests": 202,
+      "evidence": [
+        {
+          "file": "test_weakassert.py",
+          "line": 563,
+          "rule": "self_report",
+          "value": 202
+        }
+      ],
+      "readme_lines": 572,
+      "status": "claim",
+      "title": "weakassert",
+      "tool": "weak-assertion-scanner"
+    },
+    {
+      "claimed_tests": 34,
+      "evidence": [
+        {
+          "line": 23,
+          "rule": "strong_summary",
+          "value": 34
+        }
+      ],
+      "readme_lines": 98,
+      "status": "claim",
+      "title": "XRPL Classic and X-Address Validator",
+      "tool": "xrpl-address"
+    },
+    {
+      "claimed_tests": 36,
+      "evidence": [
+        {
+          "line": 21,
+          "rule": "strong_summary",
+          "value": 36
+        }
+      ],
+      "readme_lines": 176,
+      "status": "claim",
+      "title": "XRPL Payout Reference Auditor",
+      "tool": "xrpl-auditor"
+    }
+  ],
+  "totals": {
+    "tests_from_claims": 5065,
+    "tools": 51,
+    "tools_ambiguous": 3,
+    "tools_missing": 5,
+    "tools_with_claim": 43
+  }
+}
+exit=0
+
+=== $ cd ../index-generator && python3 pipe_scan.py --repo-root .. -o /tmp/dv_evidence_scratch/pipe.json ===
+exit=0
+
+=== $ python3 -c "import json;r=json.load(open('/tmp/dv_evidence_scratch/pipe.json'));print('index-generator command records:',r['total_command_records'],'piped:',r['total_piped_records'])" ===
+index-generator command records: 545 piped: 11
+exit=0
+
+--- 9. hashes of everything this commit adds or rewrites in this tool ---
+
+=== $ sha256sum docval.py test_docval.py entrypoint_baseline.py README.md captured_output.txt option_report.json ===
+e56f4280ec4e8b76d5e850a69e5f6cbfe23da2bf516c5db5dd629a6ae301fba0  docval.py
+a0649e8a45819908ec0d6a66746b5ea1269c4b7bf3613f9f0839586d35e61290  test_docval.py
+84598898329a5874fdd366dee224015f1952f2bed241a4e13f2056511a3e3e83  entrypoint_baseline.py
+c234ff9f0744c0727fbce3fe99dd0546a43d909ca44b58d28991512f22b2f062  README.md
+f9d02e0135c77d19f3bd8492fede3bb46cab2b7486a08395e7574c0880429b4d  captured_output.txt
+3b14ba6d79f277eca62d1bdcfbc0e0728dcc51dd30b2dd14a17a2fb0c0f44928  option_report.json
+exit=0
+
+=== $ sha256sum samples_entrypoints/valid/README.md samples_entrypoints/valid/entry.py samples_entrypoints/valid/capture.sh samples_entrypoints/valid/test_entry.py samples_entrypoints/broken/README.md samples_entrypoints/broken/entry.py samples_entrypoints/broken/run.sh ===
+16e37eb5fb20b20256c039bd56859a9dd093e069635c6c220c9267ab078abbdf  samples_entrypoints/valid/README.md
+c8528ea58a6cd2682edd01da2ab10bbedabf892571c7f6d2e2ab2a75a84bf0ab  samples_entrypoints/valid/entry.py
+0c8a840fa8e82cfd3f91cdbdd283f75146254ef8d366f5f5efea3f2c8f6b7326  samples_entrypoints/valid/capture.sh
+64c2d818b6caf6f4aa5adca4fc89b68a9914a9dfb304e55e2b76ea314a7f32b9  samples_entrypoints/valid/test_entry.py
+0db3f3dc9f92d3b4b97053b49d34493eddc074d12c52eae298b3ff6618915eb4  samples_entrypoints/broken/README.md
+1237939abaeb3d8cd8f5cf5651c517547ed70a7634d473818b99ff7567fe9e75  samples_entrypoints/broken/entry.py
+c5560e0c6ea335af73e418adf4ebf1c7dee09a0cc685989cdb67ddb79a13ac79  samples_entrypoints/broken/run.sh
+exit=0
+
+--- 10. everything this commit changes ---
+samples_consistent/out_clean.json is removed first: the suite's
+end-to-end CLI test scans that fixture for real, and the fixture's
+own README writes it. It is a scratch artifact of running the
+tests, not part of this commit, and it is not tracked at the
+parent either.
+Generated last, against the fully staged tree. The directories beyond
+doc-validator are mechanical consequences of adding tracked files and
+tests: shebang-mode counts tracked files, weak-assertion-scanner
+counts tests, nondeterminism-scanner scans .py content,
+index-generator counts transcript records. This file appears in the
+listing as itself, which is what generating it last means.
+
+=== $ rm -f samples_consistent/out_clean.json samples_inconsistent/bad_pair/report.json; echo removed_the_test_run_artifacts ===
+removed_the_test_run_artifacts
+exit=0
+
+=== $ cd .. && git status --porcelain --ignored=matching ===
+M  claim-crosscheck/sample_run.json
+AM doc-validator/BROKEN_ENTRYPOINT_EVIDENCE.txt
+M  doc-validator/README.md
+M  doc-validator/captured_output.txt
+M  doc-validator/docval.py
+A  doc-validator/entrypoint_baseline.py
+M  doc-validator/option_report.json
+A  doc-validator/samples_entrypoints/broken/README.md
+A  doc-validator/samples_entrypoints/broken/entry.py
+A  doc-validator/samples_entrypoints/broken/run.sh
+A  doc-validator/samples_entrypoints/valid/README.md
+A  doc-validator/samples_entrypoints/valid/capture.sh
+A  doc-validator/samples_entrypoints/valid/entry.py
+A  doc-validator/samples_entrypoints/valid/test_entry.py
+M  doc-validator/test_docval.py
+M  index-generator/README.md
+M  index-generator/captured_output.txt
+M  index-generator/pipe_classification_report.json
+M  nondeterminism-scanner/README.md
+M  nondeterminism-scanner/self_scan_report.json
+M  shebang-mode/README.md
+M  shebang-mode/selfscan_output.txt
+M  transcript-schema/validation_report.json
+M  weak-assertion-scanner/README.md
+M  weak-assertion-scanner/self_scan_report.json
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################

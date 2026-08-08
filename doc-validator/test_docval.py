@@ -8,6 +8,7 @@ CLI behavior (exit codes, determinism, relocation)."""
 import ast
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -881,17 +882,29 @@ class TestEvaluateCommandLine(TempDirCase):
         out = docval.evaluate_command_line('python3 ok.py "unterminated', self._tool_dir(), True)
         self.assertEqual(out.kind, "DOC006_COMMAND_BLOCK_UNPARSEABLE")
 
-    def test_missing_target_script_is_doc005(self):
-        out = docval.evaluate_command_line("python3 nope.py", self._tool_dir(), True)
-        self.assertEqual(out.kind, "DOC005_COMMAND_BLOCK_FAILED")
+    def test_missing_target_script_is_no_longer_the_safety_gate_s_business(self):
+        # Renamed from test_missing_target_script_is_doc005. The safety gate
+        # now answers exactly one question -- "will docval run this line?" --
+        # and a file that is not there is nothing to run, so the gate is
+        # silent and the entrypoint resolver reports it as DOC009. The
+        # replacement assertion is the second one: the defect is still
+        # detected, by name, at the same call site.
+        d = self._tool_dir()
+        self.assertIsNone(docval.evaluate_command_line("python3 nope.py", d, True))
+        self.assertIsNotNone(docval.check_entrypoint_line("python3 nope.py", d))
 
     def test_missing_target_script_detected_even_under_no_run(self):
-        # Static check -- does not require execution.
+        # Static check -- does not require execution. Unchanged property,
+        # moved from the gate to the resolver: the resolver takes no
+        # `no_run` argument at all, because it never runs anything, which is
+        # a stronger guarantee than the two-call comparison this test used
+        # to make against the gate.
         d = self._tool_dir()
-        out_static = docval.evaluate_command_line("python3 nope.py", d, True)
-        out_run = docval.evaluate_command_line("python3 nope.py", d, False)
-        self.assertEqual(out_static.kind, "DOC005_COMMAND_BLOCK_FAILED")
-        self.assertEqual(out_run.kind, "DOC005_COMMAND_BLOCK_FAILED")
+        self.assertIsNone(docval.evaluate_command_line("python3 nope.py", d, True))
+        self.assertIsNone(docval.evaluate_command_line("python3 nope.py", d, False))
+        detail = docval.check_entrypoint_line("python3 nope.py", d)
+        self.assertIsNotNone(detail)
+        self.assertIn("nope.py", detail)
 
     def test_no_run_skips_execution_for_valid_target(self):
         out = docval.evaluate_command_line("python3 ok.py", self._tool_dir(), True)
@@ -1185,7 +1198,15 @@ class TestCheckToolDir(TempDirCase):
         codes = self._codes(self._tmp)
         self.assertNotIn("DOC003_EXIT_CODE_UNREACHABLE", codes)
 
-    def test_doc005_from_missing_script_in_readme_command(self):
+    def test_doc009_from_missing_script_in_readme_command(self):
+        # Renamed from test_doc005_from_missing_script_in_readme_command.
+        # "the file this line names is not there" is now DOC009, for every
+        # launcher form, instead of DOC005 for `python3 <file>` alone -- see
+        # TestBrokenEntrypoints and README "DOC009". The property this test
+        # exists to pin is unchanged: a README naming a script the directory
+        # does not contain is a finding. Only the code moved, and the test
+        # now asserts BOTH halves of that move so a silent regression back
+        # to double-reporting under two codes fails here.
         write(self.p("tool.py"), textwrap.dedent("""
             import argparse, sys
             p = argparse.ArgumentParser()
@@ -1194,7 +1215,9 @@ class TestCheckToolDir(TempDirCase):
             sys.exit(0)
         """))
         write(self.p("README.md"), "# tool\n\n```\npython3 typo_tool.py --x 1\n```\n")
-        self.assertIn("DOC005_COMMAND_BLOCK_FAILED", self._codes(self._tmp))
+        codes = self._codes(self._tmp)
+        self.assertIn("DOC009_BROKEN_ENTRYPOINT", codes)
+        self.assertNotIn("DOC005_COMMAND_BLOCK_FAILED", codes)
 
     def test_doc006_from_pipe_in_readme_command(self):
         write(self.p("tool.py"), textwrap.dedent("""
@@ -1501,6 +1524,490 @@ class TestCanonicalDumpsRoundTrip(unittest.TestCase):
             docval.canonical_dumps(obj).encode("ascii"),
             docval.canonical_dumps(obj).encode("ascii"),
         )
+
+
+# ===========================================================================
+# DOC009: repository-local entrypoints named by README command lines
+# ===========================================================================
+
+class TestEntrypointOf(unittest.TestCase):
+    """Which token of a command line, if any, names a repository-local file."""
+
+    def ref(self, line):
+        return docval.entrypoint_of(shlex.split(line))
+
+    def test_python3_file(self):
+        self.assertEqual(self.ref("python3 tool.py --x 1").spec, "tool.py")
+
+    def test_python_file(self):
+        self.assertEqual(self.ref("python tool.py").spec, "tool.py")
+
+    def test_bash_script(self):
+        self.assertEqual(self.ref("bash capture.sh").spec, "capture.sh")
+
+    def test_sh_script(self):
+        self.assertEqual(self.ref("sh capture.sh").spec, "capture.sh")
+
+    def test_bash_flags_skipped_before_the_script(self):
+        self.assertEqual(self.ref("bash -x capture.sh").spec, "capture.sh")
+
+    def test_dot_slash_form(self):
+        ref = self.ref("./capture.sh --root .")
+        self.assertEqual(ref.spec, "capture.sh")
+        self.assertTrue(ref.needs_exec)
+
+    def test_only_dot_slash_needs_the_executable_bit(self):
+        self.assertFalse(self.ref("bash capture.sh").needs_exec)
+        self.assertFalse(self.ref("python3 tool.py").needs_exec)
+
+    def test_non_unittest_module_names_nothing(self):
+        # A module name says nothing about where the module lives. Claiming
+        # `-m pip` names `pip.py` in this repository produced five phantom
+        # findings on shapes this repository actually writes.
+        for line in ("python3 -m pip install requests", "python3 -m venv .venv",
+                     "python3 -m json.tool report.json", "python3 -m http.server 8000",
+                     "python3 -m mypkg.mymod"):
+            self.assertIsNone(self.ref(line), line)
+
+    def test_unittest_discover_names_nothing(self):
+        # `discover` is a subcommand, not a module, and it is the most
+        # common test invocation in this repository.
+        self.assertIsNone(self.ref("python3 -m unittest discover"))
+        self.assertIsNone(self.ref("python3 -m unittest discover -s transcript-schema -v"))
+
+    def test_bash_dash_c_names_nothing(self):
+        # `-c` consumes the next word as an inline program.
+        self.assertIsNone(self.ref("bash -c 'echo hello'"))
+        self.assertIsNone(self.ref('sh -c "true"'))
+
+    def test_unittest_module_target(self):
+        self.assertEqual(self.ref("python3 -m unittest test_docval -v").spec,
+                         "test_docval.py")
+
+    def test_unittest_dotted_target_reduces_to_the_module(self):
+        # `test_x.TestY.test_z` names one module and two Python objects; only
+        # the module is a file on disk.
+        self.assertEqual(
+            self.ref("python3 -m unittest test_x.TestY.test_z").spec,
+            "test_x.py")
+
+    def test_unittest_flags_skipped_before_the_target(self):
+        self.assertEqual(self.ref("python3 -m unittest -v test_x").spec,
+                         "test_x.py")
+
+    def test_unittest_target_must_look_like_a_test_module(self):
+        self.assertIsNone(self.ref("python3 -m unittest mypkg.mymod"))
+        self.assertIsNotNone(self.ref("python3 -m unittest test_mypkg"))
+
+    def test_bare_unittest_names_nothing(self):
+        self.assertIsNone(self.ref("python3 -m unittest"))
+
+    def test_dash_c_names_nothing(self):
+        self.assertIsNone(self.ref('python3 -c "print(1)"'))
+
+    def test_bare_python3_names_nothing(self):
+        self.assertIsNone(self.ref("python3"))
+
+    def test_unrecognized_launcher_names_nothing(self):
+        # Left entirely to the safety gate. DOC009 must not invent findings
+        # for command shapes it does not model.
+        for line in ("sha256sum out.json", "cmp a.json b.json", "git status",
+                     "cat README.md", "make test"):
+            self.assertIsNone(self.ref(line), line)
+
+    def test_empty_argv(self):
+        self.assertIsNone(docval.entrypoint_of([]))
+
+
+class TestResolveEntrypoint(TempDirCase):
+    """Two working directories, and the things that are not paths at all."""
+
+    def setUp(self):
+        super(TestResolveEntrypoint, self).setUp()
+        self.tool = self.p("repo", "mytool")
+        os.makedirs(self.tool)
+        write(os.path.join(self.tool, "tool.py"), "x = 1\n")
+        write(self.p("repo", "sibling.py"), "x = 1\n")
+
+    def test_resolves_in_the_tool_directory(self):
+        path, base = docval.resolve_entrypoint("tool.py", self.tool)
+        self.assertIsNotNone(path)
+        self.assertEqual(base, os.path.abspath(self.tool))
+
+    def test_resolves_in_the_containing_directory(self):
+        # `python3 mytool/tool.py` -- written to be run from the repo root.
+        path, base = docval.resolve_entrypoint("mytool/tool.py", self.tool)
+        self.assertIsNotNone(path)
+        self.assertEqual(base, os.path.abspath(self.p("repo")))
+
+    def test_tool_directory_wins_when_both_would_match(self):
+        write(os.path.join(self.tool, "sibling.py"), "x = 1\n")
+        _path, base = docval.resolve_entrypoint("sibling.py", self.tool)
+        self.assertEqual(base, os.path.abspath(self.tool))
+
+    def test_unresolvable(self):
+        self.assertEqual(docval.resolve_entrypoint("ghost.py", self.tool),
+                         (None, None))
+
+    def test_a_directory_is_not_an_entrypoint(self):
+        os.makedirs(os.path.join(self.tool, "subdir"))
+        self.assertEqual(docval.resolve_entrypoint("subdir", self.tool),
+                         (None, None))
+
+    # The three tests below assert is_repo_local_spec, NOT
+    # resolve_entrypoint. Asserting `resolve_entrypoint(...) == (None, None)`
+    # is vacuous: a plain nonexistent file returns exactly the same thing, so
+    # the assertion passes whether the guard runs or not. A review proved it:
+    # disabling PLACEHOLDER_RE entirely left all 242 tests green while every
+    # placeholder became a phantom finding.
+
+    def test_absolute_path_is_not_a_repo_local_spec(self):
+        self.assertFalse(docval.is_repo_local_spec(os.path.join(self.tool, "tool.py")))
+
+    def test_parent_escape_is_not_a_repo_local_spec(self):
+        self.assertFalse(docval.is_repo_local_spec("../../etc/passwd"))
+        self.assertFalse(docval.is_repo_local_spec("../sibling/tool.py"))
+
+    def test_placeholders_are_not_repo_local_specs(self):
+        for spec in ("{REPORT}", "path/to/FILE", "some/DIR/x.py", "out-$NAME.py",
+                     "<tool>.py", "*.py", "report-?.py"):
+            self.assertFalse(docval.is_repo_local_spec(spec), spec)
+
+    def test_a_real_name_containing_file_or_path_is_still_repo_local(self):
+        # Word boundaries, not substrings: suppressing these would be a
+        # false NEGATIVE hiding a genuinely broken entrypoint.
+        for spec in ("FILEMAKER.py", "PATHOLOGY.py", "DIRECTORY.py",
+                     "profile_reader.py", "sub/dir_walker.py"):
+            self.assertTrue(docval.is_repo_local_spec(spec), spec)
+
+    def test_empty_spec(self):
+        self.assertFalse(docval.is_repo_local_spec(""))
+        self.assertEqual(docval.resolve_entrypoint("", self.tool), (None, None))
+
+    def test_bases_stop_at_the_filesystem_root(self):
+        bases = docval.entrypoint_bases(os.sep)
+        self.assertEqual(len(bases), 1)
+
+
+class TestCheckEntrypointLine(TempDirCase):
+    """One command line in, one DOC009 detail (or None) out. Never executes."""
+
+    def setUp(self):
+        super(TestCheckEntrypointLine, self).setUp()
+        self.tool = self.p("repo", "mytool")
+        os.makedirs(self.tool)
+        write(os.path.join(self.tool, "tool.py"), "x = 1\n")
+        write(os.path.join(self.tool, "capture.sh"), "#!/usr/bin/env bash\n")
+        write(os.path.join(self.tool, "test_tool.py"), "x = 1\n")
+
+    def test_present_script_is_silent(self):
+        self.assertIsNone(docval.check_entrypoint_line("python3 tool.py", self.tool))
+
+    def test_present_bash_script_is_silent(self):
+        self.assertIsNone(docval.check_entrypoint_line("bash capture.sh", self.tool))
+
+    def test_present_unittest_module_is_silent(self):
+        self.assertIsNone(
+            docval.check_entrypoint_line("python3 -m unittest test_tool -v", self.tool))
+
+    def test_missing_bash_script_is_reported(self):
+        # The whole point: before DOC009 this line and `bash capture.sh` were
+        # reported identically, as one more "not a python3 invocation".
+        detail = docval.check_entrypoint_line("bash capture_typo.sh", self.tool)
+        self.assertIsNotNone(detail)
+        self.assertIn("capture_typo.sh", detail)
+
+    def test_missing_unittest_module_is_reported(self):
+        detail = docval.check_entrypoint_line("python3 -m unittest test_ghost", self.tool)
+        self.assertIsNotNone(detail)
+        self.assertIn("test_ghost", detail)
+
+    def test_missing_python_script_is_reported(self):
+        detail = docval.check_entrypoint_line("python3 ghost.py --x 1", self.tool)
+        self.assertIsNotNone(detail)
+        self.assertIn("ghost.py", detail)
+
+    def test_detail_quotes_the_command_as_written(self):
+        detail = docval.check_entrypoint_line("bash capture_typo.sh --root .", self.tool)
+        self.assertIn("bash capture_typo.sh --root .", detail)
+
+    def test_trailing_echo_exit_idiom_does_not_hide_the_entrypoint(self):
+        detail = docval.check_entrypoint_line(
+            'bash capture_typo.sh ; echo "exit=$?"', self.tool)
+        self.assertIsNotNone(detail)
+
+    def test_blank_and_comment_lines(self):
+        self.assertIsNone(docval.check_entrypoint_line("   ", self.tool))
+        self.assertIsNone(docval.check_entrypoint_line("# bash capture_typo.sh", self.tool))
+
+    def test_unparseable_line_is_left_to_the_safety_gate(self):
+        self.assertIsNone(
+            docval.check_entrypoint_line('bash "unterminated', self.tool))
+
+    def test_dot_slash_missing_file(self):
+        detail = docval.check_entrypoint_line("./ghost.sh", self.tool)
+        self.assertIsNotNone(detail)
+
+    def test_dot_slash_present_but_not_executable(self):
+        # Every file this repository can commit lands at mode 100644, so a
+        # `./script` line in a README is broken even though the file is there.
+        os.chmod(os.path.join(self.tool, "capture.sh"), 0o644)
+        detail = docval.check_entrypoint_line("./capture.sh", self.tool)
+        self.assertIsNotNone(detail)
+        self.assertIn("not executable", detail)
+
+    def test_dot_slash_present_and_executable_is_silent(self):
+        os.chmod(os.path.join(self.tool, "capture.sh"), 0o755)
+        self.assertIsNone(docval.check_entrypoint_line("./capture.sh", self.tool))
+
+    def test_non_dot_slash_launcher_does_not_care_about_the_mode_bit(self):
+        # `bash capture.sh` starts a new bash and hands it a path to read;
+        # the executable bit is irrelevant and demanding it would be wrong.
+        os.chmod(os.path.join(self.tool, "capture.sh"), 0o644)
+        self.assertIsNone(docval.check_entrypoint_line("bash capture.sh", self.tool))
+
+    def test_a_spec_that_is_not_a_path_is_never_reported(self):
+        # The regression this class exists to prevent. These all reach
+        # resolve_entrypoint as "unresolvable"; only is_repo_local_spec
+        # tells them apart from a genuinely missing file, and only
+        # check_entrypoint_line proves the caller consults it.
+        for line in ("python3 %s/tool.py" % self.tool,       # absolute, and it exists
+                     "python3 ../real_sibling.py",           # parent escape
+                     "python3 {REPORT}",
+                     "python3 path/to/FILE",
+                     "bash scripts/*.sh",
+                     "python3 out-$NAME.py"):
+            self.assertIsNone(docval.check_entrypoint_line(line, self.tool), line)
+
+    def test_an_absolute_path_that_exists_is_not_reported(self):
+        absolute = os.path.join(self.tool, "tool.py")
+        self.assertTrue(os.path.isfile(absolute))
+        self.assertIsNone(docval.check_entrypoint_line("python3 " + absolute, self.tool))
+
+    def test_a_parent_escape_that_exists_is_not_reported(self):
+        write(self.p("repo", "real_sibling.py"), "x = 1\n")
+        self.assertIsNone(docval.check_entrypoint_line("python3 ../real_sibling.py", self.tool))
+
+    def test_stdlib_module_invocations_are_not_reported(self):
+        for line in ("python3 -m pip install requests", "python3 -m venv .venv",
+                     "python3 -m json.tool report.json", "python3 -m http.server 8000",
+                     "python3 -m unittest discover", "python3 -m unittest discover -s x -v"):
+            self.assertIsNone(docval.check_entrypoint_line(line, self.tool), line)
+
+    def test_inline_shell_programs_are_not_reported(self):
+        for line in ("bash -c 'echo hello'", 'sh -c "true"',
+                     "bash -c 'python3 ghost.py'"):
+            self.assertIsNone(docval.check_entrypoint_line(line, self.tool), line)
+
+    def test_never_executes_anything(self):
+        # A line naming a script that would destroy the fixture if run must
+        # produce no finding and leave the marker file alone.
+        marker = os.path.join(self.tool, "marker.txt")
+        write(marker, "untouched")
+        write(os.path.join(self.tool, "destroy.py"),
+              "import os\nos.remove(os.path.join(os.path.dirname(__file__), 'marker.txt'))\n")
+        self.assertIsNone(docval.check_entrypoint_line("python3 destroy.py", self.tool))
+        with open(marker, encoding="utf-8") as fh:
+            self.assertEqual(fh.read(), "untouched")
+
+
+class TestBrokenEntrypoints(TempDirCase):
+    """DOC009 end to end, through check_tool_dir."""
+
+    def _codes(self, root):
+        findings = docval.check_tool_dir(root, root, no_run=True)
+        return sorted(f.code for f in findings)
+
+    def _details(self, root):
+        return [f.detail for f in docval.check_tool_dir(root, root, no_run=True)]
+
+    def _tool(self, readme_body):
+        write(self.p("tool.py"), textwrap.dedent("""
+            import argparse, sys
+            p = argparse.ArgumentParser()
+            args = p.parse_args()
+            sys.exit(0)
+        """))
+        write(self.p("README.md"), readme_body)
+
+    def test_valid_control_produces_no_doc009(self):
+        write(self.p("capture.sh"), "#!/usr/bin/env bash\necho hi\n")
+        self._tool("# tool\n\n```bash\nbash capture.sh\n```\n")
+        self.assertNotIn("DOC009_BROKEN_ENTRYPOINT", self._codes(self._tmp))
+
+    def test_broken_fixture_produces_doc009(self):
+        self._tool("# tool\n\n```bash\nbash capture.sh\n```\n")
+        self.assertIn("DOC009_BROKEN_ENTRYPOINT", self._codes(self._tmp))
+
+    def test_finding_names_the_readme_and_the_line_number(self):
+        self._tool("# tool\n\nintro\n\n```bash\nbash capture.sh\n```\n")
+        detail = [d for d in self._details(self._tmp) if "capture.sh" in d][0]
+        self.assertTrue(detail.startswith("./README.md:6:"), detail)
+
+    def test_finding_names_the_command(self):
+        self._tool("# tool\n\n```bash\nbash capture.sh --root .\n```\n")
+        detail = [d for d in self._details(self._tmp) if "capture.sh" in d][0]
+        self.assertIn("bash capture.sh --root .", detail)
+
+    def test_doc009_is_identical_with_and_without_run(self):
+        self._tool("# tool\n\n```bash\nbash capture.sh\n```\n")
+        static = sorted(f.detail for f in docval.check_tool_dir(self._tmp, self._tmp, True)
+                        if f.code == "DOC009_BROKEN_ENTRYPOINT")
+        live = sorted(f.detail for f in docval.check_tool_dir(self._tmp, self._tmp, False)
+                      if f.code == "DOC009_BROKEN_ENTRYPOINT")
+        self.assertEqual(static, live)
+        self.assertEqual(len(static), 1)
+
+    def test_a_quoted_cd_does_not_exempt_the_block(self):
+        # `cd` inside a Python string changes no directory. A regex over the
+        # block body matched it and silently exempted a real broken
+        # entrypoint -- a false negative found by review.
+        self._tool('# tool\n\n```bash\npython3 -c "import os; cd nowhere"\n'
+                   'bash ghost_one.sh\n```\n')
+        joined = " ".join(self._details(self._tmp))
+        self.assertIn("ghost_one.sh", joined)
+
+    def test_an_indented_cd_does_exempt_the_block(self):
+        # The other half of the same defect: the regex required `cd` at the
+        # start of a line, so an indented one did not exempt anything.
+        self._tool("# tool\n\n```bash\n  cd somewhere\n  bash ghost_two.sh\n```\n")
+        joined = " ".join(self._details(self._tmp))
+        self.assertNotIn("ghost_two.sh", joined)
+
+    def test_a_word_beginning_with_cd_does_not_exempt_the_block(self):
+        self._tool("# tool\n\n```bash\ncdrom_mount --now\nbash ghost_three.sh\n```\n")
+        joined = " ".join(self._details(self._tmp))
+        self.assertIn("ghost_three.sh", joined)
+
+    def test_a_block_that_changes_directory_is_exempt(self):
+        # `cd elsewhere` moves the working directory somewhere this checker
+        # cannot follow, so the block is skipped rather than guessed at.
+        self._tool("# tool\n\n```bash\ncd somewhere\nbash capture.sh\n```\n")
+        self.assertNotIn("DOC009_BROKEN_ENTRYPOINT", self._codes(self._tmp))
+
+    def test_the_cd_exemption_is_per_block_not_per_file(self):
+        self._tool("# tool\n\n```bash\ncd somewhere\nbash a.sh\n```\n"
+                   "\n```bash\nbash b.sh\n```\n")
+        joined = " ".join(self._details(self._tmp))
+        self.assertNotIn("a.sh", joined)
+        self.assertIn("b.sh", joined)
+
+    def test_the_cd_exemption_does_not_disable_the_safety_gate(self):
+        self._tool("# tool\n\n```bash\ncd somewhere\npython3 x.py | head\n```\n")
+        self.assertIn("DOC006_COMMAND_BLOCK_UNPARSEABLE", self._codes(self._tmp))
+
+    def test_repo_root_relative_command_is_not_a_finding(self):
+        # The single most common false positive this replaces: a README whose
+        # commands are written to be run from the directory above.
+        os.makedirs(self.p("mytool"))
+        write(self.p("mytool", "tool.py"), textwrap.dedent("""
+            import argparse, sys
+            p = argparse.ArgumentParser()
+            args = p.parse_args()
+            sys.exit(0)
+        """))
+        write(self.p("mytool", "README.md"),
+              "# tool\n\n```bash\npython3 mytool/tool.py --root .\n```\n")
+        codes = self._codes(self.p("mytool"))
+        self.assertNotIn("DOC009_BROKEN_ENTRYPOINT", codes)
+        self.assertNotIn("DOC005_COMMAND_BLOCK_FAILED", codes)
+
+    def test_a_refused_line_still_gets_its_doc006_as_well(self):
+        # DOC006 answers "will docval run this?" and DOC009 answers "is the
+        # file there?". A broken `bash` line is both, and both are reported.
+        self._tool("# tool\n\n```bash\nbash capture.sh\n```\n")
+        codes = self._codes(self._tmp)
+        self.assertIn("DOC006_COMMAND_BLOCK_UNPARSEABLE", codes)
+        self.assertIn("DOC009_BROKEN_ENTRYPOINT", codes)
+
+    def test_missing_python_target_is_reported_once_not_twice(self):
+        self._tool("# tool\n\n```bash\npython3 ghost.py\n```\n")
+        codes = self._codes(self._tmp)
+        self.assertEqual(codes.count("DOC009_BROKEN_ENTRYPOINT"), 1)
+        self.assertNotIn("DOC005_COMMAND_BLOCK_FAILED", codes)
+
+    def test_non_command_blocks_are_not_scanned(self):
+        self._tool("# tool\n\n```json\n{\"cmd\": \"bash capture.sh\"}\n```\n")
+        self.assertNotIn("DOC009_BROKEN_ENTRYPOINT", self._codes(self._tmp))
+
+    def test_doc009_appears_in_the_report_counts(self):
+        self._tool("# tool\n\n```bash\nbash capture.sh\n```\n")
+        out = self.p("r.json")
+        rc = docval.run(["--root", self._tmp, "-o", out, "--no-run"])
+        self.assertEqual(rc, docval.EXIT_FINDINGS)
+        with open(out, encoding="utf-8") as fh:
+            report = json.load(fh)
+        self.assertEqual(report["counts"]["DOC009_BROKEN_ENTRYPOINT"], 1)
+
+
+class TestCommittedEntrypointFixtures(unittest.TestCase):
+    """The two committed fixtures, asserted rather than described.
+
+    TestBrokenEntrypoints builds equivalent trees in a tmpdir, which proves
+    the rule but leaves samples_entrypoints/ decorative -- nothing re-checked
+    the numbers the README states for it. Review called that out. These tests
+    run docval against the committed directories themselves, so editing a
+    fixture without editing the prose fails here."""
+
+    def _counts(self, name):
+        out = self.p_run(os.path.join(HERE, "samples_entrypoints", name))
+        return json.loads(out)["counts"]
+
+    def p_run(self, root):
+        proc = subprocess.run(
+            [sys.executable, os.path.join(HERE, "docval.py"), "--root", root, "--no-run"],
+            capture_output=True, text=True,
+            env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        self.assertNotEqual(proc.returncode, 2, proc.stderr)
+        return proc.stdout
+
+    def test_valid_control_has_zero_broken_entrypoints(self):
+        self.assertEqual(self._counts("valid").get("DOC009_BROKEN_ENTRYPOINT", 0), 0)
+
+    def test_valid_control_still_produces_its_doc006_refusals(self):
+        # If this ever reached zero the control would have stopped
+        # controlling for anything: it exists to show that a refusal and a
+        # broken entrypoint are different facts about the same line.
+        self.assertEqual(self._counts("valid").get("DOC006_COMMAND_BLOCK_UNPARSEABLE"), 2)
+
+    def test_broken_fixture_has_exactly_three_broken_entrypoints(self):
+        self.assertEqual(self._counts("broken").get("DOC009_BROKEN_ENTRYPOINT"), 3)
+
+    def test_broken_fixture_reports_one_finding_per_failure_mode(self):
+        findings = [f for f in json.loads(self.p_run(
+            os.path.join(HERE, "samples_entrypoints", "broken")))["findings"]
+            if f["code"] == "DOC009_BROKEN_ENTRYPOINT"]
+        joined = " ".join(f["detail"] for f in findings)
+        self.assertIn("capture.sh", joined)       # missing bash script
+        self.assertIn("test_entry", joined)       # missing -m unittest module
+        self.assertIn("not executable", joined)   # present but unstartable
+
+    def test_broken_fixture_leaves_its_one_correct_line_alone(self):
+        findings = [f for f in json.loads(self.p_run(
+            os.path.join(HERE, "samples_entrypoints", "broken")))["findings"]
+            if f["code"] == "DOC009_BROKEN_ENTRYPOINT"]
+        # Substring-safe: "test_entry.py" contains "entry.py", so the
+        # assertion is on the quoted command, not on the filename.
+        for f in findings:
+            self.assertNotIn("python3 entry.py --check", f["detail"])
+
+    def test_the_files_the_control_names_are_really_committed(self):
+        for name in ("capture.sh", "test_entry.py", "entry.py"):
+            self.assertTrue(
+                os.path.isfile(os.path.join(HERE, "samples_entrypoints", "valid", name)),
+                name)
+
+    def test_the_broken_fixture_s_run_sh_exists_but_is_not_executable(self):
+        # The point of that third finding. If someone ever commits it +x,
+        # the fixture stops demonstrating anything and this fails.
+        run_sh = os.path.join(HERE, "samples_entrypoints", "broken", "run.sh")
+        self.assertTrue(os.path.isfile(run_sh))
+        self.assertFalse(os.access(run_sh, os.X_OK))
+
+    def test_the_broken_fixture_does_not_contain_the_files_it_names(self):
+        broken = os.path.join(HERE, "samples_entrypoints", "broken")
+        self.assertFalse(os.path.exists(os.path.join(broken, "capture.sh")))
+        self.assertFalse(os.path.exists(os.path.join(broken, "test_entry.py")))
 
 
 if __name__ == "__main__":
