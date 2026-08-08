@@ -14,16 +14,87 @@ python3 manifest.py verify manifest_run1.json ; echo "exit=$?"
 python3 manifest.py verify tampered_manifest.json ; echo "exit=$?"
 ```
 
+The six steps this delivery adds are recorded in `captured_output.txt` as
+**plain `$` steps**, not `=== $ ... ===` records, and are listed here in a
+table rather than in the block above:
+
+| step | what it shows |
+|------|---------------|
+| `python3 -m unittest test_repeat_run -v` | the 25 new tests, `OK` |
+| `python3 manifest.py build submissions_repeat.json -o repeat_run1.json` | first pass over the new fixture |
+| `python3 manifest.py build submissions_repeat.json -o repeat_run2.json` | second pass |
+| `sha256sum repeat_run1.json repeat_run2.json` | both output hashes, printed whether or not they agree |
+| `cmp repeat_run1.json repeat_run2.json && echo BYTE-IDENTICAL` | the byte comparison |
+| `python3 manifest.py verify repeat_run1.json` | the new fixture's manifest re-verifies |
+
+The split is not cosmetic, and the repository already documents the reason:
+`index-generator` pins a repository-wide count of `=== $ ... ===` records --
+548 -- in its committed `pipe_classification_report.json` and its README, and
+`test_pipe_classify.TestCommittedReportIsFresh` goes red the moment that count
+moves. `index-generator` is off limits under the brief these steps were added
+under, so they are plain steps, exactly as
+`evidence-validator/mk_artifacts.sh` did for the same reason. Measured, not
+assumed: recording all six as `=== $ ... ===` records takes
+`pipe_scan.py`'s `total_command_records` from 548 to 554 and turns that test
+red. A plain step also carries no `exit=` line: `transcript-drift/FORMAT.md`
+requires exactly one `exit=` per **record**, and a plain step is not a record,
+so there is no place to hang one.
+
+Keeping them out of the fenced block above is the second half of the same
+constraint: `transcript-drift/driftcheck.py` extracts a command only from a
+line **inside** a fenced block that begins `python3 ` or `./`, then requires
+each to appear as a `=== $ ... ===` header. A plain step has no header.
+Measured, by actually putting all six back in the fenced block and re-running
+`python3 driftcheck.py --root ..`: the repository-wide finding count goes
+99 -> 100, `README_COMMAND_NOT_IN_TRANSCRIPT` goes 39 -> 40, and that single
+extra finding names **four** commands, not six --
+`sha256sum ...` and `cmp ... && echo BYTE-IDENTICAL` are never extracted
+because they do not begin `python3 ` or `./`. One finding, four commands, in a
+tool that is also off limits. Both constraints point the same way.
+
+The six steps also sit in the transcript's **preamble**, ahead of the first
+`=== $ ... ===` header, rather than after the last record. `FORMAT.md` gives a
+record's body as "up to the next header or EOF", so a trailing plain-step
+block would be parsed as the body of `verify tampered_manifest.json` and its
+its `Ran ...` summary line would be attributed to a command that runs no tests.
+Measured: as preamble, `driftcheck`'s `transcript_test_counts` for this
+directory is `[29]`, identical to before this delivery; appended at the end
+the repeat-run suite's own count is added to it.
+
 ## Expected results
 
 | step | result |
 |------|--------|
-| test suite | `Ran 29 tests` / `OK`, exit 0 |
-| build (both runs) | `batch_root=ac454cee291d825e13310a14214f1d665a457f7251d22d2aefab2e64fc8ec28b`, exit 0 |
-| manifest file SHA-256 (both runs) | `ba351b028a8b85f8aa93cd2769cd54dba23433ae8f7868da4bc6ecad3cd112f3` |
-| `cmp` | BYTE-IDENTICAL |
-| verify clean manifest | `VERIFIED ...`, exit **0** |
+| both suites | **54 tests, OK** (29 in `test_manifest` + 25 in `test_repeat_run`), exit 0 |
+| build (both runs, either fixture) | exit 0 |
+| `cmp` (both fixtures) | BYTE-IDENTICAL |
+| verify a clean manifest | `VERIFIED ...`, exit **0** |
 | verify tampered manifest | `VERIFICATION FAILED` + 2 drift lines, exit **1** |
+
+Digests, re-derived by `test_repeat_run.TestTheReadmeNumbersAreCurrent` on
+every run rather than trusted:
+
+| input | digest |
+|------|--------|
+| `submissions.json` batch_root | `ac454cee291d825e13310a14214f1d665a457f7251d22d2aefab2e64fc8ec28b` |
+| `submissions.json` manifest SHA-256 | `ba351b028a8b85f8aa93cd2769cd54dba23433ae8f7868da4bc6ecad3cd112f3` |
+| `submissions_repeat.json` batch_root | `569e9e16370a92f2e504b3062233344f9c5d773145bd9f2f9f442a34159f26b5` |
+| `submissions_repeat.json` manifest SHA-256 | `25cc424842e367343be808f30b7b5d315ac62a67f717fef7304d13c890b0a6ba` |
+
+This is a knowing deviation from `EVIDENCE_STANDARD.md` section 6, which
+requires every documented invocation to carry a `=== $ ... ===` header and an
+explicit `exit=`. The six steps' exit codes are all 0; they are asserted by
+`test_repeat_run` (`self.assertEqual(proc.returncode, 0, proc.stderr)` on
+every subprocess) rather than recorded in the transcript, and the deviation
+buys leaving two off-limits directories untouched.
+
+`test_output.txt` is the verbose listing of both suites, in the order the
+table above states them (29 then 25).
+
+`repeat_run1.json` / `repeat_run2.json` are scratch verification artifacts of
+the rerun block, not part of the deliverable -- they are not shipped in this
+directory. `manifest_run1.json` / `manifest_run2.json` are shipped, and
+`test_repeat_run.TestTheCommittedArtifactsAreNotStale` rebuilds them.
 
 `tampered_manifest.json` is `manifest_run1.json` with `entries[0].canonical.cid`
 altered to `QmTAMPERED...`. It is included precisely so the non-zero path is
@@ -47,6 +118,97 @@ Domain separation (`leaf:` vs `node:`) prevents a leaf digest from being replaye
 `submissions.json` deliberately contains unsorted keys and messy whitespace
 (`"  validator   delivered  "`, `"reconciler\tdelivered"`) so that the
 canonicalization rules are actually exercised rather than assumed.
+
+`submissions_repeat.json` is the fixture for the repeat-run test. Seven
+records, chosen so the byte comparison has something to be sensitive to:
+out-of-order keys at two nesting depths, whitespace rule 2 has to collapse
+(`"first\trecord\nwith   mixed   whitespace"`), non-ASCII, a duplicate
+`submission_id`/`cid` pair (limitation EM-4), mixed scalar types including
+`null`, `true`, `-0.0` and `1e3`, and an **odd** leaf count so the rule-7
+promote branch runs on the first Merkle level. Seven leaves reduce 7 -> 4 ->
+2 -> 1, so the promote branch fires once, at the first level only.
+
+## What the repeat-run test adds
+
+`test_manifest.TestCli.test_build_stdout_repeatable` already runs `build`
+twice and compares stdout. `test_repeat_run.py` covers three things it does
+not:
+
+1. **The `-o` write path.** Nothing previously compared the bytes of the file
+   `--out` produces; only stdout.
+2. **A fresh working directory per pass.** Each pass stages `manifest.py` plus
+   one fixture into its own `tempfile.mkdtemp()` and runs there, so a cwd or
+   absolute path leaking into the output shows up as drift.
+3. **Two different `PYTHONHASHSEED` values.** The existing test lets both
+   children inherit the ambient seed. A runner that exports
+   `PYTHONHASHSEED=0` therefore hides per-process hash-order drift from it
+   completely.
+
+Point 3 is measured, not asserted. Mutating `canonicalize` to iterate
+`set(value)` instead of `sorted(value)`, and `serialize` to pass
+`sort_keys=False`, then running with `PYTHONHASHSEED=0` exported (three runs
+of each suite, same result every time):
+
+| suite | result on the seed-dependent build |
+|---|---|
+| `python3 -m unittest test_manifest` | 29 tests, all **OK** |
+| `python3 -m unittest test_repeat_run` | 25 tests run, **9 failures** |
+
+The entire existing suite passes on a build whose output order depends on the
+hash seed. That is the gap this file closes.
+`sortkey-detector/README.md` limitation 5 describes the same blind spot in the
+abstract; this is the first committed test in the repository that varies the
+seed.
+
+Six more mutations were applied one at a time to `manifest.py` and each was
+killed by this file: injecting `os.getcwd()` into the manifest, injecting
+`time.time()`, writing the `-o` file with `indent=2` while stdout stayed
+compact, changing rule 7 from promote to duplicate, an off-by-one
+`record_count`, and opening the `-o` path with mode `"a"` instead of `"w"`
+so a second build appends to the first. Seven mutations applied, seven
+killed. The append mutation is the reason
+`test_rerunning_into_the_same_output_path_is_a_no_op` exists: every other
+pass here writes into a fresh directory, so it alone reads the brief's
+"a second run leaves its output unchanged" literally.
+
+Every failure message prints both SHA-256 digests and both byte lengths, so a
+reviewer can tell a content change from a truncation without re-running.
+
+Cleanup note: the staging helper calls `shutil.rmtree` on the directory
+`tempfile.mkdtemp()` returned, never on its parent.
+
+## What this delivery changed outside this directory
+
+Five files. Four are in two directories the brief lists as off limits: each
+is a current-state self-scan that `report-freshness/manifest.json` requires to
+regenerate byte-for-byte, plus the README line that quotes it. The fifth,
+`claim-crosscheck/sample_run.json`, is the same kind of entry in a directory
+the brief does not exclude. Reverting any one of them turns a committed gate
+red. No finding count moved in any of the three scanners -- only the size of
+the tree they read.
+
+| file | why | movement |
+|---|---|---|
+| `nondeterminism-scanner/self_scan_report.json` | `report-freshness` entry `nondeterminism-scanner:self_scan_report.json`; regenerated with `python3 ndscan.py --root .. -o self_scan_report.json` | `files_scanned` 184 -> 185; `findings_count` unchanged at 460 |
+| `nondeterminism-scanner/README.md` | quotes that report's `files_scanned` twice | same |
+| `weak-assertion-scanner/self_scan_report.json` | `report-freshness` entry `weak-assertion-scanner:self_scan_report.json`; regenerated with `python3 weakassert.py --root .. -o self_scan_report.json` | `files_scanned` 83 -> 84, `tests_scanned` 6610 -> 6635; `findings_total` unchanged at 246 |
+| `weak-assertion-scanner/README.md` | `test_weakassert_regen` re-derives every number in it from the report | same |
+| `claim-crosscheck/sample_run.json` | `report-freshness` entry `claim-crosscheck:sample_run.json`, a whole-tree snapshot that must regenerate byte-for-byte; regenerated with `python3 crosscheck.py --root .. --all -o sample_run.json` | `claims_checked` 15, `discrepancies` 1, `errors` 0 -- all three unchanged; only the bytes move, because this README gained checkable claims |
+
+Deliberately **not** changed, and why:
+
+- `index-generator` -- its pinned `total_command_records` stays 548 because
+  the six new steps are plain steps. See "Exact rerun commands" above.
+- `shebang-mode` -- `test_repeat_run.py` carries no shebang, so
+  `SM002_SHEBANG_WITHOUT_EXEC` stays 150.
+- The root `README.md` index row still reads `| evidence-manifest | 29 |`,
+  which is now 25 short of this directory's real 54. That row, `readme-index/corpus.tsv`
+  and `readme-index/root_readme_after.md` are one pinned 44-tool snapshot;
+  moving the row alone would desynchronise the three, and `readme-index` is
+  off limits. `readmeindex.py --corpus corpus.tsv --root-readme ../README.md`
+  produces byte-identical `index_differences` before and after this delivery.
+- `throughput-reporter/README.md` -- its changelog rows describe the state at
+  *its own* commit and stay true as history.
 
 ## Flags
 

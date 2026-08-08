@@ -1,0 +1,61 @@
+[
+  {
+    "task_id": "task_4ba604ef9a8d199f4fe0375aca4bd05c",
+    "submission_id": "  sub_repeat_1  ",
+    "wallet": "rJ8St5nx0oH4DvX",
+    "cid": "QmAbc",
+    "note": "first\trecord\nwith   mixed   whitespace",
+    "attachments": [
+      {"name": "b.txt", "bytes": 12},
+      {"name": "a.txt", "bytes": 3}
+    ]
+  },
+  {
+    "submission_id": "sub_repeat_2",
+    "task_id": "task_4ba604ef9a8d199f4fe0375aca4bd05c",
+    "cid": "QmDef",
+    "wallet": "rJ8St5nx0oH4DvX",
+    "note": "unicode: naïve café é́ 中文",
+    "meta": {"zeta": null, "alpha": true, "mu": 3, "kappa": 2.5}
+  },
+  {
+    "submission_id": "sub_repeat_2",
+    "task_id": "task_4670a6419620de51ce52205e13f1791e",
+    "cid": "QmDef",
+    "wallet": "rJ8St5nx0oH4DvX",
+    "note": "duplicate submission_id and cid, kept as two leaves by design"
+  },
+  {
+    "submission_id": "sub_repeat_4",
+    "task_id": "task_cc747dfcf04143c023c703cf414672b8",
+    "wallet": "rJ8St5nx0oH4DvX",
+    "cid": "QmGhi",
+    "note": "",
+    "nested": {"b": {"d": [1, 2, {"y": "  y  ", "x": "x"}], "c": 1}, "a": []}
+  },
+  {
+    "submission_id": "sub_repeat_5",
+    "task_id": "task_d1af027fe8ca2e530006098ee7cce277",
+    "wallet": "rJ8St5nx0oH4DvX",
+    "cid": "QmJkl",
+    "note": "keys deliberately out of order in the source file",
+    "aaa": 1,
+    "zzz": 2,
+    "mmm": 3
+  },
+  {
+    "submission_id": "sub_repeat_6",
+    "task_id": "task_31bc5d40eccab8fef7ed6ae16d679e81",
+    "wallet": "rJ8St5nx0oH4DvX",
+    "cid": "QmMno",
+    "note": "sixth",
+    "flags": [true, false, null, 0, -0.0, 1e3]
+  },
+  {
+    "submission_id": "sub_repeat_7",
+    "task_id": "task_90dc30cdef0b6f74b3578bf6b253e003",
+    "wallet": "rJ8St5nx0oH4DvX",
+    "cid": "QmPqr",
+    "note": "seventh record makes the first Merkle level odd, exercising the promote rule"
+  }
+]
