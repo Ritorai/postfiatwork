@@ -287,8 +287,8 @@ It scans every sibling tool directory in this repository, each with its own
 that is the tool's documented "findings present" status, not a failure.
 
 ```
-files_scanned: 82
-tests_scanned: 6553
+files_scanned: 83
+tests_scanned: 6610
 findings_total: 246
   WA001_NO_ASSERTION: 13
   WA002_CALL_ONLY: 3
