@@ -442,7 +442,7 @@ anticipated has since landed (`payload-validator`, `queue-auditor`,
 `wallet-reconciler`, `commit-claim-auditor`, `dup-detector`,
 `transcript-schema`, each in its own commit), so the numbers have moved.
 Re-running the same command against the current tree reports **51
-transcript files scanned, 541 command records, 11 flagged records across
+transcript files scanned, 545 command records, 11 flagged records across
 9 directories**.
 
 That number is still not the number a reader wants. `pipe_scan.py` counts
