@@ -287,12 +287,12 @@ It scans every sibling tool directory in this repository, each with its own
 that is the tool's documented "findings present" status, not a failure.
 
 ```
-files_scanned: 81
-tests_scanned: 6343
-findings_total: 245
+files_scanned: 82
+tests_scanned: 6418
+findings_total: 246
   WA001_NO_ASSERTION: 13
   WA002_CALL_ONLY: 3
-  WA003_SELF_DERIVED_EXPECTATION: 121
+  WA003_SELF_DERIVED_EXPECTATION: 122
   WA004_SKIPPED_TEST: 108
 files_with_errors: 0
 ```
