@@ -1,0 +1,390 @@
+readme-index -- atomic write evidence
+=====================================
+
+Records use transcript-drift/FORMAT.md's grammar: a "=== $ command ===" header,
+the verbatim output, and an exit= line. All paths are relative. Records run
+under `bash -c 'set -o pipefail; ...'`, so a piped record's exit= line reports
+the command that failed rather than the exit status of `tail`.
+
+This file DEPARTS from FORMAT.md in one respect, deliberately: it commits
+`FAILED` verdicts. FORMAT.md classifies a committed FAILED as drift by
+definition, and it is right to -- for captured_output.txt, which is a claim
+that the tool works. This file is the opposite claim: that the tool did NOT
+work before the fix. The repository's validators only ever read
+captured_output.txt, so nothing here is being smuggled past a gate; the
+departure is stated because a file claiming conformance while violating a rule
+is worse than one that says which rule it breaks and why.
+
+What this proves, in order:
+
+  1. the same test file, run against the PRE-FIX source, fails -- and fails by
+     finding a destination truncated where the previous bytes should still be,
+     not merely by missing a helper;
+  2. a direct demonstration of that truncation, outside unittest;
+  3. the same test file, run against the fixed source, passes;
+  4. the same demonstration against the fixed source leaves the destination
+     byte-identical and no temp file behind.
+
+PARENT is the commit this fix landed on. The pre-fix source is read out of Git
+rather than kept as a second copy in the tree, because a committed copy of a
+superseded file is exactly the kind of thing that goes stale unnoticed.
+
+The one number here that is not reproducible is the wall-clock in unittest's
+`Ran N tests in ...s` line. Everything else -- counts, verdicts, byte sizes,
+exit codes -- is fixed by construction.
+
+=== $ echo abb45e149cb08e285320f600415e2a8975115cf5 ===
+abb45e149cb08e285320f600415e2a8975115cf5
+exit=0
+
+=== $ git cat-file -t abb45e149cb08e285320f600415e2a8975115cf5 ===
+commit
+exit=0
+
+=== $ git show abb45e149cb08e285320f600415e2a8975115cf5:readme-index/readmeindex.py > _atomic_scratch/readmeindex.py && wc -l _atomic_scratch/readmeindex.py ===
+388 _atomic_scratch/readmeindex.py
+exit=0
+
+=== $ grep -n 'open(args.rewrite\|open(args.output\|write_text_atomically' _atomic_scratch/readmeindex.py ===
+370:                with open(args.rewrite, "w", encoding="utf-8", newline="\n") as fh:
+380:        with open(args.output, "w", encoding="utf-8", newline="\n") as fh:
+exit=0
+
+=== $ grep -n 'open(args.rewrite\|open(args.output\|write_text_atomically' readmeindex.py ===
+86:def write_text_atomically(path, text):
+500:                write_text_atomically(args.rewrite, new_text)
+509:        write_text_atomically(args.output, text)
+exit=0
+
+=== $ cp test_readmeindex.py demo_partial_write.py _atomic_scratch/ && ls _atomic_scratch ===
+demo_partial_write.py
+readmeindex.py
+test_readmeindex.py
+exit=0
+
+=== $ cd _atomic_scratch && python3 -m unittest test_readmeindex 2>&1 | sed 's|/[^ ]*/_atomic_scratch/|_atomic_scratch/|g' ===
+............FFF..EEEE......................F......EEEEEEEEEEEEEEEEEEEEEE
+======================================================================
+ERROR: test_existing_file_reports_its_own_bits (test_readmeindex.TestDestinationMode.test_existing_file_reports_its_own_bits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 893, in test_existing_file_reports_its_own_bits
+    self.assertEqual(R.destination_mode(path), 0o604)
+                     ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'destination_mode'
+
+======================================================================
+ERROR: test_missing_file_reports_the_umask_default (test_readmeindex.TestDestinationMode.test_missing_file_reports_the_umask_default)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 899, in test_missing_file_reports_the_umask_default
+    self.assertEqual(R.destination_mode(os.path.join(d, "nope")), 0o644)
+                     ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'destination_mode'
+
+======================================================================
+ERROR: test_missing_file_under_a_tighter_umask (test_readmeindex.TestDestinationMode.test_missing_file_under_a_tighter_umask)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 907, in test_missing_file_under_a_tighter_umask
+    self.assertEqual(R.destination_mode(os.path.join(d, "nope")), 0o600)
+                     ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'destination_mode'
+
+======================================================================
+ERROR: test_reading_the_umask_restores_it (test_readmeindex.TestDestinationMode.test_reading_the_umask_restores_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 914, in test_reading_the_umask_restores_it
+    R.destination_mode(os.path.join(self.scratch(), "nope"))
+    ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'destination_mode'
+
+======================================================================
+ERROR: test_a_character_device_destination_is_written_through_not_replaced (test_readmeindex.TestWriteTextAtomically.test_a_character_device_destination_is_written_through_not_replaced)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 723, in test_a_character_device_destination_is_written_through_not_replaced
+    R.write_text_atomically(node, "discarded\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_directory_destination_still_raises_like_a_direct_write (test_readmeindex.TestWriteTextAtomically.test_a_directory_destination_still_raises_like_a_direct_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 708, in test_a_directory_destination_still_raises_like_a_direct_write
+    R.write_text_atomically(target, "x\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_fifo_destination_is_written_through_not_replaced (test_readmeindex.TestWriteTextAtomically.test_a_fifo_destination_is_written_through_not_replaced)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 799, in test_a_fifo_destination_is_written_through_not_replaced
+    R.write_text_atomically(fifo, "through the pipe\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_keyboard_interrupt_still_removes_the_temp_file (test_readmeindex.TestWriteTextAtomically.test_a_keyboard_interrupt_still_removes_the_temp_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 736, in test_a_keyboard_interrupt_still_removes_the_temp_file
+    R.write_text_atomically(path, "REPLACEMENT " * 50)
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_new_destination_gets_the_mode_plain_open_would_have_given (test_readmeindex.TestWriteTextAtomically.test_a_new_destination_gets_the_mode_plain_open_would_have_given)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 677, in test_a_new_destination_gets_the_mode_plain_open_would_have_given
+    R.write_text_atomically(path, "x")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_successful_write_leaks_no_file_descriptor (test_readmeindex.TestWriteTextAtomically.test_a_successful_write_leaks_no_file_descriptor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 770, in test_a_successful_write_leaks_no_file_descriptor
+    R.write_text_atomically(path, "warm up\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_symlink_into_proc_fd_is_written_through (test_readmeindex.TestWriteTextAtomically.test_a_symlink_into_proc_fd_is_written_through)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 832, in test_a_symlink_into_proc_fd_is_written_through
+    R.write_text_atomically(link, "down the pipe\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_symlink_loop_raises_instead_of_being_replaced (test_readmeindex.TestWriteTextAtomically.test_a_symlink_loop_raises_instead_of_being_replaced)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 848, in test_a_symlink_loop_raises_instead_of_being_replaced
+    R.write_text_atomically(a, "should not land\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_symlinked_destination_is_written_through_not_replaced (test_readmeindex.TestWriteTextAtomically.test_a_symlinked_destination_is_written_through_not_replaced)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 693, in test_a_symlinked_destination_is_written_through_not_replaced
+    R.write_text_atomically(link, "through\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_trailing_slash_on_a_new_path_still_raises (test_readmeindex.TestWriteTextAtomically.test_a_trailing_slash_on_a_new_path_still_raises)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 875, in test_a_trailing_slash_on_a_new_path_still_raises
+    R.write_text_atomically(path + os.sep, "should not land\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_a_trailing_slash_on_an_existing_file_still_raises (test_readmeindex.TestWriteTextAtomically.test_a_trailing_slash_on_an_existing_file_still_raises)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 862, in test_a_trailing_slash_on_an_existing_file_still_raises
+    R.write_text_atomically(path + os.sep, "should not land\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_an_existing_destination_keeps_its_mode (test_readmeindex.TestWriteTextAtomically.test_an_existing_destination_keeps_its_mode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 659, in test_an_existing_destination_keeps_its_mode
+    R.write_text_atomically(path, "fine\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_an_unusual_existing_mode_is_preserved_too (test_readmeindex.TestWriteTextAtomically.test_an_unusual_existing_mode_is_preserved_too)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 666, in test_an_unusual_existing_mode_is_preserved_too
+    R.write_text_atomically(path, "fine\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_creates_a_new_file_with_exactly_the_text (test_readmeindex.TestWriteTextAtomically.test_creates_a_new_file_with_exactly_the_text)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 608, in test_creates_a_new_file_with_exactly_the_text
+    R.write_text_atomically(path, "hello\nthere\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_failed_write_leaves_no_temp_file (test_readmeindex.TestWriteTextAtomically.test_failed_write_leaves_no_temp_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 632, in test_failed_write_leaves_no_temp_file
+    R.write_text_atomically(path, "REPLACEMENT " * 50)
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_failed_write_leaves_the_previous_bytes_byte_identical (test_readmeindex.TestWriteTextAtomically.test_failed_write_leaves_the_previous_bytes_byte_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 623, in test_failed_write_leaves_the_previous_bytes_byte_identical
+    R.write_text_atomically(path, "REPLACEMENT " * 50)
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_failed_write_to_a_new_path_creates_nothing (test_readmeindex.TestWriteTextAtomically.test_failed_write_to_a_new_path_creates_nothing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 642, in test_failed_write_to_a_new_path_creates_nothing
+    R.write_text_atomically(path, "REPLACEMENT " * 50)
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_newline_translation_matches_the_direct_write (test_readmeindex.TestWriteTextAtomically.test_newline_translation_matches_the_direct_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 700, in test_newline_translation_matches_the_direct_write
+    R.write_text_atomically(path, "a\nb\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_non_ascii_round_trips_as_utf8 (test_readmeindex.TestWriteTextAtomically.test_non_ascii_round_trips_as_utf8)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 884, in test_non_ascii_round_trips_as_utf8
+    R.write_text_atomically(path, "café\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_overwrites_an_existing_file_completely (test_readmeindex.TestWriteTextAtomically.test_overwrites_an_existing_file_completely)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 614, in test_overwrites_an_existing_file_completely
+    R.write_text_atomically(path, "short\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_successful_write_leaves_no_temp_file (test_readmeindex.TestWriteTextAtomically.test_successful_write_leaves_no_temp_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 650, in test_successful_write_leaves_no_temp_file
+    R.write_text_atomically(path, "fine\n")
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'write_text_atomically'
+
+======================================================================
+ERROR: test_the_temp_file_is_a_sibling_of_the_destination (test_readmeindex.TestWriteTextAtomically.test_the_temp_file_is_a_sibling_of_the_destination)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 752, in test_the_temp_file_is_a_sibling_of_the_destination
+    real_mkstemp = R.tempfile.mkstemp
+                   ^^^^^^^^^^
+AttributeError: module 'readmeindex' has no attribute 'tempfile'
+
+======================================================================
+FAIL: test_failed_report_write_leaves_the_previous_report_byte_identical (test_readmeindex.TestCliOutputsAreAtomic.test_failed_report_write_leaves_the_previous_report_byte_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 952, in test_failed_report_write_leaves_the_previous_report_byte_identical
+    self.assertEqual(read_bytes(out), before)
+AssertionError: b'{\n  "index_differences": [\n    {\n      "' != b'{"previous": true}\n'
+
+======================================================================
+FAIL: test_failed_rewrite_leaves_the_previous_readme_byte_identical (test_readmeindex.TestCliOutputsAreAtomic.test_failed_rewrite_leaves_the_previous_readme_byte_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 940, in test_failed_rewrite_leaves_the_previous_readme_byte_identical
+    self.assertEqual(read_bytes(out), before)
+AssertionError: b'# demo\n\n## The tools\n\n| Tool | Tests | T' != b'PREVIOUS OUTPUT -- MUST SURVIVE A FAILED [243 chars]TE\n'
+
+======================================================================
+FAIL: test_rewrite_in_place_survives_a_failed_write (test_readmeindex.TestCliOutputsAreAtomic.test_rewrite_in_place_survives_a_failed_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 964, in test_rewrite_in_place_survives_a_failed_write
+    self.assertEqual(read_bytes(readme), before)
+AssertionError: b'# d[35 chars]ts | T' != b'# d[35 chars]ts | What it checks |\n|------|------:|-------[136 chars]xt\n'
+
+======================================================================
+FAIL: test_imports_are_stdlib (test_readmeindex.TestStdlibOnly.test_imports_are_stdlib)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "_atomic_scratch/test_readmeindex.py", line 437, in test_imports_are_stdlib
+    self.assertEqual(
+AssertionError: Lists differ: ['argparse', 'json', 'os', 're', 'sys'] != ['argparse', 'json', 'os', 're', 'stat', 'sys', 'tempfile']
+
+First differing element 4:
+'sys'
+'stat'
+
+Second list contains 2 additional elements.
+First extra element 5:
+'sys'
+
+- ['argparse', 'json', 'os', 're', 'sys']
++ ['argparse', 'json', 'os', 're', 'stat', 'sys', 'tempfile']
+?                                  ++++++++     ++++++++++++
+
+
+----------------------------------------------------------------------
+Ran 72 tests in 10.321s
+
+FAILED (failures=4, errors=26)
+exit=1
+
+=== $ cd _atomic_scratch && python3 -m unittest test_readmeindex 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 72 tests in 10.319s
+
+FAILED (failures=4, errors=26)
+exit=1
+
+=== $ cd _atomic_scratch && python3 demo_partial_write.py ===
+destination before:      282 bytes
+run raised:              OSError, as a full disk would
+destination after:       40 bytes
+destination unchanged:   False
+temp files left behind:  0
+exit=0
+
+=== $ python3 demo_partial_write.py ===
+destination before:      282 bytes
+run raised:              OSError, as a full disk would
+destination after:       282 bytes
+destination unchanged:   True
+temp files left behind:  0
+exit=0
+
+=== $ python3 -m unittest test_readmeindex 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 72 tests in 0.351s
+
+OK
+exit=0
+
+=== $ find . -maxdepth 1 -name '.readmeindex-*' -print | wc -l ===
+0
+exit=0
+
+=== $ ls -d _atomic_scratch 2>&1; echo scratch-removed ===
+ls: cannot access '_atomic_scratch': No such file or directory
+scratch-removed
+exit=0
+

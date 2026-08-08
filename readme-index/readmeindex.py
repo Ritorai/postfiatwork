@@ -6,14 +6,16 @@ EXIT CODES
   1  differences were found (missing, extra, title, count, or aggregate)
   2  setup error (bad path, unreadable input, malformed corpus)
 
-Standard library only: argparse, json, os, re, sys.
+Standard library only: argparse, json, os, re, stat, sys, tempfile.
 """
 
 import argparse
 import json
 import os
 import re
+import stat
 import sys
+import tempfile
 
 EXIT_OK = 0
 EXIT_DIFF = 1
@@ -54,6 +56,134 @@ def canonical_json(obj):
 
 class SetupError(Exception):
     pass
+
+
+# ---------------------------------------------------------------- output
+
+
+def destination_mode(path):
+    """The mode a write to *path* should end up with.
+
+    An existing destination keeps exactly the permission bits it already has.
+    A destination that does not exist yet gets `0o666 & ~umask`, which is what
+    a plain `open(path, "w")` would have produced -- the point of this helper
+    is that switching to a temp file must not silently change a mode.
+
+    The standard library exposes no read-only accessor for the umask, so the
+    only way to read it is to set it and set it straight back. That is a
+    process-global read-modify-write and would be a race in a threaded
+    program; this is single-threaded CLI code, and the alternative is
+    inventing a mode instead of matching the one open() would pick.
+    """
+    try:
+        return os.stat(path).st_mode & 0o7777
+    except OSError:
+        mask = os.umask(0)
+        os.umask(mask)
+        return 0o666 & ~mask
+
+
+def write_text_atomically(path, text):
+    """Write *text* to *path* so that a failed write leaves *path* untouched.
+
+    The direct form this replaces --
+
+        with open(path, "w", encoding="utf-8", newline="\\n") as fh:
+            fh.write(text)
+
+    -- truncates the destination as its very first act, before a single byte
+    of the replacement exists. A write that then fails part-way (a full disk,
+    an exhausted quota, an interrupted process) leaves a prefix of the new
+    output where the old output used to be. That matters more here than in
+    most tools: `--rewrite` is aimed at a repository's root `README.md`, a
+    hand-maintained file, and a half-written README is worse than no run.
+
+    So the text goes to a sibling temp file in the destination's own
+    directory, and `os.replace` moves it onto the destination in one step.
+    `os.replace` is atomic, but only within a single filesystem -- hence a
+    sibling rather than something under the system temp directory. If
+    anything at all raises before the replace, the temp file is removed and
+    the destination still has its original bytes, mtime and inode.
+
+    Symlinks are resolved before the replace, so a symlinked destination is
+    written through rather than replaced by a regular file -- that is what
+    the `open()` call above did, and the point of this change is atomicity,
+    not a new symlink policy.
+
+    The "is this a regular file" question is asked BEFORE that resolution and
+    on the path as given. Resolving first looks harmless and is not:
+    `/dev/stdout` is not a regular file, but `os.path.realpath` turns it into
+    `/proc/<pid>/fd/1` and then into something like `pipe:[12345]`, which
+    does not exist -- so an exists()-based test resolves a live destination
+    into a phantom, misses it, and tries to create a temp file inside a pipe.
+    `os.stat` on the given path follows symlinks without inventing a
+    `/proc` name, which is the question actually being asked.
+
+    What this does NOT provide is durability. No fsync is issued, so a power
+    loss can still lose the new bytes. The guarantee is narrower and is the
+    one the direct write lacked: the destination holds either the whole old
+    output or the whole new output, never a prefix of the new one.
+    """
+    try:
+        st = os.stat(path)
+    except FileNotFoundError:
+        st = None
+    except OSError:
+        # Stat failed for a reason other than "not there": a symlink loop
+        # (ELOOP), a trailing slash on a regular file (ENOTDIR), an
+        # unsearchable parent directory (EACCES). A blanket `except OSError:
+        # st = None` here reads as "treat it as new" and is wrong in the
+        # dangerous direction -- an unclassifiable destination would fall
+        # through to mkstemp and os.replace, which is exactly the
+        # replace-something-that-is-not-a-regular-file case this branch
+        # exists to prevent. A symlink loop really did get replaced by a
+        # regular file that way. Hand it to the direct write instead, which
+        # raises precisely what the pre-fix code raised.
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+        return
+    if st is not None and not stat.S_ISREG(st.st_mode):
+        # Not a regular file: `-o /dev/null` and `-o /dev/stdout` are real
+        # ways to say "run it and discard the report" / "run it and pipe the
+        # report", and os.replace onto a device or a pipe DESTROYS the node
+        # -- as root it would succeed, which is worse. There is nothing to
+        # preserve here and nothing to truncate, so write through exactly as
+        # the direct form did. A directory lands here too and raises
+        # IsADirectoryError, which is also what the direct form did.
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+        return
+    if path.endswith(os.sep) or (os.altsep and path.endswith(os.altsep)):
+        # A trailing slash asserts "this is a directory". os.stat says ENOENT
+        # for a nonexistent one, so the branch above cannot see it, and
+        # os.path.realpath strips the slash -- which would turn `-o out.md/`
+        # into a successful write to `out.md`. The direct write raised
+        # NotADirectoryError; keep raising it.
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+        return
+    target = os.path.realpath(path)
+    directory = os.path.dirname(target)
+    mode = destination_mode(target)
+    fd, tmp = tempfile.mkstemp(prefix=".readmeindex-", suffix=".tmp", dir=directory)
+    os.close(fd)
+    try:
+        with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+        os.chmod(tmp, mode)
+        os.replace(tmp, target)
+    except BaseException:
+        # BaseException, not Exception: a KeyboardInterrupt between mkstemp
+        # and replace would otherwise leave a stray .readmeindex-*.tmp in the
+        # repository, which is exactly the litter this repo's own scanners
+        # would report. The unlink is best-effort -- if it fails there is
+        # nothing useful left to do, and the original error is the one worth
+        # propagating.
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
 
 
 # ---------------------------------------------------------------- extraction
@@ -367,8 +497,7 @@ def main(argv=None):
             report["index_differences"] = diff_index(parse_index(readme_text), tools)
             if args.rewrite:
                 new_text = rewrite_index(readme_text, tools, args.heading, args.next_heading)
-                with open(args.rewrite, "w", encoding="utf-8", newline="\n") as fh:
-                    fh.write(new_text)
+                write_text_atomically(args.rewrite, new_text)
         elif args.rewrite:
             raise SetupError("--rewrite requires --root-readme")
     except SetupError as exc:
@@ -377,8 +506,7 @@ def main(argv=None):
 
     text = canonical_json(report)
     if args.output:
-        with open(args.output, "w", encoding="utf-8", newline="\n") as fh:
-            fh.write(text)
+        write_text_atomically(args.output, text)
     else:
         sys.stdout.write(text)
     return EXIT_DIFF if report["index_differences"] else EXIT_OK

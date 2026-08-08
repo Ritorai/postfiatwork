@@ -125,7 +125,7 @@
       "tool": "weak-assertion-scanner"
     },
     {
-      "derived_tests": 4144,
+      "derived_tests": 4175,
       "derived_tools": 44,
       "index_tests": 476,
       "index_tools": 13,
@@ -496,15 +496,15 @@
       "tool": "queue-auditor"
     },
     {
-      "claimed_tests": 41,
+      "claimed_tests": 72,
       "evidence": [
         {
-          "line": 208,
+          "line": 381,
           "rule": "strong_summary",
-          "value": 41
+          "value": 72
         }
       ],
-      "readme_lines": 221,
+      "readme_lines": 410,
       "status": "claim",
       "title": "readme-index",
       "tool": "readme-index"
@@ -750,7 +750,7 @@
     }
   ],
   "totals": {
-    "tests_from_claims": 4144,
+    "tests_from_claims": 4175,
     "tools": 44,
     "tools_ambiguous": 1,
     "tools_missing": 6,

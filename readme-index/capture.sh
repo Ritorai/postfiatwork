@@ -20,6 +20,14 @@ The before/after pair is the point of this transcript: the reconciliation run
 against the committed root README exits 1 with differences, and the same
 reconciliation against the regenerated README exits 0.
 
+The last two records cover atomic writes. The atomic-write suite is re-run on
+its own, and the directory is then listed for leftover .readmeindex-*.tmp
+files -- after every run above, including the four that write a file. The list
+printed there must be empty. It is listed with python rather than
+`find ... | wc -l` on purpose: rec() runs each record under `sh -c`, which is
+dash here and has no `pipefail`, so a pipeline's exit= line would report the
+last stage and hide a failure in the first.
+
 HDR
 rec "python3 --version"
 rec "uname -sm"
@@ -40,4 +48,6 @@ rec "python3 readmeindex.py --corpus corpus.tsv --rewrite _scratch/x.md"
 rec "python3 -c \"import hashlib;print(hashlib.sha256(open('index_report.json','rb').read()).hexdigest(),' index_report.json')\""
 rec "python3 -c \"import hashlib;print(hashlib.sha256(open('corpus.tsv','rb').read()).hexdigest(),' corpus.tsv')\""
 rec "wc -l corpus.tsv"
+rec "python3 -m unittest test_readmeindex.TestWriteTextAtomically test_readmeindex.TestDestinationMode test_readmeindex.TestCliOutputsAreAtomic"
+rec "python3 -c \"import os;print(sorted(n for n in os.listdir('.') if n.startswith('.readmeindex-')))\""
 rm -rf _scratch
