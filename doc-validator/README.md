@@ -590,7 +590,7 @@ python3 optioncheck.py --root ..
 
 ```
 options compared: 91   conflict: 1   match: 17   single_use: 73
-usages: 193   unsupported_dynamic: 6
+usages: 192   unsupported_dynamic: 9
 ```
 
 **The finding: `--timeout` is not one option, it is two.**
