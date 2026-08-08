@@ -27,7 +27,7 @@ exit=0
 === $ python3 -m unittest test_readmeindex ===
 ........................................................................
 ----------------------------------------------------------------------
-Ran 72 tests in 0.358s
+Ran 72 tests in 0.352s
 
 OK
 exit=0
@@ -36,19 +36,19 @@ exit=0
 exit=0
 
 === $ python3 -c "import json;r=json.load(open('index_report.json'));print(json.dumps(r['totals'],sort_keys=True))" ===
-{"tests_from_claims": 4175, "tools": 44, "tools_ambiguous": 1, "tools_missing": 6, "tools_with_claim": 37}
+{"tests_from_claims": 4202, "tools": 44, "tools_ambiguous": 1, "tools_missing": 6, "tools_with_claim": 37}
 exit=0
 
 === $ python3 readmeindex.py --corpus corpus.tsv --root-readme root_readme_before.md -o _scratch/discard.json ===
 exit=1
 
 === $ python3 -c "import json,collections;r=json.load(open('index_report.json'));c=collections.Counter(d['kind'] for d in r['index_differences']);print(sorted(c.items()));print([d for d in r['index_differences'] if d['kind']=='aggregate_differs'])" ===
-[('aggregate_differs', 1), ('missing_from_index', 31)]
-[{'derived_tests': 4175, 'derived_tools': 44, 'index_tests': 476, 'index_tools': 13, 'kind': 'aggregate_differs'}]
+[('aggregate_differs', 1), ('count_differs', 1), ('missing_from_index', 31)]
+[{'derived_tests': 4202, 'derived_tools': 44, 'index_tests': 476, 'index_tools': 13, 'kind': 'aggregate_differs'}]
 exit=0
 
 === $ python3 -c "import json;r=json.load(open('index_report.json'));print('count_differs:',sum(1 for d in r['index_differences'] if d['kind']=='count_differs'))" ===
-count_differs: 0
+count_differs: 1
 exit=0
 
 === $ python3 -c "import json;r=json.load(open('index_report.json'));print([(t['tool'],t['status']) for t in r['tools'] if t['status']!='claim'])" ===
@@ -81,21 +81,21 @@ setup error: --rewrite requires --root-readme
 exit=2
 
 === $ python3 -c "import hashlib;print(hashlib.sha256(open('index_report.json','rb').read()).hexdigest(),' index_report.json')" ===
-bbfe9e37690af25db775540741fb23cee572ce62b78963b7f5cdfc9b29c4220e  index_report.json
+ddc16ee5b128c7d9031b22093d473afa2eea856d9764eb62df42b4ce9133960b  index_report.json
 exit=0
 
 === $ python3 -c "import hashlib;print(hashlib.sha256(open('corpus.tsv','rb').read()).hexdigest(),' corpus.tsv')" ===
-ba1628fe4f2bc65f0d73fd0aa4223c948a010c0deb73cedcaedf6194189854f2  corpus.tsv
+158875df658d517ed93afb23d7a1ded8f42e25772297b79c10e9e722eb109cd4  corpus.tsv
 exit=0
 
 === $ wc -l corpus.tsv ===
-271 corpus.tsv
+273 corpus.tsv
 exit=0
 
 === $ python3 -m unittest test_readmeindex.TestWriteTextAtomically test_readmeindex.TestDestinationMode test_readmeindex.TestCliOutputsAreAtomic ===
 ...............................
 ----------------------------------------------------------------------
-Ran 31 tests in 0.048s
+Ran 31 tests in 0.053s
 
 OK
 exit=0

@@ -17,7 +17,7 @@ cd postfiatwork/schema-checker
 python3 -m unittest test_schema_check -v
 ```
 
-**4,175 tests claimed across 37 of 44 tools.** That figure is derived from
+**4,202 tests claimed across 37 of 44 tools.** That figure is derived from
 each tool's own README by `readme-index/`, which also records the 1 ambiguous
 and 6 unstated cases rather than guessing them. It is a sum of claims, not a
 run: this repository has no single command that executes every suite.
@@ -79,7 +79,7 @@ Every tool follows the same contract so they compose in a pipeline:
 | [`readme-index`](readme-index) | 72 | readme-index |
 | [`regression-checker`](regression-checker) | 174 | regression-checker |
 | [`reward-anomaly`](reward-anomaly) | 143 | Reward Anomaly Detection CLI |
-| [`reward-reconciler`](reward-reconciler) | 23 | Deterministic Reward Reconciliation CLI |
+| [`reward-reconciler`](reward-reconciler) | 50 | Deterministic Reward Reconciliation CLI |
 | [`schema-checker`](schema-checker) | 95 | schema-checker |
 | [`scorecard`](scorecard) | 188 | scorecard |
 | [`snapshot-diff`](snapshot-diff) | 222 | snapdiff.py |
@@ -94,7 +94,7 @@ Every tool follows the same contract so they compose in a pipeline:
 | [`xrpl-address`](xrpl-address) | 34 | XRPL Classic and X-Address Validator |
 | [`xrpl-auditor`](xrpl-auditor) | 27 | XRPL Payout Reference Auditor |
 
-**Totals:** 44 tools; 4175 tests from 37 tools with a derivable claim (1 ambiguous, 6 not stated).
+**Totals:** 44 tools; 4202 tests from 37 tools with a derivable claim (1 ambiguous, 6 not stated).
 
 ## Judgement calls, collected
 

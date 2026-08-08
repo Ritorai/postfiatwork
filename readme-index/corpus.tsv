@@ -119,7 +119,7 @@ lifecycle-linter	8	T	python3 -m unittest test_lifecycle_lint -v
 lifecycle-linter	21	T	| tests | `Ran 26 tests` / `OK` |
 lifecycle-linter	81	N	-
 limitations-probe	1	H	# limitations-probe
-limitations-probe	104	N	-
+limitations-probe	112	N	-
 link-integrity	1	H	# link_integrity.py
 link-integrity	178	T	python3 -m unittest test_link_integrity -v
 link-integrity	231	T	`utf-8` when absent. A regression test,
@@ -159,25 +159,25 @@ queue-auditor	284	N	-
 readme-index	1	H	# readme-index
 readme-index	3	T	The root `README.md` of this repository says **13 tools / 476 tests**. It has
 readme-index	17	T	scan the numbers were first derived from saw 43 tools and 4,103 tests, before
-readme-index	25	T	went from 41 tests to 72, so `corpus.tsv`'s rows for *this* directory were
-readme-index	63	T	1. **`strong_summary`** — a bold `**N tests` or a `Ran N tests` on a line that
-readme-index	66	T	2. **`self_report`** — `test_*.py … N … tests`, the tool naming its own suite.
-readme-index	74	T	numbers — `Ran 26 tests`, `174 tests`, `Ran 41 tests`, `3`, `57` — because it is
-readme-index	96	T	a bundled *fixture*, `test_example.py` with 3 tests, alongside its real 154-test
-readme-index	108	T	`` - `test_claimhist.py` - 154 unit/integration tests ``: the window between the
-readme-index	213	T	neither of which exists there. That is 29 of the 31 new tests. The other two
-readme-index	255	T	regex heuristics" covering `"42 tests"`, `"Tests: 42"`, `"Ran 42 tests"` and
-readme-index	256	T	`"42/42 tests"`. That set has no case for a word between the number and
-readme-index	257	T	`tests`, which is `bundle-index` (170 unit tests), `claim-checker` (224 unit
-readme-index	258	T	tests), `commit-claim-auditor` (154 unit/integration tests) and
-readme-index	259	T	`weak-assertion-scanner` (202 unittest tests). The rules above are offered as
-readme-index	288	T	   `` * `test_exitharness.py` -- 126 unit + CLI-integration tests. `` The rules
-readme-index	319	T	   tools" and "476 tests across 13 tools, all passing" as prose, well outside
-readme-index	368	T	| `test_readmeindex.py` | 72 tests |
-readme-index	381	T	**72 tests, `OK`, exit 0.** CPython 3.11.15, Linux x86_64.
-readme-index	384	T	python3 -m unittest test_readmeindex
-readme-index	396	T	`Ran 31 tests` -- a subset count, not a second claim about the suite total.
-readme-index	410	N	-
+readme-index	27	T	went from 41 tests to 72, so `corpus.tsv`'s rows for *this* directory were
+readme-index	65	T	1. **`strong_summary`** — a bold `**N tests` or a `Ran N tests` on a line that
+readme-index	68	T	2. **`self_report`** — `test_*.py … N … tests`, the tool naming its own suite.
+readme-index	76	T	numbers — `Ran 26 tests`, `174 tests`, `Ran 41 tests`, `3`, `57` — because it is
+readme-index	98	T	a bundled *fixture*, `test_example.py` with 3 tests, alongside its real 154-test
+readme-index	110	T	`` - `test_claimhist.py` - 154 unit/integration tests ``: the window between the
+readme-index	215	T	neither of which exists there. That is 29 of the 31 new tests. The other two
+readme-index	257	T	regex heuristics" covering `"42 tests"`, `"Tests: 42"`, `"Ran 42 tests"` and
+readme-index	258	T	`"42/42 tests"`. That set has no case for a word between the number and
+readme-index	259	T	`tests`, which is `bundle-index` (170 unit tests), `claim-checker` (224 unit
+readme-index	260	T	tests), `commit-claim-auditor` (154 unit/integration tests) and
+readme-index	261	T	`weak-assertion-scanner` (202 unittest tests). The rules above are offered as
+readme-index	290	T	   `` * `test_exitharness.py` -- 126 unit + CLI-integration tests. `` The rules
+readme-index	321	T	   tools" and "476 tests across 13 tools, all passing" as prose, well outside
+readme-index	370	T	| `test_readmeindex.py` | 72 tests |
+readme-index	383	T	**72 tests, `OK`, exit 0.** CPython 3.11.15, Linux x86_64.
+readme-index	386	T	python3 -m unittest test_readmeindex
+readme-index	398	T	`Ran 31 tests` -- a subset count, not a second claim about the suite total.
+readme-index	412	N	-
 regression-checker	1	H	# regression-checker
 regression-checker	26	T	| `test_regress.py` | 131 unit/integration tests (`unittest`, stdlib only) |
 regression-checker	27	T	| `test_regress_newline.py` | 8 tests pinning the `newline="\n"` report-writing fix |
@@ -190,9 +190,11 @@ reward-anomaly	272	T	python3 -m unittest test_reconcile_anomaly -v
 reward-anomaly	291	T	`test_reconcile_anomaly.py`: **143 tests**, `Ran 143 tests ... OK`. Covers:
 reward-anomaly	385	N	-
 reward-reconciler	1	H	# Deterministic Reward Reconciliation CLI
-reward-reconciler	71	T	python3 -m unittest test_reconcile -v
-reward-reconciler	82	T	| tests | `Ran 23 tests` / `OK` |
-reward-reconciler	145	N	-
+reward-reconciler	100	T	python3 -m unittest test_reconcile -v
+reward-reconciler	101	T	python3 -m unittest test_reconcile.TestDocumentedExitCodes test_reconcile.TestRepairedExitCodes
+reward-reconciler	112	T	| tests | `Ran 50 tests` / `OK` |
+reward-reconciler	142	T	`Ran 25 tests` -- a subset count, not a second claim about the suite total.
+reward-reconciler	241	N	-
 schema-checker	1	H	# schema-checker
 schema-checker	18	T	| `test_schema_check.py` | unittest suite (95 tests). |
 schema-checker	46	T	# 1. test suite

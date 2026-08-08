@@ -125,7 +125,13 @@
       "tool": "weak-assertion-scanner"
     },
     {
-      "derived_tests": 4175,
+      "derived": 50,
+      "index": 23,
+      "kind": "count_differs",
+      "tool": "reward-reconciler"
+    },
+    {
+      "derived_tests": 4202,
       "derived_tools": 44,
       "index_tests": 476,
       "index_tools": 13,
@@ -403,7 +409,7 @@
     {
       "claimed_tests": null,
       "evidence": [],
-      "readme_lines": 104,
+      "readme_lines": 112,
       "status": "missing",
       "title": "limitations-probe",
       "tool": "limitations-probe"
@@ -499,12 +505,12 @@
       "claimed_tests": 72,
       "evidence": [
         {
-          "line": 381,
+          "line": 383,
           "rule": "strong_summary",
           "value": 72
         }
       ],
-      "readme_lines": 410,
+      "readme_lines": 412,
       "status": "claim",
       "title": "readme-index",
       "tool": "readme-index"
@@ -543,15 +549,15 @@
       "tool": "reward-anomaly"
     },
     {
-      "claimed_tests": 23,
+      "claimed_tests": 50,
       "evidence": [
         {
-          "line": 82,
+          "line": 112,
           "rule": "strong_summary",
-          "value": 23
+          "value": 50
         }
       ],
-      "readme_lines": 145,
+      "readme_lines": 241,
       "status": "claim",
       "title": "Deterministic Reward Reconciliation CLI",
       "tool": "reward-reconciler"
@@ -750,7 +756,7 @@
     }
   ],
   "totals": {
-    "tests_from_claims": 4175,
+    "tests_from_claims": 4202,
     "tools": 44,
     "tools_ambiguous": 1,
     "tools_missing": 6,

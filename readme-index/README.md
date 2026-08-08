@@ -11,17 +11,19 @@ the root README's table, and regenerates that table. Counts come only from
 claims it can actually parse; anything it cannot parse is reported as
 `ambiguous` or `not stated` rather than guessed or zeroed.
 
-**Repository-wide result: 44 tools, 37 with a derivable claim totalling 4,175
+**Repository-wide result: 44 tools, 37 with a derivable claim totalling 4,202
 tests, 1 ambiguous, 6 not stated.** That count includes this tool, whose own
 README claims 72. The figures are pinned to the tree as committed here; the
 scan the numbers were first derived from saw 43 tools and 4,103 tests, before
 this directory existed. A reviewer with a clone gets different figures on
 purpose: `--root .` sees the 51 tool directories the tree has today and totals
-5,115. The corpus is the pinned 44-tool snapshot limitation 3 describes, and
+5,142. The corpus is the pinned 44-tool snapshot limitation 3 describes, and
 the headline above is that snapshot's number, not today's.
 
 That aggregate moved by 31 in the commit that added atomic writes below, and
-the move is the tool working rather than a number drifting. This tool's suite
+again by 27 in the commit that aligned `reward-reconciler`'s documented exit
+codes (its suite went 23 to 50). Both moves are the tool working rather than a
+number drifting. This tool's suite
 went from 41 tests to 72, so `corpus.tsv`'s rows for *this* directory were
 re-extracted from the edited README, `index_report.json` re-derived and
 `root_readme_after.md` regenerated. Leaving the corpus alone would have left a
@@ -296,7 +298,7 @@ same edit.
    does claim 154; a human reads its README and knows which line is the suite
    and which is the fixture. This tool cannot tell those apart without guessing,
    so it reports `[3, 154]` with both line numbers and declines. The aggregate
-   of 4,175 therefore *excludes* a tool that has a stated count, and is a lower
+   of 4,202 therefore *excludes* a tool that has a stated count, and is a lower
    bound rather than a total.
 
 3. **`--corpus` mode classifies extracted candidate lines, not 44 full READMEs.**
