@@ -1,42 +1,80 @@
 === $ python3 -m unittest test_reconcile -v ===
-test_cli_output_byte_identical_twice (test_reconcile.TestCliExitCodes) ... ok
-test_exit_one_mismatched (test_reconcile.TestCliExitCodes) ... ok
-test_exit_two_invalid_json (test_reconcile.TestCliExitCodes) ... ok
-test_exit_two_not_array (test_reconcile.TestCliExitCodes) ... ok
-test_exit_zero_balanced (test_reconcile.TestCliExitCodes) ... ok
-test_float_amount_rejected (test_reconcile.TestDecimalPrecision) ... ok
-test_integer_amount_accepted (test_reconcile.TestDecimalPrecision) ... ok
-test_no_float_drift (test_reconcile.TestDecimalPrecision) ... ok
-test_sub_micro_difference_detected (test_reconcile.TestDecimalPrecision) ... ok
-test_bad_amount_string (test_reconcile.TestMalformedInput) ... ok
-test_duplicate_expected_task_rejected (test_reconcile.TestMalformedInput) ... ok
-test_empty_wallet (test_reconcile.TestMalformedInput) ... ok
-test_missing_field (test_reconcile.TestMalformedInput) ... ok
-test_amount_mismatch_with_delta (test_reconcile.TestMismatchTypes) ... ok
-test_balanced (test_reconcile.TestMismatchTypes) ... ok
-test_duplicate_payout (test_reconcile.TestMismatchTypes) ... ok
-test_missing_payout (test_reconcile.TestMismatchTypes) ... ok
-test_unexpected_payout (test_reconcile.TestMismatchTypes) ... ok
-test_wallet_and_amount_mismatch_both_reported (test_reconcile.TestMismatchTypes) ... ok
-test_wallet_mismatch (test_reconcile.TestMismatchTypes) ... ok
-test_canonical_json_is_byte_identical_across_runs (test_reconcile.TestOrderingAndCanonical) ... ok
-test_canonical_json_sorted_keys_and_newline (test_reconcile.TestOrderingAndCanonical) ... ok
-test_findings_sorted_regardless_of_input_order (test_reconcile.TestOrderingAndCanonical) ... ok
+test_cli_output_byte_identical_twice (test_reconcile.TestCliExitCodes.test_cli_output_byte_identical_twice) ... ok
+test_exit_one_mismatched (test_reconcile.TestCliExitCodes.test_exit_one_mismatched) ... ok
+test_exit_two_invalid_json (test_reconcile.TestCliExitCodes.test_exit_two_invalid_json) ... ok
+test_exit_two_not_array (test_reconcile.TestCliExitCodes.test_exit_two_not_array) ... ok
+test_exit_zero_balanced (test_reconcile.TestCliExitCodes.test_exit_zero_balanced) ... ok
+test_float_amount_rejected (test_reconcile.TestDecimalPrecision.test_float_amount_rejected) ... ok
+test_integer_amount_accepted (test_reconcile.TestDecimalPrecision.test_integer_amount_accepted) ... ok
+test_no_float_drift (test_reconcile.TestDecimalPrecision.test_no_float_drift) ... ok
+test_sub_micro_difference_detected (test_reconcile.TestDecimalPrecision.test_sub_micro_difference_detected) ... ok
+test_every_case_quotes_a_phrase_the_readme_actually_contains (test_reconcile.TestDocumentedExitCodes.test_every_case_quotes_a_phrase_the_readme_actually_contains) ... ok
+test_every_documented_case_returns_its_code (test_reconcile.TestDocumentedExitCodes.test_every_documented_case_returns_its_code) ... ok
+test_every_exit_two_trigger_named_in_the_readme_has_a_case (test_reconcile.TestDocumentedExitCodes.test_every_exit_two_trigger_named_in_the_readme_has_a_case) ... ok
+test_every_rejection_names_its_reason_as_json (test_reconcile.TestDocumentedExitCodes.test_every_rejection_names_its_reason_as_json) ... ok
+test_no_case_is_tied_to_a_phrase_outside_the_trigger_list (test_reconcile.TestDocumentedExitCodes.test_no_case_is_tied_to_a_phrase_outside_the_trigger_list) ... ok
+test_no_case_leaves_a_python_traceback (test_reconcile.TestDocumentedExitCodes.test_no_case_leaves_a_python_traceback) ... ok
+test_table_covers_every_code_the_readme_documents (test_reconcile.TestDocumentedExitCodes.test_table_covers_every_code_the_readme_documents) ... ok
+test_the_readme_row_is_exactly_the_trigger_list (test_reconcile.TestDocumentedExitCodes.test_the_readme_row_is_exactly_the_trigger_list) ... ok
+test_bad_amount_string (test_reconcile.TestMalformedInput.test_bad_amount_string) ... ok
+test_duplicate_expected_task_rejected (test_reconcile.TestMalformedInput.test_duplicate_expected_task_rejected) ... ok
+test_empty_wallet (test_reconcile.TestMalformedInput.test_empty_wallet) ... ok
+test_missing_field (test_reconcile.TestMalformedInput.test_missing_field) ... ok
+test_amount_mismatch_with_delta (test_reconcile.TestMismatchTypes.test_amount_mismatch_with_delta) ... ok
+test_balanced (test_reconcile.TestMismatchTypes.test_balanced) ... ok
+test_duplicate_payout (test_reconcile.TestMismatchTypes.test_duplicate_payout) ... ok
+test_missing_payout (test_reconcile.TestMismatchTypes.test_missing_payout) ... ok
+test_unexpected_payout (test_reconcile.TestMismatchTypes.test_unexpected_payout) ... ok
+test_wallet_and_amount_mismatch_both_reported (test_reconcile.TestMismatchTypes.test_wallet_and_amount_mismatch_both_reported) ... ok
+test_wallet_mismatch (test_reconcile.TestMismatchTypes.test_wallet_mismatch) ... ok
+test_canonical_json_is_byte_identical_across_runs (test_reconcile.TestOrderingAndCanonical.test_canonical_json_is_byte_identical_across_runs) ... ok
+test_canonical_json_sorted_keys_and_newline (test_reconcile.TestOrderingAndCanonical.test_canonical_json_sorted_keys_and_newline) ... ok
+test_findings_sorted_regardless_of_input_order (test_reconcile.TestOrderingAndCanonical.test_findings_sorted_regardless_of_input_order) ... ok
+test_a_closed_stderr_descriptor_does_not_change_the_code (test_reconcile.TestRepairedExitCodes.test_a_closed_stderr_descriptor_does_not_change_the_code) ... ok
+test_a_closed_stdout_descriptor_is_exit_2_not_1 (test_reconcile.TestRepairedExitCodes.test_a_closed_stdout_descriptor_is_exit_2_not_1) ... ok
+test_a_closed_stdout_pipe_is_exit_2_not_1 (test_reconcile.TestRepairedExitCodes.test_a_closed_stdout_pipe_is_exit_2_not_1) ... ok
+test_a_failing_stdout_is_exit_2_not_1 (test_reconcile.TestRepairedExitCodes.test_a_failing_stdout_is_exit_2_not_1) ... ok
+test_a_failing_stdout_leaves_no_ignored_exception_at_shutdown (test_reconcile.TestRepairedExitCodes.test_a_failing_stdout_leaves_no_ignored_exception_at_shutdown) ... ok
+test_a_missing_file_keeps_its_own_message (test_reconcile.TestRepairedExitCodes.test_a_missing_file_keeps_its_own_message) ... ok
+test_a_signalling_nan_amount_is_exit_2 (test_reconcile.TestRepairedExitCodes.test_a_signalling_nan_amount_is_exit_2) ... ok
+test_a_symlink_loop_names_its_errno (test_reconcile.TestRepairedExitCodes.test_a_symlink_loop_names_its_errno) ... ok
+test_a_writable_out_still_writes_the_report (test_reconcile.TestRepairedExitCodes.test_a_writable_out_still_writes_the_report) ... ok
+test_a_write_time_out_failure_is_exit_2 (test_reconcile.TestRepairedExitCodes.test_a_write_time_out_failure_is_exit_2) ... ok
+test_amount_infinity_is_exit_2 (test_reconcile.TestRepairedExitCodes.test_amount_infinity_is_exit_2) ... ok
+test_amount_outside_the_representable_range_is_exit_2 (test_reconcile.TestRepairedExitCodes.test_amount_outside_the_representable_range_is_exit_2) ... ok
+test_deeply_nested_json_is_exit_2 (test_reconcile.TestRepairedExitCodes.test_deeply_nested_json_is_exit_2) ... ok
+test_directory_instead_of_a_file_is_exit_2 (test_reconcile.TestRepairedExitCodes.test_directory_instead_of_a_file_is_exit_2) ... ok
+test_non_utf8_bytes_are_exit_2 (test_reconcile.TestRepairedExitCodes.test_non_utf8_bytes_are_exit_2) ... ok
+test_unwritable_out_on_a_balanced_run_is_exit_2_not_1 (test_reconcile.TestRepairedExitCodes.test_unwritable_out_on_a_balanced_run_is_exit_2_not_1) ... ok
+test_unwritable_out_on_a_mismatched_run_is_exit_2_not_1 (test_reconcile.TestRepairedExitCodes.test_unwritable_out_on_a_mismatched_run_is_exit_2_not_1) ... ok
+test_committed_fixtures_still_reconcile_to_the_committed_report (test_reconcile.TestValidInputStillWorks.test_committed_fixtures_still_reconcile_to_the_committed_report) ... ok
+test_integer_and_string_amounts_are_still_accepted (test_reconcile.TestValidInputStillWorks.test_integer_and_string_amounts_are_still_accepted) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 0.338s
+Ran 50 tests in 1.948s
 
 OK
 exit=0
 
 === $ python3 reconcile.py expected_rewards.json recorded_payouts.json -o report_run1.json ===
 exit=1
+
 === $ python3 reconcile.py expected_rewards.json recorded_payouts.json -o report_run2.json ===
 exit=1
 
 === $ sha256sum report_run1.json report_run2.json ===
 bc5a197234abcba48ef039e9d0f3dd20c590dfa9782c057481550c8c7d9e7b56  report_run1.json
 bc5a197234abcba48ef039e9d0f3dd20c590dfa9782c057481550c8c7d9e7b56  report_run2.json
+exit=0
 
 === $ cmp report_run1.json report_run2.json && echo BYTE-IDENTICAL ===
 BYTE-IDENTICAL
+exit=0
+
+=== $ python3 -m unittest test_reconcile.TestDocumentedExitCodes test_reconcile.TestRepairedExitCodes ===
+.........................
+----------------------------------------------------------------------
+Ran 25 tests in 1.734s
+
+OK
+exit=0

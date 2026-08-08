@@ -1,0 +1,169 @@
+reward-reconciler -- documented exit code evidence
+==================================================
+
+Records use transcript-drift/FORMAT.md's grammar: a "=== $ command ===" header,
+the verbatim output, and an exit= line. All paths are relative. Records run
+under `bash -c 'set -o pipefail; ...'`, so a piped record's exit= line reports
+the command that failed rather than the exit status of `tail`.
+
+This file DEPARTS from FORMAT.md in one respect, deliberately: it commits
+`FAILED` verdicts. FORMAT.md classifies a committed FAILED as drift by
+definition, and it is right to -- for captured_output.txt, which is a claim
+that the tool works. This file is the opposite claim: that the tool did NOT
+honour its documented exit codes before the fix. The repository's validators
+only ever read captured_output.txt, so nothing here is being smuggled past a
+gate; the departure is stated because a file claiming conformance while
+violating a rule is worse than one that says which rule it breaks and why.
+
+What this proves, in order:
+
+  1. the pre-fix source, read out of Git, returns the WRONG code for five
+     documented conditions -- and returns it by crashing, so the exit status
+     is 1, which README.md defines as "mismatched, one or more settlement
+     issues";
+  2. the same test file, run against that source, fails;
+  3. the fixed source returns the documented code for every case in the
+     table, with no traceback anywhere;
+  4. the valid inputs still reconcile to the committed report.
+
+The one number here that is not reproducible is the wall-clock in unittest's
+`Ran N tests in ...s` line. Everything else -- exit codes, error codes,
+counts, verdicts -- is fixed by construction.
+
+=== $ echo c373d7c40fbd6610faf4cabad86a5b871c3d192d ===
+c373d7c40fbd6610faf4cabad86a5b871c3d192d
+exit=0
+
+=== $ git cat-file -t c373d7c40fbd6610faf4cabad86a5b871c3d192d ===
+commit
+exit=0
+
+=== $ git show c373d7c40fbd6610faf4cabad86a5b871c3d192d:reward-reconciler/reconcile.py > _exitcode_scratch/reconcile.py && wc -l _exitcode_scratch/reconcile.py ===
+195 _exitcode_scratch/reconcile.py
+exit=0
+
+=== $ cp test_reconcile.py README.md _exitcode_scratch/ && cp -r samples_invalid expected_rewards.json recorded_payouts.json expected_report.json _exitcode_scratch/ && ls _exitcode_scratch ===
+README.md
+expected_report.json
+expected_rewards.json
+reconcile.py
+recorded_payouts.json
+samples_invalid
+test_reconcile.py
+exit=0
+
+=== $ cd _exitcode_scratch && python3 reconcile.py samples_invalid/valid_pair_expected.json samples_invalid/valid_pair_payouts.json > /dev/null ===
+exit=0
+
+=== $ cd _exitcode_scratch && python3 reconcile.py expected_rewards.json recorded_payouts.json > /dev/null ===
+exit=1
+
+=== $ cd _exitcode_scratch && python3 reconcile.py samples_invalid/amount_out_of_range.json samples_invalid/valid_pair_payouts.json 2>&1 | tail -1 ===
+decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+exit=1
+
+=== $ cd _exitcode_scratch && python3 reconcile.py samples_invalid/amount_infinity.json samples_invalid/valid_pair_payouts.json 2>&1 | tail -1 ===
+decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+exit=1
+
+=== $ cd _exitcode_scratch && python3 reconcile.py samples_invalid samples_invalid/valid_pair_payouts.json 2>&1 | tail -1 ===
+IsADirectoryError: [Errno 21] Is a directory: 'samples_invalid'
+exit=1
+
+=== $ cd _exitcode_scratch && python3 reconcile.py samples_invalid/not_utf8.json samples_invalid/valid_pair_payouts.json 2>&1 | tail -1 ===
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+exit=1
+
+=== $ cd _exitcode_scratch && python3 reconcile.py samples_invalid/valid_pair_expected.json samples_invalid/valid_pair_payouts.json -o /dev/null/x.json 2>&1 | tail -1 ===
+NotADirectoryError: [Errno 20] Not a directory: '/dev/null/x.json'
+exit=1
+
+=== $ cd _exitcode_scratch && python3 -m unittest test_reconcile 2>&1 | tail -1 ===
+FAILED (failures=27, errors=6)
+exit=1
+
+=== $ python3 reconcile.py samples_invalid/valid_pair_expected.json samples_invalid/valid_pair_payouts.json > /dev/null ===
+exit=0
+
+=== $ python3 reconcile.py expected_rewards.json recorded_payouts.json > /dev/null ===
+exit=1
+
+=== $ python3 reconcile.py samples_invalid/not_json.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected: invalid JSON: Expecting value: line 1 column 1 (char 0)","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/not_an_array.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected: expected a JSON array, got dict","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/float_amount.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected[0]: amount must be a string or integer, got float","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/missing_field.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected[0]: missing required field 'amount'","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/duplicate_task_id.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected: duplicate task_id in expected set: T1","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/no_such_file.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected: file not found: samples_invalid/no_such_file.json","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected: could not read samples_invalid: IsADirectoryError/EISDIR","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/not_utf8.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected: not valid UTF-8: samples_invalid/not_utf8.json","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/amount_out_of_range.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected[0]: amount is not representable at 0.000001 precision: '1E+999999999'","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/amount_infinity.json samples_invalid/valid_pair_payouts.json ===
+{"detail":"expected[0]: amount is not representable at 0.000001 precision: 'Infinity'","error":"INVALID_INPUT"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/valid_pair_expected.json samples_invalid/valid_pair_payouts.json -o /dev/null/x.json ===
+{"detail":"could not write --out /dev/null/x.json: NotADirectoryError/ENOTDIR","error":"OUTPUT_ERROR"}
+exit=2
+
+=== $ python3 reconcile.py expected_rewards.json recorded_payouts.json -o /dev/null/x.json ===
+{"detail":"could not write --out /dev/null/x.json: NotADirectoryError/ENOTDIR","error":"OUTPUT_ERROR"}
+exit=2
+
+=== $ python3 reconcile.py samples_invalid/valid_pair_expected.json ===
+usage: reconcile.py [-h] [-o OUT] expected payouts
+reconcile.py: error: the following arguments are required: payouts
+exit=2
+
+=== $ python3 -m unittest test_reconcile.TestDocumentedExitCodes test_reconcile.TestRepairedExitCodes 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 25 tests in 1.861s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_reconcile 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 50 tests in 1.989s
+
+OK
+exit=0
+
+=== $ python3 reconcile.py expected_rewards.json recorded_payouts.json -o _cmp_report.json ===
+exit=1
+
+=== $ cmp _cmp_report.json expected_report.json && echo REPORT_UNCHANGED_BY_THIS_FIX ===
+REPORT_UNCHANGED_BY_THIS_FIX
+exit=0
+
+=== $ ls -d _exitcode_scratch 2>&1; echo scratch-removed ===
+ls: cannot access '_exitcode_scratch': No such file or directory
+scratch-removed
+exit=0
+
