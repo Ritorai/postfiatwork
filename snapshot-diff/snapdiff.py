@@ -570,7 +570,152 @@ def _read_input_text(path):
         return fh.read()
 
 
-def run(argv):
+class SingleUse(argparse.Action):
+    """Store one value, and refuse a second occurrence of the option.
+
+    argparse's default "store" action is last-one-wins: given
+    `-o a.json -o b.json` it silently discards a.json and writes
+    b.json, exit 0/1, no warning. For an option documented as taking a
+    single value that is a data-loss bug, not a convenience -- the two
+    values conflict and there is no way to honour both, so the only
+    honest answer is to refuse the invocation.
+
+    This action is deliberately NOT applied to --ignore, which
+    README.md documents as repeatable and which uses action="append".
+    The two are distinguished by declaration, and
+    test_every_optional_action_is_repeatable_or_single_use asserts that
+    every optional in the parser is one or the other -- so a future
+    option added with a bare store action fails the suite instead of
+    quietly reintroducing last-one-wins.
+
+    Repetition is refused even when the two values are equal. `-o x -o x`
+    expresses the same mistake as `-o x -o y` -- a caller that believes
+    the option accumulates -- and a rule with an "unless they happen to
+    match" exception is harder to rely on than one without.
+
+    "Already given" is recorded ON THE NAMESPACE being filled, under a
+    private attribute named after the destination, and never on the
+    action instance. Two rejected alternatives explain why:
+
+      * Reading the destination back and testing it for None is wrong
+        whenever something put a value there first.
+        `parser.set_defaults(output=...)` and
+        `parse_args(argv, namespace=<pre-populated>)` both do, and a
+        value-based probe reads that preset as a first occurrence and
+        refuses the caller's only real one -- naming a value the caller
+        never supplied in the error.
+      * Keeping the marker on the action instance is worse still.
+        argparse actions are per-parser, not per-parse, so two threads
+        parsing through one parser overwrite each other's marker: a
+        genuine `-o A -o B` is silently accepted again, which is the
+        exact bug this class exists to remove, and refusals quote
+        another caller's argv. Reusing one namespace object across two
+        parses breaks the same way in a single thread.
+
+    The namespace is per-parse and per-thread by construction, so a
+    marker on it is correct in all of those cases. It does mean the
+    attribute is visible in the namespace parse_args returns;
+    strip_single_use_markers() below removes it, and run() calls it.
+    MARKER_PREFIX and marker_attribute() are public so any other caller
+    can do the same.
+
+    Values are quoted for the error message with
+    json.dumps(..., ensure_ascii=False), which delimits the value,
+    escapes what needs escaping, keeps a non-ASCII path legible, and
+    speaks the language this tool speaks everywhere else. It also
+    avoids adding a finding to nondeterminism-scanner's ND004 rule,
+    which flags %r syntactically -- though note ND004 aims at repr()
+    falling back to object.__repr__, and this module already has four
+    older %r sites that are, like this one, %r applied to a plain
+    string. The choice here is a small preference plus not moving a
+    committed repository-wide report, not a claim that the older sites
+    are defective.
+
+    One limit worth stating: argparse resolves an abbreviated long
+    option to its full spelling before any action runs, so
+    `--outp x --outp y` is reported as `--output` twice. The message
+    names what argparse resolved, which is the closest thing to "what
+    the caller typed" that an action can see.
+    """
+
+    #: Prefix for the per-parse marker attribute, e.g. "_single_use__output".
+    MARKER_PREFIX = "_single_use__"
+
+    def __init__(self, option_strings, dest, **kwargs):
+        if kwargs.get("nargs") == 0:
+            raise ValueError(
+                "SingleUse is for options that take a value; %s declares "
+                "nargs=0" % dest
+            )
+        super().__init__(option_strings, dest, **kwargs)
+
+    def marker_attribute(self):
+        return self.MARKER_PREFIX + self.dest
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        marker = self.marker_attribute()
+        first = getattr(namespace, marker, None)
+        if first is None:
+            # option_string is None only for positionals, which this
+            # action is not for; the fallback keeps the message sane
+            # rather than printing None if one is ever built that way.
+            setattr(namespace, marker, option_string or self.option_strings[0])
+            setattr(namespace, self.dest, values)
+            return
+        previous = getattr(namespace, self.dest, None)
+        parser.error(
+            "%s accepts a single value but was given twice: %s %s, then %s %s. "
+            "Pass it once -- repeating it would silently discard %s."
+            % (
+                "/".join(self.option_strings),
+                first,
+                json.dumps(previous, ensure_ascii=False),
+                option_string,
+                json.dumps(values, ensure_ascii=False),
+                json.dumps(previous, ensure_ascii=False),
+            )
+        )
+
+
+def strip_single_use_markers(parser, namespace):
+    """Remove SingleUse's per-parse markers from a parsed namespace.
+
+    SingleUse records "this option has been seen" on the namespace, so
+    the state is per-parse and per-thread rather than per-parser. The
+    cost is one extra attribute in what parse_args hands back; this
+    removes it, so a caller sees only the destinations they declared.
+
+    Written as a function taking a stock ArgumentParser rather than as
+    an ArgumentParser subclass on purpose. doc-validator/docval.py
+    discovers a tool's CLI by looking for a variable assigned from a
+    call literally named ArgumentParser (or add_parser /
+    add_subparsers); a subclass under any other name makes this file
+    stop being a discoverable CLI to that scanner, and takes every
+    option in it out of doc-validator/option_report.json's
+    cross-tool comparison. A helper costs one line at the call site and
+    keeps the parser construction in the shape the repository's own
+    tooling reads.
+
+    Returns the same namespace object, for use as `args = strip(...)`.
+    """
+    for action in parser._actions:
+        if isinstance(action, SingleUse):
+            try:
+                delattr(namespace, action.marker_attribute())
+            except AttributeError:
+                pass
+    return namespace
+
+
+def build_parser():
+    """Build the CLI parser.
+
+    Split out of run() so the structural test can inspect the actions
+    without parsing anything. Note that parser.parse_args() on its own
+    leaves SingleUse's per-parse marker in the namespace; run() passes
+    the result through strip_single_use_markers, and any other caller
+    who cares should too.
+    """
     parser = argparse.ArgumentParser(
         prog="snapdiff.py",
         description="Diff two task-node snapshots and report exactly what changed.",
@@ -580,7 +725,14 @@ def run(argv):
     parser.add_argument(
         "-o",
         "--output",
-        help="Write the canonical JSON report to this file instead of stdout.",
+        action=SingleUse,
+        default=None,
+        metavar="OUTPUT",
+        help=(
+            "Write the canonical JSON report to this file instead of stdout. "
+            "May be given only once; a second occurrence is a usage error "
+            "(exit 2) rather than a silent overwrite of the first value."
+        ),
     )
     parser.add_argument(
         "--ignore",
@@ -595,7 +747,12 @@ def run(argv):
             "task is accepted as a harmless no-op."
         ),
     )
-    args = parser.parse_args(argv)
+    return parser
+
+
+def run(argv):
+    parser = build_parser()
+    args = strip_single_use_markers(parser, parser.parse_args(argv))
 
     ignore_set = set(args.ignore)
 

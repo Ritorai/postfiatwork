@@ -62,7 +62,9 @@ python3 snapdiff.py BEFORE.json AFTER.json [-o OUTPUT] [--ignore FIELD ...]
 - `BEFORE`, `AFTER` — paths to two snapshot JSON files (both
   required; there is no stdin support — see Limitations #3).
 - `-o OUTPUT`, `--output OUTPUT` — write the report to `OUTPUT`
-  instead of stdout.
+  instead of stdout. Takes a single value, and giving it twice is a
+  usage error (exit `2`) rather than a silent overwrite — see
+  "Repeating a single-value flag" below.
 - `--ignore FIELD` — exclude `FIELD` from comparison (repeatable).
   Recognized special names `status`, `reward`, `evidence`, `summary`
   disable their entire change category; any other name is excluded
@@ -76,7 +78,161 @@ python3 snapdiff.py BEFORE.json AFTER.json [-o OUTPUT] [--ignore FIELD ...]
 |------|---------|
 | `0`  | The two snapshots are identical for diffing purposes — zero change entries. |
 | `1`  | Both snapshots were read and parsed successfully; one or more changes were found. |
-| `2`  | Invalid input or usage: missing/unreadable file, invalid JSON, malformed snapshot shape, duplicate `task_id`, invalid reward, or a CLI usage error (also argparse's own exit code for `--help`/usage errors). |
+| `2`  | Invalid input or usage: missing/unreadable file, invalid JSON, malformed snapshot shape, duplicate `task_id`, invalid reward, or a CLI usage error — including argparse's own exit code for a usage error such as a missing argument, an unknown flag, or a repeated `-o`/`--output`. (`--help` is not a usage error: argparse prints the help text and exits `0`.) |
+
+## Repeating a single-value flag
+
+`-o`/`--output` takes one value. Repeating it is refused:
+
+```
+$ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o A.json -o B.json
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: -o/--output accepts a single value but was given twice: -o "A.json", then -o "B.json". Pass it once -- repeating it would silently discard "A.json".
+```
+
+Exit code `2`, and **neither** file is created — the refusal happens
+during argument parsing, before any diffing or writing.
+
+Until this guard existed, argparse's default store action was
+last-one-wins: that same command exited `1`, wrote `B.json`, never
+created `A.json`, and printed nothing at all on stderr. A caller who
+believed the flag accumulated got exactly one of the two reports they
+asked for and no indication which one had been dropped — the worst
+shape a failure can take, because the run looks successful. The
+before/after runs are recorded in `SINGLE_USE_FLAG_EVIDENCE.txt`,
+against the pre-fix source read straight out of Git.
+
+Four decisions inside that guard are worth stating, because each could
+reasonably have gone the other way:
+
+1. **Repetition is refused even when the two values are equal.**
+   `-o x -o x` expresses the same misunderstanding as `-o x -o y`, and
+   a rule with an "unless they happen to match" exception is harder to
+   rely on than one without.
+2. **The message names the spelling argparse resolved for each
+   occurrence**, so `--output A.json` followed by `-o B.json` reports
+   `--output` then `-o` rather than one canonical form for both. The
+   one place that is not the caller's literal text is an abbreviated
+   long option: argparse expands `--outp` to `--output` before any
+   action runs, so `--outp x --outp y` is reported as `--output` twice.
+   `test_an_abbreviated_long_option_is_reported_by_its_full_spelling`
+   pins that, so it is a documented limit rather than a surprise.
+   Values are quoted with `json.dumps(..., ensure_ascii=False)`, not
+   `%r` — both delimit and escape, JSON is the language this tool
+   already speaks, and `ensure_ascii=False` keeps a non-ASCII path
+   legible in a message whose job is to let the caller recognise their
+   own argument. It also keeps nondeterminism-scanner's committed
+   self-scan byte-identical, since that scanner flags `%r`
+   syntactically as `ND004` and this change's brief puts its directory
+   off limits. That is a real but modest reason, and it is worth being
+   precise about: `ND004` aims at `repr()` falling back to
+   `object.__repr__`, nondeterminism-scanner's own README names `%r`
+   applied to an argparse string as its dominant false positive, and
+   this module already carries four older `%r` sites of exactly that
+   kind, left untouched here. Nothing about `json.dumps` is a verdict
+   on those.
+3. **`--ignore` is untouched and stays repeatable.** It is declared
+   with `action="append"`, and repeating it is the documented way to
+   exclude several fields at once.
+4. **The rule is enforced structurally, not per-option.** Every
+   optional in the parser must be either repeatable by declaration or
+   built on the `SingleUse` action;
+   `test_every_optional_action_is_repeatable_or_single_use` walks the
+   parser and asserts it. A future option added with a bare store
+   action fails that test rather than quietly reintroducing
+   last-one-wins.
+
+A fifth decision sits inside the action rather than in its behaviour.
+"Has this option already been given?" is recorded on the *namespace*
+being filled, under a private attribute named after the destination.
+Two shorter answers were tried and rejected, each for a reason that
+showed up as a real failure:
+
+- Reading the destination back and testing it for `None` breaks
+  whenever something put a value there first.
+  `parser.set_defaults(output=...)` and `parse_args(argv, namespace=…)`
+  both do, and the probe then reads that preset as a first occurrence,
+  refuses the caller's only real one, and prints the word `None` where
+  an option spelling belongs.
+- Keeping the marker on the *action* breaks harder. argparse actions
+  belong to a parser, not to a parse, so two threads parsing through
+  one parser overwrite each other's marker: `-o A -o B` comes back
+  silently accepted — the exact defect this guard exists to remove —
+  and refusals quote another caller's argument. Reusing one namespace
+  object across two parses fails the same way in a single thread, by
+  refusing a second parse that only ever had one `-o` on it.
+
+A namespace is per-parse and per-thread by construction, so a marker on
+it is right in all of those cases. The cost is that the marker would
+otherwise be visible in the namespace `parse_args` hands back;
+`strip_single_use_markers()` deletes it, and `run()` calls it.
+`build_parser()` deliberately returns a plain `ArgumentParser` rather
+than a subclass: doc-validator's CLI discovery looks for a variable
+assigned from a call literally named `ArgumentParser`, and a subclass
+would take every option in this file out of its cross-tool report.
+`SingleUse.MARKER_PREFIX` and `marker_attribute()` are
+public so a caller can strip it. Twelve tests pin this, including one
+that runs 960 concurrent parses through a single shared parser and
+asserts that not one repeat slipped through.
+
+The usage line is unchanged by all of this — `SingleUse` swaps the
+action, it does not add an option — and
+`test_usage_line_is_unchanged_by_the_guard` pins that, comparing the
+line with its whitespace collapsed so the suite does not pass or fail
+on the terminal width it was run at.
+`test_the_usage_line_is_pinned_at_a_narrow_terminal_too` runs the same
+check at `COLUMNS=40`, where argparse really does wrap, and both
+regenerators export `COLUMNS=80` so the committed transcripts cannot
+move for that reason either.
+
+### What this change leaves stale elsewhere
+
+Four repository-wide artifacts record numbers this change moves. Two
+are left stale because their directories are off limits under this
+change's brief; two could not be left stale, because the tools that own
+them compare a committed report against a live rescan in their own test
+suites, and were therefore updated. All four, rather than leaving any
+of them to be discovered:
+
+- **The root `README.md` tool table** still says `snapshot-diff | 222`,
+  and `readme-index/corpus.tsv` still carries the pre-change extraction
+  of this README. Running `readme-index` against the live tree
+  (`python3 readmeindex.py --root .. --root-readme ../README.md`)
+  therefore reports one more `count_differs` than before — a fifth,
+  alongside four that already exist for `env-leak-scanner`,
+  `path-collision-scanner`, `wallet-reconciler` and `xrpl-auditor`.
+  Editing the root README alone does **not** fix this: the root README
+  and `readme-index/root_readme_after.md` are byte-identical by design
+  and the corpus is the reference for both, so a lone root-README edit
+  trades one discrepancy for another (demonstrated in
+  `SINGLE_USE_FLAG_EVIDENCE.txt`). The whole repair is one commit owned
+  by `readme-index`: re-extract this README's rows into `corpus.tsv`,
+  regenerate `root_readme_after.md`, copy it to the root `README.md`.
+- **`shebang-mode`'s self-scan** counts tracked files, and this change
+  adds three (`SINGLE_USE_FLAG_EVIDENCE.txt` and the two regenerators),
+  so `589` becomes `592` in `shebang-mode/selfscan_output.txt` and
+  `shebang-mode/README.md`. The `SM002` total is unaffected and stays
+  at 150 — the two new `.sh` files carry no shebang precisely because
+  nothing here can be committed with an executable bit, which is the
+  condition `SM002` reports. `cd shebang-mode && bash selfscan.sh`
+  rewrites `selfscan_output.txt`; the three places
+  `shebang-mode/README.md` quotes `589` are prose and need editing by
+  hand alongside it. (Left stale here: off limits.)
+- **`doc-validator/option_report.json`** could not be left stale:
+  `test_optioncheck.py` regenerates it and compares, so it is updated
+  here, together with the one line of `doc-validator/README.md` that
+  quotes its totals (`usages: 193 → 192`,
+  `unsupported_dynamic: 6 → 9`). `optioncheck.py` resolves only literal
+  `action="..."` strings, so a custom action class necessarily lands in
+  its `unsupported_dynamic` list; that is a limit of the scan, not a
+  defect here, and `-o`/`--output` still exists and still takes a
+  value. Three of the nine are this change: the real one in
+  `snapdiff.py`, plus two toy parsers in the tests that exercise
+  `SingleUse` away from this tool. The other construction check builds
+  the action directly rather than through `add_argument`, to keep a
+  fourth out of that list. `weak-assertion-scanner` is updated for the
+  same forced reason — its `test_weakassert_regen.py` compares its
+  committed `tests_scanned` against a live scan.
 
 ## Change categories
 
@@ -306,21 +462,22 @@ inverse is exact.
 python3 -m unittest test_snapdiff -v
 ```
 
-222 tests: canonical JSON formatting and determinism (11), `jsonify`
-(10), `decimal_str`/`format_signed_delta` (10), `parse_reward_field`
-data-driven valid/invalid cases (15 valid + 17 invalid + 4 extra),
+261 tests: canonical JSON formatting (10), `jsonify`
+(10), `decimal_str`/`format_signed_delta` (12), `parse_reward_field`
+data-driven valid/invalid cases (32 + 4 extra),
 `parse_json_document` (parse_float=Decimal, NaN/Infinity rejection,
 precision preservation vs. plain `json.loads`, 10 cases),
-`validate_shape` (11), `validate_and_index_tasks` (22, including
+`validate_shape` (11), `validate_and_index_tasks` (21, including
 duplicate detection, evidence type checks, unicode titles),
 `diff_documents` per change category -- `TASK_ADDED`/`TASK_REMOVED` (7),
-`STATUS_TRANSITION` (5), `REWARD_CHANGED` (13, including the precision
+`STATUS_TRANSITION` (5), `REWARD_CHANGED` (14, including the precision
 demonstration and the string-vs-number-same-value non-change),
-`EVIDENCE_ADDED`/`EVIDENCE_REMOVED` (12, including reordering,
+`EVIDENCE_ADDED`/`EVIDENCE_REMOVED` (11, including reordering,
 duplicate-collapse, and non-dict items), `FIELD_CHANGED` (12,
 including unicode and missing-vs-null), `SUMMARY_CHANGED` (6) --
 cross-cutting `--ignore` mechanics (4), determinism/sort-tiebreak (5),
-`build_report` (4), and full CLI subprocess integration: both required
+`build_report` (4), the single-use guard (39, below), and full CLI
+subprocess integration: both required
 fixtures end-to-end, `-o`/`--output`, byte-identical repeated runs
 with `sha256sum`, no-absolute-paths-leak check, `--ignore` reducing
 (not necessarily zeroing) the change count, the reversed-diff exact-
@@ -331,3 +488,54 @@ evidence wrong type, unwritable `-o` target) plus edge cases (both
 snapshots empty, a file diffed against itself, null reward, unicode
 titles, `--ignore` for a field that never appears, duplicate `--ignore`
 flags deduplicated in the report).
+
+The 39 that cover the single-use guard are the two classes
+`TestSingleUseOutputOption` and `TestSingleUseAction`. In an
+alphabetically ordered `-v` listing they are the 20th and 21st of 23
+classes, near the end, with `TestValidateAndIndexTasks` and
+`TestValidateShape` after them.
+
+Sixteen drive the CLI as a subprocess. Three of those cover every
+spelling argparse accepts for a repeated `-o`/`--output` written out in
+full (short/short, long/long, either mixed order, `--output=`, attached
+`-oVALUE`, and the two occurrences separated by an unrelated flag),
+each asserting exit `2`, that the option is named, and that *both*
+target files are left uncreated. The other thirteen: the message naming
+both spellings in the order used; the message naming the value that
+would have been discarded; three occurrences refused at the second;
+equal values refused; stdout left empty; the exit code being the one
+the exit-code table documents; and, on the other side, single `-o`,
+single `--output`, no flag at all, `--ignore` repeated three times,
+`--ignore` repeated alongside a single `-o`, and the usage line at a
+normal and at a 40-column terminal, all still working.
+
+Twenty-three inspect the parser and the action directly: which action
+each optional is built on; the structural rule that every optional is
+repeatable-by-declaration or `SingleUse`; that the strip helper leaves only the
+declared destinations, with and without the option present, and after
+`parse_known_args` as well as `parse_args`; that until the helper runs
+the per-parse marker is there, under a name the action will tell you;
+that `build_parser()` returns a plain `ArgumentParser` and not a
+subclass; that a reused parser both accepts a fresh single occurrence
+and still refuses a repeat; that one namespace object reused
+across two parses is not mistaken for a repeat, including
+`parse_known_args` followed by `parse_args`; that one parser shared
+across eight threads never silently accepts a repeat, never quotes
+another thread's argument, and never loses a legitimate single value
+across 960 concurrent parses; that a reused namespace which was not
+stripped fails loudly rather than silently; that a value already in the namespace
+(from `set_defaults` or a `namespace=` argument) is not an occurrence
+and never appears in the message; that an option with a non-`None`
+default still refuses repeats; that `nargs=0` is rejected at
+construction; that an abbreviated `--outp` is reported by the full
+spelling argparse resolved it to; that a non-ASCII value stays readable
+in the message; and that the action works on a parser that has nothing
+to do with this tool.
+
+Thirty-two of the 39 fail against the pre-fix source; the other seven
+pin behaviour it already had and pass on both sides, which is what
+makes them useful as regression guards.
+`SINGLE_USE_FLAG_EVIDENCE.txt` records the per-test verdict for all
+thirty-nine, not only the aggregate — the aggregate is inflated by `subTest`
+expansion (three methods times seven spellings) and on its own would
+read as a larger claim than the facts support.

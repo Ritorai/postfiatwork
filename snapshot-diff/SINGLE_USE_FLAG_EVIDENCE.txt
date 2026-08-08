@@ -1,0 +1,293 @@
+snapshot-diff -- conflicting duplicate -o/--output evidence
+===========================================================
+
+Records use transcript-drift/FORMAT.md's grammar: a "=== $ command ==="
+header on one line, the verbatim output, and an exit= line. All paths
+are relative. Records run under `bash -c 'set -o pipefail; ...'`, so a
+piped record's exit= line reports the command that failed rather than
+the exit status of tail.
+
+This file DEPARTS from FORMAT.md in three respects, deliberately. Run
+transcript-schema's validator over it and it reports exactly these:
+
+  * TRANSCRIPT_SHOWS_TEST_FAILURE -- it commits `FAILED` verdicts.
+    FORMAT.md classifies a committed FAILED as drift by definition, and
+    it is right to for captured_output.txt, which is a claim that the
+    tool works. This file is the opposite claim: that the tool silently
+    discarded a caller's output path before the fix.
+  * TRANSCRIPT_RECORD_MISSING_RAN_LINE (6 records) and
+  * TRANSCRIPT_RECORD_MISSING_VERDICT (3 records) -- several unittest
+    records are piped through `tail -1`, `grep -c` or `sort`, because
+    what is being recorded is a count or a per-test verdict, not a
+    whole run. The full runs, with their `Ran N tests` and `OK` lines
+    intact, are here too.
+
+The transcript validators -- transcript-drift, transcript-schema,
+index-generator's pipe_scan, regen-preflight -- only ever read a file
+named captured_output.txt, so nothing here is being smuggled past a
+gate. (env-leak-scanner does read this file, along with every other .md
+and .txt in the tree, which is why every path below is relative and
+every scratch file is written inside this directory.) The departures
+are stated because a file claiming conformance while violating a rule
+is worse than one that says which rules it breaks and why.
+
+What this proves, in order:
+
+  1. the pre-fix source, read out of Git, accepts `-o A -o B`, exits 1
+     as though nothing were wrong, writes B, and never creates A --
+     the caller asked for two reports and got one, with nothing on
+     stderr to say so;
+  2. which of the new tests fail against that source, ONE BY ONE, not
+     just in aggregate;
+  3. the fixed source refuses the same invocation with exit 2, names
+     both spellings argparse resolved, and creates NEITHER file;
+  4. the cases that must keep working still do: a single -o, a single
+     --output, no -o at all, and --ignore repeated three times.
+
+On point 2, read the per-test listing rather than the aggregate. Not
+every new test fails against the pre-fix source and this file does not
+claim otherwise: some of them pin behaviour the pre-fix source already
+got right -- a single -o, a single --output, no -o at all, --ignore
+repeated, --ignore repeated alongside one -o, and the usage line at two
+terminal widths -- and they pass on both sides by design, because their
+job is to catch a repair that breaks something rather than to
+demonstrate the defect. The exact split is not restated here in prose;
+it is counted directly, two records below the listing, by grepping the
+listing itself. The aggregate `FAILED (failures=..., errors=...)` line
+is also expanded by subTest -- three methods times seven spellings --
+so it counts larger than the number of test methods involved. The
+`... ok` / `... FAIL` listing is the honest form of the claim.
+
+The one number here that is not reproducible is the wall-clock in
+unittest's `Ran N tests in ...s` line. Everything else -- exit codes,
+error text, file existence, counts, per-test verdicts -- is fixed by
+construction.
+
+=== $ echo c7c507b080c8de6cf7aaec1375e860492e80aa6a ===
+c7c507b080c8de6cf7aaec1375e860492e80aa6a
+exit=0
+
+=== $ git cat-file -t c7c507b080c8de6cf7aaec1375e860492e80aa6a ===
+commit
+exit=0
+
+=== $ git show c7c507b080c8de6cf7aaec1375e860492e80aa6a:snapshot-diff/snapdiff.py > _singleuse_scratch/snapdiff.py && wc -l _singleuse_scratch/snapdiff.py ===
+663 _singleuse_scratch/snapdiff.py
+exit=0
+
+=== $ cp test_snapdiff.py snapshot_before.json snapshot_after_same.json snapshot_after_changed.json _singleuse_scratch/ && ls _singleuse_scratch ===
+snapdiff.py
+snapshot_after_changed.json
+snapshot_after_same.json
+snapshot_before.json
+test_snapdiff.py
+exit=0
+
+=== $ cd _singleuse_scratch && rm -f A.json B.json && python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o A.json -o B.json ===
+exit=1
+
+=== $ cd _singleuse_scratch && ls A.json B.json 2>&1 ===
+ls: cannot access 'A.json': No such file or directory
+B.json
+exit=2
+
+=== $ cd _singleuse_scratch && rm -f A.json B.json && python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --output A.json -o B.json 2>&1 | wc -c ===
+0
+exit=1
+
+=== $ cd _singleuse_scratch && python3 -m unittest test_snapdiff 2>&1 | tail -1 ===
+FAILED (failures=27, errors=23)
+exit=1
+
+=== $ cd _singleuse_scratch && python3 -m unittest -v test_snapdiff.TestSingleUseOutputOption test_snapdiff.TestSingleUseAction 2>&1 | grep -E '[.][.][.] (ok|FAIL|ERROR)' | sed 's/ [(].*[)] [.][.][.] / ... /' | sort ===
+  test_every_repeat_spelling_exits_2 (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_exits_2) [attached_short_form] ... FAIL
+  test_every_repeat_spelling_exits_2 (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_exits_2) [equals_form] ... FAIL
+  test_every_repeat_spelling_exits_2 (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_exits_2) [long_then_long] ... FAIL
+  test_every_repeat_spelling_exits_2 (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_exits_2) [long_then_short] ... FAIL
+  test_every_repeat_spelling_exits_2 (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_exits_2) [separated_by_another_flag] ... FAIL
+  test_every_repeat_spelling_exits_2 (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_exits_2) [short_then_long] ... FAIL
+  test_every_repeat_spelling_exits_2 (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_exits_2) [short_then_short] ... FAIL
+  test_every_repeat_spelling_names_the_option (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_names_the_option) [attached_short_form] ... FAIL
+  test_every_repeat_spelling_names_the_option (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_names_the_option) [equals_form] ... FAIL
+  test_every_repeat_spelling_names_the_option (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_names_the_option) [long_then_long] ... FAIL
+  test_every_repeat_spelling_names_the_option (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_names_the_option) [long_then_short] ... FAIL
+  test_every_repeat_spelling_names_the_option (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_names_the_option) [separated_by_another_flag] ... FAIL
+  test_every_repeat_spelling_names_the_option (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_names_the_option) [short_then_long] ... FAIL
+  test_every_repeat_spelling_names_the_option (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_names_the_option) [short_then_short] ... FAIL
+  test_every_repeat_spelling_writes_neither_file (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_writes_neither_file) [attached_short_form] ... FAIL
+  test_every_repeat_spelling_writes_neither_file (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_writes_neither_file) [equals_form] ... FAIL
+  test_every_repeat_spelling_writes_neither_file (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_writes_neither_file) [long_then_long] ... FAIL
+  test_every_repeat_spelling_writes_neither_file (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_writes_neither_file) [long_then_short] ... FAIL
+  test_every_repeat_spelling_writes_neither_file (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_writes_neither_file) [separated_by_another_flag] ... FAIL
+  test_every_repeat_spelling_writes_neither_file (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_writes_neither_file) [short_then_long] ... FAIL
+  test_every_repeat_spelling_writes_neither_file (test_snapdiff.TestSingleUseOutputOption.test_every_repeat_spelling_writes_neither_file) [short_then_short] ... FAIL
+test_a_non_ascii_value_stays_readable_in_the_message ... ERROR
+test_a_pre_populated_namespace_does_not_count_as_an_occurrence ... ERROR
+test_a_preset_does_not_leak_into_the_repeat_message ... ERROR
+test_a_reused_namespace_that_was_not_stripped_reports_honestly ... ERROR
+test_a_reused_parser_still_accepts_a_single_occurrence ... ERROR
+test_a_reused_parser_still_refuses_a_repeat_on_a_later_parse ... ERROR
+test_an_abbreviated_long_option_is_reported_by_its_full_spelling ... ERROR
+test_an_option_with_a_non_none_default_still_refuses_repeats ... ERROR
+test_build_parser_returns_a_plain_argument_parser ... ERROR
+test_error_goes_to_stderr_and_stdout_stays_empty ... FAIL
+test_error_names_both_spellings_in_the_order_used ... FAIL
+test_error_names_the_value_that_would_have_been_discarded ... FAIL
+test_every_optional_action_is_repeatable_or_single_use ... ERROR
+test_exit_code_is_the_documented_usage_error_code ... FAIL
+test_ignore_is_declared_repeatable ... ERROR
+test_ignore_is_still_repeatable ... ok
+test_ignore_repeated_alongside_a_single_output_is_accepted ... ok
+test_nargs_zero_is_rejected_at_construction ... ERROR
+test_omitting_the_option_still_writes_to_stdout ... ok
+test_one_namespace_object_reused_across_parses_is_not_a_repeat ... ERROR
+test_one_parser_shared_across_threads_accepts_every_single_use ... ERROR
+test_one_parser_shared_across_threads_never_accepts_a_repeat ... ERROR
+test_output_uses_the_single_use_action ... ERROR
+test_parse_known_args_then_parse_args_on_one_namespace ... ERROR
+test_repetition_with_identical_values_is_still_refused ... FAIL
+test_set_defaults_does_not_count_as_an_occurrence ... ERROR
+test_single_long_form_still_writes_the_report ... ok
+test_single_short_form_still_writes_the_report ... ok
+test_the_action_is_reusable_on_another_parser ... ERROR
+test_the_helper_also_works_after_parse_known_args ... ERROR
+test_the_helper_is_a_no_op_when_the_option_is_absent ... ERROR
+test_the_helper_removes_the_marker_from_the_namespace ... ERROR
+test_the_marker_is_present_until_the_helper_removes_it ... ERROR
+test_the_usage_line_is_pinned_at_a_narrow_terminal_too ... ok
+test_three_occurrences_are_refused_at_the_second ... FAIL
+test_usage_line_is_unchanged_by_the_guard ... ok
+exit=1
+
+=== $ cd _singleuse_scratch && python3 -m unittest -v test_snapdiff.TestSingleUseOutputOption test_snapdiff.TestSingleUseAction 2>&1 | grep -cE '[.][.][.] ok' ===
+7
+exit=1
+
+=== $ cd _singleuse_scratch && python3 -m unittest -v test_snapdiff.TestSingleUseOutputOption test_snapdiff.TestSingleUseAction 2>&1 | grep -cE '[.][.][.] (FAIL|ERROR)' ===
+50
+exit=1
+
+=== $ rm -f A.json B.json && python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o A.json -o B.json ===
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: -o/--output accepts a single value but was given twice: -o "A.json", then -o "B.json". Pass it once -- repeating it would silently discard "A.json".
+exit=2
+
+=== $ ls A.json B.json 2>&1 ===
+ls: cannot access 'A.json': No such file or directory
+ls: cannot access 'B.json': No such file or directory
+exit=2
+
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --output A.json -o B.json ===
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: -o/--output accepts a single value but was given twice: --output "A.json", then -o "B.json". Pass it once -- repeating it would silently discard "A.json".
+exit=2
+
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --output=A.json --output=B.json ===
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: -o/--output accepts a single value but was given twice: --output "A.json", then --output "B.json". Pass it once -- repeating it would silently discard "A.json".
+exit=2
+
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -oA.json -oB.json ===
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: -o/--output accepts a single value but was given twice: -o "A.json", then -o "B.json". Pass it once -- repeating it would silently discard "A.json".
+exit=2
+
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o A.json -o A.json ===
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: -o/--output accepts a single value but was given twice: -o "A.json", then -o "A.json". Pass it once -- repeating it would silently discard "A.json".
+exit=2
+
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o A.json --ignore reward -o B.json ===
+usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after
+snapdiff.py: error: -o/--output accepts a single value but was given twice: -o "A.json", then -o "B.json". Pass it once -- repeating it would silently discard "A.json".
+exit=2
+
+=== $ rm -f A.json && python3 snapdiff.py snapshot_before.json snapshot_after_changed.json -o A.json ===
+exit=1
+
+=== $ wc -c A.json ===
+1732 A.json
+exit=0
+
+=== $ rm -f A.json && python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --output A.json ===
+exit=1
+
+=== $ wc -c A.json ===
+1732 A.json
+exit=0
+
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_same.json ===
+{"change_count":0,"changes":[],"ignored_fields":[],"result":"identical","task_count_after":12,"task_count_before":12}
+exit=0
+
+=== $ python3 snapdiff.py snapshot_before.json snapshot_after_changed.json --ignore reward --ignore status --ignore summary -o A.json ===
+exit=1
+
+=== $ python3 -c "import json;print(json.load(open('A.json'))['ignored_fields'])" ===
+['reward', 'status', 'summary']
+exit=0
+
+=== $ python3 -m unittest test_snapdiff.TestSingleUseOutputOption test_snapdiff.TestSingleUseAction 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 39 tests in 1.259s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_snapdiff 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 261 tests in 2.761s
+
+OK
+exit=0
+
+=== $ COLUMNS=40 python3 -m unittest test_snapdiff 2>&1 | tail -1 ===
+OK
+exit=0
+
+=== $ COLUMNS=200 python3 -m unittest test_snapdiff 2>&1 | tail -1 ===
+OK
+exit=0
+
+=== $ grep -n 'snapshot-diff' ../README.md ===
+85:| [`snapshot-diff`](snapshot-diff) | 222 | snapdiff.py |
+exit=0
+
+=== $ grep -n '^[0-9][0-9]* tests:' README.md ===
+462:260 tests: canonical JSON formatting (10), `jsonify`
+exit=0
+
+=== $ cd ../readme-index && python3 readmeindex.py --corpus corpus.tsv --root-readme root_readme_after.md -o ../snapshot-diff/_singleuse_scratch2/a.json ===
+exit=0
+
+=== $ cd ../readme-index && python3 readmeindex.py --corpus corpus.tsv --root-readme ../README.md -o ../snapshot-diff/_singleuse_scratch2/b.json ===
+exit=0
+
+=== $ cd ../readme-index && python3 readmeindex.py --root .. --root-readme ../README.md -o ../snapshot-diff/_singleuse_scratch2/c.json ; python3 -c "import json,collections;d=json.load(open('../snapshot-diff/_singleuse_scratch2/c.json'))['index_differences'];print(sorted(collections.Counter(e['kind'] for e in d).items()));print([e for e in d if e.get('tool')=='snapshot-diff'])" ===
+[('aggregate_differs', 1), ('count_differs', 5), ('count_not_derivable', 1), ('missing_from_index', 7)]
+[{'derived': 260, 'index': 222, 'kind': 'count_differs', 'tool': 'snapshot-diff'}]
+exit=0
+
+=== $ sed "s/(snapshot-diff) | 222 |/(snapshot-diff) | $(sed -n 's/^\([0-9][0-9]*\) tests:.*/\1/p' README.md | head -1) |/" ../README.md > _singleuse_scratch2/root_readme_edited.md && grep -n 'snapshot-diff' _singleuse_scratch2/root_readme_edited.md ===
+85:| [`snapshot-diff`](snapshot-diff) | 260 | snapdiff.py |
+exit=0
+
+=== $ cd ../readme-index && python3 readmeindex.py --corpus corpus.tsv --root-readme ../snapshot-diff/_singleuse_scratch2/root_readme_edited.md -o ../snapshot-diff/_singleuse_scratch2/d.json ; python3 -c "import json;d=json.load(open('../snapshot-diff/_singleuse_scratch2/d.json'))['index_differences'];print([e for e in d if e.get('tool')=='snapshot-diff'])" ===
+[{'derived': 222, 'index': 260, 'kind': 'count_differs', 'tool': 'snapshot-diff'}]
+exit=0
+
+=== $ cd ../readme-index && python3 readmeindex.py --root .. --root-readme ../snapshot-diff/_singleuse_scratch2/root_readme_edited.md -o ../snapshot-diff/_singleuse_scratch2/e.json ; python3 -c "import json,collections;d=json.load(open('../snapshot-diff/_singleuse_scratch2/e.json'))['index_differences'];print(sorted(collections.Counter(e['kind'] for e in d).items()));print([e for e in d if e.get('tool')=='snapshot-diff'])" ===
+[('aggregate_differs', 1), ('count_differs', 4), ('count_not_derivable', 1), ('missing_from_index', 7)]
+[]
+exit=0
+
+=== $ ls -d _singleuse_scratch2 2>&1; echo scratch2-removed ===
+ls: cannot access '_singleuse_scratch2': No such file or directory
+scratch2-removed
+exit=0
+
+=== $ ls -d _singleuse_scratch 2>&1; echo scratch-removed ===
+ls: cannot access '_singleuse_scratch': No such file or directory
+scratch-removed
+exit=0
+

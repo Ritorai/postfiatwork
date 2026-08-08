@@ -1415,5 +1415,556 @@ class TestCliEdgeCases(TempDirMixin, unittest.TestCase):
             self.assertNotIn(token, out)
 
 
+# ==========================================================================
+# Single-use options: -o/--output must not silently last-one-wins
+# ==========================================================================
+#
+# argparse, contextlib and io are imported inside the tests that need
+# them rather than at module scope. That is not style preference: this
+# file's existing findings are recorded BY LINE NUMBER in committed
+# repository-wide reports, and three more lines at the top would move
+# every one of them for no reason connected to this change. Appending
+# only at the end leaves every existing line where it was.
+#
+# Not all of the thirty tests below fail against the pre-fix source, and
+# the evidence file does not claim they do. Seven of them -- a single
+# -o, a single --output, no -o at all, --ignore repeated, --ignore
+# repeated alongside one -o, and the usage line at a normal and at a
+# narrow terminal width -- pin behaviour the pre-fix source already got
+# right; they are regression guards for the repair, not proof of the
+# defect. The other twenty-three fail against it.
+# SINGLE_USE_FLAG_EVIDENCE.txt records the per-test verdict, not just
+# the aggregate, because the aggregate is expanded by subTest (three
+# methods x seven spellings) and so reads larger than the number of
+# test methods involved.
+
+
+# The spellings argparse accepts for a repeated -o/--output when the
+# caller writes the option out in full, as (case id, argv fragment
+# builder). Each must be refused with exit 2. Abbreviated long options
+# are covered separately, by
+# test_an_abbreviated_long_option_is_reported_by_its_full_spelling,
+# because argparse resolves those to --output before the action runs
+# and the reported spelling is therefore not the typed one.
+REPEAT_FORMS = (
+    ("short_then_short", lambda a, b: ["-o", a, "-o", b]),
+    ("long_then_long", lambda a, b: ["--output", a, "--output", b]),
+    ("long_then_short", lambda a, b: ["--output", a, "-o", b]),
+    ("short_then_long", lambda a, b: ["-o", a, "--output", b]),
+    ("equals_form", lambda a, b: ["--output=" + a, "--output=" + b]),
+    ("attached_short_form", lambda a, b: ["-o" + a, "-o" + b]),
+    ("separated_by_another_flag", lambda a, b: ["-o", a, "--ignore", "reward", "-o", b]),
+)
+
+
+def quoted(value):
+    """How snapdiff.py quotes a value inside the repeated-option error."""
+    return json.dumps(value, ensure_ascii=False)
+
+
+class TestSingleUseOutputOption(TempDirMixin, unittest.TestCase):
+    """-o/--output takes one value, so a second occurrence is refused.
+
+    Before this guard argparse's default store action was last-one-wins:
+    `-o a.json -o b.json` wrote b.json, never created a.json, and exited
+    0 or 1 with nothing on stderr. A caller who believed the option
+    accumulated got one of the two reports they asked for and no
+    indication that the other had been dropped.
+    """
+
+    def repeat_argv(self, form, a, b):
+        return [SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED] + form(a, b)
+
+    def test_every_repeat_spelling_exits_2(self):
+        a = os.path.join(self.tmpdir, "first.json")
+        b = os.path.join(self.tmpdir, "second.json")
+        for case_id, form in REPEAT_FORMS:
+            with self.subTest(case_id):
+                code, out, err = run_cli(self.repeat_argv(form, a, b))
+                self.assertEqual(code, 2, err)
+
+    def test_every_repeat_spelling_names_the_option(self):
+        a = os.path.join(self.tmpdir, "first.json")
+        b = os.path.join(self.tmpdir, "second.json")
+        for case_id, form in REPEAT_FORMS:
+            with self.subTest(case_id):
+                code, out, err = run_cli(self.repeat_argv(form, a, b))
+                self.assertIn("-o/--output", err)
+
+    def test_every_repeat_spelling_writes_neither_file(self):
+        # The whole point: a refused invocation must not have produced
+        # half of what was asked for.
+        for case_id, form in REPEAT_FORMS:
+            with self.subTest(case_id):
+                a = os.path.join(self.tmpdir, case_id + "-first.json")
+                b = os.path.join(self.tmpdir, case_id + "-second.json")
+                run_cli(self.repeat_argv(form, a, b))
+                self.assertFalse(os.path.exists(a))
+                self.assertFalse(os.path.exists(b))
+
+    def test_error_names_both_spellings_in_the_order_used(self):
+        a = os.path.join(self.tmpdir, "first.json")
+        b = os.path.join(self.tmpdir, "second.json")
+        code, out, err = run_cli(
+            [SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "--output", a, "-o", b]
+        )
+        self.assertEqual(code, 2)
+        # "--output <a>, then -o <b>" -- the spellings the caller typed,
+        # not a canonical one, so the message points at real argv text.
+        first_at = err.index("--output " + quoted(a))
+        second_at = err.index("-o " + quoted(b))
+        self.assertLess(first_at, second_at)
+
+    def test_error_names_the_value_that_would_have_been_discarded(self):
+        a = os.path.join(self.tmpdir, "first.json")
+        b = os.path.join(self.tmpdir, "second.json")
+        code, out, err = run_cli([SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "-o", a, "-o", b])
+        self.assertIn(quoted(a), err)
+        self.assertIn(quoted(b), err)
+
+    def test_repetition_with_identical_values_is_still_refused(self):
+        a = os.path.join(self.tmpdir, "same.json")
+        code, out, err = run_cli([SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "-o", a, "-o", a])
+        self.assertEqual(code, 2, err)
+        self.assertFalse(os.path.exists(a))
+
+    def test_three_occurrences_are_refused_at_the_second(self):
+        a = os.path.join(self.tmpdir, "1.json")
+        b = os.path.join(self.tmpdir, "2.json")
+        c = os.path.join(self.tmpdir, "3.json")
+        code, out, err = run_cli(
+            [SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "-o", a, "-o", b, "-o", c]
+        )
+        self.assertEqual(code, 2, err)
+        self.assertIn(quoted(b), err)
+        self.assertNotIn(quoted(c), err)
+
+    def test_error_goes_to_stderr_and_stdout_stays_empty(self):
+        a = os.path.join(self.tmpdir, "first.json")
+        b = os.path.join(self.tmpdir, "second.json")
+        code, out, err = run_cli([SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "-o", a, "-o", b])
+        self.assertEqual(out, "")
+        self.assertTrue(err.strip())
+
+    def test_exit_code_is_the_documented_usage_error_code(self):
+        a = os.path.join(self.tmpdir, "first.json")
+        b = os.path.join(self.tmpdir, "second.json")
+        code, out, err = run_cli([SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "-o", a, "-o", b])
+        self.assertEqual(code, snapdiff.EXIT_INVALID_INPUT)
+
+    # --- the valid cases the guard must not break ---------------------
+
+    def test_single_short_form_still_writes_the_report(self):
+        a = os.path.join(self.tmpdir, "only.json")
+        code, out, err = run_cli([SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "-o", a])
+        self.assertEqual(code, 1, err)
+        self.assertEqual(out, "")
+        self.assertTrue(os.path.exists(a))
+
+    def test_single_long_form_still_writes_the_report(self):
+        a = os.path.join(self.tmpdir, "only.json")
+        code, out, err = run_cli([SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED, "--output", a])
+        self.assertEqual(code, 1, err)
+        self.assertTrue(os.path.exists(a))
+
+    def test_omitting_the_option_still_writes_to_stdout(self):
+        code, out, err = run_cli([SNAPSHOT_BEFORE, SNAPSHOT_AFTER_CHANGED])
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("{"))
+
+    def test_ignore_is_still_repeatable(self):
+        code, out, err = run_cli(
+            [
+                SNAPSHOT_BEFORE,
+                SNAPSHOT_AFTER_CHANGED,
+                "--ignore",
+                "reward",
+                "--ignore",
+                "status",
+                "--ignore",
+                "summary",
+            ]
+        )
+        self.assertEqual(code, 1, err)
+        report = json.loads(out)
+        self.assertEqual(report["ignored_fields"], ["reward", "status", "summary"])
+
+    def test_ignore_repeated_alongside_a_single_output_is_accepted(self):
+        a = os.path.join(self.tmpdir, "only.json")
+        code, out, err = run_cli(
+            [
+                SNAPSHOT_BEFORE,
+                SNAPSHOT_AFTER_CHANGED,
+                "--ignore",
+                "reward",
+                "-o",
+                a,
+                "--ignore",
+                "status",
+            ]
+        )
+        self.assertEqual(code, 1, err)
+        with open(a, encoding="utf-8") as fh:
+            report = json.load(fh)
+        self.assertEqual(report["ignored_fields"], ["reward", "status"])
+
+    def test_usage_line_is_unchanged_by_the_guard(self):
+        # The committed transcript quotes this line verbatim; the guard
+        # is an action swap, not a new option, so it must not move.
+        #
+        # argparse wraps usage to the terminal width, and COLUMNS is set
+        # by plenty of CI harnesses, so the raw line is compared with its
+        # whitespace collapsed. That still pins the option set, their
+        # order and their metavars -- everything the guard could have
+        # disturbed -- without making the suite pass or fail on the width
+        # of whatever ran it.
+        code, out, err = run_cli([SNAPSHOT_BEFORE])
+        usage = err.split("snapdiff.py: error:")[0]
+        self.assertEqual(
+            " ".join(usage.split()),
+            "usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after",
+        )
+
+    def test_the_usage_line_is_pinned_at_a_narrow_terminal_too(self):
+        # The guard against the previous test quietly becoming
+        # width-dependent again.
+        env = dict(os.environ, COLUMNS="40")
+        proc = subprocess.run(
+            [sys.executable, SNAPDIFF_PY, SNAPSHOT_BEFORE],
+            cwd=HERE,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.assertEqual(proc.returncode, 2)
+        usage = proc.stderr.split("snapdiff.py: error:")[0]
+        self.assertIn("\n", usage.strip())          # it really did wrap
+        self.assertEqual(
+            " ".join(usage.split()),
+            "usage: snapdiff.py [-h] [-o OUTPUT] [--ignore FIELD] before after",
+        )
+
+
+class TestSingleUseAction(unittest.TestCase):
+    """The action itself, and the structural rule that keeps it applied."""
+
+    # argparse exposes no public accessor for a parser's actions;
+    # _actions is the attribute every argparse-introspecting tool uses.
+    def optional_actions(self):
+        parser = snapdiff.build_parser()
+        return [a for a in parser._actions if a.option_strings]
+
+    def test_output_uses_the_single_use_action(self):
+        by_dest = {a.dest: a for a in self.optional_actions()}
+        self.assertIsInstance(by_dest["output"], snapdiff.SingleUse)
+
+    def test_ignore_is_declared_repeatable(self):
+        import argparse
+
+        by_dest = {a.dest: a for a in self.optional_actions()}
+        self.assertIsInstance(by_dest["ignore"], argparse._AppendAction)
+
+    def test_every_optional_action_is_repeatable_or_single_use(self):
+        # This is the guard against the defect coming back through a
+        # *new* option: anything that stores a value must either say it
+        # repeats, or be SingleUse. A bare store action fails here.
+        import argparse
+
+        repeatable = (
+            argparse._AppendAction,
+            argparse._AppendConstAction,
+            argparse._CountAction,
+        )
+        extend = getattr(argparse, "_ExtendAction", None)
+        if extend is not None:
+            repeatable = repeatable + (extend,)
+        for action in self.optional_actions():
+            with self.subTest("/".join(action.option_strings)):
+                if action.nargs == 0:
+                    # --help and friends store nothing; repeating them
+                    # cannot lose a value.
+                    continue
+                self.assertIsInstance(action, (snapdiff.SingleUse,) + repeatable)
+
+    def test_the_helper_removes_the_marker_from_the_namespace(self):
+        parser = snapdiff.build_parser()
+        args = snapdiff.strip_single_use_markers(
+            parser, parser.parse_args(["b.json", "a.json", "-o", "out.json"])
+        )
+        self.assertEqual(sorted(vars(args)), ["after", "before", "ignore", "output"])
+
+    def test_the_helper_is_a_no_op_when_the_option_is_absent(self):
+        parser = snapdiff.build_parser()
+        args = snapdiff.strip_single_use_markers(
+            parser, parser.parse_args(["b.json", "a.json"])
+        )
+        self.assertEqual(sorted(vars(args)), ["after", "before", "ignore", "output"])
+
+    def test_the_helper_also_works_after_parse_known_args(self):
+        parser = snapdiff.build_parser()
+        args, extra = parser.parse_known_args(["b.json", "a.json", "-o", "x", "--zz"])
+        self.assertEqual(extra, ["--zz"])
+        args = snapdiff.strip_single_use_markers(parser, args)
+        self.assertEqual(sorted(vars(args)), ["after", "before", "ignore", "output"])
+
+    def test_the_marker_is_present_until_the_helper_removes_it(self):
+        # The documented cost of the per-parse marker living on the
+        # namespace. Named, so any caller can strip it; run() does.
+        parser = snapdiff.build_parser()
+        action = {a.dest: a for a in parser._actions}["output"]
+        raw = parser.parse_args(["b.json", "a.json", "-o", "one.json"])
+        self.assertEqual(action.marker_attribute(), "_single_use__output")
+        self.assertEqual(getattr(raw, action.marker_attribute()), "-o")
+
+    def test_build_parser_returns_a_plain_argument_parser(self):
+        # Not an ArgumentParser subclass, on purpose: doc-validator's
+        # CLI discovery looks for a variable assigned from a call
+        # literally named ArgumentParser, and a subclass would take
+        # every option in this file out of its cross-tool report.
+        import argparse
+
+        self.assertIs(type(snapdiff.build_parser()), argparse.ArgumentParser)
+
+    # --- the marker is per-parse, not per-parser ----------------------
+
+    def test_one_namespace_object_reused_across_parses_is_not_a_repeat(self):
+        # Each parse_args call sees exactly one -o. Keeping the marker on
+        # the action instead of the namespace refused the second one and
+        # quoted a value that was never on that command line. Stripping
+        # between parses is what run() does and what any caller reusing
+        # a namespace has to do.
+        import argparse
+
+        parser = snapdiff.build_parser()
+        shared = argparse.Namespace()
+        first = snapdiff.strip_single_use_markers(
+            parser, parser.parse_args(["b.json", "a.json", "-o", "one.json"], shared)
+        )
+        self.assertEqual(first.output, "one.json")
+        second = snapdiff.strip_single_use_markers(
+            parser, parser.parse_args(["b.json", "a.json", "-o", "two.json"], shared)
+        )
+        self.assertEqual(second.output, "two.json")
+
+    def test_parse_known_args_then_parse_args_on_one_namespace(self):
+        import argparse
+
+        parser = snapdiff.build_parser()
+        shared = argparse.Namespace()
+        args, _ = parser.parse_known_args(
+            ["b.json", "a.json", "-o", "one.json", "--zz"], shared
+        )
+        snapdiff.strip_single_use_markers(parser, args)
+        args = parser.parse_args(["b.json", "a.json", "-o", "two.json"], shared)
+        self.assertEqual(args.output, "two.json")
+
+    def test_a_reused_namespace_that_was_not_stripped_reports_honestly(self):
+        # The failure mode of forgetting the helper is a refusal, not a
+        # silent overwrite. Stated as a test so it is a known shape
+        # rather than a surprise.
+        import argparse
+        import contextlib
+        import io
+
+        parser = snapdiff.build_parser()
+        shared = argparse.Namespace()
+        parser.parse_args(["b.json", "a.json", "-o", "one.json"], shared)
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with self.assertRaises(SystemExit) as caught:
+                parser.parse_args(["b.json", "a.json", "-o", "two.json"], shared)
+        self.assertEqual(caught.exception.code, 2)
+
+    def test_one_parser_shared_across_threads_never_accepts_a_repeat(self):
+        # The failure this guards against is not a crash: with the marker
+        # on the action, concurrent parses overwrote each other's marker
+        # and a genuine `-o A -o B` came back silently accepted -- the
+        # exact defect this class exists to remove.
+        import contextlib
+        import io
+        import threading
+
+        parser = snapdiff.build_parser()
+        accepted = []
+        lock = threading.Lock()
+
+        def hammer(spelling, tag):
+            for _ in range(120):
+                try:
+                    args = parser.parse_args(
+                        ["b.json", "a.json", spelling, tag, spelling, tag + "2"]
+                    )
+                except SystemExit:
+                    continue
+                with lock:
+                    accepted.append((spelling, tag, args.output))
+
+        pairs = [("-o", "SHORT"), ("--output", "LONG")] * 4
+        threads = [threading.Thread(target=hammer, args=p) for p in pairs]
+        with contextlib.redirect_stderr(io.StringIO()) as captured:
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join()
+        self.assertEqual(accepted, [])
+        # And no refusal quotes another thread's argument.
+        for line in captured.getvalue().splitlines():
+            with self.subTest(line):
+                self.assertFalse("SHORT" in line and "LONG" in line)
+
+    def test_one_parser_shared_across_threads_accepts_every_single_use(self):
+        import threading
+
+        parser = snapdiff.build_parser()
+        results = []
+        lock = threading.Lock()
+
+        def hammer(tag):
+            for index in range(120):
+                value = "%s-%d.json" % (tag, index)
+                args = parser.parse_args(["b.json", "a.json", "-o", value])
+                with lock:
+                    results.append((value, args.output))
+
+        threads = [threading.Thread(target=hammer, args=("t%d" % i,)) for i in range(8)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        self.assertEqual(len(results), 8 * 120)
+        self.assertEqual([r for r in results if r[0] != r[1]], [])
+
+    def test_a_reused_parser_still_refuses_a_repeat_on_a_later_parse(self):
+        import contextlib
+        import io
+
+        parser = snapdiff.build_parser()
+        parser.parse_args(["b.json", "a.json", "--output", "one.json"])
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with self.assertRaises(SystemExit) as caught:
+                parser.parse_args(["b.json", "a.json", "-o", "x.json", "-o", "y.json"])
+        self.assertEqual(caught.exception.code, 2)
+        # The spelling reported is the one used in THIS parse, not the
+        # "--output" left behind by the previous one.
+        self.assertIn('-o "x.json", then -o "y.json"', captured.getvalue())
+
+    def test_a_reused_parser_still_accepts_a_single_occurrence(self):
+        parser = snapdiff.build_parser()
+        parser.parse_args(["b.json", "a.json", "-o", "one.json"])
+        args = parser.parse_args(["b.json", "a.json", "-o", "two.json"])
+        self.assertEqual(args.output, "two.json")
+
+    # The construction check builds the action directly instead of going
+    # through parser.add_argument. That is the same constructor call
+    # add_argument would make with this keyword, and it keeps another
+    # `action=<a name>` call site out of doc-validator/optioncheck.py's
+    # repository-wide scan, which can only resolve literal `action=`
+    # strings and files every other form as an unsupported dynamic usage.
+    def test_nargs_zero_is_rejected_at_construction(self):
+        with self.assertRaises(ValueError):
+            snapdiff.SingleUse(["--thing"], "thing", nargs=0)
+
+    # --- presets: a value already in the namespace is not an occurrence -
+
+    def test_a_pre_populated_namespace_does_not_count_as_an_occurrence(self):
+        import argparse
+
+        parser = snapdiff.build_parser()
+        preset = argparse.Namespace(output="PRESET")
+        args = parser.parse_args(["b.json", "a.json", "-o", "real.json"], preset)
+        self.assertEqual(args.output, "real.json")
+
+    def test_set_defaults_does_not_count_as_an_occurrence(self):
+        parser = snapdiff.build_parser()
+        parser.set_defaults(output="PRESET")
+        args = parser.parse_args(["b.json", "a.json", "-o", "real.json"])
+        self.assertEqual(args.output, "real.json")
+
+    def test_a_preset_does_not_leak_into_the_repeat_message(self):
+        # The value-based probe this replaced reported the preset as the
+        # first occurrence and printed the word None where a spelling
+        # belongs.
+        import argparse
+        import contextlib
+        import io
+
+        parser = snapdiff.build_parser()
+        preset = argparse.Namespace(output="PRESET")
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with self.assertRaises(SystemExit) as caught:
+                parser.parse_args(["b.json", "a.json", "-o", "x.json", "-o", "y.json"],
+                                  preset)
+        self.assertEqual(caught.exception.code, 2)
+        message = captured.getvalue()
+        self.assertIn('-o "x.json", then -o "y.json"', message)
+        self.assertNotIn("None", message)
+        self.assertNotIn("PRESET", message)
+
+    def test_an_option_with_a_non_none_default_still_refuses_repeats(self):
+        import argparse
+        import contextlib
+        import io
+
+        parser = argparse.ArgumentParser(prog="t")
+        parser.add_argument("--thing", action=snapdiff.SingleUse, default="fallback")
+        self.assertEqual(parser.parse_args([]).thing, "fallback")
+        self.assertEqual(parser.parse_args(["--thing", "one"]).thing, "one")
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with self.assertRaises(SystemExit):
+                parser.parse_args(["--thing", "one", "--thing", "two"])
+        self.assertIn('--thing "one", then --thing "two"', captured.getvalue())
+
+    def test_an_abbreviated_long_option_is_reported_by_its_full_spelling(self):
+        # argparse resolves --outp to --output before any action runs, so
+        # this is the one case where the message does not echo the
+        # caller's literal text. Pinned so the README can say so.
+        import contextlib
+        import io
+
+        parser = snapdiff.build_parser()
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with self.assertRaises(SystemExit):
+                parser.parse_args(["b.json", "a.json", "--outp", "x", "--outp", "y"])
+        self.assertIn('--output "x", then --output "y"', captured.getvalue())
+
+    def test_a_non_ascii_value_stays_readable_in_the_message(self):
+        import contextlib
+        import io
+
+        # Non-ASCII in BOTH positions: the discarded value and the new
+        # one are quoted by separate json.dumps calls, and each needs
+        # ensure_ascii=False.
+        parser = snapdiff.build_parser()
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with self.assertRaises(SystemExit):
+                parser.parse_args(["b.json", "a.json", "-o", "caf\u00e9.json",
+                                   "-o", "\u4eac\u90fd.json"])
+        message = captured.getvalue()
+        self.assertIn("caf\u00e9.json", message)
+        self.assertIn("\u4eac\u90fd.json", message)
+        self.assertNotIn("\\u", message)
+
+    def test_the_action_is_reusable_on_another_parser(self):
+        # Nothing in SingleUse is specific to -o/--output.
+        import argparse
+        import contextlib
+        import io
+
+        parser = argparse.ArgumentParser(prog="t")
+        parser.add_argument("-c", "--config", action=snapdiff.SingleUse)
+        self.assertEqual(parser.parse_args(["-c", "one"]).config, "one")
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with self.assertRaises(SystemExit):
+                parser.parse_args(["-c", "one", "-c", "two"])
+        self.assertIn("-c/--config", captured.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()
