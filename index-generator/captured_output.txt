@@ -224,9 +224,9 @@ A catalogued TEST COUNT going stale must exit 1, tool count held correct. ... ok
 test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToEndTests.test_stale_catalogued_test_count_exits_1_via_subprocess)
 Same case, but through the real CLI so the exit code is the process's ... ok
 test_stdout_output_when_no_o_flag (test_indexgen.RunEndToEndTests.test_stdout_output_when_no_o_flag) ... ok
-test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_qudwhf9m/no_such_subdir/report.json'
+test_unwritable_output_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_output_exit_2) ... indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_eypenrz3/no_such_subdir/report.json'
 ok
-test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_2p8w2m9q/no_such_subdir/INDEX.md'
+test_unwritable_write_index_exit_2 (test_indexgen.RunEndToEndTests.test_unwritable_write_index_exit_2) ... indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_1yg9z8qm/no_such_subdir/INDEX.md'
 ok
 test_write_index_creates_file (test_indexgen.RunEndToEndTests.test_write_index_creates_file) ... ok
 test_split_row_basic (test_indexgen.SplitRowTests.test_split_row_basic) ... ok
@@ -250,7 +250,7 @@ test_index_with_unicode_roundtrips (test_indexgen.UnicodeCrlfTests.test_index_wi
 test_unicode_description_end_to_end (test_indexgen.UnicodeCrlfTests.test_unicode_description_end_to_end) ... ok
 
 ----------------------------------------------------------------------
-Ran 161 tests in 0.422s
+Ran 161 tests in 0.317s
 
 OK
 exit=0
@@ -547,18 +547,18 @@ test_stale_catalogued_test_count_exits_1_via_subprocess (test_indexgen.RunEndToE
 Same case, but through the real CLI so the exit code is the process's ... ok
 
 ----------------------------------------------------------------------
-Ran 2 tests in 0.041s
+Ran 2 tests in 0.035s
 
 OK
 exit=0
 
 === $ python3 -m unittest test_indexgen ===
 ..............................................................................................................................indexgen.py: error: --root '/no/such/dir/at/all' is not a directory
-.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_82xf8dgh/no_such_subdir/report.json'
-.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_soa604fn/no_such_subdir/INDEX.md'
+.............indexgen.py: error: cannot write --output: [Errno 2] No such file or directory: '/tmp/indexgen_test_82onfk65/no_such_subdir/report.json'
+.indexgen.py: error: cannot write --write-index: [Errno 2] No such file or directory: '/tmp/indexgen_test_d3kc9q2z/no_such_subdir/INDEX.md'
 .....................
 ----------------------------------------------------------------------
-Ran 161 tests in 0.413s
+Ran 161 tests in 0.318s
 
 OK
 exit=0
@@ -599,7 +599,7 @@ test_ignores_unpiped_records (test_capture.PipeScanTests.test_ignores_unpiped_re
 test_report_is_json_serializable_and_deterministic (test_capture.PipeScanTests.test_report_is_json_serializable_and_deterministic) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 0.537s
+Ran 18 tests in 0.521s
 
 OK
 exit=0
@@ -618,7 +618,7 @@ in README.md, "Finding 4", computed by running this same command again
 after this file is complete.
 
 === $ python3 pipe_scan.py --repo-root .. ===
-{"files_with_piped_records":[{"piped_records":1,"tool":"bundle-index"},{"piped_records":1,"tool":"claim-checker"},{"piped_records":1,"tool":"commit-claim-auditor"},{"piped_records":1,"tool":"exit-harness"},{"piped_records":1,"tool":"index-generator"},{"piped_records":1,"tool":"payload-validator"},{"piped_records":2,"tool":"queue-auditor"},{"piped_records":1,"tool":"report-freshness"},{"piped_records":1,"tool":"wallet-reconciler"}],"total_command_records":539,"total_files_with_a_piped_record":9,"total_piped_records":10,"transcript_files_scanned":51}
+{"files_with_piped_records":[{"piped_records":1,"tool":"bundle-index"},{"piped_records":1,"tool":"claim-checker"},{"piped_records":1,"tool":"commit-claim-auditor"},{"piped_records":1,"tool":"exit-harness"},{"piped_records":1,"tool":"index-generator"},{"piped_records":1,"tool":"payload-validator"},{"piped_records":2,"tool":"queue-auditor"},{"piped_records":1,"tool":"report-freshness"},{"piped_records":1,"tool":"wallet-reconciler"}],"total_command_records":541,"total_files_with_a_piped_record":9,"total_piped_records":10,"transcript_files_scanned":51}
 exit=0
 
 --- Finding 4, classified: pipe_classify.py (shell-quote-aware companion) ---
@@ -659,13 +659,13 @@ dropped.
 === $ python3 -m unittest test_pipe_classify.TestUnquotedPipelines test_pipe_classify.TestOrOperator test_pipe_classify.TestSingleQuotes test_pipe_classify.TestDoubleQuotes test_pipe_classify.TestEscapedOutsideQuotes test_pipe_classify.TestReconciliation test_pipe_classify.TestAgreementWithPipeScan test_pipe_classify.TestLiveRecordClassification test_pipe_classify.TestShellGroundTruth test_pipe_classify.TestDeterminismAndRelocation test_pipe_classify.TestCli ===
 ......................................................................
 ----------------------------------------------------------------------
-Ran 70 tests in 0.646s
+Ran 70 tests in 0.440s
 
 OK
 exit=0
 
 === $ python3 pipe_classify.py --repo-root .. ===
-{"bar_character_counts_by_kind":{"escaped":0,"or_operator":2,"pipeline":4,"quoted":10},"tools":[{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/sessions\\|/tmp\\|/home\" r1.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":258}],"records_with_a_bar":1,"tool":"bundle-index"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":310}],"records_with_a_bar":1,"tool":"claim-checker"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -cE 'time\\.time|utcnow|now\\(\\)' claimhist.py","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":53}],"records_with_a_bar":1,"tool":"commit-claim-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"test -f out_bad.json && echo EXISTS || echo NOT_CREATED","counts":{"escaped":0,"or_operator":2,"pipeline":0,"quoted":0},"is_pipeline":false,"line":184}],"records_with_a_bar":1,"tool":"exit-harness"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -n 'time\\.time\\|utcnow\\|now()' indexgen.py; echo grep_exit=$?","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":483}],"records_with_a_bar":1,"tool":"index-generator"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"cat payloads_bad.json | python3 payload_validate.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":211}],"records_with_a_bar":1,"tool":"payload-validator"},{"pipeline_records":2,"records":[{"bar_count":1,"command":"cat snapshot_dirty.json | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":200},{"bar_count":1,"command":"echo '{not json' | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":208}],"records_with_a_bar":2,"tool":"queue-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/root\\|/home\" freshness_report.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":29}],"records_with_a_bar":1,"tool":"report-freshness"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"echo '{\"opening_balance\":\"0\",\"closing_balance\":\"0\",\"events\":[{\"event_id\":\"e1\",\"type\":\"reward\",\"amount\":NaN,\"at\":\"2026-01-01T00:00:00Z\"}]}' | python3 wallet_reconcile.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":197}],"records_with_a_bar":1,"tool":"wallet-reconciler"}],"total_command_records":541,"total_files_with_a_bar_record":9,"total_files_with_a_pipeline_record":3,"total_non_pipeline_bar_records":6,"total_pipeline_records":4,"total_records_with_a_bar":10,"transcript_files_scanned":51}
+{"bar_character_counts_by_kind":{"escaped":0,"or_operator":2,"pipeline":4,"quoted":10},"tools":[{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/sessions\\|/tmp\\|/home\" r1.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":258}],"records_with_a_bar":1,"tool":"bundle-index"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/home\\|/sessions\" r1.json (expect 0)","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":310}],"records_with_a_bar":1,"tool":"claim-checker"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -cE 'time\\.time|utcnow|now\\(\\)' claimhist.py","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":53}],"records_with_a_bar":1,"tool":"commit-claim-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"test -f out_bad.json && echo EXISTS || echo NOT_CREATED","counts":{"escaped":0,"or_operator":2,"pipeline":0,"quoted":0},"is_pipeline":false,"line":184}],"records_with_a_bar":1,"tool":"exit-harness"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -n 'time\\.time\\|utcnow\\|now()' indexgen.py; echo grep_exit=$?","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":483}],"records_with_a_bar":1,"tool":"index-generator"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"cat payloads_bad.json | python3 payload_validate.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":211}],"records_with_a_bar":1,"tool":"payload-validator"},{"pipeline_records":2,"records":[{"bar_count":1,"command":"cat snapshot_dirty.json | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":200},{"bar_count":1,"command":"echo '{not json' | python3 queue_audit.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":208}],"records_with_a_bar":2,"tool":"queue-auditor"},{"pipeline_records":0,"records":[{"bar_count":2,"command":"grep -c \"/tmp\\|/root\\|/home\" freshness_report.json","counts":{"escaped":0,"or_operator":0,"pipeline":0,"quoted":2},"is_pipeline":false,"line":29}],"records_with_a_bar":1,"tool":"report-freshness"},{"pipeline_records":1,"records":[{"bar_count":1,"command":"echo '{\"opening_balance\":\"0\",\"closing_balance\":\"0\",\"events\":[{\"event_id\":\"e1\",\"type\":\"reward\",\"amount\":NaN,\"at\":\"2026-01-01T00:00:00Z\"}]}' | python3 wallet_reconcile.py - ; echo \"exit=$?\"","counts":{"escaped":0,"or_operator":0,"pipeline":1,"quoted":0},"is_pipeline":true,"line":197}],"records_with_a_bar":1,"tool":"wallet-reconciler"}],"total_command_records":543,"total_files_with_a_bar_record":9,"total_files_with_a_pipeline_record":3,"total_non_pipeline_bar_records":6,"total_pipeline_records":4,"total_records_with_a_bar":10,"transcript_files_scanned":51}
 exit=0
 
 === $ python3 pipe_classify.py --command 'grep -c "a|b" f.json' ===
