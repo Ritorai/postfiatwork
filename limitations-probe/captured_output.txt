@@ -41,8 +41,8 @@ RR-1  [reward-reconciler]  REPRODUCED
 
 RR-2  [reward-reconciler]  REPRODUCED
   Q: Does an amount of '1E+999999999' produce the documented INVALID_INPUT report and exit 2?
-  observed: {"exit_code": 1, "json_report_emitted": false, "last_stderr_line": "decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]", "python_traceback": true}
-  means:    value.quantize(SCALE) sits outside the try/except that catches InvalidOperation, so a malformed amount raises an uncaught exception and exits 1 -- the code a caller reads as 'mismatches found', not 'bad input'.
+  observed: {"exit_code": 2, "last_stderr_line": "{\"detail\":\"expected[0]: amount is not representable at 0.000001 precision: '1E+999999999'\",\"error\":\"INVALID_INPUT\"}", "python_traceback": false, "stderr_error_code": "INVALID_INPUT"}
+  means:    value.quantize(SCALE) used to sit outside the try/except that catches InvalidOperation, so a malformed amount raised an uncaught exception and exited 1 -- the code a caller reads as 'mismatches found', not 'bad input'. It is now inside a guard of its own and the run exits 2 with a JSON INVALID_INPUT report.
 
 RR-3  [reward-reconciler]  REPRODUCED
   Q: Is a negative reward amount rejected?

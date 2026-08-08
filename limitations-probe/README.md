@@ -32,15 +32,23 @@ python3 limitations-probe/probe.py -o probe_report.json  # canonical JSON
 
 **Exit `1` is the interesting one.** A probe that stops reproducing means the
 finding it documents was fixed, or the tool moved in some other direction. In
-either case the matching README section is now wrong. That is the reason this
+either case the matching README section is now wrong.
+
+One probe now has the opposite polarity, and it is the only one:
+`probe_rr2` was rewritten when RR-2 was repaired, so it asserts the *fixed*
+behaviour. If RR-2 stops reproducing it means the repair was reverted, not
+that a defect was fixed. The rule above still holds for the other eleven.
+Keeping a repaired finding as a probe rather than deleting it is what stops
+the repair from being quietly undone; the price is that this file can no
+longer state one uniform rule, and pretending otherwise would be worse. That is the reason this
 is a committed, runnable harness rather than a paragraph describing a run I
 did once: a reviewer re-derives every claim with one command, and the repo
 notices when a claim goes stale.
 
 ## What it found
 
-12 probes, **12 reproduced**. Nine are limitations; three are negative results
-kept deliberately.
+12 probes, **12 reproduced**. Eight are live limitations, one is a repaired
+one, and three are negative results kept deliberately.
 
 | Probe | Tool | Finding |
 |---|---|---|
@@ -49,7 +57,7 @@ kept deliberately.
 | EM-3 | evidence-manifest | a bare `NaN` survives into the manifest; strict RFC 8259 readers reject the file |
 | EM-4 | evidence-manifest | duplicate `submission_id`s are accepted silently |
 | RR-1 | reward-reconciler | a discrepancy below 6 dp is quantized away and reported `balanced` |
-| RR-2 | reward-reconciler | `"1E+999999999"` raises an uncaught exception and exits `1`, not `2` |
+| RR-2 | reward-reconciler | **repaired** — `"1E+999999999"` used to raise an uncaught exception and exit `1`; it now exits `2` with an `INVALID_INPUT` report, and this probe pins the repair |
 | RR-3 | reward-reconciler | negative amounts reconcile cleanly; no sign or range check |
 | RR-4 | reward-reconciler | a split payout to the **wrong wallet** is reported without ever naming that wallet |
 | SC-1 | schema-checker | `pattern` is a search, not a full match: `[0-9]{4}` accepts `XX1234XX` |

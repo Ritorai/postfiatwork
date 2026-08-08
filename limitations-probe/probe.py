@@ -225,26 +225,41 @@ def probe_rr1(work):
 
 
 def probe_rr2(work):
-    """An out-of-range exponent crashes instead of exiting 2."""
+    """An out-of-range exponent is rejected with exit 2. REPAIRED FINDING.
+
+    This probe used to assert the defect: exit 1, a Python traceback, no JSON.
+    reward-reconciler now guards value.quantize(SCALE), so it asserts the
+    repair instead. The entry is kept rather than deleted because a probe that
+    pins a fix is what stops the fix from being undone -- and because
+    reward-reconciler/README.md still carries the item, now marked FIXED, and
+    the two have to agree.
+    """
     code, doc, out, err = rr(work,
                              [{"task_id": "T1", "wallet": "rW1", "amount": "1E+999999999"}],
                              [{"task_id": "T1", "wallet": "rW1", "amount": "1"}],
                              "2")
     traceback = "Traceback" in err
     last = err.strip().splitlines()[-1] if err.strip() else ""
+    try:
+        error_code = json.loads(err)["error"]
+    except (ValueError, KeyError, TypeError):
+        error_code = None
     return {
         "id": "RR-2",
         "tool": "reward-reconciler",
         "question": "Does an amount of '1E+999999999' produce the documented "
                     "INVALID_INPUT report and exit 2?",
         "observed": {"exit_code": code, "python_traceback": traceback,
-                     "last_stderr_line": last, "json_report_emitted": doc is not None},
-        "expected": {"exit_code": 1, "python_traceback": True, "json_report_emitted": False},
-        "reproduced": code == 1 and traceback and doc is None,
-        "means": "value.quantize(SCALE) sits outside the try/except that "
-                 "catches InvalidOperation, so a malformed amount raises an "
-                 "uncaught exception and exits 1 -- the code a caller reads as "
-                 "'mismatches found', not 'bad input'.",
+                     "last_stderr_line": last, "stderr_error_code": error_code},
+        "expected": {"exit_code": 2, "python_traceback": False,
+                     "stderr_error_code": "INVALID_INPUT"},
+        "reproduced": code == 2 and not traceback and error_code == "INVALID_INPUT",
+        "means": "value.quantize(SCALE) used to sit outside the try/except "
+                 "that catches InvalidOperation, so a malformed amount raised "
+                 "an uncaught exception and exited 1 -- the code a caller "
+                 "reads as 'mismatches found', not 'bad input'. It is now "
+                 "inside a guard of its own and the run exits 2 with a JSON "
+                 "INVALID_INPUT report.",
     }
 
 
