@@ -480,8 +480,8 @@
         "../adversarial-suite/fixtures/reward-reconciler/deep_nesting_expected.json",
         "../adversarial-suite/fixtures/reward-reconciler/both_empty_payouts.json"
       ],
-      "exit_code": 1,
-      "output_sha256": "c48d867b8f8b88959c3d359841f35b25fdce799e0faeb016623950554d6193a9",
+      "exit_code": 2,
+      "output_sha256": "8feca7bb2c74a21a49a6f8172c93f3f07963bb3b46c4c947d2cf480ad83a99da",
       "timed_out": false,
       "tool": "reward-reconciler"
     },
@@ -490,8 +490,8 @@
         "../adversarial-suite/fixtures/reward-reconciler/dir_as_expected",
         "../adversarial-suite/fixtures/reward-reconciler/balanced_payouts.json"
       ],
-      "exit_code": 1,
-      "output_sha256": "88f9cb0efe81a91f0e87cb8d57a471c47e96f6949009d6b5c632fe4b6b27ee27",
+      "exit_code": 2,
+      "output_sha256": "b78d5481abb3ac86d52d26012078106e373693b0dbdfef5f2841f01cc1b79e7b",
       "timed_out": false,
       "tool": "reward-reconciler"
     },
@@ -559,8 +559,8 @@
         "../adversarial-suite/fixtures/reward-reconciler/huge_exponent_expected.json",
         "../adversarial-suite/fixtures/reward-reconciler/huge_exponent_payouts.json"
       ],
-      "exit_code": 1,
-      "output_sha256": "7a0650b5fdd4ee2b448c8d534dc2f8954c79cab58f54c181a19d33d4d412543d",
+      "exit_code": 2,
+      "output_sha256": "720a49c1230fed67ef85a476d8ee5292cab92b223cab8ab0a156228e8eddf8e4",
       "timed_out": false,
       "tool": "reward-reconciler"
     },

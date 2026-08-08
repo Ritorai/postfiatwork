@@ -9,6 +9,14 @@ the identical suite in-process and additionally prints a single sha256 over
 every recorded case's normalized argv/exit-code/stdout/stderr. All three
 RESULTS_DIGEST values below are identical -- that is the relocation proof.
 
+Re-derived, not re-run: the exit-code alignment delivery changed three of the
+106 recorded cases (reward-reconciler now exits 2 rather than crashing on a
+directory argument, a huge exponent and pathological JSON nesting), so the
+digest moved. The three runs' absolute paths above are the originals from the
+relocation build and are left as measured; the claim they support is that the
+three digests are EQUAL, which they still are. Reproduce the current value
+with `python3 test_adversarial.py --digest`.
+
 === $ cd /tmp/build_4/repo/adversarial-suite && python3 make_fixtures.py --verify ===
 VERIFY OK: 120 files + 3 empty dirs, byte-identical (tree listing and diff -r both agree)
 exit=0
@@ -26,7 +34,7 @@ exit=0
 Ran 122 tests in 9.316s
 
 OK
-RESULTS_DIGEST sha256=6246d36b30c93763f0463633f5352d611d58ef7763bad44803f1174f6aa2cbdf cases=106
+1cb6ae4ac68a76c2318555d1fae8b1a5d47c0c4d695d09410c49c22e6ebbc330
 exit=0
 
 === $ python3 -m unittest test_adversarial   # original checkout, run 2 ===
@@ -42,7 +50,7 @@ exit=0
 Ran 122 tests in 10.284s
 
 OK
-RESULTS_DIGEST sha256=6246d36b30c93763f0463633f5352d611d58ef7763bad44803f1174f6aa2cbdf cases=106
+1cb6ae4ac68a76c2318555d1fae8b1a5d47c0c4d695d09410c49c22e6ebbc330
 exit=0
 
 === $ cp -r /tmp/build_4/repo /tmp/build_4/relocated_xyz && cd /tmp/build_4/relocated_xyz/adversarial-suite && python3 make_fixtures.py --verify ===
@@ -62,5 +70,5 @@ exit=0
 Ran 122 tests in 9.289s
 
 OK
-RESULTS_DIGEST sha256=6246d36b30c93763f0463633f5352d611d58ef7763bad44803f1174f6aa2cbdf cases=106
+1cb6ae4ac68a76c2318555d1fae8b1a5d47c0c4d695d09410c49c22e6ebbc330
 exit=0

@@ -218,12 +218,16 @@ pathologically hanging, not a slow environment.
 tool against the broader adversarial axes required by this task's brief
 turned up three more, unrelated to those 12:
 
-1. **All three tools crash with an unhandled traceback and exit 1 -- not
+1. **These tools crashed with an unhandled traceback and exited 1 -- not
    their own documented exit 2 for "invalid input" -- on a directory passed
    where a file argument was expected**, and on JSON nested ~3000 levels
-   deep (`RecursionError`). Neither `evidence-manifest/manifest.py`'s
-   `load_records()` nor `reward-reconciler/reconcile.py`'s `_load_records()`
-   catches anything but `FileNotFoundError` around `open()` and
+   deep (`RecursionError`). **`reward-reconciler` was repaired in the
+   exit-code alignment delivery and now exits 2 for both**, so the cases
+   here pin that repair instead of the defect; `evidence-manifest` still
+   crashes and the tests still say so. Neither
+   `evidence-manifest/manifest.py`'s `load_records()` nor, at the time this
+   was written, `reward-reconciler/reconcile.py`'s `_load_records()`
+   caught anything but `FileNotFoundError` around `open()` and
    `json.JSONDecodeError` around `json.load()`; `IsADirectoryError` and
    `RecursionError` are both neither, so they propagate to Python's default
    top-level handler, which prints a traceback and exits 1. Exit 1 is
@@ -271,9 +275,11 @@ finding was expected and missing:
 - **Huge integers** (500 digits, evidence-manifest) and **huge decimal
   amounts without scientific notation** (26 digits, reward-reconciler) round
   -trip exactly; Python's arbitrary-precision `int` and `decimal.Decimal`
-  do not overflow. Contrasts directly with `RR-2`
-  (`"1E+999999999"`, exponent notation, crashes): the defect is in exponent
-  handling specifically, not magnitude.
+  do not overflow. Contrasted directly with `RR-2`
+  (`"1E+999999999"`, exponent notation), which used to crash: the defect was
+  in exponent handling specifically, not magnitude. `RR-2` has since been
+  repaired and that input now exits 2 with an `INVALID_INPUT` report; the
+  magnitude/exponent distinction it illustrated still stands.
 - **`bool` amounts are rejected** by `reward-reconciler`
   (`isinstance(raw, bool)` is checked explicitly before the general
   `isinstance(raw, (str, int))` gate) -- the exact bug class documented as

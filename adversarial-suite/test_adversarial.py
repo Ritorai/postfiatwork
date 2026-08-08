@@ -587,35 +587,44 @@ class RewardReconcilerTests(unittest.TestCase):
                          "the wallet that actually received the money must "
                          "not silently disappear from the report")
 
-    # --- REPRODUCED FAILURE MODE (RR-2): huge exponent crashes exit 1, -----
-    # --- not the documented exit 2 ------------------------------------------
+    # --- REPAIRED FAILURE MODE (RR-2): the huge exponent now exits 2 -------
+    #
+    # These three used to pin the defect: exit 1 with an uncaught traceback,
+    # where 1 is reward-reconciler's code for "mismatched, one or more
+    # settlement issues". The exit-code alignment delivery repaired all three
+    # -- value.quantize() got its own InvalidOperation guard, _load_records
+    # got OSError and RecursionError clauses -- so they now pin the repair.
+    # Rewritten rather than deleted: an adversarial case that stops firing is
+    # the thing that stops a repair from being quietly undone.
 
-    def test_rr2_huge_exponent_crashes_uncaught_not_exit2(self):
+    def test_rr2_huge_exponent_is_rejected_with_exit_2(self):
         code, out, err = self._run("huge_exponent_expected.json", "huge_exponent_payouts.json")
-        self.assertEqual(code, 1)
-        self.assertIn("Traceback (most recent call last):", err)
-        self.assertIn("decimal", err.lower())
-        self.assertIsNone(jload(out), "no JSON report should be emitted on a crash")
+        self.assertEqual(code, 2)
+        self.assertNotIn("Traceback (most recent call last):", err)
+        self.assertEqual(jload(err).get("error"), "INVALID_INPUT")
 
-    def test_directory_as_expected_path_crashes_uncaught_exit1(self):
-        """Same uncaught-OSError class as evidence-manifest's directory
-        case: _load_records only catches FileNotFoundError."""
+    def test_directory_as_expected_path_is_rejected_with_exit_2(self):
+        """Was the same uncaught-OSError class as evidence-manifest's
+        directory case, when _load_records caught only FileNotFoundError.
+        evidence-manifest still crashes; this tool no longer does."""
         e = rel_to_tool(self.TOOL, fixture_path(self.TOOL, "dir_as_expected"))
         p = rel_to_tool(self.TOOL, fixture_path(self.TOOL, "balanced_payouts.json"))
         argv = [e, p]
         code, out, err, to = run_tool(self.TOOL, argv)
         record("RR-dir-as-expected", self.TOOL, argv, code, out, err, to)
-        self.assertEqual(code, 1)
-        self.assertIn("IsADirectoryError", err)
+        self.assertEqual(code, 2)
+        self.assertNotIn("Traceback", err)
+        self.assertIn("IsADirectoryError", jload(err).get("detail", ""))
 
-    def test_deep_nesting_crashes_uncaught_recursionerror_exit1(self):
+    def test_deep_nesting_is_rejected_with_exit_2(self):
         e = rel_to_tool(self.TOOL, fixture_path(self.TOOL, "deep_nesting_expected.json"))
         p = rel_to_tool(self.TOOL, fixture_path(self.TOOL, "both_empty_payouts.json"))
         argv = [e, p]
         code, out, err, to = run_tool(self.TOOL, argv)
         record("RR-deep-nesting", self.TOOL, argv, code, out, err, to)
-        self.assertEqual(code, 1)
-        self.assertIn("RecursionError", err)
+        self.assertEqual(code, 2)
+        self.assertNotIn("Traceback", err)
+        self.assertIn("nesting too deep", jload(err).get("detail", ""))
 
     # --- RR-1: sub-precision discrepancy quantized away ---------------------
 
@@ -1134,20 +1143,28 @@ class CrossToolFailureClassTests(unittest.TestCase):
     def setUpClass(cls):
         ensure_fixtures()
 
-    def test_all_three_crash_exit1_not_exit2_on_a_directory_argument(self):
+    def test_the_directory_argument_pattern_now_splits_two_to_one(self):
+        """A directory used to crash both of these tools; it now crashes only
+        one. reward-reconciler grew an OSError clause in the exit-code
+        alignment delivery, so it joins schema-checker below. The case is
+        kept, with its expectation moved, because the interesting fact is
+        which tools still crash -- and evidence-manifest still does."""
         cases = [
-            ("evidence-manifest", ["build", rel_to_tool(
+            ("evidence-manifest", 1, ["build", rel_to_tool(
                 "evidence-manifest", fixture_path("evidence-manifest", "dir_as_input"))]),
-            ("reward-reconciler", [
+            ("reward-reconciler", 2, [
                 rel_to_tool("reward-reconciler", fixture_path("reward-reconciler", "dir_as_expected")),
                 rel_to_tool("reward-reconciler", fixture_path("reward-reconciler", "balanced_payouts.json")),
             ]),
         ]
-        for tool, argv in cases:
+        for tool, expected, argv in cases:
             with self.subTest(tool=tool):
                 code, out, err, to = run_tool(tool, argv)
-                self.assertEqual(code, 1, "%s: expected uncaught-crash exit 1" % tool)
-                self.assertIn("IsADirectoryError", err)
+                self.assertEqual(code, expected, "%s: expected exit %d" % (tool, expected))
+                if expected == 1:
+                    self.assertIn("IsADirectoryError", err)
+                else:
+                    self.assertNotIn("Traceback", err)
 
     def test_schema_checker_is_the_exception_to_the_pattern_for_directories(self):
         """schema-checker catches OSError explicitly, so the SAME class of
@@ -1160,7 +1177,7 @@ class CrossToolFailureClassTests(unittest.TestCase):
         ])
         self.assertEqual(code, 2)
 
-    def test_all_three_crash_exit1_on_pathological_json_nesting_depth(self):
+    def test_pathological_json_nesting_depth_still_crashes_two_of_three(self):
         cases = [
             ("evidence-manifest", ["build", rel_to_tool(
                 "evidence-manifest", fixture_path("evidence-manifest", "deep_nesting.json"))]),
@@ -1173,11 +1190,20 @@ class CrossToolFailureClassTests(unittest.TestCase):
                 rel_to_tool("schema-checker", fixture_path("schema-checker", "payload_deep_nesting.json")),
             ]),
         ]
+        expected_codes = {
+            # Repaired in the exit-code alignment delivery: json's
+            # RecursionError is now caught and reported as bad JSON.
+            "reward-reconciler": 2,
+        }
         for tool, argv in cases:
             with self.subTest(tool=tool):
                 code, out, err, to = run_tool(tool, argv)
-                self.assertEqual(code, 1, "%s: expected RecursionError crash exit 1" % tool)
-                self.assertIn("RecursionError", err)
+                expected = expected_codes.get(tool, 1)
+                self.assertEqual(code, expected, "%s: expected exit %d" % (tool, expected))
+                if expected == 1:
+                    self.assertIn("RecursionError", err)
+                else:
+                    self.assertNotIn("Traceback", err)
 
 
 # ===========================================================================
