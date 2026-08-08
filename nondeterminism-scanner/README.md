@@ -288,7 +288,7 @@ the whole run. `scan_file()` catches `OSError` (unreadable),
 per file and records `{"path": ..., "message": ...}` in the report's
 top-level `"errors"` array — the scan continues to the next file. **Why**:
 one unreadable or unparseable file among many (samples_risky/ has 7 files;
-the self-scan target has 182) should not make the whole run's exit code and
+the self-scan target has 184) should not make the whole run's exit code and
 report indistinguishable from "the caller passed a garbage `--root`".
 Exit-`2` is reserved for usage problems the *caller* can fix by changing
 their command line (bad `--root`, bad `--rule`, unwritable `-o`); a
@@ -354,7 +354,7 @@ carries a `regenerable` entry that fails if it stops matching — see
 "Regeneration is locked" below.
 
 ```
-files_scanned:   182
+files_scanned:   184
 files_errored:   0
 findings_count:  460
 
