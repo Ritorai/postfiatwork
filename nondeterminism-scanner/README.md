@@ -354,15 +354,15 @@ carries a `regenerable` entry that fails if it stops matching — see
 "Regeneration is locked" below.
 
 ```
-files_scanned:   177
+files_scanned:   181
 files_errored:   0
-findings_count:  447
+findings_count:  452
 
                              total    own others
   ND001_WALL_CLOCK:             7      7      0
   ND002_UNSORTED_LISTDIR:      65     10     55
   ND003_UNORDERED_ITERATION:   24      3     21
-  ND004_UNSAFE_REPR:          337      5    332
+  ND004_UNSAFE_REPR:          342      5    337
   ND005_UNSEEDED_RANDOM:        7      5      2
   ND006_FLOAT_IN_MONEY:         7      7      0
 ```
