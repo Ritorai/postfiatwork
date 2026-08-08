@@ -1,0 +1,132 @@
+Stale-number check evidence for throughput-reporter
+Parent commit: 4cc433950c5b7a4dd5d657efa22e84c4fe5dbbc6
+
+Rebuild with: bash mk_stale_evidence.sh
+Volatile on a rebuild: the unittest duration, and the python3
+version line on a different interpreter. Everything else is
+byte-stable. See mk_stale_evidence.sh for why the steps use the
+plain `$ ` form rather than the `=== $ ... ===` record form.
+
+Every edit below is made to a scratch copy that mktemp created
+and this script removes. The committed files are read, never
+written; the last check re-runs against them to show it.
+
+$ python3 --version
+Python 3.11.15
+
+$ python3 check_counts.py            # the committed tree, untouched
+checked=135 stale=0 missing=0 unexpected=0 duplicate=0 format=0
+exit=0
+
+$ python3 stale_one_count.py         # scratch copy: bob rewarded 1 -> 99
+edited report_ok.json: contributors[bob].counts.rewarded = 99
+exit=0
+
+$ python3 check_counts.py            # same scratch copy
+STALE report_ok.json contributors[bob].counts.rewarded expected=1 found=99
+checked=135 stale=1 missing=0 unexpected=0 duplicate=0 format=0
+exit=1
+
+$ python3 stale_the_fixture.py       # instead: drop bob's refusal from the fixture
+dropped 1 of 13 events; the report is now the stale side
+exit=0
+
+$ python3 check_counts.py            # the report is now the stale side
+STALE report_ok.json contributors[bob].counts.refused expected=0 found=1
+STALE report_ok.json contributors[bob].counts.terminal expected=1 found=2
+STALE report_ok.json contributors[bob].grade expected="INSUFFICIENT_DATA" found="C"
+STALE report_ok.json contributors[bob].refusal_rate expected=0.0 found=0.5
+STALE report_ok.json grade_counts.INSUFFICIENT_DATA expected=2 found=1
+STALE report_ok.json totals.events expected=12 found=13
+UNEXPECTED report_ok.json grade_counts.C not produced by the recomputation in check_counts.py
+STALE report_ok.json contributors.order expected=["alice", "bob", "carol"] found=["bob", "alice", "carol"]
+checked=134 stale=7 missing=0 unexpected=1 duplicate=0 format=0
+exit=1
+
+$ python3 drift_a_timestamp.py       # instead: move alice's submits a month later
+moved 2 submitted timestamps; every count is unchanged
+exit=0
+
+$ python3 check_counts.py            # no count moved; the grades did
+STALE report_ok.json contributors[alice].grade expected="B" found="A"
+STALE report_ok.json contributors[alice].median_accept_to_submit_hours expected=792.0 found=8.0
+STALE report_ok.json contributors[alice].median_submit_to_terminal_hours expected=null found=21.0
+MISSING report_ok.json grade_counts.B expected=1 found=absent
+UNEXPECTED report_ok.json grade_counts.A not produced by the recomputation in check_counts.py
+checked=134 stale=3 missing=1 unexpected=1 duplicate=0 format=0
+exit=1
+
+$ python3 duplicate_a_contributor.py # one name twice, the first copy tampered
+inserted a second entry for bob
+exit=0
+
+$ python3 check_counts.py            # keying by name alone would have missed this
+DUPLICATE report_ok.json contributors carries "bob" more than once
+STALE report_ok.json contributors[bob].counts.rewarded expected=1 found=999
+UNEXPECTED report_ok.json contributors[bob#2].counts.accepted not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].counts.refused not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].counts.rewarded not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].counts.submitted not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].counts.tasks_seen not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].counts.terminal not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].grade not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].median_accept_to_submit_hours not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].median_submit_to_terminal_hours not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].over_ceiling not produced by the recomputation in check_counts.py
+UNEXPECTED report_ok.json contributors[bob#2].refusal_rate not produced by the recomputation in check_counts.py
+STALE report_ok.json contributors.order expected=["bob", "alice", "carol"] found=["bob", "bob", "alice", "carol"]
+checked=135 stale=2 missing=0 unexpected=11 duplicate=1 format=0
+exit=1
+
+$ python3 add_an_unknown_value.py    # a value the recomputation does not produce
+added totals.brand_new and one contributor counts.surprise
+exit=0
+
+$ python3 check_counts.py            # UNEXPECTED, not silently passed
+UNEXPECTED report_breach_run1.json contributors[dave].counts.surprise not produced by the recomputation in check_counts.py
+UNEXPECTED report_breach_run1.json totals.brand_new not produced by the recomputation in check_counts.py
+checked=135 stale=0 missing=0 unexpected=2 duplicate=0 format=0
+exit=1
+
+$ python3 break_the_fixture.py       # a state the tool itself refuses
+set events[0].state to an unknown value
+exit=0
+
+$ python3 check_counts.py            # exit 2, not a wall of STALE lines
+INVALID_INPUT: events_ok.json: events[0]: unknown state "queued"
+exit=2
+
+$ python3 retag_the_flags.py         # config claims flags the command never passed
+rewrote config to min_tasks=1 refusal_ceiling=0.99
+exit=0
+
+$ python3 check_counts.py            # pinned to the documented rerun, not read back
+STALE report_ok.json config.min_tasks expected=2 found=1
+STALE report_ok.json config.refusal_ceiling expected=0.5 found=0.99
+checked=135 stale=2 missing=0 unexpected=0 duplicate=0 format=0
+exit=1
+
+$ python3 pretty_print_it.py         # every value right, the bytes wrong
+re-indented report_ok.json; no value changed
+exit=0
+
+$ python3 check_counts.py            # FORMAT: it would not reproduce byte for byte
+FORMAT report_ok.json the file is not the canonical rendering of its own contents: sort_keys, compact separators, ASCII escapes, one trailing newline
+checked=135 stale=0 missing=0 unexpected=0 duplicate=0 format=1
+exit=1
+
+$ python3 check_counts.py nowhere    # a directory that does not exist
+INVALID_INPUT: file not found: events_ok.json
+exit=2
+
+$ python3 check_counts.py            # the committed tree, unchanged by any of this
+checked=135 stale=0 missing=0 unexpected=0 duplicate=0 format=0
+exit=0
+
+$ python3 -m unittest test_check_counts
+.........................................................
+----------------------------------------------------------------------
+Ran 57 tests in 1.166s
+
+OK
+exit=0
