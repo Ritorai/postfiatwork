@@ -65,7 +65,7 @@ them.
 | `--root` not inside a checkout | exit **2** |
 | `--root` inside a checkout but not its root | exit **2** |
 | unwritable `-o` | exit **2** |
-| **this repository** | **146 × `SM002`, exit 1** — see below |
+| **this repository** | **148 × `SM002`, exit 1** — see below |
 
 ## CLI
 
@@ -189,36 +189,36 @@ none.
 
 ## Why this repository does not pass
 
-Run against this checkout, the tool reports **146 × `SM002_SHEBANG_WITHOUT_EXEC`
+Run against this checkout, the tool reports **148 × `SM002_SHEBANG_WITHOUT_EXEC`
 and exits 1**. That is a real result, printed in `selfscan_output.txt`
 rather than hidden:
 
 ```
-counts   {"checked": 571, "executable": 0, "skipped_binary": 0,
+counts   {"checked": 574, "executable": 0, "skipped_binary": 0,
           "skipped_excluded": 0, "skipped_not_a_regular_file": 0,
-          "skipped_unmerged": 0, "tracked": 571, "with_shebang": 146}
-by_code  {"SM002_SHEBANG_WITHOUT_EXEC": 146}
+          "skipped_unmerged": 0, "tracked": 574, "with_shebang": 148}
+by_code  {"SM002_SHEBANG_WITHOUT_EXEC": 148}
 ```
 
-`git ls-files -s | awk '{print $1}' | sort | uniq -c` returns `571 100644`:
-**no file in this repository is tracked as executable**, while 146 carry a
+`git ls-files -s | awk '{print $1}' | sort | uniq -c` returns `574 100644`:
+**no file in this repository is tracked as executable**, while 148 carry a
 shebang. The first half of the rule has zero violations for the same
 reason — there is nothing executable to violate it, which is why
 `selfscan_output.txt` prints that 0 next to the executable count rather
 than leaving it to be read as a pass.
 
-Five of those 146 are this directory's own `shebangmode.py`,
+Five of those 148 are this directory's own `shebangmode.py`,
 `test_shebangmode.py`, `capture.sh`, `fixture_repo.sh` and `selfscan.sh`.
 The checker reports itself, and the counts are taken with this directory
 already in the index, so they are what a reader reproduces after the
 commit rather than before it.
 
-**The 146 are not repaired in this commit, and that is a limitation of
+**The 148 are not repaired in this commit, and that is a limitation of
 this commit rather than a judgement that they are fine.** Repairing them
-means changing 146 index modes. A mode change cannot be expressed through
+means changing 148 index modes. A mode change cannot be expressed through
 the file-upload route these commits are made with — every uploaded file is
 written as `100644` — so the repair would have to be a `git update-index`
-plus a push. Committing a checker that reports 146 real mismatches and
+plus a push. Committing a checker that reports 148 real mismatches and
 saying so is the honest half of the job. `--exclude`-ing the whole
 repository to manufacture a green run would not have been; the self-scan
 records `"exclude_prefixes": []` so that can be checked rather than taken
@@ -235,7 +235,7 @@ operation against a throwaway fixture, where mutating the index is safe.
 
 A caller who wants the opposite convention — no executable bits anywhere,
 every script invoked as `python3 tool.py`, which is what every README here
-documents — should strip the 146 shebangs instead. This tool deliberately
+documents — should strip the 148 shebangs instead. This tool deliberately
 does not decide which side gives; it reports that the two disagree and
 prints the command for either direction.
 
