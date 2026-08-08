@@ -288,7 +288,7 @@ that is the tool's documented "findings present" status, not a failure.
 
 ```
 files_scanned: 82
-tests_scanned: 6437
+tests_scanned: 6468
 findings_total: 246
   WA001_NO_ASSERTION: 13
   WA002_CALL_ONLY: 3
