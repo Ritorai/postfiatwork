@@ -1,0 +1,304 @@
+############################################################
+# RESERVED_STEM_EVIDENCE.txt
+#
+# Subject: pathscan.py's WINDOWS_RESERVED_NAME rule, which compared the
+# text before a component's first dot against the Windows device names
+# WITHOUT removing trailing spaces first.
+#
+# Windows discards trailing spaces and dots from a name before resolving
+# it, so "CON .txt" is not a file called "CON " -- it is the console
+# device, and the file cannot be created. The dot half was already
+# handled: splitting on the first dot reduces "CON..txt" and "CON. .txt"
+# to "CON". The space half was not. So a path Windows refuses outright
+# was reported as safe, with exit 0, by the tool whose entire purpose is
+# to catch names that break on another filesystem.
+#
+# Every record below is a real run: a "=== $ command ===" header, the
+# verbatim output, and an exit= line. Commands are relative to
+# path-collision-scanner/ unless the header says otherwise.
+############################################################
+
+--- 0. the two trees ---
+The parent commit is extracted into a scratch directory OUTSIDE the
+checkout, so nothing below can measure the repaired tool while claiming
+to measure the parent.
+
+=== $ git -C .. rev-parse HEAD ===
+b98d5945f78b853dcee195858450f01e1f905aee
+exit=0
+
+=== $ mkdir -p ../../ps_evidence_scratch/parent && git -C .. archive b98d5945f78b853dcee195858450f01e1f905aee | tar -x -C ../../ps_evidence_scratch/parent ===
+exit=0
+
+=== $ test -f ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py && echo PARENT_TREE_EXTRACTED ===
+PARENT_TREE_EXTRACTED
+exit=0
+
+--- 1. BEFORE: eight device names Windows cannot create, all clean ---
+One path per run, fed on stdin as a NUL-delimited list. Exit 0 and an
+empty findings array is the tool saying the name is fine.
+
+=== $ printf 'CON .txt\0' | python3 ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py --paths-from - ===
+{"distinct_paths":1,"findings":[],"paths_scanned":1,"rules_enabled":["CASE_FOLD_COLLISION","CONTROL_CHARACTER","DUPLICATE_PATH","TRAILING_DOT_OR_SPACE","UNICODE_NORMALIZATION_COLLISION","UNSAFE_RELATIVE_PATH","WINDOWS_ILLEGAL_CHARACTER","WINDOWS_RESERVED_NAME"],"schema_version":1,"source":"path-list","status":"clean","summary":{"CASE_FOLD_COLLISION":0,"CONTROL_CHARACTER":0,"DUPLICATE_PATH":0,"TRAILING_DOT_OR_SPACE":0,"UNICODE_NORMALIZATION_COLLISION":0,"UNSAFE_RELATIVE_PATH":0,"WINDOWS_ILLEGAL_CHARACTER":0,"WINDOWS_RESERVED_NAME":0},"tool":"path-collision-scanner"}
+exit=0
+
+The same, for the whole device set, reduced to one line per name so
+the pattern is readable. 'clean' below is the tool's own status field.
+
+=== $ for n in 'CON .txt' 'PRN .ps' 'AUX .json' 'NUL .log' 'COM1 .txt' 'COM9 .dat' 'LPT1 .dat' 'LPT9 .out' 'docs/CON .txt'; do printf '%s\0' "$n" | python3 ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py --paths-from - > /tmp/ps_evidence_scratch/one.json; printf '%-16s exit=%s status=%s findings=%s\n' "$n" "$?" "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["status"])' /tmp/ps_evidence_scratch/one.json)" "$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))["findings"]))' /tmp/ps_evidence_scratch/one.json)"; done ===
+CON .txt         exit=0 status=clean findings=0
+PRN .ps          exit=0 status=clean findings=0
+AUX .json        exit=0 status=clean findings=0
+NUL .log         exit=0 status=clean findings=0
+COM1 .txt        exit=0 status=clean findings=0
+COM9 .dat        exit=0 status=clean findings=0
+LPT1 .dat        exit=0 status=clean findings=0
+LPT9 .out        exit=0 status=clean findings=0
+docs/CON .txt    exit=0 status=clean findings=0
+exit=0
+
+--- 2. BEFORE: the neighbouring cases the rule DID handle ---
+This is what makes it a gap rather than a missing feature: the same
+rule already reduces a trailing DOT out of the stem. It was written
+to normalise the stem; it just did half of it.
+
+=== $ for n in 'CON.txt' 'CON..txt' 'CON. .txt' 'CON'; do printf '%s\0' "$n" | python3 ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py --paths-from - > /tmp/ps_evidence_scratch/one.json; printf '%-12s exit=%s findings=%s\n' "$n" "$?" "$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))["findings"]))' /tmp/ps_evidence_scratch/one.json)"; done ===
+CON.txt      exit=1 findings=1
+CON..txt     exit=1 findings=1
+CON. .txt    exit=1 findings=1
+CON          exit=1 findings=1
+exit=0
+
+--- 3. AFTER: the same nine paths, all reported ---
+
+=== $ printf 'CON .txt\0' | python3 pathscan.py --paths-from - ===
+{"distinct_paths":1,"findings":[{"detail":{"components":["CON .txt"]},"paths":["CON .txt"],"rule_id":"WINDOWS_RESERVED_NAME"}],"paths_scanned":1,"rules_enabled":["CASE_FOLD_COLLISION","CONTROL_CHARACTER","DUPLICATE_PATH","TRAILING_DOT_OR_SPACE","UNICODE_NORMALIZATION_COLLISION","UNSAFE_RELATIVE_PATH","WINDOWS_ILLEGAL_CHARACTER","WINDOWS_RESERVED_NAME"],"schema_version":1,"source":"path-list","status":"findings","summary":{"CASE_FOLD_COLLISION":0,"CONTROL_CHARACTER":0,"DUPLICATE_PATH":0,"TRAILING_DOT_OR_SPACE":0,"UNICODE_NORMALIZATION_COLLISION":0,"UNSAFE_RELATIVE_PATH":0,"WINDOWS_ILLEGAL_CHARACTER":0,"WINDOWS_RESERVED_NAME":1},"tool":"path-collision-scanner"}
+exit=1
+
+=== $ for n in 'CON .txt' 'PRN .ps' 'AUX .json' 'NUL .log' 'COM1 .txt' 'COM9 .dat' 'LPT1 .dat' 'LPT9 .out' 'docs/CON .txt'; do printf '%s\0' "$n" | python3 pathscan.py --paths-from - > /tmp/ps_evidence_scratch/one.json; printf '%-16s exit=%s status=%s findings=%s\n' "$n" "$?" "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["status"])' /tmp/ps_evidence_scratch/one.json)" "$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))["findings"]))' /tmp/ps_evidence_scratch/one.json)"; done ===
+CON .txt         exit=1 status=findings findings=1
+PRN .ps          exit=1 status=findings findings=1
+AUX .json        exit=1 status=findings findings=1
+NUL .log         exit=1 status=findings findings=1
+COM1 .txt        exit=1 status=findings findings=1
+COM9 .dat        exit=1 status=findings findings=1
+LPT1 .dat        exit=1 status=findings findings=1
+LPT9 .out        exit=1 status=findings findings=1
+docs/CON .txt    exit=1 status=findings findings=1
+exit=0
+
+--- 4. the negatives, which are what stop this being a blunt strip ---
+rstrip removes from the END of the stem only, so a device name with
+text before it is still not a device, and a longer word that merely
+starts with one is still not a device. Leading spaces are left alone
+on purpose: Windows' handling of them is context-dependent, so the
+tool does not claim anything about them.
+
+=== $ for n in 'CONFIG .txt' 'console .md' 'auxiliary .json' 'A CON .txt' 'not-CON .txt' 'com0 .txt' 'lpt0 .txt' '  CON.txt'; do printf '%s\0' "$n" | python3 pathscan.py --paths-from - > /tmp/ps_evidence_scratch/one.json; printf '%-16s exit=%s findings=%s\n' "$n" "$?" "$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))["findings"]))' /tmp/ps_evidence_scratch/one.json)"; done ===
+CONFIG .txt      exit=0 findings=0
+console .md      exit=0 findings=0
+auxiliary .json  exit=0 findings=0
+A CON .txt       exit=0 findings=0
+not-CON .txt     exit=0 findings=0
+com0 .txt        exit=0 findings=0
+lpt0 .txt        exit=0 findings=0
+  CON.txt        exit=0 findings=0
+exit=0
+
+A tab is not a space. It is a control character, it is reported as
+one, and it must not be stripped into a device name:
+
+=== $ printf 'CON\t.txt\0' | python3 pathscan.py --paths-from - | python3 -c "import json,sys;print([f['rule_id'] for f in json.load(sys.stdin)['findings']])" ===
+['CONTROL_CHARACTER']
+exit=1
+
+--- 5. the control: every other output is byte-identical ---
+Three runs on each tree, compared as bytes rather than eyeballed:
+the repository's own tracked path set, the clean fixture list, and
+the dirty fixture list. If the fix moved anything it was not asked
+to move, one of these cmp records fails.
+
+=== $ rm -rf fixtures && python3 make_fixtures.py ===
+wrote 7 files under /tmp/PHW/path-collision-scanner/fixtures
+exit=0
+
+=== $ python3 ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py --root .. -o /tmp/ps_evidence_scratch/before_repo.json ===
+exit=0
+
+=== $ python3 pathscan.py --root .. -o /tmp/ps_evidence_scratch/after_repo.json ===
+exit=0
+
+=== $ cmp /tmp/ps_evidence_scratch/before_repo.json /tmp/ps_evidence_scratch/after_repo.json && echo BYTE_IDENTICAL_repository_scan ===
+BYTE_IDENTICAL_repository_scan
+exit=0
+
+=== $ python3 ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py --paths-from fixtures/clean.paths -o /tmp/ps_evidence_scratch/before_clean.json ===
+exit=0
+
+=== $ python3 pathscan.py --paths-from fixtures/clean.paths -o /tmp/ps_evidence_scratch/after_clean.json ===
+exit=0
+
+=== $ cmp /tmp/ps_evidence_scratch/before_clean.json /tmp/ps_evidence_scratch/after_clean.json && echo BYTE_IDENTICAL_clean_fixture ===
+BYTE_IDENTICAL_clean_fixture
+exit=0
+
+=== $ python3 ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py --paths-from fixtures/dirty.paths -o /tmp/ps_evidence_scratch/before_dirty.json ===
+exit=1
+
+=== $ python3 pathscan.py --paths-from fixtures/dirty.paths -o /tmp/ps_evidence_scratch/after_dirty.json ===
+exit=1
+
+=== $ cmp /tmp/ps_evidence_scratch/before_dirty.json /tmp/ps_evidence_scratch/after_dirty.json && echo BYTE_IDENTICAL_dirty_fixture ===
+BYTE_IDENTICAL_dirty_fixture
+exit=0
+
+=== $ sha256sum /tmp/ps_evidence_scratch/after_repo.json /tmp/ps_evidence_scratch/after_clean.json /tmp/ps_evidence_scratch/after_dirty.json ===
+d24c4b11e8123c1c9441a8ded26354624bba2e62d0c0066e8e618b7a528f6286  /tmp/ps_evidence_scratch/after_repo.json
+8176da673d446e2ad761cbb8359c2b9c7ad84e4da6fae842ec491822fdd1b004  /tmp/ps_evidence_scratch/after_clean.json
+76d406d48f707c61dd1e0b93fd4019b0f6a00d0b190fc77e03ae05302ddb1945  /tmp/ps_evidence_scratch/after_dirty.json
+exit=0
+
+The repository scan exits 0 on both trees: no tracked name in this
+tree has a reserved stem, with or without the fix. That is the
+honest result. The fix closes a hole; it does not find a defect in
+this repository, and the fixtures are what demonstrate it works.
+
+--- 6. the two paths whose finding set the fix DOES change ---
+Disclosed rather than left to be discovered. A component that is a
+device name followed only by spaces was already reported, but as
+TRAILING_DOT_OR_SPACE alone. It is now reported as both, because it
+is both. No path loses a finding anywhere.
+
+=== $ for n in 'CON ' 'CON /file.txt'; do printf '%s\0' "$n" | python3 ../../ps_evidence_scratch/parent/path-collision-scanner/pathscan.py --paths-from - | python3 -c "import json,sys;print('BEFORE %-16s' % sys.argv[1], sorted(f['rule_id'] for f in json.load(sys.stdin)['findings']))" "$n"; printf '%s\0' "$n" | python3 pathscan.py --paths-from - | python3 -c "import json,sys;print('AFTER  %-16s' % sys.argv[1], sorted(f['rule_id'] for f in json.load(sys.stdin)['findings']))" "$n"; done ===
+BEFORE CON              ['TRAILING_DOT_OR_SPACE']
+AFTER  CON              ['TRAILING_DOT_OR_SPACE', 'WINDOWS_RESERVED_NAME']
+BEFORE CON /file.txt    ['TRAILING_DOT_OR_SPACE']
+AFTER  CON /file.txt    ['TRAILING_DOT_OR_SPACE', 'WINDOWS_RESERVED_NAME']
+exit=1
+
+--- 7. the tests ---
+The new classes are run against the PARENT copy with only the test
+file added, so what fails there is the old behaviour and not a
+missing file.
+
+=== $ cp test_pathscan.py ../../ps_evidence_scratch/parent/path-collision-scanner/ ===
+exit=0
+
+THE NEXT RECORD IS DELIBERATELY RED and is left verbatim.
+transcript-schema reports exactly one TRANSCRIPT_SHOWS_TEST_FAILURE
+for it, and that finding is correct: a repair whose tests do not
+fail against the parent has demonstrated nothing. The repository-wide
+run reads <tool>/captured_output.txt by that exact name and never
+sees this file.
+
+=== $ cd ../../ps_evidence_scratch/parent/path-collision-scanner && python3 -m unittest test_pathscan.TestReservedDeviceNameWithTrailingSpaceInTheStem test_pathscan.TestReservedStemHelperDirectly 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 19 tests in 0.037s
+
+FAILED (failures=7, errors=2)
+exit=1
+
+The same two classes on this version:
+
+=== $ python3 -m unittest test_pathscan.TestReservedDeviceNameWithTrailingSpaceInTheStem test_pathscan.TestReservedStemHelperDirectly 2>&1 | tail -3 ===
+Ran 19 tests in 0.035s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_pathscan 2>&1 | tail -3 ===
+Ran 114 tests in 0.906s
+
+OK
+exit=0
+
+=== $ python3 make_fixtures.py --check ===
+fixtures match the generator (7 files)
+exit=0
+
+--- 8. the change itself ---
+
+=== $ git -C .. diff b98d5945f78b853dcee195858450f01e1f905aee -- path-collision-scanner/pathscan.py | grep -v '^index ' ===
+diff --git a/path-collision-scanner/pathscan.py b/path-collision-scanner/pathscan.py
+--- a/path-collision-scanner/pathscan.py
++++ b/path-collision-scanner/pathscan.py
+@@ -209,12 +209,41 @@ def unsafe_reasons(path):
+ 
+ 
+ def reserved_components(path):
+-    """Components whose stem is a Windows reserved device name. Sorted."""
++    """Components whose stem is a Windows reserved device name. Sorted.
++
++    The stem is the text before the first dot, with trailing spaces
++    removed. Both halves of that matter, and only one of them used to be
++    here.
++
++    Windows discards trailing spaces and dots from a name before it
++    resolves it, so `CON .txt` is not a file called "CON " -- it is the
++    console device, and the file cannot be created at all. The dot half
++    was already handled, because splitting on the first dot makes
++    `CON..txt` and `CON. .txt` reduce to `CON`. The space half was not, so
++    `CON .txt`, `AUX .json` and `COM1 .log` scanned clean: a path that
++    Windows refuses outright, reported as safe, by the tool whose entire
++    job is to catch exactly that. Two of the eight rules missed it
++    together -- TRAILING_DOT_OR_SPACE looks at the end of the whole
++    component, and `CON .txt` ends in a `t`.
++
++    Leading spaces are deliberately NOT stripped. Windows' handling of
++    them is context-dependent (the shell, the API and Explorer do not
++    agree), so `  CON.txt` is left alone rather than guessed at; stripping
++    it here would be a claim this tool cannot support.
++
++    The rule below is not this author's reading of the documentation. It
++    is character-for-character what CPython's own `ntpath._isreservedname`
++    does -- `name.partition('.')[0].rstrip(' ').upper() in _reserved_names`
++    -- under the comment `# DOS device names are reserved (e.g. "nul" or
++    "nul .txt")`. That is the strongest corroboration available from the
++    standard library, and it is worth being plain that it is corroboration
++    and not proof: no run recorded anywhere in this repository has happened
++    on Windows."""
+     hits = set()
+     for part in components(path):
+         if not part:
+             continue
+-        stem = part.split(".")[0]
++        stem = part.split(".")[0].rstrip(" ")
+         if stem.upper() in WINDOWS_RESERVED:
+             hits.add(part)
+     return sorted(hits)
+exit=0
+
+--- 9. hashes of everything this commit rewrites in this tool ---
+
+=== $ rm -rf fixtures __pycache__; sha256sum pathscan.py test_pathscan.py README.md captured_output.txt make_fixtures.py ===
+151b347b1136ea969a14e47fbe8ce750f74ba503efc9c36e0332b18cb7ed8813  pathscan.py
+fbbeb55808fcedcfa92dc1c10f761b73a2f566ac1817f4f51840828c53b2fbc6  test_pathscan.py
+9abd4e2192efc980a1b5d145fbc66c717846566cf19ea796a634eb702aa43a72  README.md
+2be7bae823d5401d2bae58dadf056cf58e1b25208362c60566134678f425298d  captured_output.txt
+f9dd1a0c84f4313b54687c2c728f2d21f4273eff7feb5ed8550d9dd3ca155350  make_fixtures.py
+exit=0
+
+--- 10. everything this commit changes ---
+Generated last, against the fully staged tree. The directories beyond
+path-collision-scanner are mechanical consequences of adding tests and
+one tracked file: shebang-mode counts tracked files,
+weak-assertion-scanner counts tests, nondeterminism-scanner scans .py
+content. This file appears in the listing as itself, which is what
+generating it last means.
+
+=== $ cd .. && git status --porcelain --ignored=matching ===
+M  doc-validator/option_report.json
+M  path-collision-scanner/README.md
+AM path-collision-scanner/RESERVED_STEM_EVIDENCE.txt
+M  path-collision-scanner/captured_output.txt
+M  path-collision-scanner/pathscan.py
+M  path-collision-scanner/test_pathscan.py
+M  shebang-mode/README.md
+M  shebang-mode/selfscan_output.txt
+M  weak-assertion-scanner/README.md
+M  weak-assertion-scanner/self_scan_report.json
+exit=0
+
+############################################################
+# END OF TRANSCRIPT
+############################################################

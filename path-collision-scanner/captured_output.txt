@@ -32,7 +32,7 @@ ls: cannot access 'fixtures': No such file or directory
 exit=2
 
 $ python3 -m unittest test_pathscan 2>&1 | tail -n 3
-Ran 95 tests in 1.254s
+Ran 114 tests in 0.930s
 
 OK
 

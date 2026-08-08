@@ -209,12 +209,41 @@ def unsafe_reasons(path):
 
 
 def reserved_components(path):
-    """Components whose stem is a Windows reserved device name. Sorted."""
+    """Components whose stem is a Windows reserved device name. Sorted.
+
+    The stem is the text before the first dot, with trailing spaces
+    removed. Both halves of that matter, and only one of them used to be
+    here.
+
+    Windows discards trailing spaces and dots from a name before it
+    resolves it, so `CON .txt` is not a file called "CON " -- it is the
+    console device, and the file cannot be created at all. The dot half
+    was already handled, because splitting on the first dot makes
+    `CON..txt` and `CON. .txt` reduce to `CON`. The space half was not, so
+    `CON .txt`, `AUX .json` and `COM1 .log` scanned clean: a path that
+    Windows refuses outright, reported as safe, by the tool whose entire
+    job is to catch exactly that. Two of the eight rules missed it
+    together -- TRAILING_DOT_OR_SPACE looks at the end of the whole
+    component, and `CON .txt` ends in a `t`.
+
+    Leading spaces are deliberately NOT stripped. Windows' handling of
+    them is context-dependent (the shell, the API and Explorer do not
+    agree), so `  CON.txt` is left alone rather than guessed at; stripping
+    it here would be a claim this tool cannot support.
+
+    The rule below is not this author's reading of the documentation. It
+    is character-for-character what CPython's own `ntpath._isreservedname`
+    does -- `name.partition('.')[0].rstrip(' ').upper() in _reserved_names`
+    -- under the comment `# DOS device names are reserved (e.g. "nul" or
+    "nul .txt")`. That is the strongest corroboration available from the
+    standard library, and it is worth being plain that it is corroboration
+    and not proof: no run recorded anywhere in this repository has happened
+    on Windows."""
     hits = set()
     for part in components(path):
         if not part:
             continue
-        stem = part.split(".")[0]
+        stem = part.split(".")[0].rstrip(" ")
         if stem.upper() in WINDOWS_RESERVED:
             hits.add(part)
     return sorted(hits)

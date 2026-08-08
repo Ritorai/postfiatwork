@@ -634,5 +634,126 @@ class TestStdlibOnlyImports(unittest.TestCase):
         self.assertEqual(found - self.ALLOWED, set(), "unexpected imports: %s" % (found - self.ALLOWED))
 
 
+class TestReservedDeviceNameWithTrailingSpaceInTheStem(unittest.TestCase):
+    """The repaired defect.
+
+    Windows discards trailing spaces and dots from a name before resolving
+    it, so `CON .txt` names the console device and cannot be created. The
+    dot half of that was already handled -- splitting on the first dot
+    reduces `CON..txt` and `CON. .txt` to `CON` -- but the space half was
+    not, so every path below scanned CLEAN at the parent commit: exit 0,
+    zero findings, from the tool whose whole job is to catch names that
+    break on another filesystem.
+
+    Two rules missed it together. WINDOWS_RESERVED_NAME compared the
+    unstripped stem `"CON "` against the device set, and
+    TRAILING_DOT_OR_SPACE looks at the end of the whole component, which
+    for `CON .txt` is a `t`.
+    """
+
+    DEVICES_WITH_A_TRAILING_SPACE = [
+        "CON .txt", "AUX .json", "NUL .log", "PRN .ps",
+        "COM1 .txt", "COM9 .dat", "LPT1 .dat", "LPT9 .out",
+    ]
+
+    def test_every_device_with_a_trailing_space_is_reserved(self):
+        for name in self.DEVICES_WITH_A_TRAILING_SPACE:
+            self.assertIn(pathscan.R_RESERVED, rules_fired([name]), name)
+
+    def test_it_is_case_insensitive_like_the_rest_of_the_rule(self):
+        for name in ("con .txt", "Con .TXT", "aUx .json"):
+            self.assertIn(pathscan.R_RESERVED, rules_fired([name]), name)
+
+    def test_more_than_one_trailing_space(self):
+        self.assertIn(pathscan.R_RESERVED, rules_fired(["CON   .txt"]))
+
+    def test_in_a_directory_component(self):
+        f = [x for x in scan_paths(["docs/CON .txt"])["findings"]
+             if x["rule_id"] == pathscan.R_RESERVED][0]
+        self.assertEqual(f["detail"]["components"], ["CON .txt"])
+
+    def test_the_reported_component_is_the_path_as_written(self):
+        # Not the stripped stem: the report must let a reader find the
+        # offending name in the tree by searching for it verbatim.
+        f = [x for x in scan_paths(["CON .txt"])["findings"]
+             if x["rule_id"] == pathscan.R_RESERVED][0]
+        self.assertEqual(f["detail"]["components"], ["CON .txt"])
+
+    def test_spaces_and_dots_together(self):
+        for name in ("CON. .txt", "CON . .txt", "AUX .. json"):
+            self.assertIn(pathscan.R_RESERVED, rules_fired([name]), name)
+
+    def test_the_scan_now_exits_one_instead_of_zero(self):
+        # The defect's real shape: not a wrong finding, a missing one, and
+        # therefore a wrong EXIT CODE. A CI gate reading the exit code was
+        # told this tree was fine.
+        rc, out, _err = run_cli(["--paths-from", "-"],
+                                stdin_bytes=b"CON .txt\0")
+        self.assertEqual(rc, 1)
+        self.assertEqual(json.loads(out)["status"], "findings")
+
+    # ---- the negatives, which are what stop this being a blunt rstrip ----
+
+    def test_a_longer_name_ending_in_a_space_is_not_a_device(self):
+        for name in ("CONFIG .txt", "console .md", "auxiliary .json"):
+            self.assertNotIn(pathscan.R_RESERVED, rules_fired([name]), name)
+
+    def test_a_device_name_preceded_by_other_text_is_not_reserved(self):
+        # rstrip only removes from the END of the stem.
+        for name in ("A CON .txt", "my CON .log", "not-CON .txt"):
+            self.assertNotIn(pathscan.R_RESERVED, rules_fired([name]), name)
+
+    def test_leading_spaces_are_deliberately_left_alone(self):
+        # Windows' handling of leading spaces is context-dependent, so the
+        # tool does not claim anything about them. If this ever starts
+        # firing, someone has widened the rule past what it can support.
+        self.assertNotIn(pathscan.R_RESERVED, rules_fired(["  CON.txt"]))
+
+    def test_com0_and_lpt0_are_still_not_reserved_with_a_trailing_space(self):
+        self.assertNotIn(pathscan.R_RESERVED,
+                         rules_fired(["com0 .txt", "lpt0 .txt"]))
+
+    def test_a_tab_is_not_a_space(self):
+        # A tab is a control character and is reported as one; it must not
+        # be silently stripped into a device name.
+        fired = rules_fired(["CON\t.txt"])
+        self.assertIn(pathscan.R_CONTROL, fired)
+        self.assertNotIn(pathscan.R_RESERVED, fired)
+
+    def test_clean_paths_are_still_clean(self):
+        # The control: the fix must not turn ordinary names into findings.
+        clean = ["README.md", "src/main.py", "docs/guide.txt",
+                 "config .yaml", "a b c.txt", "CONTRIBUTING.md"]
+        self.assertEqual(scan_paths(clean)["findings"], [])
+
+    def test_this_repositorys_own_tracked_names_are_unaffected(self):
+        # Whatever the tracked set is, the fix must not add a finding to
+        # it: every name here is checked against the rule directly.
+        for name in ("path-collision-scanner", "pathscan.py",
+                     "captured_output.txt", "make_fixtures.py"):
+            self.assertEqual(pathscan.reserved_components(name), [])
+
+
+class TestReservedStemHelperDirectly(unittest.TestCase):
+    """reserved_components on its own, so a regression cannot hide behind
+    the report layer."""
+
+    def test_trailing_space_stem(self):
+        self.assertEqual(pathscan.reserved_components("CON .txt"), ["CON .txt"])
+
+    def test_trailing_dot_stem_still_works(self):
+        self.assertEqual(pathscan.reserved_components("CON..txt"), ["CON..txt"])
+
+    def test_no_stem_match(self):
+        self.assertEqual(pathscan.reserved_components("CONFIG .txt"), [])
+
+    def test_multiple_components(self):
+        self.assertEqual(pathscan.reserved_components("AUX .a/x/NUL .b"),
+                         ["AUX .a", "NUL .b"])
+
+    def test_empty_components_are_skipped(self):
+        self.assertEqual(pathscan.reserved_components("a//b.txt"), [])
+
+
 if __name__ == "__main__":
     unittest.main()
