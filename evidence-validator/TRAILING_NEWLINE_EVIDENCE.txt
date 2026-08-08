@@ -1,0 +1,332 @@
+evidence-validator -- trailing-newline anchor evidence
+======================================================
+
+Records use transcript-drift/FORMAT.md's grammar: a "=== $ command ==="
+header on one line, the verbatim output, and an exit= line. Every path
+is relative and every scratch file is written inside this directory:
+env-leak-scanner reads every .md and .txt in the tree, and a
+multi-segment absolute path in a committed transcript becomes a
+confirmed leak in its report. Its EL-ABS-POSIX rule needs two or more
+segments, so a one-segment path such as "/nonexistent.json" does not
+register; a two-segment device path and a temp path both do, and an
+earlier draft of this file committed one of each. Naming either of them
+here would have re-added the finding, so this paragraph does not.
+Records run under `bash -c 'set -o pipefail; ...'`, so
+a piped record's exit= line reports the command that failed rather than
+the exit status of tail.
+
+This file DEPARTS from FORMAT.md deliberately, in the ways
+transcript-schema reports when it is pointed at it: it commits `FAILED`
+verdicts, and several unittest records are piped through `tail` or a
+`sort`, so they carry no `Ran N tests` line and no verdict of their
+own. FORMAT.md is right to classify a committed FAILED as drift -- for
+captured_output.txt, which is a claim that the tool works. This file is
+the opposite claim: that the tool accepted a value its own README calls
+malformed. The transcript validators -- transcript-drift,
+transcript-schema, index-generator's pipe_scan, regen-preflight -- only
+ever read a file named captured_output.txt, so nothing here is being
+smuggled past a gate; the departures are stated because a file claiming
+conformance while violating a rule is worse than one that says which
+rules it breaks and why.
+
+THE DEFECT
+
+README.md says `tx_hash` is "exactly 64 uppercase hex characters" and
+its schema table gives `[0-9A-F]{64}`. validator.py compiled that as
+`^[0-9A-F]{64}$`. In Python, `$` matches at the end of the string OR
+just before a single newline at the end of the string, so a
+SIXTY-FIVE character value ending in "\n" satisfied it. The same hole
+was in all four format patterns: CIDV0_RE, CIDV1_RE, TXHASH_RE and
+TASK_ID_RE.
+
+The fix is four characters per pattern: `$` becomes `\Z`, which matches
+only at the true end of the string. No new error code, no new flag, no
+change to any exit code -- a value that fails the documented format now
+produces the MALFORMED_* code README.md already documents for it, and
+the process exits 1, which README.md already documents as "one or more
+records had validation issues".
+
+What this proves, in order:
+
+  1. the exact scope of the hole, measured against the pre-fix patterns
+     read out of Git: one trailing newline passed, and nothing else did;
+  2. the pre-fix source accepting the committed fixture -- three
+     records, all "clean", exit 0;
+  3. which of the new tests fail against that source, ONE BY ONE, not
+     just in aggregate;
+  4. the fixed source rejecting the same fixture with one MALFORMED_*
+     code per record and exit 1;
+  5. the valid cases still working: sample_valid.json still exits 0,
+     sample_invalid.json still exits 1 with the same findings, and the
+     whole suite passes.
+
+On point 3, read the per-test listing rather than the aggregate. Not
+every new test fails against the pre-fix source and this file does not
+claim otherwise: several pin behaviour the pre-fix source already had
+and pass on both sides by design, because their job is to catch a
+repair that breaks something rather than to demonstrate the defect. The
+split is counted directly, two records below the listing, by grepping
+the listing itself. The aggregate `FAILED (failures=...)` line is also
+expanded by subTest, so it counts larger than the number of test
+methods involved.
+
+The one number here that is not reproducible is the wall-clock in
+unittest's `Ran N tests in ...s` line. Everything else -- exit codes,
+issue codes, counts, per-test verdicts -- is fixed by construction.
+
+=== $ echo 07efc15c7d462e72cd1978e186981ab8a6fe2c7b ===
+07efc15c7d462e72cd1978e186981ab8a6fe2c7b
+exit=0
+
+=== $ git cat-file -t 07efc15c7d462e72cd1978e186981ab8a6fe2c7b ===
+commit
+exit=0
+
+=== $ git show 07efc15c7d462e72cd1978e186981ab8a6fe2c7b:evidence-validator/validator.py > _anchor_scratch/validator.py && wc -l _anchor_scratch/validator.py ===
+150 _anchor_scratch/validator.py
+exit=0
+
+=== $ cp test_validator.py sample_valid.json sample_invalid.json sample_trailing_newline.json _anchor_scratch/ && ls _anchor_scratch ===
+sample_invalid.json
+sample_trailing_newline.json
+sample_valid.json
+test_validator.py
+validator.py
+exit=0
+
+=== $ cd _anchor_scratch && python3 -c "import test_validator as T, validator as V; cases=[('one_trailing_newline', chr(10))]+list(T.NEAR_MISSES); [print('%-11s %-23s len=%-3d %s' % (n, lb, len(v), 'ACCEPTED' if getattr(V,n).match(v) else 'refused')) for n in sorted(T.GOOD_FOR_PATTERN) for lb,af in cases for v in [af+T.GOOD_FOR_PATTERN[n] if lb=='leading_newline' else T.GOOD_FOR_PATTERN[n]+af]]" ===
+CIDV0_RE    one_trailing_newline    len=47  ACCEPTED
+CIDV0_RE    trailing_newline_twice  len=48  refused
+CIDV0_RE    newline_then_character  len=48  refused
+CIDV0_RE    one_extra_character     len=47  refused
+CIDV0_RE    trailing_crlf           len=48  refused
+CIDV0_RE    trailing_space          len=47  refused
+CIDV0_RE    trailing_tab            len=47  refused
+CIDV0_RE    leading_newline         len=47  refused
+CIDV1_RE    one_trailing_newline    len=55  ACCEPTED
+CIDV1_RE    trailing_newline_twice  len=56  refused
+CIDV1_RE    newline_then_character  len=56  refused
+CIDV1_RE    one_extra_character     len=55  refused
+CIDV1_RE    trailing_crlf           len=56  refused
+CIDV1_RE    trailing_space          len=55  refused
+CIDV1_RE    trailing_tab            len=55  refused
+CIDV1_RE    leading_newline         len=55  refused
+TASK_ID_RE  one_trailing_newline    len=38  ACCEPTED
+TASK_ID_RE  trailing_newline_twice  len=39  refused
+TASK_ID_RE  newline_then_character  len=39  refused
+TASK_ID_RE  one_extra_character     len=38  refused
+TASK_ID_RE  trailing_crlf           len=39  refused
+TASK_ID_RE  trailing_space          len=38  refused
+TASK_ID_RE  trailing_tab            len=38  refused
+TASK_ID_RE  leading_newline         len=38  refused
+TXHASH_RE   one_trailing_newline    len=65  ACCEPTED
+TXHASH_RE   trailing_newline_twice  len=66  refused
+TXHASH_RE   newline_then_character  len=66  refused
+TXHASH_RE   one_extra_character     len=65  refused
+TXHASH_RE   trailing_crlf           len=66  refused
+TXHASH_RE   trailing_space          len=65  refused
+TXHASH_RE   trailing_tab            len=65  refused
+TXHASH_RE   leading_newline         len=65  refused
+exit=0
+
+=== $ cd _anchor_scratch && python3 validator.py sample_trailing_newline.json --pretty ===
+{
+  "schema_version": "1.0",
+  "required_fields": [
+    "submission_id",
+    "task_id",
+    "wallet",
+    "cid",
+    "tx_hash"
+  ],
+  "totals": {
+    "records": 3,
+    "clean": 3,
+    "rejected": 0
+  },
+  "issue_totals": {},
+  "records": [
+    {
+      "index": 0,
+      "submission_id": "sub_3001",
+      "issues": [],
+      "status": "clean"
+    },
+    {
+      "index": 1,
+      "submission_id": "sub_3002",
+      "issues": [],
+      "status": "clean"
+    },
+    {
+      "index": 2,
+      "submission_id": "sub_3003",
+      "issues": [],
+      "status": "clean"
+    }
+  ]
+}
+exit=0
+
+=== $ cd _anchor_scratch && python3 validator.py sample_valid.json | python3 -c "import json,sys;print(json.load(sys.stdin)['totals'])" ===
+{'records': 2, 'clean': 2, 'rejected': 0}
+exit=0
+
+=== $ cd _anchor_scratch && python3 -m unittest test_validator 2>&1 | tail -1 ===
+FAILED (failures=19)
+exit=1
+
+=== $ cd _anchor_scratch && python3 -m unittest -v test_validator.TestEndAnchors test_validator.TestTrailingNewlineRecords test_validator.TestTrailingNewlineFixture test_validator.TestTrailingNewlineCli 2>&1 | grep -E '[.][.][.] (ok|FAIL|ERROR)' | sed 's/ [(].*[)] [.][.][.] / ... /' | sort ===
+  test_every_start_anchored_pattern_is_end_anchored (test_validator.TestEndAnchors.test_every_start_anchored_pattern_is_end_anchored) [CIDV0_RE] ... FAIL
+  test_every_start_anchored_pattern_is_end_anchored (test_validator.TestEndAnchors.test_every_start_anchored_pattern_is_end_anchored) [CIDV1_RE] ... FAIL
+  test_every_start_anchored_pattern_is_end_anchored (test_validator.TestEndAnchors.test_every_start_anchored_pattern_is_end_anchored) [TASK_ID_RE] ... FAIL
+  test_every_start_anchored_pattern_is_end_anchored (test_validator.TestEndAnchors.test_every_start_anchored_pattern_is_end_anchored) [TXHASH_RE] ... FAIL
+  test_no_module_pattern_uses_a_dollar_anchor (test_validator.TestEndAnchors.test_no_module_pattern_uses_a_dollar_anchor) [CIDV0_RE] ... FAIL
+  test_no_module_pattern_uses_a_dollar_anchor (test_validator.TestEndAnchors.test_no_module_pattern_uses_a_dollar_anchor) [CIDV1_RE] ... FAIL
+  test_no_module_pattern_uses_a_dollar_anchor (test_validator.TestEndAnchors.test_no_module_pattern_uses_a_dollar_anchor) [TASK_ID_RE] ... FAIL
+  test_no_module_pattern_uses_a_dollar_anchor (test_validator.TestEndAnchors.test_no_module_pattern_uses_a_dollar_anchor) [TXHASH_RE] ... FAIL
+  test_one_trailing_newline_is_refused (test_validator.TestEndAnchors.test_one_trailing_newline_is_refused) [CIDV0_RE] ... FAIL
+  test_one_trailing_newline_is_refused (test_validator.TestEndAnchors.test_one_trailing_newline_is_refused) [CIDV1_RE] ... FAIL
+  test_one_trailing_newline_is_refused (test_validator.TestEndAnchors.test_one_trailing_newline_is_refused) [TASK_ID_RE] ... FAIL
+  test_one_trailing_newline_is_refused (test_validator.TestEndAnchors.test_one_trailing_newline_is_refused) [TXHASH_RE] ... FAIL
+test_a_clean_record_is_still_clean ... ok
+test_a_field_that_is_only_a_newline_is_empty_not_malformed ... ok
+test_cidv0_with_trailing_newline_flagged ... FAIL
+test_cidv1_with_trailing_newline_flagged ... FAIL
+test_fixture_exits_one ... FAIL
+test_fixture_is_rejected_record_by_record ... FAIL
+test_fixture_records_carry_exactly_one_trailing_newline_each ... ok
+test_fixture_trips_no_other_issue ... FAIL
+test_good_values_still_match ... ok
+test_introspection_finds_the_four_documented_patterns ... ok
+test_stripping_the_newlines_makes_the_fixture_clean ... ok
+test_task_id_with_trailing_newline_flagged ... FAIL
+test_the_invalid_sample_still_exits_one ... ok
+test_the_near_misses_that_were_already_refused_still_are ... ok
+test_the_valid_sample_still_exits_zero ... ok
+test_tx_hash_with_trailing_newline_flagged ... FAIL
+exit=1
+
+=== $ cd _anchor_scratch && python3 -m unittest -v test_validator.TestEndAnchors test_validator.TestTrailingNewlineRecords test_validator.TestTrailingNewlineFixture test_validator.TestTrailingNewlineCli 2>&1 | grep -cE '[.][.][.] ok' ===
+9
+exit=1
+
+=== $ cd _anchor_scratch && python3 -m unittest -v test_validator.TestEndAnchors test_validator.TestTrailingNewlineRecords test_validator.TestTrailingNewlineFixture test_validator.TestTrailingNewlineCli 2>&1 | grep -cE '[.][.][.] (FAIL|ERROR)' ===
+19
+exit=1
+
+=== $ python3 -c "import test_validator as T, validator as V; cases=[('one_trailing_newline', chr(10))]+list(T.NEAR_MISSES); [print('%-11s %-23s len=%-3d %s' % (n, lb, len(v), 'ACCEPTED' if getattr(V,n).match(v) else 'refused')) for n in sorted(T.GOOD_FOR_PATTERN) for lb,af in cases for v in [af+T.GOOD_FOR_PATTERN[n] if lb=='leading_newline' else T.GOOD_FOR_PATTERN[n]+af]]" ===
+CIDV0_RE    one_trailing_newline    len=47  refused
+CIDV0_RE    trailing_newline_twice  len=48  refused
+CIDV0_RE    newline_then_character  len=48  refused
+CIDV0_RE    one_extra_character     len=47  refused
+CIDV0_RE    trailing_crlf           len=48  refused
+CIDV0_RE    trailing_space          len=47  refused
+CIDV0_RE    trailing_tab            len=47  refused
+CIDV0_RE    leading_newline         len=47  refused
+CIDV1_RE    one_trailing_newline    len=55  refused
+CIDV1_RE    trailing_newline_twice  len=56  refused
+CIDV1_RE    newline_then_character  len=56  refused
+CIDV1_RE    one_extra_character     len=55  refused
+CIDV1_RE    trailing_crlf           len=56  refused
+CIDV1_RE    trailing_space          len=55  refused
+CIDV1_RE    trailing_tab            len=55  refused
+CIDV1_RE    leading_newline         len=55  refused
+TASK_ID_RE  one_trailing_newline    len=38  refused
+TASK_ID_RE  trailing_newline_twice  len=39  refused
+TASK_ID_RE  newline_then_character  len=39  refused
+TASK_ID_RE  one_extra_character     len=38  refused
+TASK_ID_RE  trailing_crlf           len=39  refused
+TASK_ID_RE  trailing_space          len=38  refused
+TASK_ID_RE  trailing_tab            len=38  refused
+TASK_ID_RE  leading_newline         len=38  refused
+TXHASH_RE   one_trailing_newline    len=65  refused
+TXHASH_RE   trailing_newline_twice  len=66  refused
+TXHASH_RE   newline_then_character  len=66  refused
+TXHASH_RE   one_extra_character     len=65  refused
+TXHASH_RE   trailing_crlf           len=66  refused
+TXHASH_RE   trailing_space          len=65  refused
+TXHASH_RE   trailing_tab            len=65  refused
+TXHASH_RE   leading_newline         len=65  refused
+exit=0
+
+=== $ python3 validator.py sample_trailing_newline.json --pretty ===
+{
+  "schema_version": "1.0",
+  "required_fields": [
+    "submission_id",
+    "task_id",
+    "wallet",
+    "cid",
+    "tx_hash"
+  ],
+  "totals": {
+    "records": 3,
+    "clean": 0,
+    "rejected": 3
+  },
+  "issue_totals": {
+    "MALFORMED_CID": 1,
+    "MALFORMED_TASK_ID": 1,
+    "MALFORMED_TX_HASH": 1
+  },
+  "records": [
+    {
+      "index": 0,
+      "submission_id": "sub_3001",
+      "issues": [
+        "MALFORMED_TX_HASH"
+      ],
+      "status": "rejected"
+    },
+    {
+      "index": 1,
+      "submission_id": "sub_3002",
+      "issues": [
+        "MALFORMED_TASK_ID"
+      ],
+      "status": "rejected"
+    },
+    {
+      "index": 2,
+      "submission_id": "sub_3003",
+      "issues": [
+        "MALFORMED_CID"
+      ],
+      "status": "rejected"
+    }
+  ]
+}
+exit=1
+
+=== $ python3 validator.py sample_valid.json ===
+{"schema_version": "1.0", "required_fields": ["submission_id", "task_id", "wallet", "cid", "tx_hash"], "totals": {"records": 2, "clean": 2, "rejected": 0}, "issue_totals": {}, "records": [{"index": 0, "submission_id": "sub_1001", "issues": [], "status": "clean"}, {"index": 1, "submission_id": "sub_1002", "issues": [], "status": "clean"}]}
+exit=0
+
+=== $ python3 validator.py sample_invalid.json | python3 -c "import json,sys;print(json.load(sys.stdin)['issue_totals'])" ===
+{'DUPLICATE_CID_REFERENCE': 2, 'DUPLICATE_SUBMISSION_ID': 2, 'EMPTY_FIELD': 1, 'MALFORMED_CID': 1, 'MALFORMED_TASK_ID': 1, 'MALFORMED_TX_HASH': 1, 'MISSING_FIELD': 1}
+exit=1
+
+=== $ python3 -m unittest test_validator.TestEndAnchors test_validator.TestTrailingNewlineRecords test_validator.TestTrailingNewlineFixture test_validator.TestTrailingNewlineCli 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 19 tests in 0.089s
+
+OK
+exit=0
+
+=== $ python3 -m unittest test_validator 2>&1 | tail -4 ===
+----------------------------------------------------------------------
+Ran 36 tests in 0.265s
+
+OK
+exit=0
+
+=== $ python3 -c "import validator;print(sorted((n,p.pattern) for n,p in vars(validator).items() if isinstance(p,type(validator.TXHASH_RE))))" ===
+[('CIDV0_RE', '^Qm[1-9A-HJ-NP-Za-km-z]{44}\\Z'), ('CIDV1_RE', '^bafy[a-z2-7]{50,}\\Z'), ('TASK_ID_RE', '^task_[0-9a-f]{32}\\Z'), ('TXHASH_RE', '^[0-9A-F]{64}\\Z')]
+exit=0
+
+=== $ ls -d _anchor_scratch 2>&1; echo scratch-removed ===
+ls: cannot access '_anchor_scratch': No such file or directory
+scratch-removed
+exit=0
+

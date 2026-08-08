@@ -19,13 +19,13 @@ from collections import Counter
 # --- Declared contract -------------------------------------------------------
 REQUIRED_FIELDS = ("submission_id", "task_id", "wallet", "cid", "tx_hash")
 
-# IPFS CIDv0: "Qm" + 44 base58 chars (no 0, O, I, l). CIDv1: "bafy" + base32 lowercase.
-CIDV0_RE = re.compile(r"^Qm[1-9A-HJ-NP-Za-km-z]{44}$")
-CIDV1_RE = re.compile(r"^bafy[a-z2-7]{50,}$")
-# XRPL transaction hash: exactly 64 uppercase hex characters.
-TXHASH_RE = re.compile(r"^[0-9A-F]{64}$")
-# Task Node task id: "task_" + 32 lowercase hex.
-TASK_ID_RE = re.compile(r"^task_[0-9a-f]{32}$")
+# Reference formats. Every pattern ends with \Z, not $ -- `$` ALSO matches
+# just before one trailing newline, so `^[0-9A-F]{64}$` accepted a 65-character
+# value ending in "\n", which is not "exactly 64" anything. See README.md.
+CIDV0_RE = re.compile(r"^Qm[1-9A-HJ-NP-Za-km-z]{44}\Z")   # "Qm" + 44 base58, no 0OIl
+CIDV1_RE = re.compile(r"^bafy[a-z2-7]{50,}\Z")            # "bafy" + 50+ base32 lower
+TXHASH_RE = re.compile(r"^[0-9A-F]{64}\Z")                # exactly 64 uppercase hex
+TASK_ID_RE = re.compile(r"^task_[0-9a-f]{32}\Z")          # "task_" + 32 lowercase hex
 
 ISSUE_MISSING_FIELD = "MISSING_FIELD"
 ISSUE_EMPTY_FIELD = "EMPTY_FIELD"

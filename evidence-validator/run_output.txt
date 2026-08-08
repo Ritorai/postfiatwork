@@ -1,24 +1,43 @@
 === $ python3 -m unittest test_validator -v ===
-test_exit_one_on_issues (test_validator.TestCliExitCodes) ... ok
-test_exit_two_on_invalid_json (test_validator.TestCliExitCodes) ... ok
-test_exit_two_on_missing_file (test_validator.TestCliExitCodes) ... ok
-test_exit_two_on_non_array (test_validator.TestCliExitCodes) ... ok
-test_exit_zero_on_clean (test_validator.TestCliExitCodes) ... ok
-test_distinct_records_are_clean (test_validator.TestDuplicates) ... ok
-test_duplicate_cid_reference_flagged (test_validator.TestDuplicates) ... ok
-test_duplicate_submission_id_flags_both (test_validator.TestDuplicates) ... ok
-test_bad_cid_flagged (test_validator.TestMalformedReferences) ... ok
-test_bad_task_id_flagged (test_validator.TestMalformedReferences) ... ok
-test_bad_tx_hash_lowercase_flagged (test_validator.TestMalformedReferences) ... ok
-test_bad_tx_hash_wrong_length_flagged (test_validator.TestMalformedReferences) ... ok
-test_empty_field_flagged (test_validator.TestMissingFields) ... ok
-test_missing_field_flagged (test_validator.TestMissingFields) ... ok
-test_non_object_record_flagged (test_validator.TestMissingFields) ... ok
-test_cidv1_accepted (test_validator.TestValidRecords) ... ok
-test_clean_record_has_no_issues (test_validator.TestValidRecords) ... ok
+test_exit_one_on_issues (test_validator.TestCliExitCodes.test_exit_one_on_issues) ... ok
+test_exit_two_on_invalid_json (test_validator.TestCliExitCodes.test_exit_two_on_invalid_json) ... ok
+test_exit_two_on_missing_file (test_validator.TestCliExitCodes.test_exit_two_on_missing_file) ... ok
+test_exit_two_on_non_array (test_validator.TestCliExitCodes.test_exit_two_on_non_array) ... ok
+test_exit_zero_on_clean (test_validator.TestCliExitCodes.test_exit_zero_on_clean) ... ok
+test_distinct_records_are_clean (test_validator.TestDuplicates.test_distinct_records_are_clean) ... ok
+test_duplicate_cid_reference_flagged (test_validator.TestDuplicates.test_duplicate_cid_reference_flagged) ... ok
+test_duplicate_submission_id_flags_both (test_validator.TestDuplicates.test_duplicate_submission_id_flags_both) ... ok
+test_every_start_anchored_pattern_is_end_anchored (test_validator.TestEndAnchors.test_every_start_anchored_pattern_is_end_anchored) ... ok
+test_good_values_still_match (test_validator.TestEndAnchors.test_good_values_still_match) ... ok
+test_introspection_finds_the_four_documented_patterns (test_validator.TestEndAnchors.test_introspection_finds_the_four_documented_patterns) ... ok
+test_no_module_pattern_uses_a_dollar_anchor (test_validator.TestEndAnchors.test_no_module_pattern_uses_a_dollar_anchor) ... ok
+test_one_trailing_newline_is_refused (test_validator.TestEndAnchors.test_one_trailing_newline_is_refused) ... ok
+test_the_near_misses_that_were_already_refused_still_are (test_validator.TestEndAnchors.test_the_near_misses_that_were_already_refused_still_are) ... ok
+test_bad_cid_flagged (test_validator.TestMalformedReferences.test_bad_cid_flagged) ... ok
+test_bad_task_id_flagged (test_validator.TestMalformedReferences.test_bad_task_id_flagged) ... ok
+test_bad_tx_hash_lowercase_flagged (test_validator.TestMalformedReferences.test_bad_tx_hash_lowercase_flagged) ... ok
+test_bad_tx_hash_wrong_length_flagged (test_validator.TestMalformedReferences.test_bad_tx_hash_wrong_length_flagged) ... ok
+test_empty_field_flagged (test_validator.TestMissingFields.test_empty_field_flagged) ... ok
+test_missing_field_flagged (test_validator.TestMissingFields.test_missing_field_flagged) ... ok
+test_non_object_record_flagged (test_validator.TestMissingFields.test_non_object_record_flagged) ... ok
+test_fixture_exits_one (test_validator.TestTrailingNewlineCli.test_fixture_exits_one) ... ok
+test_the_invalid_sample_still_exits_one (test_validator.TestTrailingNewlineCli.test_the_invalid_sample_still_exits_one) ... ok
+test_the_valid_sample_still_exits_zero (test_validator.TestTrailingNewlineCli.test_the_valid_sample_still_exits_zero) ... ok
+test_fixture_is_rejected_record_by_record (test_validator.TestTrailingNewlineFixture.test_fixture_is_rejected_record_by_record) ... ok
+test_fixture_records_carry_exactly_one_trailing_newline_each (test_validator.TestTrailingNewlineFixture.test_fixture_records_carry_exactly_one_trailing_newline_each) ... ok
+test_fixture_trips_no_other_issue (test_validator.TestTrailingNewlineFixture.test_fixture_trips_no_other_issue) ... ok
+test_stripping_the_newlines_makes_the_fixture_clean (test_validator.TestTrailingNewlineFixture.test_stripping_the_newlines_makes_the_fixture_clean) ... ok
+test_a_clean_record_is_still_clean (test_validator.TestTrailingNewlineRecords.test_a_clean_record_is_still_clean) ... ok
+test_a_field_that_is_only_a_newline_is_empty_not_malformed (test_validator.TestTrailingNewlineRecords.test_a_field_that_is_only_a_newline_is_empty_not_malformed) ... ok
+test_cidv0_with_trailing_newline_flagged (test_validator.TestTrailingNewlineRecords.test_cidv0_with_trailing_newline_flagged) ... ok
+test_cidv1_with_trailing_newline_flagged (test_validator.TestTrailingNewlineRecords.test_cidv1_with_trailing_newline_flagged) ... ok
+test_task_id_with_trailing_newline_flagged (test_validator.TestTrailingNewlineRecords.test_task_id_with_trailing_newline_flagged) ... ok
+test_tx_hash_with_trailing_newline_flagged (test_validator.TestTrailingNewlineRecords.test_tx_hash_with_trailing_newline_flagged) ... ok
+test_cidv1_accepted (test_validator.TestValidRecords.test_cidv1_accepted) ... ok
+test_clean_record_has_no_issues (test_validator.TestValidRecords.test_clean_record_has_no_issues) ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 0.115s
+Ran 36 tests in 0.228s
 
 OK
 exit=0
@@ -114,3 +133,61 @@ exit=0
   ]
 }
 exit=1
+
+
+$ python3 --version
+Python 3.11.15
+
+$ python3 validator.py sample_trailing_newline.json --pretty
+{
+  "schema_version": "1.0",
+  "required_fields": [
+    "submission_id",
+    "task_id",
+    "wallet",
+    "cid",
+    "tx_hash"
+  ],
+  "totals": {
+    "records": 3,
+    "clean": 0,
+    "rejected": 3
+  },
+  "issue_totals": {
+    "MALFORMED_CID": 1,
+    "MALFORMED_TASK_ID": 1,
+    "MALFORMED_TX_HASH": 1
+  },
+  "records": [
+    {
+      "index": 0,
+      "submission_id": "sub_3001",
+      "issues": [
+        "MALFORMED_TX_HASH"
+      ],
+      "status": "rejected"
+    },
+    {
+      "index": 1,
+      "submission_id": "sub_3002",
+      "issues": [
+        "MALFORMED_TASK_ID"
+      ],
+      "status": "rejected"
+    },
+    {
+      "index": 2,
+      "submission_id": "sub_3003",
+      "issues": [
+        "MALFORMED_CID"
+      ],
+      "status": "rejected"
+    }
+  ]
+}
+
+$ python3 validator.py sample_invalid.json
+{"schema_version": "1.0", "required_fields": ["submission_id", "task_id", "wallet", "cid", "tx_hash"], "totals": {"records": 3, "clean": 0, "rejected": 3}, "issue_totals": {"DUPLICATE_CID_REFERENCE": 2, "DUPLICATE_SUBMISSION_ID": 2, "EMPTY_FIELD": 1, "MALFORMED_CID": 1, "MALFORMED_TASK_ID": 1, "MALFORMED_TX_HASH": 1, "MISSING_FIELD": 1}, "records": [{"index": 0, "submission_id": "sub_2001", "issues": ["MALFORMED_CID"], "status": "rejected"}, {"index": 1, "submission_id": "sub_2002", "issues": ["EMPTY_FIELD:wallet", "MALFORMED_TX_HASH", "MALFORMED_TASK_ID", "DUPLICATE_SUBMISSION_ID", "DUPLICATE_CID_REFERENCE"], "status": "rejected"}, {"index": 2, "submission_id": "sub_2002", "issues": ["MISSING_FIELD:wallet", "DUPLICATE_SUBMISSION_ID", "DUPLICATE_CID_REFERENCE"], "status": "rejected"}]}
+
+$ python3 validator.py /nonexistent.json
+{"error": "FILE_NOT_FOUND", "path": "/nonexistent.json"}
