@@ -17,7 +17,7 @@ cd postfiatwork/schema-checker
 python3 -m unittest test_schema_check -v
 ```
 
-**4,202 tests claimed across 37 of 44 tools.** That figure is derived from
+**4,221 tests claimed across 37 of 44 tools.** That figure is derived from
 each tool's own README by `readme-index/`, which also records the 1 ambiguous
 and 6 unstated cases rather than guessing them. It is a sum of claims, not a
 run: this repository has no single command that executes every suite.
@@ -64,7 +64,7 @@ Every tool follows the same contract so they compose in a pipeline:
 | [`evidence-harness`](evidence-harness) | 63 | Evidence Verification Harness |
 | [`evidence-manifest`](evidence-manifest) | 29 | Deterministic Batch Evidence Manifest CLI |
 | [`evidence-scorer`](evidence-scorer) | 39 | Objective Evidence Quality Scorer |
-| [`evidence-validator`](evidence-validator) | 17 | Evidence Integrity Validator |
+| [`evidence-validator`](evidence-validator) | 36 | Evidence Integrity Validator |
 | [`exit-harness`](exit-harness) | not stated | exit-harness |
 | [`index-generator`](index-generator) | 138 | index-generator |
 | [`lifecycle-linter`](lifecycle-linter) | 26 | Task Lifecycle Event Linter |
@@ -94,7 +94,7 @@ Every tool follows the same contract so they compose in a pipeline:
 | [`xrpl-address`](xrpl-address) | 34 | XRPL Classic and X-Address Validator |
 | [`xrpl-auditor`](xrpl-auditor) | 27 | XRPL Payout Reference Auditor |
 
-**Totals:** 44 tools; 4202 tests from 37 tools with a derivable claim (1 ambiguous, 6 not stated).
+**Totals:** 44 tools; 4221 tests from 37 tools with a derivable claim (1 ambiguous, 6 not stated).
 
 ## Judgement calls, collected
 
