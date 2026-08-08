@@ -288,7 +288,7 @@ the whole run. `scan_file()` catches `OSError` (unreadable),
 per file and records `{"path": ..., "message": ...}` in the report's
 top-level `"errors"` array — the scan continues to the next file. **Why**:
 one unreadable or unparseable file among many (samples_risky/ has 7 files;
-the self-scan target has 177) should not make the whole run's exit code and
+the self-scan target has 182) should not make the whole run's exit code and
 report indistinguishable from "the caller passed a garbage `--root`".
 Exit-`2` is reserved for usage problems the *caller* can fix by changing
 their command line (bad `--root`, bad `--rule`, unwritable `-o`); a
@@ -354,15 +354,15 @@ carries a `regenerable` entry that fails if it stops matching — see
 "Regeneration is locked" below.
 
 ```
-files_scanned:   181
+files_scanned:   182
 files_errored:   0
-findings_count:  452
+findings_count:  459
 
                              total    own others
   ND001_WALL_CLOCK:             7      7      0
-  ND002_UNSORTED_LISTDIR:      65     10     55
+  ND002_UNSORTED_LISTDIR:      71     10     61
   ND003_UNORDERED_ITERATION:   24      3     21
-  ND004_UNSAFE_REPR:          342      5    337
+  ND004_UNSAFE_REPR:          343      5    338
   ND005_UNSEEDED_RANDOM:        7      5      2
   ND006_FLOAT_IN_MONEY:         7      7      0
 ```
@@ -404,7 +404,7 @@ over-fires on would be a worse outcome than dating it. But it is dated:
     the 87-file scan**, not from the committed report. The current
     per-rule counts are the table above.
   * The current report has **not** been re-triaged finding by finding.
-    Nothing below should be read as a judgement about the 410
+    Nothing below should be read as a judgement about the 422
     sibling-tool findings in it.
   * The `path:line` citations below were re-checked mechanically against
     the current report, after two of them were corrected in place
