@@ -188,6 +188,12 @@ findings belong to files this delivery does not touch (the six tools
 `MIGRATION.md` already documented as correctly, permanently refused —
 `event-linter`, `evidence-manifest`, `lifecycle-linter`, `reward-reconciler`,
 `sybil-detector`, `xrpl-auditor` — none of which are among the seven).
+**Later correction:** `reward-reconciler` left that list. The exit-code
+alignment delivery regenerated its transcript with a helper that writes an
+`exit=` line for every record, so its two refused records are gone and
+`TRANSCRIPT_RECORD_HAS_NO_EXIT` is 43 rather than 45 as this document's
+successor state. The figure 48 above is the number this delivery measured and
+is left as measured.
 Every other increase is a real, previously-dormant README/transcript
 mismatch, now visible and individually named per tool in the table above
 instead of hidden behind an opaque "unparseable" status.

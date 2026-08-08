@@ -102,7 +102,7 @@ itself subject to Rule 3 exactly like any other rewrite.
 | `regression-checker` | **migrated** | 11/17 bare lines promoted; verified flat (1→1) |
 | `evidence-validator` | **migrated (filename normalization)** | `run_output.txt` (already fully conformant) copied verbatim to `captured_output.txt`; `run_output.txt` left in place; verified flat (1→1) |
 | `crosspath-runner` | **refused (reverted by verify-no-regression)** | promoting would move this tool from 1 finding (`TRANSCRIPT_HAS_NO_COMMAND_RECORDS`) to 2 (`EXIT_CODE_MISMATCH` + `README_COMMAND_NOT_IN_TRANSCRIPT`); reverted, byte-identical to the original |
-| `event-linter`, `evidence-manifest`, `lifecycle-linter`, `reward-reconciler`, `sybil-detector`, `xrpl-auditor` | **refused (unsafe)** | unchanged from v1: specific records with no recoverable `exit=` (see §6 of the earlier revision / `migrate_output.txt` in this delivery) |
+| `event-linter`, `evidence-manifest`, `lifecycle-linter`, `reward-reconciler`, `sybil-detector`, `xrpl-auditor` | **refused (unsafe)** | unchanged from v1: specific records with no recoverable `exit=` (see §6 of the earlier revision / `migrate_output.txt` in this delivery). **`reward-reconciler` has since left this list**: the exit-code alignment delivery regenerated its transcript so every record carries an `exit=` line, and there is nothing left to refuse. |
 | `transcript-drift` | **unchanged, already conformant** | all 16 records already have `exit=` |
 
 Only **four** files' bytes changed under the default, committed

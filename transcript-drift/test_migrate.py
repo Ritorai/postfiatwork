@@ -723,10 +723,19 @@ class TestRealRepoFixtures(TempDirMixin, unittest.TestCase):
         result = migrate.process_file(path, dry_run=False)
         self.assertEqual(len(result["refused_records"]), 3)
 
-    def test_reward_reconciler_refused_two_records(self):
+    def test_reward_reconciler_refuses_nothing_now_that_it_conforms(self):
+        # End-state assertion, not a promotion count -- see
+        # test_limitations_probe_ends_with_two_normative_records above for the
+        # precedent. This fixture used to refuse 2 records: `sha256sum ...`
+        # and `cmp ... && echo BYTE-IDENTICAL` carried no exit= line, which is
+        # exactly what TRANSCRIPT_RECORD_HAS_NO_EXIT reports. The exit-code
+        # alignment delivery regenerated that transcript with a rec() helper
+        # that writes an exit= line for every record, so the file now arrives
+        # conformant and there is nothing left to refuse. Asserting 2 here
+        # would be asserting a defect that no longer exists.
         path = os.path.join(self.tmp, "reward-reconciler", "captured_output.txt")
         result = migrate.process_file(path, dry_run=False)
-        self.assertEqual(len(result["refused_records"]), 2)
+        self.assertEqual(len(result["refused_records"]), 0)
 
     def test_sybil_detector_refused_three_records(self):
         path = os.path.join(self.tmp, "sybil-detector", "captured_output.txt")
