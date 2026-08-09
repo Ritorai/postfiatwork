@@ -430,6 +430,49 @@ def build_arg_parser():
     return parser
 
 
+def output_aliases_input(input_path, output_path):
+    """Return a reason string if writing to output_path would clobber the input.
+
+    Two files are the same file when they share a device and an inode, which is
+    what os.stat reports. That test catches more than a string comparison of the
+    two paths does:
+
+      * the same path spelled two ways -- "t.json" and "./t.json", or one of
+        them reached through a symlinked directory;
+      * a HARD LINK, where the two names are genuinely different and neither is
+        a symlink, so no amount of normalising the strings will ever reveal
+        that they are one file.
+
+    The check runs BEFORE the output is opened. Opening with "w" truncates
+    immediately, so a check that ran afterwards would be reporting on a file it
+    had already destroyed -- and the input has been read into memory by then,
+    which is exactly what makes this failure quiet: the run still prints a
+    correct-looking report and still exits 0 or 1.
+
+    A missing output path is not an alias; that is the ordinary case of writing
+    a new file. Any other stat error is left alone here so the existing
+    open()/OSError path keeps reporting it in its own words.
+    """
+    # Imported here rather than at module scope on purpose. A new top-level
+    # import line shifts every line below it, and doc-validator's committed
+    # option_report.json pins the line number of each argparse option in this
+    # file -- adding one line moves `--submitted-stale-hours` from 417 to 418
+    # and turns test_optioncheck.TestCommittedReport red. doc-validator is off
+    # limits under this task's brief. Measured, not assumed.
+    import os
+
+    try:
+        in_stat = os.stat(input_path)
+        out_stat = os.stat(output_path)
+    except OSError:
+        return None
+    if (in_stat.st_dev, in_stat.st_ino) != (out_stat.st_dev, out_stat.st_ino):
+        return None
+    if os.path.realpath(input_path) == os.path.realpath(output_path):
+        return "same path"
+    return "hard link to the input"
+
+
 def main(argv=None):
     parser = build_arg_parser()
     args = parser.parse_args(argv)  # argparse itself exits(2) on usage errors
@@ -467,6 +510,14 @@ def main(argv=None):
 
     out = canonical_json(report)
     if args.output:
+        alias = output_aliases_input(args.input_file, args.output)
+        if alias is not None:
+            print(
+                "staleness.py: error: --output would overwrite the input file "
+                f"({alias}); refusing to write",
+                file=sys.stderr,
+            )
+            return 2
         try:
             with open(args.output, "w", encoding="utf-8", newline="\n") as fh:
                 fh.write(out)
