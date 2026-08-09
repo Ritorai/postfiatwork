@@ -1,0 +1,9 @@
+{"sequence": 1, "task_id": "task_a"}
+{"sequence": true, "task_id": "task_b"}
+{"sequence": 3, "task_id": "task_c"}
+{"sequence": 3, "task_id": "task_c_again"}
+{"sequence": "5", "task_id": "task_e"}
+{"sequence": 9, "task_id": "task_i"}
+["not", "an", "object"]
+{"sequence": 8, "task_id": "task_h"
+{"task_id": "task_j"}
