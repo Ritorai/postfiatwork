@@ -1,0 +1,724 @@
+{
+  "map_version": "1",
+  "schema_version": "1.0",
+  "known_tool_directories": [
+    "adversarial-suite",
+    "budget-forecaster",
+    "bundle-index",
+    "bundle-verifier",
+    "claim-checker",
+    "claim-crosscheck",
+    "commit-claim-auditor",
+    "consolidate",
+    "contradiction-detector",
+    "crosspath-runner",
+    "doc-validator",
+    "dup-detector",
+    "env-leak-scanner",
+    "event-linter",
+    "evidence-harness",
+    "evidence-manifest",
+    "evidence-scorer",
+    "evidence-validator",
+    "exit-harness",
+    "index-generator",
+    "jsonl-sequence-checker",
+    "lifecycle-linter",
+    "limitations-probe",
+    "link-integrity",
+    "loop-health",
+    "nondeterminism-scanner",
+    "path-collision-scanner",
+    "payload-validator",
+    "preflight",
+    "queue-auditor",
+    "readme-index",
+    "regen-preflight",
+    "regression-checker",
+    "report-freshness",
+    "report-impact-predictor",
+    "reward-anomaly",
+    "reward-reconciler",
+    "schema-checker",
+    "scorecard",
+    "shebang-mode",
+    "snapshot-diff",
+    "sortkey-detector",
+    "staleness-monitor",
+    "sybil-detector",
+    "tamper-runner",
+    "thread-check",
+    "throughput-reporter",
+    "transcript-drift",
+    "transcript-schema",
+    "wallet-reconciler",
+    "weak-assertion-scanner",
+    "xrpl-address",
+    "xrpl-auditor"
+  ],
+  "rules": {
+    "ANY_PY": {
+      "description": "any .py file at any depth, except inside an ignored directory",
+      "match": "extension",
+      "value": ".py",
+      "depth": "any",
+      "source": "nondeterminism-scanner/ndscan.py:625-630 walks os.walk(root), prunes IGNORED_DIR_NAMES (ndscan.py:63-66) and keeps every name ending .py",
+      "ignores": [
+        ".eggs",
+        ".git",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".tox",
+        ".venv",
+        "__pycache__",
+        "build",
+        "dist",
+        "node_modules",
+        "venv"
+      ],
+      "ignores_source": "nondeterminism-scanner/ndscan.py IGNORED_DIR_NAMES, imported and compared by test_the_ignore_lists_equal_their_consumers"
+    },
+    "TEST_PY": {
+      "description": "a test module: basename starts with test_ or ends with _test.py, at any depth",
+      "match": "test-module",
+      "value": "test_*.py | *_test.py",
+      "depth": "any",
+      "source": "weak-assertion-scanner/weakassert.py:87-90 is_test_filename, discovered by weakassert.py:93-105 which also prunes dot-directories",
+      "ignores": [
+        ".git",
+        ".hg",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".svn",
+        ".tox",
+        ".venv",
+        "__pycache__",
+        "build",
+        "dist",
+        "env",
+        "node_modules",
+        "venv",
+        "<any name starting with a dot>"
+      ],
+      "ignores_source": "weak-assertion-scanner/weakassert.py IGNORED_DIR_NAMES, imported and compared by test_the_ignore_lists_equal_their_consumers. NOTE it contains 'env' and NOT '.eggs' -- the reverse of ndscan's. Transcribing instead of importing put '.eggs' here and lost 'env', and a test module under env/ was then reported 'certain' for a report it does not move."
+    },
+    "TOOL_CLI_PY": {
+      "description": "a .py file directly inside a top-level tool directory (depth 1). doc-validator narrows further to files that build an ArgumentParser AND call parse_args, but a path alone cannot tell, so this rule is deliberately the wider one",
+      "match": "extension",
+      "value": ".py",
+      "depth": "1",
+      "source": "doc-validator/optioncheck.py:255-262 lists top-level dirs, docval.py:850-861 lists *.py directly inside each and keeps those with has_argument_parser and has_parse_args",
+      "ignores": [
+        ".git",
+        ".hg",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".svn",
+        "__pycache__",
+        "<any name starting with a dot>"
+      ],
+      "ignores_source": "doc-validator/docval.py SKIP_DIR_NAMES plus dot names (optioncheck.py:257), imported and compared"
+    },
+    "TOOL_TRANSCRIPT": {
+      "description": "a file named exactly captured_output.txt directly inside a top-level tool directory",
+      "match": "basename",
+      "value": "captured_output.txt",
+      "depth": "1",
+      "source": "index-generator/pipe_scan.py:55-61 and transcript-schema/validate_transcript.py:347-357 use the identical depth-1 predicate; a captured_output.txt at depth 2 (e.g. commit-claim-auditor/fixture/) is invisible to both",
+      "ignores": [
+        "<any name starting with a dot>"
+      ],
+      "ignores_source": "index-generator/pipe_scan.py:57 skips only names starting with a dot; transcript-schema/validate_transcript.py:348 also skips __pycache__, so the intersection is dots alone"
+    },
+    "TOOL_README": {
+      "description": "a README.md directly inside a top-level tool directory",
+      "match": "basename",
+      "value": "README.md",
+      "depth": "1",
+      "source": "claim-crosscheck/crosscheck.py:1092-1099 requires <dir>/README.md to treat <dir> as a tool; readme-index/readmeindex.py:276-282 the same",
+      "ignores": [],
+      "ignores_source": "claim-crosscheck/crosscheck.py:1092-1099 filters nothing: any directory containing a README.md is a tool to it"
+    },
+    "TOOL_JSON": {
+      "description": "a .json file directly inside a top-level tool directory",
+      "match": "extension",
+      "value": ".json",
+      "depth": "1",
+      "source": "claim-crosscheck/crosscheck.py:900-903 discovers a tool's report by listing *.json next to its README",
+      "ignores": [],
+      "ignores_source": "same discovery as TOOL_README"
+    },
+    "NEW_TOOL_DIR": {
+      "description": "a path whose first component is not in known_tool_directories, i.e. the change introduces a top-level directory the map has not seen",
+      "match": "new-top-level",
+      "value": null,
+      "depth": "1",
+      "source": "derived from known_tool_directories. The consumers that count top-level directories -- regression-checker/coverage_audit.py:239-254 and transcript-schema/validate_transcript.py:346-358 -- skip only dot-prefixed names (and __pycache__), so build/ and dist/ are ordinary directories to them. No filesystem access, so the answer is a function of the map and the paths alone.",
+      "ignores": [
+        "__pycache__",
+        "<any name starting with a dot>"
+      ]
+    },
+    "BASELINED_TOOL_TREE": {
+      "description": "any path inside a top-level directory that has a baselines.json entry. coverage_audit re-runs each baselined tool and hashes its output, so a change to that tool's source OR its fixtures can move the report",
+      "match": "baselined-tool",
+      "value": null,
+      "depth": "any",
+      "ignores": [],
+      "source": "regression-checker/coverage_audit.py re-runs every tool named in baselines.json and compares the fresh report hash; baselined_tools in this map is that key list, sorted"
+    },
+    "DECLARED_INPUT": {
+      "description": "a file that report-freshness/manifest.json names in an entry's `inputs` list. Each report's own trigger names the specific path",
+      "match": "declared-input",
+      "value": null,
+      "depth": "any",
+      "ignores": [],
+      "source": "report-freshness/manifest.json `inputs`. The first version of this map read the manifest for argv/cwd/expected_exit_code and ignored `inputs` entirely, which made transcript-schema/schema.json and regression-checker/baselines.json invisible"
+    },
+    "PRODUCER_SOURCE": {
+      "description": "the script that generates a report. Editing a generator changes what it emits, so it moves its own artifact",
+      "match": "producer",
+      "value": null,
+      "depth": "any",
+      "ignores": [],
+      "source": "each report's own `producer` field. Measured: editing a finding message in weak-assertion-scanner/weakassert.py took self_scan_report.json to 'stale'"
+    },
+    "GONE_TOOL_DIR": {
+      "description": "a top-level directory the change DELETES, declared with --gone-dir. A path list alone cannot tell 'one file removed' from 'the whole directory removed', so it has to be said",
+      "match": "gone-top-level",
+      "value": null,
+      "depth": "1",
+      "ignores": [
+        "__pycache__",
+        "<any name starting with a dot>"
+      ],
+      "source": "regression-checker/coverage_audit.py:239-254 and transcript-schema/validate_transcript.py:346-358 both count top-level directories, so a deletion moves them exactly as a creation does. Measured: rm -rf sortkey-detector took regression-checker, transcript-schema, claim-crosscheck, nondeterminism-scanner and weak-assertion-scanner to 'stale'"
+    }
+  },
+  "reports": [
+    {
+      "id": "nondeterminism-scanner:self_scan_report.json",
+      "artifact": "nondeterminism-scanner/self_scan_report.json",
+      "producer": "nondeterminism-scanner/ndscan.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "ANY_PY",
+          "precision": "exact",
+          "note": "files_scanned counts every .py in the tree, so adding or removing one always moves the bytes. Measured: adding link-integrity/test_probe_module.py took report-freshness to state 'stale' for this entry. Exact for an ADD or a REMOVE only: measured, appending a comment line to commit-claim-auditor/fixture/test_example.py (a file with no findings) left report-freshness at exit 0.",
+          "exact_for": [
+            "add",
+            "remove"
+          ]
+        },
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        }
+      ],
+      "regenerate": {
+        "cwd": "nondeterminism-scanner",
+        "argv": [
+          "python3",
+          "ndscan.py",
+          "--root",
+          "..",
+          "-o",
+          "{OUT}"
+        ],
+        "expected_exit_code": 1
+      },
+      "enforced_by": [
+        {
+          "kind": "freshness-manifest",
+          "location": "report-freshness/manifest.json#nondeterminism-scanner:self_scan_report.json",
+          "detail": "kind regenerable; report-freshness re-runs the generator and byte-compares, so a mismatch is state 'stale' and freshness.py exits 1"
+        }
+      ],
+      "pins": [
+        {
+          "what": "files_scanned, the count of .py files in the whole repository",
+          "where": "$.files_scanned",
+          "note": "adding one .py file anywhere moves this even when the new file produces zero findings"
+        }
+      ]
+    },
+    {
+      "id": "weak-assertion-scanner:self_scan_report.json",
+      "artifact": "weak-assertion-scanner/self_scan_report.json",
+      "producer": "weak-assertion-scanner/weakassert.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "TEST_PY",
+          "precision": "exact",
+          "note": "files_scanned and tests_scanned both count test modules, so adding or removing one always moves the bytes. Measured with the same probe module. Exact for an ADD or a REMOVE only: the same measured edit left this entry at 'match'.",
+          "exact_for": [
+            "add",
+            "remove"
+          ]
+        },
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        }
+      ],
+      "regenerate": {
+        "cwd": "weak-assertion-scanner",
+        "argv": [
+          "python3",
+          "weakassert.py",
+          "--root",
+          "..",
+          "-o",
+          "{OUT}"
+        ],
+        "expected_exit_code": 1
+      },
+      "enforced_by": [
+        {
+          "kind": "freshness-manifest",
+          "location": "report-freshness/manifest.json#weak-assertion-scanner:self_scan_report.json",
+          "detail": "kind regenerable; re-run and byte-compare"
+        }
+      ],
+      "pins": [
+        {
+          "what": "files_scanned and tests_scanned over every test module in the repository",
+          "where": "$.files_scanned, $.tests_scanned",
+          "note": "a new test module moves both even if it triggers no finding"
+        }
+      ]
+    },
+    {
+      "id": "weak-assertion-scanner:README.md",
+      "artifact": "weak-assertion-scanner/README.md",
+      "producer": "weak-assertion-scanner/weakassert.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        }
+      ],
+      "regenerate": null,
+      "enforced_by": [
+        {
+          "kind": "unittest",
+          "location": "weak-assertion-scanner/test_weakassert_regen.py:208",
+          "detail": "TestReadmeMatchesTheReport.test_every_readme_count_matches_the_report parses the counts block out of README.md and compares each value to the committed report's, one subTest per key"
+        }
+      ],
+      "pins": [
+        {
+          "what": "the counts block quoted in prose",
+          "where": "weak-assertion-scanner/README.md:290-291",
+          "note": "files_scanned: 86 / tests_scanned: 6692 as committed; these are prose, so no generator rewrites them and they must be edited by hand when the report moves"
+        }
+      ]
+    },
+    {
+      "id": "doc-validator:option_report.json",
+      "artifact": "doc-validator/option_report.json",
+      "producer": "doc-validator/optioncheck.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "TOOL_CLI_PY",
+          "precision": "over-approximate",
+          "note": "doc-validator records a depth-1 .py only if it builds an ArgumentParser AND calls parse_args (docval.py:850-861), and then records LINE NUMBERS -- so an edit strictly below every add_argument call moves nothing. A path cannot tell any of that. Measured false positive: adding link-integrity/test_probe_module.py is predicted here, and test_optioncheck still passes. Settle it with: cd doc-validator && python3 -m unittest test_optioncheck",
+          "exact_for": []
+        },
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        }
+      ],
+      "regenerate": {
+        "cwd": "doc-validator",
+        "argv": [
+          "python3",
+          "optioncheck.py",
+          "--root",
+          "..",
+          "-o",
+          "{OUT}"
+        ],
+        "expected_exit_code": 1
+      },
+      "enforced_by": [
+        {
+          "kind": "unittest",
+          "location": "doc-validator/test_optioncheck.py:389",
+          "detail": "the committed report is compared against a live rescan of the repository"
+        }
+      ],
+      "pins": [
+        {
+          "what": "the LINE NUMBER of every argparse option site in the repository",
+          "where": "$.options[*].variants[*].sites[*].line",
+          "note": "this is the trap: inserting a single line ANYWHERE above an add_argument call -- a new top-level import, a comment, a blank line -- shifts the recorded number and turns the comparison red, without changing one character of the option itself"
+        }
+      ],
+      "triggers_note": "NEW_TOOL_DIR is deliberately NOT a trigger. doc-validator only records a directory that contains an argparse CLI (docval.py:941-943), so a new directory moves this report only by way of the .py it contains -- which TOOL_CLI_PY already catches. Listing NEW_TOOL_DIR as well would report every new docs/ or fixtures/ directory as impacting it, which is false."
+    },
+    {
+      "id": "index-generator:pipe_classification_report.json",
+      "artifact": "index-generator/pipe_classification_report.json",
+      "producer": "index-generator/pipe_classify.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "TOOL_TRANSCRIPT",
+          "precision": "over-approximate",
+          "note": "exact when a transcript is ADDED or REMOVED (transcript_files_scanned moves), approximate for an EDIT: total_command_records counts only lines matching the '=== $ command ===' header, so editing body text inside a transcript moves nothing. Settle it with: cd index-generator && python3 -m unittest test_pipe_classify",
+          "exact_for": [
+            "add",
+            "remove"
+          ]
+        },
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        }
+      ],
+      "regenerate": null,
+      "enforced_by": [
+        {
+          "kind": "unittest",
+          "location": "index-generator/test_pipe_classify.py:528",
+          "detail": "the committed pipe_classification_report.json is loaded and compared against a fresh scan of the repository's transcripts"
+        }
+      ],
+      "pins": [
+        {
+          "what": "total_command_records and transcript_files_scanned, summed across every depth-1 captured_output.txt",
+          "where": "$.total_command_records, $.transcript_files_scanned",
+          "note": "committed at 548 and 51. A NEW TOOL DIRECTORY WITH NO TRANSCRIPT DOES NOT MOVE THIS -- pipe_scan.py:60-61 skips a directory that has no captured_output.txt, so the count only changes when a transcript file itself is added, removed or edited. This is the one place where this report and transcript-schema's disagree"
+        }
+      ]
+    },
+    {
+      "id": "transcript-schema:validation_report.json",
+      "artifact": "transcript-schema/validation_report.json",
+      "producer": "transcript-schema/validate_transcript.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "TOOL_TRANSCRIPT",
+          "precision": "over-approximate",
+          "note": "same add/remove versus edit distinction as index-generator, plus this report also records per-file validation findings, so an edit that changes a header line does move it.",
+          "exact_for": [
+            "add",
+            "remove"
+          ]
+        },
+        {
+          "rule": "NEW_TOOL_DIR",
+          "precision": "exact",
+          "note": "directories_without_transcript is a sorted list of DIRECTORY NAMES (validate_transcript.py:346-358), so a new top-level directory with no transcript always moves the bytes. Measured: creating docs/notes.md took this entry to 'stale'.",
+          "exact_for": [
+            "add",
+            "remove"
+          ]
+        },
+        {
+          "rule": "DECLARED_INPUT",
+          "precision": "exact",
+          "exact_for": [
+            "add",
+            "remove",
+            "edit"
+          ],
+          "note": "report-freshness/manifest.json declares transcript-schema/schema.json as this entry's input. Measured: bumping transcript-schema/schema.json's schema_version took validation_report.json to 'stale'; deleting one entry from regression-checker/baselines.json took baseline_coverage_report.json to 'stale'."
+        },
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        },
+        {
+          "rule": "GONE_TOOL_DIR",
+          "precision": "exact",
+          "exact_for": [
+            "remove"
+          ],
+          "note": "Measured: rm -rf sortkey-detector took this report to 'stale'. NEW_TOOL_DIR cannot cover it -- that rule fires on a top-level name NOT in known_tool_directories, and a directory being deleted is by definition still in the map."
+        }
+      ],
+      "regenerate": {
+        "cwd": "transcript-schema",
+        "argv": [
+          "python3",
+          "validate_transcript.py",
+          "--root",
+          "..",
+          "-o",
+          "{OUT}"
+        ],
+        "expected_exit_code": 1
+      },
+      "enforced_by": [
+        {
+          "kind": "freshness-manifest",
+          "location": "report-freshness/manifest.json#transcript-schema:validation_report.json",
+          "detail": "kind regenerable; re-run and byte-compare"
+        }
+      ],
+      "pins": [
+        {
+          "what": "directories_without_transcript, a sorted list of every top-level directory that has no captured_output.txt",
+          "where": "$.directories_without_transcript",
+          "note": "THIS is why a new tool directory moves this report and not index-generator's: validate_transcript.py:346-358 records the directory by NAME in a list, so adding a directory with no transcript changes the bytes even though no transcript was scanned"
+        }
+      ],
+      "triggers_note": "NEW_TOOL_DIR is a trigger because validate_transcript.py:346-358 records every top-level directory that has NO captured_output.txt, by name, in directories_without_transcript. index-generator does not do this -- pipe_scan.py:60-61 skips such a directory entirely -- which is why the two reports disagree about a new directory that ships no transcript."
+    },
+    {
+      "id": "claim-crosscheck:sample_run.json",
+      "artifact": "claim-crosscheck/sample_run.json",
+      "producer": "claim-crosscheck/crosscheck.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "TOOL_README",
+          "precision": "over-approximate",
+          "note": "claim-crosscheck compares a README's numeric claims against the tool's own report. Editing a README moves sample_run.json only if the OUTCOME of that comparison changes. Measured false positive: updating weak-assertion-scanner/README.md's counts in lockstep with its regenerated report left this entry at 'match'.",
+          "exact_for": []
+        },
+        {
+          "rule": "TOOL_JSON",
+          "precision": "over-approximate",
+          "note": "a tool's report is discovered by listing *.json next to its README (crosscheck.py:900-903) and only one is paired, so editing an unrelated .json in the same directory may move nothing. Measured false positive: regenerating regression-checker/baseline_coverage_report.json and transcript-schema/validation_report.json left this entry at 'match'.",
+          "exact_for": []
+        },
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        },
+        {
+          "rule": "GONE_TOOL_DIR",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "Measured true positive: rm -rf sortkey-detector took this report to 'stale', because the deleted directory had a README.md. A directory without one would not move it."
+        }
+      ],
+      "regenerate": {
+        "cwd": "claim-crosscheck",
+        "argv": [
+          "python3",
+          "crosscheck.py",
+          "--root",
+          "..",
+          "--all",
+          "-o",
+          "{OUT}"
+        ],
+        "expected_exit_code": 1
+      },
+      "enforced_by": [
+        {
+          "kind": "freshness-manifest",
+          "location": "report-freshness/manifest.json#claim-crosscheck:sample_run.json",
+          "detail": "kind regenerable; re-run and byte-compare"
+        }
+      ],
+      "pins": [
+        {
+          "what": "per-tool claim/report cross-check results for every directory that has a README.md",
+          "where": "$.tools[*]",
+          "note": "a tool directory is discovered only if it contains a README.md (crosscheck.py:1098-1099), so a new directory without one is invisible here"
+        }
+      ],
+      "triggers_note": "NEW_TOOL_DIR is deliberately NOT a trigger. crosscheck.py:1098-1099 treats a directory as a tool only if it contains a README.md, so a new directory moves this report only by way of that README -- which TOOL_README already catches."
+    },
+    {
+      "id": "regression-checker:baseline_coverage_report.json",
+      "artifact": "regression-checker/baseline_coverage_report.json",
+      "producer": "regression-checker/coverage_audit.py",
+      "pinned": false,
+      "triggers": [
+        {
+          "rule": "NEW_TOOL_DIR",
+          "precision": "exact",
+          "note": "coverage_audit.py:239-254 counts every non-dot top-level directory whatever it contains, so creating one always moves the bytes. Measured: creating docs/notes.md took this entry to 'stale'.",
+          "exact_for": [
+            "add",
+            "remove"
+          ]
+        },
+        {
+          "rule": "BASELINED_TOOL_TREE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "coverage_audit re-runs each baselined tool and hashes its output, so a change inside one of those directories moves this report only if the tool's own output changes. Measured true positive: appending a record to dup-detector/records_dupes.json took this report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        },
+        {
+          "rule": "DECLARED_INPUT",
+          "precision": "exact",
+          "exact_for": [
+            "add",
+            "remove",
+            "edit"
+          ],
+          "note": "report-freshness/manifest.json declares regression-checker/baselines.json as this entry's input. Measured: bumping transcript-schema/schema.json's schema_version took validation_report.json to 'stale'; deleting one entry from regression-checker/baselines.json took baseline_coverage_report.json to 'stale'."
+        },
+        {
+          "rule": "PRODUCER_SOURCE",
+          "precision": "over-approximate",
+          "exact_for": [],
+          "note": "editing the generator moves its own report only if the edit changes what it emits -- a comment or a docstring will not. Measured true positive: changing a finding message in weakassert.py took its report to 'stale'. Settle it with: cd report-freshness && python3 freshness.py"
+        },
+        {
+          "rule": "GONE_TOOL_DIR",
+          "precision": "exact",
+          "exact_for": [
+            "remove"
+          ],
+          "note": "Measured: rm -rf sortkey-detector took this report to 'stale'. NEW_TOOL_DIR cannot cover it -- that rule fires on a top-level name NOT in known_tool_directories, and a directory being deleted is by definition still in the map."
+        }
+      ],
+      "regenerate": {
+        "cwd": "regression-checker",
+        "argv": [
+          "python3",
+          "coverage_audit.py",
+          "-o",
+          "{OUT}"
+        ],
+        "expected_exit_code": 1
+      },
+      "enforced_by": [
+        {
+          "kind": "freshness-manifest",
+          "location": "report-freshness/manifest.json#regression-checker:baseline_coverage_report.json",
+          "detail": "kind regenerable; re-run and byte-compare"
+        }
+      ],
+      "pins": [
+        {
+          "what": "which tool directories have a baselines.json entry and which do not",
+          "where": "$.tools_without_baseline, $.summary",
+          "note": "a new tool directory lands in the un-baselined list, which is why creating a directory is enough to move this report without touching any existing file"
+        }
+      ],
+      "triggers_note": "NEW_TOOL_DIR is the ONLY trigger, and it is the right one: coverage_audit.py:239-254 counts every non-dot top-level directory, whatever is inside it, so creating a directory is enough and editing an existing file is not."
+    },
+    {
+      "id": "env-leak-scanner:leak_report_2026-08-04.json",
+      "artifact": "env-leak-scanner/leak_report_2026-08-04.json",
+      "producer": "env-leak-scanner/leakscan.py",
+      "pinned": true,
+      "triggers": [],
+      "regenerate": null,
+      "enforced_by": [
+        {
+          "kind": "freshness-manifest",
+          "location": "report-freshness/manifest.json#env-leak-scanner:leak_report_2026-08-04.json",
+          "detail": "kind pinned. report-freshness records it as present and NEVER re-runs the generator"
+        }
+      ],
+      "pins": [
+        {
+          "what": "the state of the repository on 2026-08-04, dated in the filename",
+          "where": "the whole file",
+          "note": "point-in-time evidence. It is not stale when the tree changes -- that is the point of it. A predictor that reports it as impacted is wrong"
+        }
+      ]
+    },
+    {
+      "id": "transcript-drift:drift_report_after_migration.json",
+      "artifact": "transcript-drift/drift_report_after_migration.json",
+      "producer": "transcript-drift/driftcheck.py",
+      "pinned": true,
+      "triggers": [],
+      "regenerate": null,
+      "enforced_by": [
+        {
+          "kind": "freshness-manifest",
+          "location": "report-freshness/manifest.json#transcript-drift:drift_report_after_migration.json",
+          "detail": "kind pinned; the 'after' half of a committed before/after pair documenting one migration run"
+        }
+      ],
+      "pins": [
+        {
+          "what": "one specific migration run at one specific commit",
+          "where": "the whole file",
+          "note": "driftcheck.py uses the same depth-1 captured_output.txt predicate as index-generator and transcript-schema, so this report WOULD move if it were regenerable. It is not. Pinned wins"
+        }
+      ]
+    }
+  ],
+  "propagations": [
+    {
+      "from": "weak-assertion-scanner:self_scan_report.json",
+      "to": "weak-assertion-scanner:README.md",
+      "why": "test_weakassert_regen.py:208 re-derives the README's counts block from the committed report, so whenever the report moves the README must be hand-edited to match or that test turns red",
+      "precision": "exact",
+      "exact_for": [
+        "add",
+        "remove",
+        "edit"
+      ]
+    }
+  ],
+  "ignored_directory_names_note": "Removed on purpose. There is no single repository-wide ignore list: ndscan prunes 11 names and NOT .hg or .svn; weakassert prunes those 11 plus every dot-prefixed name; the depth-1 consumers prune dots plus their own small sets; and coverage_audit/validate_transcript prune only dot names and __pycache__ -- so `build/` and `dist/` DO count as new top-level directories there. A single global list suppressed real impacts: measured, creating build/notes.md moved regression-checker and transcript-schema to 'stale' while a global ignore list made this tool answer exit 0. Each rule now carries its own `ignores`.",
+  "baselined_tools": [
+    "budget-forecaster",
+    "bundle-index",
+    "consolidate",
+    "dup-detector",
+    "event-linter",
+    "evidence-harness",
+    "evidence-manifest",
+    "evidence-scorer",
+    "lifecycle-linter",
+    "link-integrity",
+    "loop-health",
+    "payload-validator",
+    "preflight",
+    "queue-auditor",
+    "reward-anomaly",
+    "reward-reconciler",
+    "schema-checker",
+    "staleness-monitor",
+    "sybil-detector",
+    "throughput-reporter",
+    "wallet-reconciler",
+    "xrpl-address",
+    "xrpl-auditor"
+  ],
+  "change_kinds": [
+    "add",
+    "remove",
+    "edit",
+    "unknown"
+  ],
+  "declared_inputs": {
+    "env-leak-scanner:leak_report_2026-08-04.json": [
+      "env-leak-scanner/review.json"
+    ],
+    "regression-checker:baseline_coverage_report.json": [
+      "regression-checker/baselines.json"
+    ],
+    "transcript-drift:drift_report_after_migration.json": [
+      "transcript-drift/inventory.json"
+    ],
+    "transcript-schema:validation_report.json": [
+      "transcript-schema/schema.json"
+    ]
+  }
+}
